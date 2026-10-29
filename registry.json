@@ -1,0 +1,10 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "mangacn",
+  "homepage": "https://mangacn.com",
+  "include": [
+    "registry/theme/registry.json",
+    "registry/ui/registry.json",
+    "registry/blocks/registry.json"
+  ]
+}

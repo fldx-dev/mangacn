@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "hello-world",
+      "type": "registry:component",
+      "title": "Hello World",
+      "description": "Throwaway item that proves the registry pipeline end to end.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.0.1" },
+      "files": [{ "path": "hello-world/hello-world.tsx", "type": "registry:component" }]
+    }
+  ]
+}

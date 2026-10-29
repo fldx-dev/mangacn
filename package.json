@@ -14,9 +14,14 @@
     "node": ">=22"
   },
   "scripts": {
+    "predev": "pnpm registry:build",
     "dev": "next dev",
+    "prebuild": "pnpm registry:build",
     "build": "next build",
     "start": "next start",
+    "registry:build": "shadcn build --output public/r",
+    "registry:validate": "shadcn registry validate",
+    "registry:list": "shadcn list http://localhost:3000/r/registry.json",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
