@@ -21,6 +21,7 @@
     "start": "next start",
     "registry:build": "shadcn build --output public/r",
     "registry:validate": "shadcn registry validate",
+    "registry:smoke": "tsx scripts/registry-smoke.ts",
     "registry:list": "shadcn list http://localhost:3000/r/registry.json",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
