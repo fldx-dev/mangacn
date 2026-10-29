@@ -1,0 +1,48 @@
+{
+  "name": "mangacn",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Manga-styled React components, distributed as a shadcn registry.",
+  "homepage": "https://mangacn.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fldx-dev/mangacn"
+  },
+  "license": "MIT",
+  "packageManager": "pnpm@10.10.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "fumadocs-core": "16.17.9",
+    "fumadocs-mdx": "15.4.10",
+    "fumadocs-ui": "16.17.9",
+    "lucide-react": "1.64.0",
+    "motion": "14.7.1",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tailwind-merge": "3.7.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.4",
+    "@tailwindcss/turbopack": "4.3.3",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "shadcn": "4.23.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3"
+  }
+}
