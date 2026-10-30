@@ -47,6 +47,12 @@ const EXPECTED_CONTENT: Record<
   button: [{ file: "components/ui/button.tsx", attribution: attribution("Button") }],
   badge: [{ file: "components/ui/badge.tsx", attribution: attribution("Badge") }],
   separator: [{ file: "components/ui/separator.tsx", attribution: attribution("Separator") }],
+  // Manga-native pieces: registry:component with `target: "@components/<name>.tsx"`.
+  panel: [{ file: "components/panel.tsx", includes: ["export function Panel("] }],
+  "panel-grid": [{ file: "components/panel-grid.tsx", includes: ["export function PanelGrid("] }],
+  "manga-frame": [
+    { file: "components/manga-frame.tsx", includes: ["export function MangaFrame("] },
+  ],
 };
 
 /** True when `line` is the attribution comment and only imports or a directive precede it. */

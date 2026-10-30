@@ -32,6 +32,54 @@
       "files": [
         { "path": "separator/separator.tsx", "type": "registry:ui", "target": "@ui/separator.tsx" }
       ]
+    },
+    {
+      "name": "panel",
+      "type": "registry:component",
+      "title": "Panel",
+      "description": "One manga panel: heavy hand-drawn ink frame on paper, optional screentone, corner caption and hatched shadow (needs ink-frame).",
+      "categories": ["layout"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "panel/panel.tsx",
+          "type": "registry:component",
+          "target": "@components/panel.tsx"
+        }
+      ]
+    },
+    {
+      "name": "panel-grid",
+      "type": "registry:component",
+      "title": "Panel Grid",
+      "description": "Manga page layout: panels on a grid with paper gutters, column and row spans, one column on phones.",
+      "categories": ["layout"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "panel-grid/panel-grid.tsx",
+          "type": "registry:component",
+          "target": "@components/panel-grid.tsx"
+        }
+      ]
+    },
+    {
+      "name": "manga-frame",
+      "type": "registry:component",
+      "title": "Manga Frame",
+      "description": "Image in a hand-drawn ink frame with aspect presets, a halftone mat and a caption; alt is required (needs ink-frame).",
+      "categories": ["data"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "manga-frame/manga-frame.tsx",
+          "type": "registry:component",
+          "target": "@components/manga-frame.tsx"
+        }
+      ]
     }
   ]
 }
