@@ -1,5 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { expectNoA11yViolations } from "@/lib/test/axe";
+import HelloWorldDefaultDemo from "./demos/default";
 import { HelloWorld } from "./hello-world";
 
 afterEach(cleanup);
@@ -21,5 +23,9 @@ describe("HelloWorld", () => {
     expect(el.getAttribute("data-slot")).toBe("hello-world");
     expect(el.classList.contains("custom-class")).toBe(true);
     expect(el.classList.contains("rounded-md")).toBe(true);
+  });
+
+  it("has no axe violations in its default demo", async () => {
+    await expectNoA11yViolations(<HelloWorldDefaultDemo />);
   });
 });

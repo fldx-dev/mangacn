@@ -51,3 +51,7 @@ next-env.d.ts
 
 # generated from registry/**/demos (pnpm gen:demos)
 /lib/registry/demos.generated.ts
+
+# Playwright output (baselines in e2e/__screenshots__ are committed)
+/e2e/test-results/
+/playwright-report/

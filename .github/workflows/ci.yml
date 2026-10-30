@@ -4,12 +4,19 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      update-snapshots:
+        description: Regenerate the Playwright baselines and upload them as an artifact
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # Keep manual runs (baseline updates) from cancelling the push run on the same ref.
+  group: ci-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
@@ -26,3 +33,33 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # `pnpm ci` is a reserved (unimplemented) pnpm command, so call the script with `run`.
       - run: pnpm run ci
+
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build
+      - if: ${{ !inputs.update-snapshots }}
+        run: pnpm test:e2e
+      - if: ${{ inputs.update-snapshots }}
+        run: pnpm test:e2e:update
+      - if: ${{ inputs.update-snapshots }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-baselines
+          path: e2e/__screenshots__
+          if-no-files-found: error
+      - if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: e2e/test-results
+          if-no-files-found: ignore

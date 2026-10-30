@@ -11,6 +11,7 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    setupFiles: ["./vitest.setup.ts"],
     include: ["registry/**/*.test.{ts,tsx}", "lib/**/*.test.ts"],
     coverage: {
       enabled: true,

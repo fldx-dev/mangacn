@@ -163,7 +163,16 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    fit), file type `registry:ui`.
 5. **Demo and test:** `demos/default.tsx` showing the common case, extra demos for variants
    and sizes, and `<name>.test.tsx` (renders, forwards `className`, sets `data-slot`,
-   variants map to classes).
+   variants map to classes, and runs axe on the default demo):
+
+   ```tsx
+   import { expectNoA11yViolations } from "@/lib/test/axe";
+   import ButtonDefaultDemo from "./demos/default";
+
+   it("has no axe violations in its default demo", async () => {
+     await expectNoA11yViolations(<ButtonDefaultDemo />);
+   });
+   ```
 6. **Run the checks** (below).
 
 ## Recipe 2: add a manga-native piece
@@ -219,7 +228,8 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
 ```bash
 pnpm gen:demos       # regenerate the demo map (also runs in predev/prebuild/ci)
 pnpm test            # unit tests, import rule, demo map staleness, stock parity
-pnpm run ci          # everything CI runs: lint, typecheck, tests, validate, build, smoke install
+pnpm run ci          # the `ci` job: lint, typecheck, tests, validate, build, smoke install
+pnpm build && pnpm test:e2e   # the `visual` job: every demo × 360/768/1280 px × light/dark
 ```
 
 Preview a demo in isolation with `pnpm dev` and open
@@ -239,3 +249,19 @@ A failure lists what is missing or unexpected. Primitives not restyled yet show 
 
 The snapshot is refreshed only on purpose, after a shadcn release, with maintainer
 sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
+
+### Accessibility and visual snapshots
+
+- `expectNoA11yViolations(<Demo />)` (`lib/test/axe.ts`) renders the demo and runs axe on
+  `document.body`, so portalled popups are checked too. `color-contrast` and `region` are
+  off in jsdom (no layout, no page landmarks); theme contrast has its own test.
+- `e2e/demos.spec.ts` opens `/demo/<item>/<demo>` and `?mode=dark` for every demo in the
+  generated map at 360, 768 and 1280 px, fails on console errors, non-200 responses and
+  horizontal overflow, and on Linux compares against
+  `e2e/__screenshots__/linux/w<width>/<item>-<demo>-<mode>.png` (`maxDiffPixelRatio` 0.01).
+  On Windows and macOS it skips the pixel comparison, because font rendering differs.
+- A new demo has no baseline, so the `visual` CI job fails until you add one. Baselines are
+  only made on CI: run the workflow manually with `update-snapshots` checked
+  (`gh workflow run ci.yml -f update-snapshots=true`), download the `playwright-baselines`
+  artifact into `e2e/__screenshots__/` (`gh run download <run-id> -n playwright-baselines -D e2e/__screenshots__`),
+  look at the new PNGs, and commit them with the item.
