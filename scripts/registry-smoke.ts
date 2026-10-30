@@ -14,7 +14,9 @@ import path from "node:path";
 
 const NEXT_VERSION = "16.4.3";
 const SHADCN_VERSION = "4.23.0";
-const TIMEOUT_MS = 10 * 60 * 1000;
+/** Overall budget: setup plus a minute per item (`pnpm dlx shadcn add` takes ~40 s on Windows). */
+const BASE_TIMEOUT_MS = 6 * 60 * 1000;
+const PER_ITEM_TIMEOUT_MS = 60 * 1000;
 const isWindows = process.platform === "win32";
 
 // pnpm runs package scripts from the repo root.
@@ -308,12 +310,23 @@ async function main() {
   }
 }
 
+/** Catalog size for the time budget; a missing catalog is reported by main(). */
+function itemCount(): number {
+  try {
+    const catalog = JSON.parse(readFileSync(path.join(outputDir, "registry.json"), "utf8"));
+    return (catalog as { items: unknown[] }).items.length;
+  } catch {
+    return 0;
+  }
+}
+
+const timeoutMs = BASE_TIMEOUT_MS + PER_ITEM_TIMEOUT_MS * itemCount();
 const timer = setTimeout(() => {
   if (currentChild) killTree(currentChild);
-  console.error(`✗ registry smoke timed out after ${TIMEOUT_MS / 60000} min`);
+  console.error(`✗ registry smoke timed out after ${timeoutMs / 60000} min`);
   if (projectDir) console.error(`Temp project kept for inspection: ${projectDir}`);
   process.exit(1);
-}, TIMEOUT_MS);
+}, timeoutMs);
 
 main()
   .then(() => {
