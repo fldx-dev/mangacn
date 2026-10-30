@@ -1,25 +1,27 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { expectNoA11yViolations } from "@/lib/test/axe";
 import SfxTextDefaultDemo from "./demos/default";
 import { SfxText } from "./sfx-text";
 
-// motion reads `prefers-reduced-motion` through matchMedia, which jsdom lacks.
-function stubReducedMotion(reduce: boolean) {
+// motion reads `prefers-reduced-motion` through matchMedia (missing in jsdom) once, on first
+// use, and caches it for the module; so the whole file runs with reduced motion.
+beforeAll(() => {
   vi.stubGlobal("matchMedia", (query: string) => ({
-    matches: reduce && query.includes("reduce"),
+    matches: query.includes("reduce"),
     media: query,
     addEventListener() {},
     removeEventListener() {},
     addListener() {},
     removeListener() {},
   }));
-}
+});
 
-afterEach(() => {
-  cleanup();
+afterAll(() => {
   vi.unstubAllGlobals();
 });
+
+afterEach(cleanup);
 
 const sfxOf = (container: HTMLElement) => container.firstElementChild as HTMLElement;
 
@@ -78,7 +80,6 @@ describe("SfxText", () => {
   });
 
   it.each(["pop", "slam"] as const)("keeps the plain word inside a %s entrance", (enter) => {
-    stubReducedMotion(false);
     const sfx = sfxOf(render(<SfxText enter={enter}>Don!</SfxText>).container);
     expect(sfx.dataset.enter).toBe(enter);
     expect(sfx.textContent).toBe("Don!");
@@ -86,7 +87,6 @@ describe("SfxText", () => {
   });
 
   it("shows the word at rest under reduced motion", async () => {
-    stubReducedMotion(true);
     const sfx = sfxOf(render(<SfxText enter="slam">Don!</SfxText>).container);
     const inner = sfx.firstElementChild as HTMLElement;
     await vi.waitFor(() => expect(inner.style.opacity).toBe("1"));
@@ -94,7 +94,6 @@ describe("SfxText", () => {
   });
 
   it("has no axe violations in its default demo", async () => {
-    stubReducedMotion(true);
     await expectNoA11yViolations(<SfxTextDefaultDemo />);
   });
 });

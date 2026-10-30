@@ -76,6 +76,10 @@ const EXPECTED_CONTENT: Record<
     },
   ],
   emanata: [{ file: "components/emanata.tsx", includes: ["export function Emanata("] }],
+  "ink-splash-loader": [
+    { file: "components/ink-splash-loader.tsx", includes: ["export function InkSplashLoader("] },
+  ],
+  "page-turn": [{ file: "components/page-turn.tsx", includes: ["export function PageTurn("] }],
   "manga-frame": [
     { file: "components/manga-frame.tsx", includes: ["export function MangaFrame("] },
   ],

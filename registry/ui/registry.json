@@ -194,6 +194,38 @@
       ]
     },
     {
+      "name": "ink-splash-loader",
+      "type": "registry:component",
+      "title": "Ink Splash Loader",
+      "description": "Loading status: an ink blot that pulses and splashes droplets, still under reduced motion, with a hidden label.",
+      "categories": ["feedback"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority", "motion"],
+      "files": [
+        {
+          "path": "ink-splash-loader/ink-splash-loader.tsx",
+          "type": "registry:component",
+          "target": "@components/ink-splash-loader.tsx"
+        }
+      ]
+    },
+    {
+      "name": "page-turn",
+      "type": "registry:component",
+      "title": "Page Turn",
+      "description": "Turns its children like a manga page when pageKey changes (right to left by default); cross-fades under reduced motion.",
+      "categories": ["animation"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "motion"],
+      "files": [
+        {
+          "path": "page-turn/page-turn.tsx",
+          "type": "registry:component",
+          "target": "@components/page-turn.tsx"
+        }
+      ]
+    },
+    {
       "name": "manga-frame",
       "type": "registry:component",
       "title": "Manga Frame",
