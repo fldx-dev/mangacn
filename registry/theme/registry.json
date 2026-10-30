@@ -283,6 +283,23 @@
         "variable": "--font-dialogue",
         "subsets": ["latin", "latin-ext"]
       }
+    },
+    {
+      "name": "manga-motion",
+      "type": "registry:lib",
+      "title": "Manga motion presets",
+      "description": "Spring and easing presets plus popIn, slamIn, shake and flash variants for motion.",
+      "categories": ["animation"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["motion"],
+      "files": [
+        {
+          "path": "manga-motion/manga-motion.ts",
+          "type": "registry:lib"
+        }
+      ]
     }
   ]
 }

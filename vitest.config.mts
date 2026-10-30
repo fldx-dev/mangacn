@@ -11,7 +11,7 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
-    include: ["registry/**/*.test.tsx", "lib/**/*.test.ts"],
+    include: ["registry/**/*.test.{ts,tsx}", "lib/**/*.test.ts"],
     coverage: {
       enabled: true,
       provider: "v8",
