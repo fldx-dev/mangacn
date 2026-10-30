@@ -368,3 +368,9 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   (`gh workflow run ci.yml -f update-snapshots=true`), download the `playwright-baselines`
   artifact into `e2e/__screenshots__/` (`gh run download <run-id> -n playwright-baselines -D e2e/__screenshots__`),
   look at the new PNGs, and commit them with the item.
+- Every `InkFrame` without an explicit `seed` hashes `useId()`, and React ids depend on the
+  tree above the component. Changing the demo stage's tree (`app/demo/[item]/[demo]/page.tsx`)
+  therefore changes every wobble and shifts every baseline a little; regenerate all of them
+  in the same commit. Two runs of the same commit also differ in a few dozen PNGs by one to a
+  few hundred pixels (renderer antialiasing at text and stroke edges); that is within the
+  threshold and not something to chase.
