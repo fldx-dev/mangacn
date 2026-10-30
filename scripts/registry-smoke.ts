@@ -49,6 +49,39 @@ const EXPECTED_CONTENT: Record<
   button: [{ file: "components/ui/button.tsx", attribution: attribution("Button") }],
   badge: [{ file: "components/ui/badge.tsx", attribution: attribution("Badge") }],
   separator: [{ file: "components/ui/separator.tsx", attribution: attribution("Separator") }],
+  // Manga-native pieces: registry:component with `target: "@components/<name>.tsx"`.
+  panel: [{ file: "components/panel.tsx", includes: ["export function Panel("] }],
+  "panel-grid": [{ file: "components/panel-grid.tsx", includes: ["export function PanelGrid("] }],
+  "speech-bubble": [
+    { file: "components/speech-bubble.tsx", includes: ["export function SpeechBubble("] },
+  ],
+  "thought-bubble": [
+    { file: "components/thought-bubble.tsx", includes: ["export function ThoughtBubble("] },
+  ],
+  "sfx-text": [{ file: "components/sfx-text.tsx", includes: ["export function SfxText("] }],
+  "vertical-text": [
+    { file: "components/vertical-text.tsx", includes: ["export function VerticalText("] },
+  ],
+  "speed-lines": [
+    { file: "components/speed-lines.tsx", includes: ["export function SpeedLines("] },
+  ],
+  "focus-lines": [
+    { file: "components/focus-lines.tsx", includes: ["export function FocusLines("] },
+  ],
+  "halftone-background": [
+    {
+      file: "components/halftone-background.tsx",
+      includes: ["export function HalftoneBackground("],
+    },
+  ],
+  emanata: [{ file: "components/emanata.tsx", includes: ["export function Emanata("] }],
+  "ink-splash-loader": [
+    { file: "components/ink-splash-loader.tsx", includes: ["export function InkSplashLoader("] },
+  ],
+  "page-turn": [{ file: "components/page-turn.tsx", includes: ["export function PageTurn("] }],
+  "manga-frame": [
+    { file: "components/manga-frame.tsx", includes: ["export function MangaFrame("] },
+  ],
 };
 
 /** True when `line` is the attribution comment and only imports or a directive precede it. */
@@ -113,7 +146,6 @@ class SmokeError extends Error {
 
 let currentChild: ChildProcess | undefined;
 let projectDir: string | undefined;
-
 function killTree(child: ChildProcess) {
   if (child.pid === undefined || child.exitCode !== null) return;
   if (isWindows) {

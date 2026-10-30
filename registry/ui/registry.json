@@ -380,6 +380,214 @@
           "target": "@ui/table.tsx"
         }
       ]
+    },
+    {
+      "name": "panel",
+      "type": "registry:component",
+      "title": "Panel",
+      "description": "One manga panel: heavy hand-drawn ink frame on paper, optional screentone, corner caption and hatched shadow (needs ink-frame).",
+      "categories": ["layout"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "panel/panel.tsx",
+          "type": "registry:component",
+          "target": "@components/panel.tsx"
+        }
+      ]
+    },
+    {
+      "name": "panel-grid",
+      "type": "registry:component",
+      "title": "Panel Grid",
+      "description": "Manga page layout: panels on a grid with paper gutters, column and row spans, one column on phones.",
+      "categories": ["layout"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "panel-grid/panel-grid.tsx",
+          "type": "registry:component",
+          "target": "@components/panel-grid.tsx"
+        }
+      ]
+    },
+    {
+      "name": "speech-bubble",
+      "type": "registry:component",
+      "title": "Speech Bubble",
+      "description": "Dialogue bubble with a hand-drawn tail: round, square, shout burst or dashed whisper, seven tail positions (needs ink-frame).",
+      "categories": ["text"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "speech-bubble/speech-bubble.tsx",
+          "type": "registry:component",
+          "target": "@components/speech-bubble.tsx"
+        }
+      ]
+    },
+    {
+      "name": "thought-bubble",
+      "type": "registry:component",
+      "title": "Thought Bubble",
+      "description": "Dashed hand-drawn thought bubble with a trail of one to three rough ink dots (needs ink-frame).",
+      "categories": ["text"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "thought-bubble/thought-bubble.tsx",
+          "type": "registry:component",
+          "target": "@components/thought-bubble.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sfx-text",
+      "type": "registry:component",
+      "title": "SFX Text",
+      "description": "Onomatopoeia in the display face with ink stroke, hard shadow, tilt and a reduced-motion-safe pop or slam entrance.",
+      "categories": ["text"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority", "motion"],
+      "files": [
+        {
+          "path": "sfx-text/sfx-text.tsx",
+          "type": "registry:component",
+          "target": "@components/sfx-text.tsx"
+        }
+      ]
+    },
+    {
+      "name": "vertical-text",
+      "type": "registry:component",
+      "title": "Vertical Text",
+      "description": "Vertical writing (vertical-rl) with text-orientation control for mixing Japanese and Latin.",
+      "categories": ["text"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "vertical-text/vertical-text.tsx",
+          "type": "registry:component",
+          "target": "@components/vertical-text.tsx"
+        }
+      ]
+    },
+    {
+      "name": "speed-lines",
+      "type": "registry:component",
+      "title": "Speed Lines",
+      "description": "Decorative radial or horizontal motion lines behind content, with density, colour and a movable centre.",
+      "categories": ["background"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "speed-lines/speed-lines.tsx",
+          "type": "registry:component",
+          "target": "@components/speed-lines.tsx"
+        }
+      ]
+    },
+    {
+      "name": "focus-lines",
+      "type": "registry:component",
+      "title": "Focus Lines",
+      "description": "Decorative concentration lines bursting in towards a point, as inline SVG at the speed-line width.",
+      "categories": ["background"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "focus-lines/focus-lines.tsx",
+          "type": "registry:component",
+          "target": "@components/focus-lines.tsx"
+        }
+      ]
+    },
+    {
+      "name": "halftone-background",
+      "type": "registry:component",
+      "title": "Halftone Background",
+      "description": "Decorative full-bleed halftone screen in three tones and dot sizes, with an optional top, bottom or radial fade.",
+      "categories": ["background"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "halftone-background/halftone-background.tsx",
+          "type": "registry:component",
+          "target": "@components/halftone-background.tsx"
+        }
+      ]
+    },
+    {
+      "name": "emanata",
+      "type": "registry:component",
+      "title": "Emanata",
+      "description": "Inline SVG emotion marks (sweat drop, anger mark, sparkle, surprise lines, puff), labelled unless decorative.",
+      "categories": ["decoration"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "emanata/emanata.tsx",
+          "type": "registry:component",
+          "target": "@components/emanata.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ink-splash-loader",
+      "type": "registry:component",
+      "title": "Ink Splash Loader",
+      "description": "Loading status: an ink blot that pulses and splashes droplets, still under reduced motion, with a hidden label.",
+      "categories": ["feedback"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority", "motion"],
+      "files": [
+        {
+          "path": "ink-splash-loader/ink-splash-loader.tsx",
+          "type": "registry:component",
+          "target": "@components/ink-splash-loader.tsx"
+        }
+      ]
+    },
+    {
+      "name": "page-turn",
+      "type": "registry:component",
+      "title": "Page Turn",
+      "description": "Turns its children like a manga page when pageKey changes (right to left by default); cross-fades under reduced motion.",
+      "categories": ["animation"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "motion"],
+      "files": [
+        {
+          "path": "page-turn/page-turn.tsx",
+          "type": "registry:component",
+          "target": "@components/page-turn.tsx"
+        }
+      ]
+    },
+    {
+      "name": "manga-frame",
+      "type": "registry:component",
+      "title": "Manga Frame",
+      "description": "Image in a hand-drawn ink frame with aspect presets, a halftone mat and a caption; alt is required (needs ink-frame).",
+      "categories": ["data"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "manga-frame/manga-frame.tsx",
+          "type": "registry:component",
+          "target": "@components/manga-frame.tsx"
+        }
+      ]
     }
   ]
 }

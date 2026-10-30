@@ -113,6 +113,37 @@ describe("InkFrame in the browser", () => {
     expect(paths(container)).toEqual(before);
   });
 
+  it("draws a custom outline path in box pixels, shifted into the padding", () => {
+    const outline = vi.fn((w: number, h: number) => `M 0 0 L ${w} 0 L ${w / 2} ${h + 12} Z`);
+    const { container } = render(<InkFrame outline={outline} shadow="solid" />);
+    fireAll(100, 40);
+    expect(outline).toHaveBeenCalledWith(100, 40);
+    const groups = container.querySelectorAll("svg > g");
+    // Shadow first, offset by --shadow-offset (4) plus half the stroke; then the outline.
+    expect(groups).toHaveLength(2);
+    expect(groups[0].getAttribute("transform")).toBe("translate(12.75 12.75)");
+    expect(groups[1].getAttribute("transform")).toBe("translate(8 8)");
+    const filled = [...groups[1].querySelectorAll("path")].filter(
+      (path) => path.style.fill === "var(--paper)",
+    );
+    expect(filled).toHaveLength(1);
+  });
+
+  it("dashes the stroke on request and only then", () => {
+    const dashedStroke = (dashed: boolean) => {
+      const { container } = render(<InkFrame shape="ellipse" dashed={dashed} />);
+      fireAll();
+      const stroke = [...container.querySelectorAll("path")].find(
+        (path) => path.style.stroke === "var(--ink)",
+      );
+      cleanup();
+      observers.reset();
+      return stroke?.getAttribute("stroke-dasharray") ?? null;
+    };
+    expect(dashedStroke(true)).toBe("6 4.5");
+    expect(dashedStroke(false)).toBeNull();
+  });
+
   it("renders the element given by as and forwards attributes", () => {
     const { container } = render(
       <InkFrame as="section" aria-label="Panel" id="p1">

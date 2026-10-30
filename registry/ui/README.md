@@ -201,6 +201,11 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    - Colours are CSS variables, so `[--ink:var(--spot)]` on the host turns the stroke (and an
      ink fill) spot, and hover can retint a fill: `hover:[--paper:var(--tone-1)]`.
    - Heavy outlines: `className="[--outline-width:var(--outline-width-heavy)]"` on the frame.
+   - Shapes beyond rect/ellipse/line (a bubble with its tail, a shout burst): pass
+     `outline={(width, height) => "M … Z"}`, an SVG path in border-box pixels drawn with the same
+     pen, fill and shadow (`shape` still picks the CSS fallback). Memoise it with `useCallback`:
+     a new function redraws, and the component passing it needs `"use client"`.
+     `registry/ui/speech-bubble/speech-bubble.tsx` is the reference. `dashed` dashes the stroke.
    - Cost: one SVG per outlined element, redrawn only on resize. Long lists pass one shared
      `seed` and prefer `shape="line"` row rules over full frames.
    - **Do not declare it.** `registryDependencies: ["ink-frame"]` would resolve to shadcn's
@@ -298,6 +303,10 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
 
    Add `"use client"` only if the piece uses state, effects, refs or `motion`. Tails,
    bursts and marks are CSS (pseudo-elements, `clip-path`) or small inline SVG; no images.
+   Outlines go through `InkFrame` (recipe 1), including custom shapes via its `outline` prop.
+   Decorative backgrounds (`speed-lines`, `focus-lines`, `halftone-background`) render one
+   `aria-hidden` layer with `pointer-events-none absolute inset-0 -z-1`; the user places it as
+   the first child of a `relative isolate` container.
 2. **Catalog entry:** `"type": "registry:component"`, file type `registry:component`,
    `dependencies` listing every package the file imports (`["class-variance-authority"]` for
    the example above; `@/lib/utils` is always available and is not a dependency).
