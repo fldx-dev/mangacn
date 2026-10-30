@@ -1,38 +1,15 @@
-import { act, cleanup, render } from "@testing-library/react";
+import { cleanup, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { expectNoA11yViolations } from "@/lib/test/axe";
+import { stubResizeObserver } from "@/lib/test/resize-observer";
 import InkFrameDefaultDemo from "./demos/default";
 import { InkFrame } from "./ink-frame";
 
-type Callback = (entries: Partial<ResizeObserverEntry>[]) => void;
-
-/** jsdom has no ResizeObserver; this one reports a fixed border box when `fire()` is called. */
-class StubResizeObserver {
-  static instances: StubResizeObserver[] = [];
-  readonly targets: Element[] = [];
-  constructor(readonly callback: Callback) {
-    StubResizeObserver.instances.push(this);
-  }
-  observe(target: Element) {
-    this.targets.push(target);
-  }
-  unobserve() {}
-  disconnect() {}
-  fire(width = 120, height = 32) {
-    this.callback([
-      {
-        borderBoxSize: [{ inlineSize: width, blockSize: height }],
-        contentRect: { width, height } as DOMRectReadOnly,
-      },
-    ]);
-  }
-}
+let observers: ReturnType<typeof stubResizeObserver>;
 
 function fireAll(width?: number, height?: number) {
-  act(() => {
-    for (const observer of StubResizeObserver.instances) observer.fire(width, height);
-  });
+  observers.drawAll(width, height);
 }
 
 const paths = (root: ParentNode) =>
@@ -41,7 +18,6 @@ const paths = (root: ParentNode) =>
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
-  StubResizeObserver.instances = [];
 });
 
 describe("InkFrame on the server", () => {
@@ -58,7 +34,7 @@ describe("InkFrame on the server", () => {
 
 describe("InkFrame in the browser", () => {
   beforeEach(() => {
-    vi.stubGlobal("ResizeObserver", StubResizeObserver);
+    observers = stubResizeObserver();
   });
 
   it("draws rough.js paths once the box is measured and marks itself inked", () => {
@@ -91,7 +67,7 @@ describe("InkFrame in the browser", () => {
     fireAll();
     expect(plain.container.querySelectorAll("path")).toHaveLength(1);
     cleanup();
-    StubResizeObserver.instances = [];
+    observers.reset();
 
     const hatched = render(<InkFrame shadow="hatch">x</InkFrame>);
     fireAll();
@@ -115,14 +91,14 @@ describe("InkFrame in the browser", () => {
     fireAll();
     const before = paths(first.container);
     cleanup();
-    StubResizeObserver.instances = [];
+    observers.reset();
 
     const second = render(<InkFrame seed={7}>a</InkFrame>);
     fireAll();
     expect(paths(second.container)).toEqual(before);
 
     cleanup();
-    StubResizeObserver.instances = [];
+    observers.reset();
     const other = render(<InkFrame seed={8}>a</InkFrame>);
     fireAll();
     expect(paths(other.container)).not.toEqual(before);

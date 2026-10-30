@@ -188,6 +188,7 @@ export function InkFrame({
     <Tag
       data-slot="ink-frame"
       data-shape={shape}
+      data-fill={fill}
       className={cn(
         "relative isolate",
         shape === "line"

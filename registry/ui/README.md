@@ -174,10 +174,12 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    **The frame layer.** `InkFrame` (`registry/theme/ink-frame/ink-frame.tsx`, installed to
    `@/components/ink-frame.tsx`) is a client component that draws a rough.js outline, fill
    and optional shadow into an `aria-hidden` SVG behind its children, and shows a CSS
-   `ink-border` until the first drawing (server render, no JavaScript, one frame after
-   hydration). In a primitive it is the **first child** of the stock element rather than a
-   wrapper around it, so `className`, `render` and layout stay stock and host selectors such
-   as `[&>svg]:size-3!` never reach the drawing:
+   `ink-border` until the first drawing (server render, no JavaScript, and a few frames
+   after a cold load until hydration). In a primitive it is the **first child** of the stock
+   element rather than a wrapper around it, so `className`, `render` and layout stay stock
+   and host selectors such as `[&>svg]:size-3!` never reach the drawing. Use `as="span"`:
+   buttons and badges only allow phrasing content. `registry/ui/button/button.tsx` is the
+   reference:
 
    ```tsx
    import { InkFrame } from "@/components/ink-frame";
@@ -185,11 +187,14 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    // Host classes: add `relative isolate border-0`, drop border and shadow classes, and clear
    // the CSS fill once the frame has drawn: `has-[>[data-inked=true]]:bg-transparent!`.
    <ButtonPrimitive data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props}>
-     <InkFrame fill="ink" className="pointer-events-none absolute inset-0 -z-1" />
+     <InkFrame as="span" fill="ink" className="pointer-events-none absolute inset-0 -z-1" />
      {children}
    </ButtonPrimitive>
    ```
 
+   Tests stub `ResizeObserver` with `stubResizeObserver()` from `lib/test/resize-observer.ts`
+   to make the frame draw in jsdom; `data-fill` and `data-shape` on the frame expose what it
+   draws.
    - `fill`: `ink` for solid (`bg-primary`) variants, `paper` for outlined ones, `tone` for
      `bg-secondary`, `none` when disabled (so the halftone shows). Ghost and link variants
      render no frame: stock draws no border for them.

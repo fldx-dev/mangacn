@@ -33,7 +33,7 @@
     "test": "vitest run",
     "test:watch": "vitest --coverage.enabled=false",
     "test:e2e": "playwright test -c e2e/playwright.config.ts",
-    "test:e2e:update": "playwright test -c e2e/playwright.config.ts --update-snapshots",
+    "test:e2e:update": "playwright test -c e2e/playwright.config.ts --update-snapshots=all",
     "ci": "pnpm lint && pnpm gen:demos && pnpm typecheck && pnpm gen:theme && pnpm test && pnpm registry:validate && pnpm registry:build && pnpm registry:smoke"
   },
   "dependencies": {

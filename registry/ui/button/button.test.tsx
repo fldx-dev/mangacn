@@ -1,10 +1,17 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { expectNoA11yViolations } from "@/lib/test/axe";
+import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { Button, buttonVariants } from "./button";
 import ButtonDefaultDemo from "./demos/default";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+
+const frameOf = (element: HTMLElement) =>
+  element.querySelector<HTMLElement>(':scope > [data-slot="ink-frame"]');
 
 describe("Button", () => {
   it("renders a button with data-slot and a forwarded className", () => {
@@ -14,22 +21,52 @@ describe("Button", () => {
     expect(button.classList.contains("custom-class")).toBe(true);
   });
 
-  it("draws a 2 px ink border with a hard shadow that presses in", () => {
+  it("has no CSS border or shadow; an InkFrame layer draws the outline", () => {
     render(<Button>Go</Button>);
-    const classes = screen.getByRole("button").classList;
-    for (const name of [
-      "border-[length:var(--outline-width)]",
-      "border-border",
-      "ink-shadow-sm",
-      "active:not-aria-[haspopup]:translate-[1px_1px]",
-      "active:not-aria-[haspopup]:shadow-none",
-    ]) {
-      expect(classes.contains(name), name).toBe(true);
+    const button = screen.getByRole("button");
+    for (const name of button.classList) {
+      expect(name, name).not.toMatch(/ink-shadow|(^|:)shadow-|border-\[length|border-border/);
     }
-    expect(buttonVariants({ variant: "outline" })).toContain("ink-shadow-sm");
+    for (const name of ["relative", "isolate", "border-0"]) {
+      expect(button.classList.contains(name), name).toBe(true);
+    }
+    const frame = frameOf(button);
+    expect(frame?.getAttribute("data-fill")).toBe("ink");
+    expect(frame?.className).toContain("absolute inset-0 -z-1");
+    expect(button.textContent).toBe("Go");
   });
 
-  it("screens disabled buttons with halftone instead of opacity", () => {
+  it("presses by translating 1 px, with no shadow to collapse", () => {
+    const classes = buttonVariants();
+    expect(classes).toContain("active:not-aria-[haspopup]:translate-[1px_1px]");
+    expect(classes).not.toContain("translate-y-px");
+    expect(classes).not.toContain("shadow-none");
+  });
+
+  it.each([
+    ["default", "ink"],
+    ["outline", "paper"],
+    ["secondary", "tone"],
+    ["destructive", "paper"],
+    ["sfx", "paper"],
+  ] as const)("draws the %s variant with a %s fill", (variant, fill) => {
+    render(<Button variant={variant}>Go</Button>);
+    expect(frameOf(screen.getByRole("button"))?.getAttribute("data-fill")).toBe(fill);
+  });
+
+  it.each(["ghost", "link"] as const)(
+    "draws no frame for %s, like stock's borderless",
+    (variant) => {
+      render(<Button variant={variant}>Go</Button>);
+      expect(frameOf(screen.getByRole("button"))).toBeNull();
+    },
+  );
+
+  it("inks destructive outlines in spot", () => {
+    expect(buttonVariants({ variant: "destructive" })).toContain("[--ink:var(--destructive)]");
+  });
+
+  it("screens disabled buttons with halftone through an unfilled outline", () => {
     render(<Button disabled>Go</Button>);
     const button = screen.getByRole("button");
     expect(button.hasAttribute("disabled")).toBe(true);
@@ -40,21 +77,37 @@ describe("Button", () => {
     ]) {
       expect(button.classList.contains(name), name).toBe(true);
     }
-    expect(button.classList.contains("disabled:opacity-50")).toBe(false);
+    expect(frameOf(button)?.getAttribute("data-fill")).toBe("none");
   });
 
-  it("maps the sfx variant to display type and a full ink shadow", () => {
+  it("maps the sfx variant to display type with a paper fill", () => {
     render(<Button variant="sfx">Dokan!</Button>);
     const classes = screen.getByRole("button").classList;
-    for (const name of ["font-display", "uppercase", "ink-shadow", "bg-paper", "text-ink"]) {
+    for (const name of ["font-display", "uppercase", "bg-paper", "text-ink"]) {
       expect(classes.contains(name), name).toBe(true);
     }
-    expect(classes.contains("ink-shadow-sm")).toBe(false);
   });
 
-  it("keeps ghost and link borderless", () => {
-    expect(buttonVariants({ variant: "ghost" })).toContain("border-transparent");
-    expect(buttonVariants({ variant: "link" })).toContain("border-transparent");
+  it("draws once measured and clears its CSS fill", () => {
+    const observers = stubResizeObserver();
+    render(<Button>Go</Button>);
+    const button = screen.getByRole("button");
+    observers.drawAll(64, 32);
+    const frame = frameOf(button);
+    expect(frame?.dataset.inked).toBe("true");
+    expect(frame?.querySelectorAll("path").length).toBeGreaterThan(0);
+    expect(button.classList.contains("has-[>[data-inked=true]]:bg-transparent!")).toBe(true);
+  });
+
+  it("keeps the frame when rendered as another element", () => {
+    render(
+      <Button nativeButton={false} render={<a href="#read" />}>
+        Read
+      </Button>,
+    );
+    const link = screen.getByRole("button", { name: "Read" });
+    expect(link.tagName).toBe("A");
+    expect(frameOf(link)?.getAttribute("data-fill")).toBe("ink");
   });
 
   it("has no axe violations in its default demo", async () => {
