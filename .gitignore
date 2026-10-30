@@ -42,3 +42,6 @@ next-env.d.ts
 
 # shadcn registry build output (built in CI / on deploy)
 /public/r/
+
+# generated from the theme registry item (pnpm gen:theme)
+/app/mangacn-theme.css

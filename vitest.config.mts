@@ -16,7 +16,7 @@ export default defineConfig({
       enabled: true,
       provider: "v8",
       include: ["lib/registry/**"],
-      exclude: ["lib/registry/**/*.test.ts"],
+      exclude: ["lib/registry/**/*.test.ts", "lib/registry/**/__snapshots__/**"],
       reporter: ["text"],
       thresholds: {
         lines: 90,
