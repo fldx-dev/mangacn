@@ -29,7 +29,7 @@ exports[`renderThemeCssFile > prefixes the generated-file header and matches the
   --spot-foreground: oklch(0.985 0.008 85);
   --tone-1: oklch(0.93 0 0);
   --tone-2: oklch(0.82 0 0);
-  --tone-3: oklch(0.64 0 0);
+  --tone-3: oklch(0.55 0 0);
   --tone-4: oklch(0.42 0 0);
   --background: var(--paper);
   --foreground: var(--ink);
@@ -69,10 +69,10 @@ exports[`renderThemeCssFile > prefixes the generated-file header and matches the
   --ink: oklch(0.93 0.004 85);
   --paper: oklch(0.24 0.004 60);
   --spot: oklch(0.66 0.21 27);
-  --spot-foreground: oklch(0.985 0.008 85);
+  --spot-foreground: oklch(0.24 0.004 60);
   --tone-1: oklch(0.31 0 0);
   --tone-2: oklch(0.42 0 0);
-  --tone-3: oklch(0.58 0 0);
+  --tone-3: oklch(0.62 0 0);
   --tone-4: oklch(0.73 0 0);
   --background: var(--paper);
   --foreground: var(--ink);

@@ -20,6 +20,19 @@ const isWindows = process.platform === "win32";
 // pnpm runs package scripts from the repo root.
 const outputDir = path.resolve("public", "r");
 
+/** Strings an installed item must leave in the temp project, keyed by item name. */
+const EXPECTED_CONTENT: Record<string, { file: string; includes: string[] }[]> = {
+  theme: [
+    {
+      file: "app/globals.css",
+      includes: ["--ink:", "--paper:", "--spot:", "@utility halftone", "@keyframes mangacn-shake"],
+    },
+  ],
+  "font-display": [{ file: "app/layout.tsx", includes: ["Dela_Gothic_One(", "--font-display"] }],
+  "font-dialogue": [{ file: "app/layout.tsx", includes: ["Shantell_Sans(", "--font-dialogue"] }],
+  "manga-motion": [{ file: "lib/manga-motion.ts", includes: ["export const popIn"] }],
+};
+
 class SmokeError extends Error {
   constructor(
     message: string,
@@ -189,6 +202,21 @@ async function main() {
           owners.set(file, name);
         }
       }
+    }
+
+    console.log("→ installed content");
+    const missing: string[] = [];
+    for (const name of names) {
+      for (const { file, includes } of EXPECTED_CONTENT[name] ?? []) {
+        const full = path.join(project, file);
+        const content = existsSync(full) ? readFileSync(full, "utf8") : "";
+        for (const needle of includes) {
+          if (!content.includes(needle)) missing.push(`${name}: ${file} lacks "${needle}"`);
+        }
+      }
+    }
+    if (missing.length > 0) {
+      throw new SmokeError(`Installed content check failed:\n  ${missing.join("\n  ")}`);
     }
 
     const check = async (label: string, args: string[]) => {
