@@ -3,7 +3,7 @@ import { loadRegistry } from "@/lib/registry";
 import type { CssTree, ThemeCssSource } from "@/lib/registry/theme-css";
 
 const theme = loadRegistry().items.find((item) => item.name === "theme") as
-  | (ThemeCssSource & { registryDependencies?: string[] })
+  | (ThemeCssSource & { registryDependencies?: string[]; docs?: string })
   | undefined;
 
 // SPEC-manga-theme §5.1
@@ -139,10 +139,11 @@ describe("theme item", () => {
     expect(Object.keys(css["@layer base"] as CssTree)).toEqual(["*", "body"]);
   });
 
-  it("depends on both font items", () => {
-    expect(theme?.registryDependencies).toEqual([
-      "@mangacn/font-display",
-      "@mangacn/font-dialogue",
-    ]);
+  it("has no namespaced registryDependencies, so URL and GitHub-mode installs resolve", () => {
+    // `@mangacn/...` entries only resolve when the consumer has the namespace configured;
+    // a direct-URL or `owner/repo/item` install fails with "Unknown registry". Fonts are
+    // installed alongside the theme instead (see SPEC-manga-theme §4).
+    expect(theme?.registryDependencies ?? []).toEqual([]);
+    expect(theme?.docs).toContain("@mangacn/font-display @mangacn/font-dialogue");
   });
 });

@@ -10,7 +10,7 @@
       "meta": {
         "since": "0.1.0"
       },
-      "registryDependencies": ["@mangacn/font-display", "@mangacn/font-dialogue"],
+      "docs": "Fonts are separate items: npx shadcn@latest add @mangacn/font-display @mangacn/font-dialogue (or set --font-display / --font-dialogue yourself).",
       "files": [],
       "cssVars": {
         "theme": {

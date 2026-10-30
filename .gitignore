@@ -45,3 +45,6 @@ next-env.d.ts
 
 # generated from the theme registry item (pnpm gen:theme)
 /app/mangacn-theme.css
+
+# local test-runner reports (rtk wraps vitest with a json reporter)
+/.vitest/
