@@ -25,6 +25,7 @@
     "registry:list": "shadcn list http://localhost:3000/r/registry.json",
     "gen:theme": "tsx scripts/gen-theme-css.ts",
     "gen:demos": "tsx scripts/gen-demos.ts",
+    "gen:parity": "tsx scripts/gen-parity-snapshot.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",

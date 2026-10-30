@@ -15,6 +15,7 @@
       "!build",
       "!coverage",
       "!public/r",
+      "!registry/ui/__parity__",
       "!font-specimen.html"
     ]
   },

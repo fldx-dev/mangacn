@@ -117,14 +117,19 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
 
 ## Recipe 1: restyle a stock primitive
 
-1. **Fetch the current stock source** (never write a primitive from memory):
+1. **Fetch the current stock source** (never write a primitive from memory). This prints
+   the file exactly as the CLI would install it into this repo, without writing anything:
 
    ```bash
-   pnpm dlx shadcn@4.23.0 view https://ui.shadcn.com/r/styles/base-nova/<name>.json
+   pnpm dlx shadcn@4.23.0 add https://ui.shadcn.com/r/styles/base-nova/<name>.json --dry-run --view components/ui/<name>.tsx
    ```
 
-   Copy the `files[0].content` into `registry/ui/<name>/<name>.tsx`. Keep its
-   `dependencies` and `registryDependencies` exactly as stock lists them.
+   Copy the printed source into `registry/ui/<name>/<name>.tsx`. Do not copy the raw
+   `files[0].content` from the JSON instead: it still has shadcn's internal
+   `@/app/(create)/components/icon-placeholder` and `@/registry/base-nova/ui/<x>` imports,
+   which the CLI turns into `lucide-react` icons and `@/components/ui/<x>`. Keep the item's
+   `dependencies` and `registryDependencies` exactly as stock lists them
+   (`registry/ui/__parity__/base-nova.json` has the current values).
 2. **Add the attribution header** as the first line:
 
    ```tsx
@@ -213,7 +218,7 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
 
 ```bash
 pnpm gen:demos       # regenerate the demo map (also runs in predev/prebuild/ci)
-pnpm test            # unit tests, import rule, demo map staleness
+pnpm test            # unit tests, import rule, demo map staleness, stock parity
 pnpm run ci          # everything CI runs: lint, typecheck, tests, validate, build, smoke install
 ```
 
@@ -223,3 +228,14 @@ page renders that one demo centred on paper and nothing else.
 
 `pnpm gen:demos` fails with the item name if `demos/default.tsx` is missing, and
 `pnpm test` fails if the generated map is stale; rerun `pnpm gen:demos`.
+
+### Stock parity
+
+`registry/ui/parity.test.ts` compares every restyled primitive (a `registry:ui` item whose
+name is one of the 21 stock primitives) with `registry/ui/__parity__/base-nova.json`:
+named exports, `data-slot` values and both dependency lists must equal stock; every stock
+`cva` variant group and key must still exist (added keys such as `variant="sfx"` are fine).
+A failure lists what is missing or unexpected. Primitives not restyled yet show as `todo`.
+
+The snapshot is refreshed only on purpose, after a shadcn release, with maintainer
+sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
