@@ -84,15 +84,23 @@ export function packageName(specifier: string): string {
   return name.replace(/(.)@.*$/, "$1");
 }
 
+/**
+ * mangacn components that items import without declaring them, because users install them
+ * explicitly first (SPEC-components §4.4: a bare registryDependency would resolve to shadcn's
+ * registry and a namespaced one breaks URL installs). The registry smoke test installs them
+ * before every other item.
+ */
+export const EXPLICIT_INSTALL_IMPORTS = ["@/components/ink-frame"];
+
 /** Install folders (shadcn aliases) that a declared registry dependency can be imported from. */
 const REGISTRY_DEPENDENCY_PREFIXES = ["@/components/ui/", "@/components/", "@/lib/", "@/hooks/"];
 
 /**
  * Why `specifier` may not appear in a file shipped by `item`, or `null` when it is allowed.
  * Allowed (SPEC-registry-core §6.5): `react`, `react-dom`, packages in the item's
- * `dependencies`, `@/lib/utils`, and `@/components/ui/<x>` (or the lib/component/hook
- * alias) where `x` is in the item's `registryDependencies`; relative imports only to another
- * file of the same item.
+ * `dependencies`, `@/lib/utils`, `@/components/ink-frame` (installed explicitly), and
+ * `@/components/ui/<x>` (or the lib/component/hook alias) where `x` is in the item's
+ * `registryDependencies`; relative imports only to another file of the same item.
  */
 export function importViolation(
   specifier: string,
@@ -106,7 +114,7 @@ export function importViolation(
   }
 
   if (specifier.startsWith("@/")) {
-    if (specifier === "@/lib/utils") return null;
+    if (specifier === "@/lib/utils" || EXPLICIT_INSTALL_IMPORTS.includes(specifier)) return null;
     const declared = (item.registryDependencies ?? []).map((dep) => dep.split("/").pop());
     for (const prefix of REGISTRY_DEPENDENCY_PREFIXES) {
       if (!specifier.startsWith(prefix)) continue;

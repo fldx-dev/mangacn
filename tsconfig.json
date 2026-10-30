@@ -19,6 +19,7 @@
       }
     ],
     "paths": {
+      "@/components/ink-frame": ["./registry/theme/ink-frame/ink-frame.tsx"],
       "@/*": ["./*"]
     }
   },

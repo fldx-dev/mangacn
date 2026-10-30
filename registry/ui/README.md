@@ -36,7 +36,7 @@ registry/ui/<name>/
 
 | Folder                    | Item type                                                        | Installs to                                               |
 | ------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------- |
-| `registry/theme/`         | `registry:theme`, `registry:font`, `registry:lib`                | css, `app/layout.tsx`, `@/lib/<name>.ts`                  |
+| `registry/theme/`         | `registry:theme`, `registry:font`, `registry:lib`, `ink-frame`   | css, `app/layout.tsx`, `@/lib/<name>.ts`, `@/components/` |
 | `registry/ui/<name>/`     | `registry:ui` (primitive) or `registry:component` (manga-native) | `@/components/ui/<name>.tsx` or `@/components/<name>.tsx` |
 | `registry/blocks/<name>/` | `registry:block`                                                 | `@/components/blocks/<name>/…`                            |
 
@@ -77,13 +77,14 @@ branches merge as appended array entries.
 
 Enforced by `registry/ui/imports.test.ts` for every file in every catalog:
 
-| Allowed                                                                                                      | Example                                            |
-| ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
-| `react`, `react-dom` (and subpaths)                                                                          | `import * as React from "react"`                   |
-| packages in the item's `dependencies` (and subpaths)                                                         | `import { Popover } from "@base-ui/react/popover"` |
-| `@/lib/utils`                                                                                                | `import { cn } from "@/lib/utils"`                 |
-| `@/components/ui/<x>`, `@/components/<x>`, `@/lib/<x>`, `@/hooks/<x>` where `x` is in `registryDependencies` | `import { Button } from "@/components/ui/button"`  |
-| relative imports to another file of the **same** item                                                        | `import { parts } from "./dialog-parts"`           |
+| Allowed                                                                                                      | Example                                             |
+| ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- |
+| `react`, `react-dom` (and subpaths)                                                                          | `import * as React from "react"`                    |
+| packages in the item's `dependencies` (and subpaths)                                                         | `import { Popover } from "@base-ui/react/popover"`  |
+| `@/lib/utils`                                                                                                | `import { cn } from "@/lib/utils"`                  |
+| `@/components/ui/<x>`, `@/components/<x>`, `@/lib/<x>`, `@/hooks/<x>` where `x` is in `registryDependencies` | `import { Button } from "@/components/ui/button"`   |
+| `@/components/ink-frame` (installed explicitly, never declared; see recipe 1)                                | `import { InkFrame } from "@/components/ink-frame"` |
+| relative imports to another file of the **same** item                                                        | `import { parts } from "./dialog-parts"`            |
 
 Everything else fails with `file:line imports "specifier" (item): reason`: `@/app/…`,
 `@/lib/registry/…`, `@/registry/…`, docs-only `@/components/…`, relative imports into
@@ -93,12 +94,13 @@ another item, undeclared packages, Node built-ins. Demos and tests may import an
 ### Design rules (every item)
 
 1. **Tokens only.** No literal colours, widths or radii. Use theme tokens (`ink`, `paper`,
-   `spot`, `tone-1`…`tone-4`, `--outline-width`) and theme utilities (`ink-border`,
-   `ink-shadow`, `ink-shadow-sm`, `halftone`, `halftone-light`, `screentone-lines`…). If you
-   need a value the theme lacks, ask for a token first; do not invent one here.
-2. **Drawn edges, hard shadows, square corners.** Borders are
-   `border-[length:var(--outline-width)] border-border`; shadows are `ink-shadow` or
-   `ink-shadow-sm`. Stock `rounded-*` classes stay: `--radius` already renders near-square.
+   `spot`, `tone-1`…`tone-4`, `--outline-width`, `--ink-roughness`…) and theme utilities
+   (`ink-border`, `halftone`, `halftone-light`, `screentone-lines`…). If you need a value the
+   theme lacks, ask for a token first; do not invent one here.
+2. **Hand-drawn edges, no shadow by default.** Every outline is drawn by rough.js through
+   `InkFrame` (recipe 1): one wobbly `--outline-width` stroke, corners that meet, solid ink
+   fills. No CSS borders or shadows on outlined surfaces; `ink-shadow*` and `InkFrame
+   shadow` only behind an explicit prop. Stock `rounded-*` classes stay.
 3. **Spot colour is rare.** Only where stock uses `destructive` or `ring`, plus at most one
    deliberate emphasis element in a manga-native piece. Never as a surface background.
 4. **Primitives inherit the user's font.** Only manga-native pieces set `font-display` or
@@ -147,31 +149,67 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    const buttonVariants = cva(
    ```
 
-3. **Change classes only.** Keep structure, exports, `data-slot` values, variant names and
-   keys, comments and order. The diff against stock should read as class changes plus the
-   header. Apply this table and leave everything else as stock:
+3. **Change classes, and draw outlines with `InkFrame`.** Keep exports, `data-slot` values,
+   variant names and keys, comments and order. The diff against stock should read as class
+   changes, the header and the frame. Apply this table and leave everything else as stock:
 
    | Stock                                       | mangacn                                                                       |
    | ------------------------------------------- | ----------------------------------------------------------------------------- |
-   | 1 px `border-border` or transparent border  | `border-[length:var(--outline-width)] border-border`                          |
-   | `ring-1 ring-foreground/10` hairline        | 2 px ink border, optional `ink-shadow` via a `shadow` variant                 |
-   | `shadow-xs` / `shadow-md` on solid controls | `ink-shadow-sm`, plus `active:translate-[1px_1px] active:shadow-none`         |
-   | `bg-muted` / `bg-secondary`                 | keep; disabled states add `halftone-light`                                    |
+   | 1 px `border-border` or transparent border  | `border-0`; an `InkFrame` layer draws the outline (below)                     |
+   | `bg-primary` solid fill                     | keep the class (server render); the frame gets `fill="ink"`                   |
+   | `ring-1 ring-foreground/10` hairline        | `InkFrame`; an explicit `shadow` variant may pass `shadow="hatch"`            |
+   | `shadow-xs` / `shadow-md`                   | removed; press feedback is `active:translate-[1px_1px]` only                  |
+   | `bg-muted` / `bg-secondary`                 | keep; disabled states add `halftone-light` and draw with `fill="none"`        |
    | `disabled:opacity-50`                       | `disabled:opacity-100 disabled:halftone-light disabled:text-muted-foreground` |
-   | `data-checked:bg-primary`                   | keep; thumb/indicator gets `ink-border`                                       |
+   | `data-checked:bg-primary`                   | keep; the indicator gets its own `InkFrame` with a shared `seed`              |
    | overlay `bg-black/50`                       | `bg-ink/70`                                                                   |
-   | popover/tooltip `shadow-md` + 1 px border   | 2 px ink border + `ink-shadow`                                                |
-   | tabs underline / pill                       | 2 px ink bottom rule; active tab ink border on three sides                    |
-   | progress track                              | `ink-border`; a `tone` variant uses `screentone-lines`                        |
-   | skeleton `animate-pulse bg-accent`          | `halftone-light animate-pulse`                                                |
-   | separator 1 px                              | `var(--outline-width)` ink                                                    |
-   | table row borders                           | 2 px ink header rule, `calc(var(--outline-width)/2)` ink row rules            |
-   | avatar `rounded-full`                       | keep round, add `ink-border`                                                  |
+   | popover/tooltip/dialog `shadow-md` + border | `InkFrame` at `[--outline-width:var(--outline-width-heavy)]`, no shadow       |
+   | tabs underline / pill                       | `InkFrame shape="line"` rule; active tab outlined on three sides              |
+   | progress track                              | `InkFrame` track; a `tone` variant uses `screentone-lines`                    |
+   | skeleton `animate-pulse bg-accent`          | `halftone-light animate-pulse`, no outline                                    |
+   | separator 1 px                              | `InkFrame shape="line"` filling a `var(--outline-width)` box                  |
+   | table row borders                           | `shape="line"` rules, header at `--outline-width-heavy`                       |
+   | avatar `rounded-full`                       | `InkFrame shape="ellipse"`                                                    |
+
+   **The frame layer.** `InkFrame` (`registry/theme/ink-frame/ink-frame.tsx`, installed to
+   `@/components/ink-frame.tsx`) is a client component that draws a rough.js outline, fill
+   and optional shadow into an `aria-hidden` SVG behind its children, and shows a CSS
+   `ink-border` until the first drawing (server render, no JavaScript, one frame after
+   hydration). In a primitive it is the **first child** of the stock element rather than a
+   wrapper around it, so `className`, `render` and layout stay stock and host selectors such
+   as `[&>svg]:size-3!` never reach the drawing:
+
+   ```tsx
+   import { InkFrame } from "@/components/ink-frame";
+
+   // Host classes: add `relative isolate border-0`, drop border and shadow classes, and clear
+   // the CSS fill once the frame has drawn: `has-[>[data-inked=true]]:bg-transparent!`.
+   <ButtonPrimitive data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props}>
+     <InkFrame fill="ink" className="pointer-events-none absolute inset-0 -z-1" />
+     {children}
+   </ButtonPrimitive>
+   ```
+
+   - `fill`: `ink` for solid (`bg-primary`) variants, `paper` for outlined ones, `tone` for
+     `bg-secondary`, `none` when disabled (so the halftone shows). Ghost and link variants
+     render no frame: stock draws no border for them.
+   - Colours are CSS variables, so `[--ink:var(--spot)]` on the host turns the stroke (and an
+     ink fill) spot, and hover can retint a fill: `hover:[--paper:var(--tone-1)]`.
+   - Heavy outlines: `className="[--outline-width:var(--outline-width-heavy)]"` on the frame.
+   - Cost: one SVG per outlined element, redrawn only on resize. Long lists pass one shared
+     `seed` and prefer `shape="line"` row rules over full frames.
+   - **Do not declare it.** `registryDependencies: ["ink-frame"]` would resolve to shadcn's
+     registry and `@mangacn/ink-frame` breaks URL installs, so `registryDependencies` stay
+     equal to stock (parity is unchanged) and users install it first:
+     `npx shadcn@latest add @mangacn/ink-frame @mangacn/button`. The import rule allows
+     `@/components/ink-frame` for this reason, `tsconfig.json` and `vitest.config.mts` map it
+     to the source file in this repo, and the smoke test installs `ink-frame` before every
+     other item. Once mangacn.com is live, items will declare its full URL instead.
 
    New variants may be **added** (`button` gains `variant="sfx"`); existing keys keep their
    stock meaning, and no stock export is removed or renamed. Where stock already has a
    modifier for the same state, reuse it: stock `button` presses with
-   `active:not-aria-[haspopup]:translate-y-px`, so its solid variants use
+   `active:not-aria-[haspopup]:translate-y-px`, so mangacn uses
    `active:not-aria-[haspopup]:translate-[1px_1px]`, which `cn` merges over the stock class
    (a plain `active:` class would sit next to it and the two would fight).
 4. **Catalog entry:** `"type": "registry:ui"`, `"categories": ["primitive"]` (or a better

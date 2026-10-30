@@ -90,6 +90,7 @@ describe("importViolation", () => {
     "@/lib/utils",
     "@/components/ui/button",
     "@/lib/manga-motion",
+    "@/components/ink-frame",
     "./dialog-parts",
   ])("allows %s", (specifier) => {
     expect(importViolation(specifier, item, file)).toBeNull();
@@ -103,6 +104,7 @@ describe("importViolation", () => {
     ["@/components/site-header", "alias import"],
     ["@/components/ui/card", "alias import"],
     ["@/components/ui/button/extra", "alias import"],
+    ["@/components/ink-frame/extra", "alias import"],
     ["@/registry/ui/button/button", "alias import"],
     ["../button/button", "relative import outside this item"],
     ["./missing", "relative import outside this item"],

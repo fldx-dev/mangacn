@@ -10,7 +10,7 @@
       "meta": {
         "since": "0.1.0"
       },
-      "docs": "Fonts are separate items: npx shadcn@latest add @mangacn/font-display @mangacn/font-dialogue (or set --font-display / --font-dialogue yourself).",
+      "docs": "Fonts are separate items: npx shadcn@latest add @mangacn/font-display @mangacn/font-dialogue (or set --font-display / --font-dialogue yourself). Outlined components draw through @mangacn/ink-frame: add it before them.",
       "files": [],
       "cssVars": {
         "theme": {
@@ -24,8 +24,12 @@
           "color-tone-2": "var(--tone-2)",
           "color-tone-3": "var(--tone-3)",
           "color-tone-4": "var(--tone-4)",
-          "outline-width": "2px",
-          "outline-width-heavy": "3px",
+          "outline-width": "1.5px",
+          "outline-width-heavy": "2.1px",
+          "ink-roughness": "1.2",
+          "ink-bowing": "0.8",
+          "ink-offset": "1.5",
+          "ink-hachure-gap": "4px",
           "shadow-offset": "4px",
           "halftone-size": "4px",
           "halftone-dot": "1.2px",
@@ -298,6 +302,24 @@
         {
           "path": "manga-motion/manga-motion.ts",
           "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "ink-frame",
+      "type": "registry:component",
+      "title": "Ink frame",
+      "description": "Hand-drawn rough.js outline, fill and optional shadow behind any element; every outlined mangacn item uses it.",
+      "categories": ["decoration"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["roughjs@4.6.6"],
+      "files": [
+        {
+          "path": "ink-frame/ink-frame.tsx",
+          "type": "registry:component",
+          "target": "@components/ink-frame.tsx"
         }
       ]
     }

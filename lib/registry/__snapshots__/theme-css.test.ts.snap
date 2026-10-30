@@ -14,8 +14,12 @@ exports[`renderThemeCssFile > prefixes the generated-file header and matches the
   --color-tone-2: var(--tone-2);
   --color-tone-3: var(--tone-3);
   --color-tone-4: var(--tone-4);
-  --outline-width: 2px;
-  --outline-width-heavy: 3px;
+  --outline-width: 1.5px;
+  --outline-width-heavy: 2.1px;
+  --ink-roughness: 1.2;
+  --ink-bowing: 0.8;
+  --ink-offset: 1.5;
+  --ink-hachure-gap: 4px;
   --shadow-offset: 4px;
   --halftone-size: 4px;
   --halftone-dot: 1.2px;

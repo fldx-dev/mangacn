@@ -41,6 +41,8 @@ const EXPECTED_CONTENT: Record<
   "font-display": [{ file: "app/layout.tsx", includes: ["Dela_Gothic_One(", "--font-display"] }],
   "font-dialogue": [{ file: "app/layout.tsx", includes: ["Shantell_Sans(", "--font-dialogue"] }],
   "manga-motion": [{ file: "lib/manga-motion.ts", includes: ["export const popIn"] }],
+  // registry:component with `target: "@components/ink-frame.tsx"` (SPEC-components §4.4).
+  "ink-frame": [{ file: "components/ink-frame.tsx", includes: ["export function InkFrame"] }],
   // button overwrites the stock button pre-installed after `shadcn init`.
   button: [{ file: "components/ui/button.tsx", attribution: attribution("Button") }],
   badge: [{ file: "components/ui/badge.tsx", attribution: attribution("Badge") }],
@@ -62,6 +64,14 @@ function stripImports(source: string): string {
     "",
   );
 }
+
+/**
+ * Installed before every other mangacn item, in this order. Outlined items import
+ * `@/components/ink-frame` without declaring it (a bare registryDependency would resolve to
+ * shadcn's registry, a namespaced one breaks URL installs), so users add it first; see
+ * SPEC-components §4.4.
+ */
+const INSTALL_FIRST = ["ink-frame"];
 
 /** Stock shadcn items installed before the mangacn items, which must overwrite them. */
 const STOCK_PREINSTALL = [{ name: "button", file: "components/ui/button.tsx" }];
@@ -174,7 +184,11 @@ async function main() {
     throw new SmokeError("public/r/registry.json not found. Run `pnpm registry:build` first.");
   }
   const catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as { items: { name: string }[] };
-  const names = catalog.items.map((item) => item.name);
+  const listed = catalog.items.map((item) => item.name);
+  for (const name of INSTALL_FIRST) {
+    if (!listed.includes(name)) throw new SmokeError(`"${name}" is missing from the catalog`);
+  }
+  const names = [...INSTALL_FIRST, ...listed.filter((name) => !INSTALL_FIRST.includes(name))];
   console.log(`Smoke-installing ${names.length} item(s): ${names.join(", ")}`);
 
   const workDir = mkdtempSync(path.join(tmpdir(), "mangacn-smoke-"));

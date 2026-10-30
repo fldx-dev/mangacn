@@ -54,12 +54,16 @@ const SHADCN_VARIABLES = [
   "radius",
 ];
 
-// SPEC-manga-theme §5.2 and §5.3
+// SPEC-manga-theme §5.2, §5.3 and §17
 const THEME_VARIABLES = [
   "font-display",
   "font-dialogue",
   "outline-width",
   "outline-width-heavy",
+  "ink-roughness",
+  "ink-bowing",
+  "ink-offset",
+  "ink-hachure-gap",
   "shadow-offset",
   "halftone-size",
   "halftone-dot",
@@ -118,6 +122,19 @@ describe("theme item", () => {
     for (const name of THEME_VARIABLES) expect(Object.keys(vars)).toContain(name);
     expect(vars["font-display"]).toMatch(/^var\(--font-display, "Dela Gothic One",/);
     expect(vars["font-dialogue"]).toMatch(/^var\(--font-dialogue, "Shantell Sans",/);
+  });
+
+  it("holds the hand-drawn pen defaults the user chose (SPEC-manga-theme §17)", () => {
+    const vars = theme?.cssVars?.theme ?? {};
+    expect(vars).toMatchObject({
+      "outline-width": "1.5px",
+      "outline-width-heavy": "2.1px",
+      "ink-roughness": "1.2",
+      "ink-bowing": "0.8",
+      "ink-offset": "1.5",
+      "ink-hachure-gap": "4px",
+      "shadow-offset": "4px",
+    });
   });
 
   it("ships every utility, keyframe and animate utility from §7", () => {

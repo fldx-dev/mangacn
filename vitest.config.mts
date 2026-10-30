@@ -5,9 +5,16 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./", import.meta.url)),
-    },
+    // Shipped items import InkFrame from its install path; tsconfig.json maps it the same way.
+    alias: [
+      {
+        find: /^@\/components\/ink-frame$/,
+        replacement: fileURLToPath(
+          new URL("./registry/theme/ink-frame/ink-frame.tsx", import.meta.url),
+        ),
+      },
+      { find: "@", replacement: fileURLToPath(new URL("./", import.meta.url)) },
+    ],
   },
   test: {
     environment: "jsdom",
