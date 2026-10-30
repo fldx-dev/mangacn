@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { getDemoLoader, listDemos } from "@/lib/registry/demos";
 import { DemoMode } from "./demo-mode";
 
@@ -10,26 +11,34 @@ export function generateStaticParams() {
   return listDemos().map(({ item, demo }) => ({ item, demo }));
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/demo/[item]/[demo]">): Promise<Metadata> {
-  const { item, demo } = await params;
-  return { title: `${item} / ${demo} · mangacn demo`, robots: { index: false } };
-}
+// Static on purpose: with Partial Prefetching the App Shell is shared by every demo URL, and a
+// `params` read here (or outside the Suspense below) would tie it to one URL.
+export const metadata: Metadata = { title: "mangacn demo", robots: { index: false } };
 
-export default async function DemoStage({ params }: PageProps<"/demo/[item]/[demo]">) {
-  const { item, demo } = await params;
-  const load = getDemoLoader(item, demo);
-  if (!load) notFound();
-  const { default: Demo } = await load();
+type StageProps = PageProps<"/demo/[item]/[demo]">;
 
+export default function DemoStage({ params }: StageProps) {
   return (
     <main
       data-slot="demo-stage"
       className="flex flex-1 items-center justify-center bg-paper p-4 text-ink sm:p-8"
     >
-      <DemoMode />
-      <Demo />
+      {/* The URL-dependent part renders inside the boundary; the stage itself is the shell. */}
+      <Suspense fallback={null}>
+        <Demo params={params} />
+        {/* After the demo, so `data-demo-ready` means the demo is on the page too. */}
+        <DemoMode />
+      </Suspense>
     </main>
   );
+}
+
+async function Demo({ params }: Pick<StageProps, "params">) {
+  const { item, demo } = await params;
+  const load = getDemoLoader(item, demo);
+  // Inside the boundary the shell has already streamed, so an unknown demo shows the
+  // not-found page with a 200 (`dynamicParams = false` is not allowed with cacheComponents).
+  if (!load) notFound();
+  const { default: Component } = await load();
+  return <Component />;
 }
