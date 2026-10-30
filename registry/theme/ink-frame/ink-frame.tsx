@@ -17,6 +17,14 @@ export interface InkFrameProps extends React.HTMLAttributes<HTMLElement> {
   shadow?: InkFrameShadow;
   /** Same seed, same wobble. Defaults to a stable hash of `useId()`. */
   seed?: number;
+  /**
+   * A custom outline (a speech bubble with its tail, a burst): an SVG path in border-box
+   * pixels, `0 0` at the top-left corner, drawn instead of `shape`'s outline with the same pen,
+   * fill and shadow. `shape` still picks the CSS fallback. A new function redraws, so memoise it.
+   */
+  outline?: (width: number, height: number) => string;
+  /** Draws the stroke dashed (whisper and thought bubbles). */
+  dashed?: boolean;
   as?: keyof React.JSX.IntrinsicElements;
 }
 
@@ -80,7 +88,10 @@ function draw(
     fill,
     shadow,
     seed,
-  }: Required<Pick<InkFrameProps, "shape" | "fill" | "shadow" | "seed">>,
+    outline,
+    dashed,
+  }: Required<Pick<InkFrameProps, "shape" | "fill" | "shadow" | "seed" | "dashed">> &
+    Pick<InkFrameProps, "outline">,
 ) {
   const style = getComputedStyle(host);
   const strokeWidth = readNumber(style, "--outline-width", 1.5);
@@ -93,12 +104,39 @@ function draw(
     disableMultiStrokeFill: true,
     preserveVertices: true,
   };
-  const base = { ...pen, seed, roughness, bowing, maxRandomnessOffset, stroke: INK, strokeWidth };
+  const base = {
+    ...pen,
+    seed,
+    roughness,
+    bowing,
+    maxRandomnessOffset,
+    stroke: INK,
+    strokeWidth,
+    ...(dashed ? { strokeLineDash: [strokeWidth * 4, strokeWidth * 3] } : {}),
+  };
 
   svg.replaceChildren();
   svg.setAttribute("viewBox", `0 0 ${width + PAD * 2} ${height + PAD * 2}`);
   const rc = rough.svg(svg);
   const nodes: SVGGElement[] = [];
+  /** The closed outline (custom, ellipse or rect) with its top-left corner at `x, y`. */
+  const body = (x: number, y: number, options: Parameters<typeof rc.rectangle>[4]) => {
+    // rough.js ellipses overshoot their start, which a dash pattern shows; two arcs close exactly.
+    const arc = `A ${width / 2} ${height / 2} 0 1 1`;
+    const path =
+      outline?.(width, height) ??
+      (dashed && shape === "ellipse"
+        ? `M 0 ${height / 2} ${arc} ${width} ${height / 2} ${arc} 0 ${height / 2} Z`
+        : undefined);
+    if (path) {
+      const node = rc.path(path, options);
+      node.setAttribute("transform", `translate(${x} ${y})`);
+      return node;
+    }
+    return shape === "ellipse"
+      ? rc.ellipse(x + width / 2, y + height / 2, width, height, options)
+      : rc.rectangle(x, y, width, height, options);
+  };
 
   if (shadow !== "none" && shape !== "line") {
     const offset = readNumber(style, "--shadow-offset", 4) + strokeWidth / 2;
@@ -119,11 +157,7 @@ function draw(
             fillWeight: Math.max(0.9, strokeWidth * 0.5),
           }),
     };
-    nodes.push(
-      shape === "ellipse"
-        ? rc.ellipse(PAD + offset + width / 2, PAD + offset + height / 2, width, height, options)
-        : rc.rectangle(PAD + offset, PAD + offset, width, height, options),
-    );
+    nodes.push(body(PAD + offset, PAD + offset, options));
   }
 
   const color = FILLS[fill];
@@ -134,10 +168,8 @@ function draw(
         ? rc.line(PAD, PAD + height / 2, PAD + width, PAD + height / 2, base)
         : rc.line(PAD + width / 2, PAD, PAD + width / 2, PAD + height, base),
     );
-  } else if (shape === "ellipse") {
-    nodes.push(rc.ellipse(PAD + width / 2, PAD + height / 2, width, height, options));
   } else {
-    nodes.push(rc.rectangle(PAD, PAD, width, height, options));
+    nodes.push(body(PAD, PAD, options));
   }
 
   svg.append(...nodes);
@@ -153,6 +185,8 @@ export function InkFrame({
   fill = "paper",
   shadow = "none",
   seed,
+  outline,
+  dashed = false,
   as = "div",
   className,
   children,
@@ -173,12 +207,19 @@ export function InkFrame({
       const width = host.offsetWidth || box?.inlineSize || entry?.contentRect.width || 0;
       const height = host.offsetHeight || box?.blockSize || entry?.contentRect.height || 0;
       if (width === 0 && height === 0) return;
-      draw(svg, host, width, height, { shape, fill, shadow, seed: resolvedSeed });
+      draw(svg, host, width, height, {
+        shape,
+        fill,
+        shadow,
+        seed: resolvedSeed,
+        outline,
+        dashed,
+      });
       host.dataset.inked = "true";
     });
     observer.observe(host, { box: "border-box" });
     return () => observer.disconnect();
-  }, [shape, fill, shadow, resolvedSeed]);
+  }, [shape, fill, shadow, resolvedSeed, outline, dashed]);
 
   const Tag = as as React.ElementType;
   // The drawing covers the border box, but absolute children start inside the (transparent)

@@ -50,6 +50,16 @@ const EXPECTED_CONTENT: Record<
   // Manga-native pieces: registry:component with `target: "@components/<name>.tsx"`.
   panel: [{ file: "components/panel.tsx", includes: ["export function Panel("] }],
   "panel-grid": [{ file: "components/panel-grid.tsx", includes: ["export function PanelGrid("] }],
+  "speech-bubble": [
+    { file: "components/speech-bubble.tsx", includes: ["export function SpeechBubble("] },
+  ],
+  "thought-bubble": [
+    { file: "components/thought-bubble.tsx", includes: ["export function ThoughtBubble("] },
+  ],
+  "sfx-text": [{ file: "components/sfx-text.tsx", includes: ["export function SfxText("] }],
+  "vertical-text": [
+    { file: "components/vertical-text.tsx", includes: ["export function VerticalText("] },
+  ],
   "manga-frame": [
     { file: "components/manga-frame.tsx", includes: ["export function MangaFrame("] },
   ],

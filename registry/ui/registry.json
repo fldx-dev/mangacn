@@ -66,6 +66,70 @@
       ]
     },
     {
+      "name": "speech-bubble",
+      "type": "registry:component",
+      "title": "Speech Bubble",
+      "description": "Dialogue bubble with a hand-drawn tail: round, square, shout burst or dashed whisper, seven tail positions (needs ink-frame).",
+      "categories": ["text"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "speech-bubble/speech-bubble.tsx",
+          "type": "registry:component",
+          "target": "@components/speech-bubble.tsx"
+        }
+      ]
+    },
+    {
+      "name": "thought-bubble",
+      "type": "registry:component",
+      "title": "Thought Bubble",
+      "description": "Dashed hand-drawn thought bubble with a trail of one to three rough ink dots (needs ink-frame).",
+      "categories": ["text"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "thought-bubble/thought-bubble.tsx",
+          "type": "registry:component",
+          "target": "@components/thought-bubble.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sfx-text",
+      "type": "registry:component",
+      "title": "SFX Text",
+      "description": "Onomatopoeia in the display face with ink stroke, hard shadow, tilt and a reduced-motion-safe pop or slam entrance.",
+      "categories": ["text"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority", "motion"],
+      "files": [
+        {
+          "path": "sfx-text/sfx-text.tsx",
+          "type": "registry:component",
+          "target": "@components/sfx-text.tsx"
+        }
+      ]
+    },
+    {
+      "name": "vertical-text",
+      "type": "registry:component",
+      "title": "Vertical Text",
+      "description": "Vertical writing (vertical-rl) with text-orientation control for mixing Japanese and Latin.",
+      "categories": ["text"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "vertical-text/vertical-text.tsx",
+          "type": "registry:component",
+          "target": "@components/vertical-text.tsx"
+        }
+      ]
+    },
+    {
       "name": "manga-frame",
       "type": "registry:component",
       "title": "Manga Frame",

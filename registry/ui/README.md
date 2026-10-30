@@ -201,6 +201,11 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    - Colours are CSS variables, so `[--ink:var(--spot)]` on the host turns the stroke (and an
      ink fill) spot, and hover can retint a fill: `hover:[--paper:var(--tone-1)]`.
    - Heavy outlines: `className="[--outline-width:var(--outline-width-heavy)]"` on the frame.
+   - Shapes beyond rect/ellipse/line (a bubble with its tail, a shout burst): pass
+     `outline={(width, height) => "M … Z"}`, an SVG path in border-box pixels drawn with the same
+     pen, fill and shadow (`shape` still picks the CSS fallback). Memoise it with `useCallback`:
+     a new function redraws, and the component passing it needs `"use client"`.
+     `registry/ui/speech-bubble/speech-bubble.tsx` is the reference. `dashed` dashes the stroke.
    - Cost: one SVG per outlined element, redrawn only on resize. Long lists pass one shared
      `seed` and prefer `shape="line"` row rules over full frames.
    - **Do not declare it.** `registryDependencies: ["ink-frame"]` would resolve to shadcn's
