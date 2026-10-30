@@ -48,3 +48,6 @@ next-env.d.ts
 
 # local test-runner reports (rtk wraps vitest with a json reporter)
 /.vitest/
+
+# generated from registry/**/demos (pnpm gen:demos)
+/lib/registry/demos.generated.ts
