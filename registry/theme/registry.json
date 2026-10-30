@@ -10,6 +10,7 @@
       "meta": {
         "since": "0.1.0"
       },
+      "registryDependencies": ["@mangacn/font-display", "@mangacn/font-dialogue"],
       "files": [],
       "cssVars": {
         "theme": {
@@ -244,6 +245,43 @@
             "@apply bg-background text-foreground": {}
           }
         }
+      }
+    },
+    {
+      "name": "font-display",
+      "type": "registry:font",
+      "title": "Dela Gothic One",
+      "description": "Ultra-bold gothic display face for SFX and headings, exposed as --font-display.",
+      "categories": ["text"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "files": [],
+      "font": {
+        "family": "Dela Gothic One",
+        "provider": "google",
+        "import": "Dela_Gothic_One",
+        "variable": "--font-display",
+        "weight": ["400"],
+        "subsets": ["latin", "latin-ext"]
+      }
+    },
+    {
+      "name": "font-dialogue",
+      "type": "registry:font",
+      "title": "Shantell Sans",
+      "description": "Hand-drawn variable sans for speech bubbles and dialogue, exposed as --font-dialogue.",
+      "categories": ["text"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "files": [],
+      "font": {
+        "family": "Shantell Sans",
+        "provider": "google",
+        "import": "Shantell_Sans",
+        "variable": "--font-dialogue",
+        "subsets": ["latin", "latin-ext"]
       }
     }
   ]
