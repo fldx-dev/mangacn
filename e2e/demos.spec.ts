@@ -24,6 +24,17 @@ for (const { item, demo } of demoEntries) {
       await expect(
         page.locator('[data-slot="ink-frame"]:not([data-inked="true"])').filter({ visible: true }),
       ).toHaveCount(0);
+      // A web font swap after the first drawing resizes the box; wait until every drawing was
+      // measured against the box it now covers, so no frame is captured mid-redraw.
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll<HTMLElement>('[data-slot="ink-frame"][data-inked="true"]')]
+          .filter((host) => host.getClientRects().length > 0)
+          .every((host) => {
+            const [width, height] = (host.dataset.inkSize ?? "").split("x").map(Number);
+            const box = host.getBoundingClientRect();
+            return Math.abs(width - box.width) < 1 && Math.abs(height - box.height) < 1;
+          }),
+      );
 
       if (comparePixels) {
         await expect(page).toHaveScreenshot(`${item}-${demo}-${mode}.png`, { fullPage: true });

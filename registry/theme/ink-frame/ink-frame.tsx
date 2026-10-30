@@ -95,9 +95,14 @@ function draw(
 ) {
   const style = getComputedStyle(host);
   const strokeWidth = readNumber(style, "--outline-width", 1.5);
-  const roughness = readNumber(style, "--ink-roughness", 1.2);
+  // A 16 px radio or thought dot turns lumpy at the theme's pen settings, so ellipses under
+  // 32 px scale both pen numbers down (never below half); a 16 px dot then strays, relative
+  // to its radius, like a 64 px ellipse at full strength.
+  const calm =
+    shape === "ellipse" && !outline ? Math.min(1, Math.max(0.5, Math.min(width, height) / 32)) : 1;
+  const roughness = readNumber(style, "--ink-roughness", 1.2) * calm;
   const bowing = readNumber(style, "--ink-bowing", 0.8);
-  const maxRandomnessOffset = readNumber(style, "--ink-offset", 1.5);
+  const maxRandomnessOffset = readNumber(style, "--ink-offset", 1.5) * calm;
   // The clean pen: one stroke per edge, corners that meet.
   const pen = {
     disableMultiStroke: true,
@@ -121,11 +126,12 @@ function draw(
   const nodes: SVGGElement[] = [];
   /** The closed outline (custom, ellipse or rect) with its top-left corner at `x, y`. */
   const body = (x: number, y: number, options: Parameters<typeof rc.rectangle>[4]) => {
-    // rough.js ellipses overshoot their start, which a dash pattern shows; two arcs close exactly.
+    // rough.js ellipses overshoot their start, leaving a hook (and a visible overlap when
+    // dashed); two arcs close exactly, so every ellipse goes through the path renderer.
     const arc = `A ${width / 2} ${height / 2} 0 1 1`;
     const path =
       outline?.(width, height) ??
-      (dashed && shape === "ellipse"
+      (shape === "ellipse"
         ? `M 0 ${height / 2} ${arc} ${width} ${height / 2} ${arc} 0 ${height / 2} Z`
         : undefined);
     if (path) {
@@ -133,9 +139,7 @@ function draw(
       node.setAttribute("transform", `translate(${x} ${y})`);
       return node;
     }
-    return shape === "ellipse"
-      ? rc.ellipse(x + width / 2, y + height / 2, width, height, options)
-      : rc.rectangle(x, y, width, height, options);
+    return rc.rectangle(x, y, width, height, options);
   };
 
   if (shadow !== "none" && shape !== "line") {
@@ -202,10 +206,17 @@ export function InkFrame({
     const svg = svgRef.current;
     if (!host || !svg || typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver(([entry]) => {
+      // The border box from the entry is fractional and ignores transforms (the pressed
+      // translate); offsetWidth rounds, and a rounded viewBox over a fractional box scales the
+      // drawing, which showed as lines stopping short of their ends. jsdom has neither.
       const box = entry?.borderBoxSize?.[0];
-      // offsetWidth ignores transforms (the pressed translate); the entry covers jsdom.
-      const width = host.offsetWidth || box?.inlineSize || entry?.contentRect.width || 0;
-      const height = host.offsetHeight || box?.blockSize || entry?.contentRect.height || 0;
+      const vertical = getComputedStyle(host).writingMode.startsWith("vertical");
+      const inline = box?.inlineSize || 0;
+      const block = box?.blockSize || 0;
+      const width =
+        (vertical ? block : inline) || host.offsetWidth || entry?.contentRect.width || 0;
+      const height =
+        (vertical ? inline : block) || host.offsetHeight || entry?.contentRect.height || 0;
       if (width === 0 && height === 0) return;
       draw(svg, host, width, height, {
         shape,
@@ -216,6 +227,8 @@ export function InkFrame({
         dashed,
       });
       host.dataset.inked = "true";
+      // What the drawing was measured against, so a test can wait until it matches the box.
+      host.dataset.inkSize = `${width}x${height}`;
     });
     observer.observe(host, { box: "border-box" });
     return () => observer.disconnect();
@@ -249,6 +262,9 @@ export function InkFrame({
         ref={svgRef}
         aria-hidden="true"
         focusable="false"
+        // The viewBox is the measured box; map it edge to edge rather than letting a sub-pixel
+        // mismatch scale the drawing inside the box.
+        preserveAspectRatio="none"
         // Inline, so a host's `[&_svg]:size-4` cannot resize the drawing.
         style={{
           position: "absolute",

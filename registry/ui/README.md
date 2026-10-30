@@ -301,8 +301,10 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    }
    ```
 
-   Add `"use client"` only if the piece uses state, effects, refs or `motion`. Tails,
-   bursts and marks are CSS (pseudo-elements, `clip-path`) or small inline SVG; no images.
+   Add `"use client"` only if the piece uses state, effects, refs or `motion`. Tails and
+   bursts are rough.js paths through `InkFrame`'s `outline` prop; emanata and other marks are
+   small inline SVG; no images. `motion` imports are `motion` and `useReducedMotion`, plus
+   `AnimatePresence` only for a keyed exit animation (`page-turn`).
    Outlines go through `InkFrame` (recipe 1), including custom shapes via its `outline` prop.
    Decorative backgrounds (`speed-lines`, `focus-lines`, `halftone-background`) render one
    `aria-hidden` layer with `pointer-events-none absolute inset-0 -z-1`; the user places it as

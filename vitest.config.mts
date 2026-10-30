@@ -23,6 +23,9 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    // Locally, parallel sessions can saturate the CPU and workers then time out on start-up;
+    // CI runners are quiet, so they keep the default.
+    ...(process.env.CI ? {} : { maxWorkers: "50%" }),
     setupFiles: ["./vitest.setup.ts"],
     include: ["registry/**/*.test.{ts,tsx}", "lib/**/*.test.ts"],
     coverage: {

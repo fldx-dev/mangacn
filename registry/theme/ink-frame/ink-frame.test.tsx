@@ -6,6 +6,34 @@ import { stubResizeObserver } from "@/lib/test/resize-observer";
 import InkFrameDefaultDemo from "./demos/default";
 import { InkFrame } from "./ink-frame";
 
+// Records the options handed to rough.js, with the real renderer still doing the drawing.
+const { pathOptions, rectangleOptions } = vi.hoisted(() => ({
+  pathOptions: [] as Record<string, unknown>[],
+  rectangleOptions: [] as Record<string, unknown>[],
+}));
+vi.mock("roughjs", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("roughjs")>();
+  return {
+    default: {
+      ...actual.default,
+      svg: (...args: Parameters<typeof actual.default.svg>) => {
+        const rc = actual.default.svg(...args);
+        const path = rc.path.bind(rc);
+        const rectangle = rc.rectangle.bind(rc);
+        rc.path = (d, options) => {
+          pathOptions.push({ ...options });
+          return path(d, options);
+        };
+        rc.rectangle = (x, y, w, h, options) => {
+          rectangleOptions.push({ ...options });
+          return rectangle(x, y, w, h, options);
+        };
+        return rc;
+      },
+    },
+  };
+});
+
 let observers: ReturnType<typeof stubResizeObserver>;
 
 function fireAll(width?: number, height?: number) {
@@ -142,6 +170,41 @@ describe("InkFrame in the browser", () => {
     };
     expect(dashedStroke(true)).toBe("6 4.5");
     expect(dashedStroke(false)).toBeNull();
+  });
+
+  it("measures the fractional border box, maps it edge to edge and stamps the size", () => {
+    const { container } = render(<InkFrame shape="line" />);
+    fireAll(320, 1.5);
+    const frame = container.querySelector<HTMLElement>('[data-slot="ink-frame"]');
+    const svg = frame?.querySelector("svg");
+    // 8 px of padding on each side; no rounding of the 1.5 px height.
+    expect(svg?.getAttribute("viewBox")).toBe("0 0 336 17.5");
+    expect(svg?.getAttribute("preserveAspectRatio")).toBe("none");
+    expect(frame?.dataset.inkSize).toBe("320x1.5");
+    // The stroke runs the full width: from the padding edge to the padding edge.
+    expect(svg?.querySelector("path")?.getAttribute("d")).toMatch(/^M8 8\.75 .* 328 8\.75$/);
+  });
+
+  it("draws ellipses as two closed arcs and calms small ones", () => {
+    const { container } = render(<InkFrame shape="ellipse" seed={3} />);
+    fireAll(64, 64);
+    const group = container.querySelector("svg > g");
+    expect(group?.getAttribute("transform")).toBe("translate(8 8)");
+    expect(pathOptions.at(-1)).toMatchObject({ roughness: 1.2, maxRandomnessOffset: 1.5 });
+
+    cleanup();
+    observers.reset();
+    render(<InkFrame shape="ellipse" seed={3} fill="none" />);
+    fireAll(16, 16);
+    // Half the pen for a 16 px dot; the floor, so an 8 px dot gets the same.
+    expect(pathOptions.at(-1)).toMatchObject({ roughness: 0.6, maxRandomnessOffset: 0.75 });
+
+    cleanup();
+    observers.reset();
+    render(<InkFrame seed={3} />);
+    fireAll(16, 16);
+    // Rectangles keep the full pen (checkboxes read fine at 16 px).
+    expect(rectangleOptions.at(-1)).toMatchObject({ roughness: 1.2, maxRandomnessOffset: 1.5 });
   });
 
   it("renders the element given by as and forwards attributes", () => {
