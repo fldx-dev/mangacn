@@ -211,6 +211,24 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
      to the source file in this repo, and the smoke test installs `ink-frame` before every
      other item. Once mangacn.com is live, items will declare its full URL instead.
 
+   Cases the first-child rule does not cover (Tasks 23–25 found these):
+   - **Void elements** (`input`, `textarea`) cannot hold the frame, so the `InkFrame` wraps
+     them (`<InkFrame as="span" fill="paper" className="flex w-full min-w-0">`); the stock
+     element keeps `data-slot`, `className` and props. Size the field from its parent.
+   - **Scroll containers** clip the drawing (it reaches 8 px out). Hang the frame on a
+     non-scrolling ancestor of the same size: `select` puts it on the Positioner.
+   - **Elements that cannot hold a `<span>`** (`<tr>`): draw from the children. `table`
+     cells each ink their segment of the row rule, overlapping by `--outline-width`.
+   - **Stock selectors that count children** (`card`'s `>img:first-child`) shift by one;
+     rewrite them (`[data-slot=ink-frame]+img`, `img:nth-child(2)`).
+   - **Frames above content** (`avatar` outlines over the image) go last with `z-1` and
+     `fill="none"`.
+   - **Checked fills and state-only frames:** a second frame with the **same `seed`** lands
+     exactly on the first (checkbox/radio indicators); frames shown only in some states
+     are `hidden` and revealed with a CSS variant (tabs). A hidden frame draws when it
+     becomes visible, and the e2e wait skips it while hidden.
+   - **Overlays:** `bg-ink/70` with `dark:bg-paper/70` (in dark mode ink is the light tone).
+
    New variants may be **added** (`button` gains `variant="sfx"`); existing keys keep their
    stock meaning, and no stock export is removed or renamed. Where stock already has a
    modifier for the same state, reuse it: stock `button` presses with
@@ -225,6 +243,18 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
 5. **Demo and test:** `demos/default.tsx` showing the common case, extra demos for variants
    and sizes, and `<name>.test.tsx` (renders, forwards `className`, sets `data-slot`,
    variants map to classes, and runs axe on the default demo):
+
+   Overlays render open in their default demo (`defaultOpen`) so the baselines capture
+   them. A demo that passes `render={<Button />}` must start with `"use client"`: an
+   element serialized from a server component loses the children Base UI merges into it
+   (jsdom tests do not catch this; the page shows empty buttons). An item that imports a
+   `registryDependencies` entry (`dialog` → `@/components/ui/button`) needs that path mapped
+   to the source in `tsconfig.json` `paths` and the `vitest.config.mts` aliases, as
+   `@/components/ink-frame` is. Because that entry is a bare stock name, installing
+   `@mangacn/dialog` or `@mangacn/sheet` also installs shadcn's **stock** button; users add
+   `@mangacn/button` after them (`npx shadcn@latest add @mangacn/ink-frame @mangacn/dialog`,
+   then `npx shadcn@latest add @mangacn/button --overwrite`), and the smoke test installs every
+   item after the items that depend on it.
 
    ```tsx
    import { expectNoA11yViolations } from "@/lib/test/axe";

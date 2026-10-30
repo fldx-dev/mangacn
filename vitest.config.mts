@@ -13,6 +13,11 @@ export default defineConfig({
           new URL("./registry/theme/ink-frame/ink-frame.tsx", import.meta.url),
         ),
       },
+      // Items import their registryDependencies from the install path too (dialog → button).
+      {
+        find: /^@\/components\/ui\/button$/,
+        replacement: fileURLToPath(new URL("./registry/ui/button/button.tsx", import.meta.url)),
+      },
       { find: "@", replacement: fileURLToPath(new URL("./", import.meta.url)) },
     ],
   },

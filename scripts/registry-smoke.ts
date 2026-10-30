@@ -75,6 +75,30 @@ function stripImports(source: string): string {
  */
 const INSTALL_FIRST = ["ink-frame"];
 
+/**
+ * Catalog order, except that an item named in another item's `registryDependencies` installs
+ * after that item. The names are bare stock names (`dialog` → `button`), so installing
+ * `@mangacn/dialog` pulls shadcn's stock button and `--overwrite` replaces a mangacn button
+ * installed earlier; users get the same advice (registry/ui/README.md).
+ */
+function installOrder(
+  items: { name: string; registryDependencies?: string[] }[],
+  first: string[],
+): string[] {
+  const rest = items.map((item) => item.name).filter((name) => !first.includes(name));
+  const order: string[] = [];
+  const visit = (name: string) => {
+    if (order.includes(name)) return;
+    for (const item of items) {
+      if (item.registryDependencies?.includes(name) && rest.includes(item.name)) visit(item.name);
+    }
+    order.push(name);
+  };
+  // Dependents first: visiting `button` places `dialog` and `sheet` ahead of it.
+  for (const name of rest) visit(name);
+  return [...first, ...order];
+}
+
 /** Stock shadcn items installed before the mangacn items, which must overwrite them. */
 const STOCK_PREINSTALL = [{ name: "button", file: "components/ui/button.tsx" }];
 
@@ -185,12 +209,14 @@ async function main() {
   if (!existsSync(catalogPath)) {
     throw new SmokeError("public/r/registry.json not found. Run `pnpm registry:build` first.");
   }
-  const catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as { items: { name: string }[] };
+  const catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as {
+    items: { name: string; registryDependencies?: string[] }[];
+  };
   const listed = catalog.items.map((item) => item.name);
   for (const name of INSTALL_FIRST) {
     if (!listed.includes(name)) throw new SmokeError(`"${name}" is missing from the catalog`);
   }
-  const names = [...INSTALL_FIRST, ...listed.filter((name) => !INSTALL_FIRST.includes(name))];
+  const names = installOrder(catalog.items, INSTALL_FIRST);
   console.log(`Smoke-installing ${names.length} item(s): ${names.join(", ")}`);
 
   const workDir = mkdtempSync(path.join(tmpdir(), "mangacn-smoke-"));
