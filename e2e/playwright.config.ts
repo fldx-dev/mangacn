@@ -49,7 +49,7 @@ export default defineConfig({
   webServer: {
     command: `pnpm start --port ${port} --hostname 127.0.0.1`,
     cwd: root,
-    url: `http://127.0.0.1:${port}/demo/hello-world/default`,
+    url: `http://127.0.0.1:${port}/demo/button/default`,
     reuseExistingServer: false,
     timeout: 60_000,
   },

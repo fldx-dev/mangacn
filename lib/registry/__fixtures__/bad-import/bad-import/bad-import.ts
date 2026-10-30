@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export { loadRegistry } from "@/lib/registry";
-export { HelloWorld } from "../../../../../registry/ui/hello-world/hello-world";
+export { Button } from "../../../../../registry/ui/button/button";
 
 export const loadPopover = () => import("@base-ui/react/popover");
 

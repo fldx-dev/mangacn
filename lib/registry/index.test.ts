@@ -98,8 +98,8 @@ describe("loadRegistry", () => {
     const registry = loadRegistry();
 
     expect(registry.name).toBe("mangacn");
-    expect(registry.items.find((entry) => entry.name === "hello-world")?.files[0]?.path).toBe(
-      "registry/ui/hello-world/hello-world.tsx",
+    expect(registry.items.find((entry) => entry.name === "button")?.files[0]?.path).toBe(
+      "registry/ui/button/button.tsx",
     );
   });
 });

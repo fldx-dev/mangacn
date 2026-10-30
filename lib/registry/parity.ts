@@ -219,15 +219,19 @@ function diffList(label: string, expected: string[], actual: string[]): string[]
 }
 
 /**
- * Differences between a restyled primitive and its stock snapshot. Exports, slots and both
- * dependency lists must be equal; every stock `cva` group and key must exist, and added
- * groups, keys or `cva` objects are allowed (SPEC-components §4.2: additions only).
+ * Differences between a restyled primitive and its stock snapshot. Exports, slots and
+ * `registryDependencies` must be equal; `dependencies` must include every stock package (an
+ * item also declares the base-nova style packages it imports, SPEC-components §4.1). Every
+ * stock `cva` group and key must exist, and added groups, keys or `cva` objects are allowed
+ * (SPEC-components §4.2: additions only).
  */
 export function compareParity(stock: ParityShape, actual: ParityShape): string[] {
   const problems = [
     ...diffList("exports", stock.exports, actual.exports),
     ...diffList("data-slot", stock.dataSlots, actual.dataSlots),
-    ...diffList("dependencies", stock.dependencies, actual.dependencies),
+    ...diffList("dependencies", stock.dependencies, actual.dependencies).filter((problem) =>
+      problem.startsWith("dependencies: missing"),
+    ),
     ...diffList("registryDependencies", stock.registryDependencies, actual.registryDependencies),
   ];
   for (const [name, groups] of Object.entries(stock.variants)) {

@@ -124,7 +124,7 @@ describe("bad-import fixture", () => {
     expect(violations.map((v) => [v.specifier, v.line])).toEqual([
       ["@/app/page", 3],
       ["@/lib/registry", 7],
-      ["../../../../../registry/ui/hello-world/hello-world", 8],
+      ["../../../../../registry/ui/button/button", 8],
       ["@base-ui/react/popover", 10],
     ]);
   });

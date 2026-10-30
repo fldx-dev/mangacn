@@ -65,9 +65,9 @@ describe("collectDemos", () => {
   it("finds a default demo for every item in the real registry", () => {
     const entries = collectDemos(loadRegistry());
     expect(entries).toContainEqual({
-      item: "hello-world",
+      item: "button",
       demo: "default",
-      path: "registry/ui/hello-world/demos/default.tsx",
+      path: "registry/ui/button/demos/default.tsx",
     });
   });
 });
@@ -112,15 +112,15 @@ describe(`${DEMO_MAP_PATH} staleness`, () => {
     for (const { item, demo } of listDemos()) {
       expect(getDemoLoader(item, demo)).toBeTypeOf("function");
     }
-    expect(getDemoLoader("hello-world", "nope")).toBeUndefined();
+    expect(getDemoLoader("button", "nope")).toBeUndefined();
     expect(getDemoLoader("nope", "default")).toBeUndefined();
     expect(getDemoLoader("constructor", "default")).toBeUndefined();
-    expect(getDemoLoader("hello-world", "toString")).toBeUndefined();
+    expect(getDemoLoader("button", "toString")).toBeUndefined();
   });
 
-  it.skipIf(!present)("loads the hello-world default demo", async () => {
+  it.skipIf(!present)("loads the button default demo", async () => {
     const { getDemoLoader } = await import("./demos");
-    const mod = await getDemoLoader("hello-world", "default")?.();
+    const mod = await getDemoLoader("button", "default")?.();
     expect(mod?.default).toBeTypeOf("function");
   });
 });

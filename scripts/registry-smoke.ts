@@ -20,8 +20,18 @@ const isWindows = process.platform === "win32";
 // pnpm runs package scripts from the repo root.
 const outputDir = path.resolve("public", "r");
 
-/** Strings an installed item must leave in the temp project, keyed by item name. */
-const EXPECTED_CONTENT: Record<string, { file: string; includes: string[] }[]> = {
+/**
+ * Attribution comment of every restyled primitive (registry/ui/README.md, recipe 1). It sits
+ * right after the imports: `shadcn add` drops anything above a file's first statement.
+ */
+const ATTRIBUTION = "// Based on shadcn/ui ";
+const attribution = (name: string) => `${ATTRIBUTION}${name} (MIT, https://ui.shadcn.com)`;
+
+/** What an installed item must leave in the temp project, keyed by item name. */
+const EXPECTED_CONTENT: Record<
+  string,
+  { file: string; attribution?: string; includes?: string[] }[]
+> = {
   theme: [
     {
       file: "app/globals.css",
@@ -31,7 +41,30 @@ const EXPECTED_CONTENT: Record<string, { file: string; includes: string[] }[]> =
   "font-display": [{ file: "app/layout.tsx", includes: ["Dela_Gothic_One(", "--font-display"] }],
   "font-dialogue": [{ file: "app/layout.tsx", includes: ["Shantell_Sans(", "--font-dialogue"] }],
   "manga-motion": [{ file: "lib/manga-motion.ts", includes: ["export const popIn"] }],
+  // button overwrites the stock button pre-installed after `shadcn init`.
+  button: [{ file: "components/ui/button.tsx", attribution: attribution("Button") }],
+  badge: [{ file: "components/ui/badge.tsx", attribution: attribution("Badge") }],
+  separator: [{ file: "components/ui/separator.tsx", attribution: attribution("Separator") }],
 };
+
+/** True when `line` is the attribution comment and only imports or a directive precede it. */
+function hasAttributionHeader(content: string, line: string): boolean {
+  const index = content.indexOf(line);
+  if (index === -1) return false;
+  const preamble = stripImports(content.slice(0, index));
+  return /^\s*(["']use client["'];?\s*)?$/.test(preamble);
+}
+
+/** Removes import statements (including multi-line ones) from a module preamble. */
+function stripImports(source: string): string {
+  return source.replace(
+    /^import\s[\s\S]*?\sfrom\s*["'][^"']+["'];?$|^import\s*["'][^"']+["'];?$/gm,
+    "",
+  );
+}
+
+/** Stock shadcn items installed before the mangacn items, which must overwrite them. */
+const STOCK_PREINSTALL = [{ name: "button", file: "components/ui/button.tsx" }];
 
 class SmokeError extends Error {
   constructor(
@@ -183,6 +216,15 @@ async function main() {
     };
     writeFileSync(componentsPath, `${JSON.stringify(components, null, 2)}\n`);
 
+    for (const stock of STOCK_PREINSTALL) {
+      console.log(`→ shadcn add ${stock.name} (stock, to be overwritten)`);
+      await run("pnpm", ["dlx", `shadcn@${SHADCN_VERSION}`, "add", stock.name, "--yes"], project);
+      const full = path.join(project, stock.file);
+      if (!existsSync(full) || readFileSync(full, "utf8").includes(ATTRIBUTION)) {
+        throw new SmokeError(`Stock ${stock.name} did not install a stock ${stock.file}`);
+      }
+    }
+
     const owners = new Map<string, string>();
     for (const name of names) {
       console.log(`→ shadcn add @mangacn/${name}`);
@@ -207,9 +249,16 @@ async function main() {
     console.log("→ installed content");
     const missing: string[] = [];
     for (const name of names) {
-      for (const { file, includes } of EXPECTED_CONTENT[name] ?? []) {
+      for (const { file, attribution, includes = [] } of EXPECTED_CONTENT[name] ?? []) {
         const full = path.join(project, file);
-        const content = existsSync(full) ? readFileSync(full, "utf8") : "";
+        if (!existsSync(full)) {
+          missing.push(`${name}: ${file} was not installed`);
+          continue;
+        }
+        const content = readFileSync(full, "utf8");
+        if (attribution && !hasAttributionHeader(content, attribution)) {
+          missing.push(`${name}: ${file} lacks the header "${attribution}" after its imports`);
+        }
         for (const needle of includes) {
           if (!content.includes(needle)) missing.push(`${name}: ${file} lacks "${needle}"`);
         }

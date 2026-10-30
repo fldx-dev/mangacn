@@ -10,8 +10,9 @@ import {
   type ParitySnapshot,
 } from "@/lib/registry/parity";
 
-// SPEC-components §4.1: each restyled primitive keeps stock's exports, slots, variant keys
-// and dependencies. The snapshot is refreshed only by `pnpm gen:parity` (manual, network).
+// SPEC-components §4.1: each restyled primitive keeps stock's exports, slots, variant keys and
+// registryDependencies; its dependencies are a superset of stock's (it also declares the
+// base-nova style packages it imports). The snapshot is refreshed only by `pnpm gen:parity`.
 const snapshot = JSON.parse(
   readFileSync(path.resolve(PARITY_SNAPSHOT_PATH), "utf8"),
 ) as ParitySnapshot;
@@ -40,6 +41,10 @@ describe("restyled primitives match stock base-nova", () => {
       const item = items.get(name);
       const file = item?.files.find((entry) => entry.path.endsWith(`/${name}.tsx`));
       expect(file, `${name}: no ${name}.tsx in files[]`).toBeDefined();
+      // Without it shadcn installs components/ui/<name>/<name>.tsx beside the stock file.
+      expect(file?.target, `${name}: files[].target must overwrite the stock file`).toBe(
+        `@ui/${name}.tsx`,
+      );
       const source = readFileSync(path.resolve(file?.path ?? ""), "utf8");
       const problems = compareParity(snapshot.items[name], extractParityShape(source, item));
       expect(problems, `${name} differs from stock:\n  ${problems.join("\n  ")}`).toEqual([]);

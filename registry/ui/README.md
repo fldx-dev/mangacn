@@ -127,13 +127,24 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    Copy the printed source into `registry/ui/<name>/<name>.tsx`. Do not copy the raw
    `files[0].content` from the JSON instead: it still has shadcn's internal
    `@/app/(create)/components/icon-placeholder` and `@/registry/base-nova/ui/<x>` imports,
-   which the CLI turns into `lucide-react` icons and `@/components/ui/<x>`. Keep the item's
-   `dependencies` and `registryDependencies` exactly as stock lists them
-   (`registry/ui/__parity__/base-nova.json` has the current values).
-2. **Add the attribution header** as the first line:
+   which the CLI turns into `lucide-react` icons and `@/components/ui/<x>`. Keep
+   `registryDependencies` exactly as stock lists them
+   (`registry/ui/__parity__/base-nova.json` has the current values). For `dependencies`,
+   list every package the file imports: stock items declare only `cn`, because
+   `@base-ui/react`, `class-variance-authority` and `lucide-react` come with the base-nova
+   style at `shadcn init`; mangacn declares them so installs into other setups get them too.
+2. **Add the attribution header** directly after the import block, before the first
+   declaration. Not above the imports: `shadcn add` drops everything before a file's first
+   statement, so a top-of-file comment never reaches the user. The smoke install checks
+   that the installed `components/ui/button.tsx` has it in this position.
 
    ```tsx
-   // Based on shadcn/ui <Name> (MIT, https://ui.shadcn.com), base-nova, fetched YYYY-MM-DD. Restyled for mangacn.
+   import { cn } from "cn";
+
+   // Based on shadcn/ui <Name> (MIT, https://ui.shadcn.com), base-nova style, fetched YYYY-MM-DD.
+   // Restyled for mangacn.
+
+   const buttonVariants = cva(
    ```
 
 3. **Change classes only.** Keep structure, exports, `data-slot` values, variant names and
@@ -158,9 +169,16 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    | avatar `rounded-full`                       | keep round, add `ink-border`                                                  |
 
    New variants may be **added** (`button` gains `variant="sfx"`); existing keys keep their
-   stock meaning, and no stock export is removed or renamed.
+   stock meaning, and no stock export is removed or renamed. Where stock already has a
+   modifier for the same state, reuse it: stock `button` presses with
+   `active:not-aria-[haspopup]:translate-y-px`, so its solid variants use
+   `active:not-aria-[haspopup]:translate-[1px_1px]`, which `cn` merges over the stock class
+   (a plain `active:` class would sit next to it and the two would fight).
 4. **Catalog entry:** `"type": "registry:ui"`, `"categories": ["primitive"]` (or a better
-   fit), file type `registry:ui`.
+   fit), file type `registry:ui` and `"target": "@ui/<name>.tsx"`. The target is required:
+   without it shadcn keeps the folder after `ui/` in the source path and installs
+   `components/ui/<name>/<name>.tsx` next to the stock file instead of replacing it.
+   `@ui/` resolves against the user's own `ui` alias.
 5. **Demo and test:** `demos/default.tsx` showing the common case, extra demos for variants
    and sizes, and `<name>.test.tsx` (renders, forwards `className`, sets `data-slot`,
    variants map to classes, and runs axe on the default demo):
@@ -243,8 +261,9 @@ page renders that one demo centred on paper and nothing else.
 
 `registry/ui/parity.test.ts` compares every restyled primitive (a `registry:ui` item whose
 name is one of the 21 stock primitives) with `registry/ui/__parity__/base-nova.json`:
-named exports, `data-slot` values and both dependency lists must equal stock; every stock
-`cva` variant group and key must still exist (added keys such as `variant="sfx"` are fine).
+named exports, `data-slot` values and `registryDependencies` must equal stock;
+`dependencies` must contain every stock package (more is fine); every stock `cva` variant
+group and key must still exist (added keys such as `variant="sfx"` are fine).
 A failure lists what is missing or unexpected. Primitives not restyled yet show as `todo`.
 
 The snapshot is refreshed only on purpose, after a shadcn release, with maintainer

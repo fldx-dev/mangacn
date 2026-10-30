@@ -2,13 +2,36 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "items": [
     {
-      "name": "hello-world",
-      "type": "registry:component",
-      "title": "Hello World",
-      "description": "Throwaway item that proves the registry pipeline end to end.",
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Stock button with 2 px ink borders, a hard ink shadow that presses in, and an sfx variant.",
       "categories": ["primitive"],
-      "meta": { "since": "0.0.1" },
-      "files": [{ "path": "hello-world/hello-world.tsx", "type": "registry:component" }]
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "files": [{ "path": "button/button.tsx", "type": "registry:ui", "target": "@ui/button.tsx" }]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "Stock badge with a 2 px ink border and a spot variant for the one red label.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "files": [{ "path": "badge/badge.tsx", "type": "registry:ui", "target": "@ui/badge.tsx" }]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "Stock separator drawn as an outline-width ink rule.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react"],
+      "files": [
+        { "path": "separator/separator.tsx", "type": "registry:ui", "target": "@ui/separator.tsx" }
+      ]
     }
   ]
 }

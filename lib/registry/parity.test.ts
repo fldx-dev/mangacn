@@ -112,8 +112,9 @@ describe("extractParityShape", () => {
 describe("compareParity", () => {
   const stock: ParityShape = extractParityShape(sample, { dependencies: ["cn"] });
 
-  it("accepts an identical shape and added variant keys, groups and cva objects", () => {
+  it("accepts an identical shape, added variant keys, groups and cva objects, and added dependencies", () => {
     const restyled = structuredClone(stock);
+    restyled.dependencies.push("@base-ui/react", "class-variance-authority");
     restyled.variants.sampleVariants.variant.push("sfx");
     restyled.variants.sampleVariants.shadow = ["none", "ink"];
     restyled.variants.extraVariants = { tone: ["a"] };
@@ -121,20 +122,20 @@ describe("compareParity", () => {
     expect(compareParity(stock, restyled)).toEqual([]);
   });
 
-  it("reports missing and unexpected exports, slots and dependencies, and missing variants", () => {
+  it("reports missing and unexpected exports and slots, missing dependencies and variants", () => {
     const restyled: ParityShape = {
       exports: ["Sample", "SampleAction", "SampleHeading", "sampleVariants", "Extra"],
       dataSlots: ["sample"],
       variants: {
         sampleVariants: { variant: ["default"], size: stock.variants.sampleVariants.size },
       },
-      dependencies: ["cn", "lodash"],
+      dependencies: ["lodash"],
       registryDependencies: ["@mangacn/button"],
     };
     expect(compareParity(stock, restyled)).toEqual([
       "exports: unexpected Extra",
       "data-slot: missing sample-action, sample-title",
-      "dependencies: unexpected lodash",
+      "dependencies: missing cn",
       "registryDependencies: unexpected @mangacn/button",
       "cva sampleVariants.variant: missing outline, destructive",
     ]);
