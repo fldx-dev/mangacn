@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "bad-import-fixture",
+  "homepage": "https://example.com",
+  "items": [
+    {
+      "name": "bad-import",
+      "type": "registry:component",
+      "title": "Bad import (test fixture)",
+      "description": "Test-only item whose file breaks SPEC-registry-core §6.5. Never part of the registry.",
+      "dependencies": ["cn"],
+      "registryDependencies": ["button"],
+      "files": [{ "path": "bad-import/bad-import.ts", "type": "registry:component" }]
+    }
+  ]
+}

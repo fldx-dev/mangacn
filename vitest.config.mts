@@ -20,6 +20,7 @@ export default defineConfig({
         "lib/registry/**/*.test.ts",
         "lib/registry/**/__snapshots__/**",
         "lib/registry/**/*.generated.ts",
+        "lib/registry/__fixtures__/**",
       ],
       reporter: ["text"],
       thresholds: {
