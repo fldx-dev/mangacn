@@ -7,9 +7,17 @@
       "title": "Button",
       "description": "Stock button with a hand-drawn ink outline and solid ink fill (needs ink-frame), plus an sfx variant.",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
-      "files": [{ "path": "button/button.tsx", "type": "registry:ui", "target": "@ui/button.tsx" }]
+      "files": [
+        {
+          "path": "button/button.tsx",
+          "type": "registry:ui",
+          "target": "@ui/button.tsx"
+        }
+      ]
     },
     {
       "name": "badge",
@@ -17,9 +25,17 @@
       "title": "Badge",
       "description": "Stock badge with a hand-drawn ink outline (needs ink-frame) and a spot variant for the one red label.",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
-      "files": [{ "path": "badge/badge.tsx", "type": "registry:ui", "target": "@ui/badge.tsx" }]
+      "files": [
+        {
+          "path": "badge/badge.tsx",
+          "type": "registry:ui",
+          "target": "@ui/badge.tsx"
+        }
+      ]
     },
     {
       "name": "separator",
@@ -27,10 +43,124 @@
       "title": "Separator",
       "description": "Stock separator drawn as one hand-drawn ink stroke (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react"],
       "files": [
-        { "path": "separator/separator.tsx", "type": "registry:ui", "target": "@ui/separator.tsx" }
+        {
+          "path": "separator/separator.tsx",
+          "type": "registry:ui",
+          "target": "@ui/separator.tsx"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Stock input inside a hand-drawn ink outline on paper (needs ink-frame); spot outline when invalid.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react"],
+      "files": [
+        {
+          "path": "input/input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "description": "Stock textarea inside a hand-drawn ink outline on paper (needs ink-frame); spot outline when invalid.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "files": [
+        {
+          "path": "textarea/textarea.tsx",
+          "type": "registry:ui",
+          "target": "@ui/textarea.tsx"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "Stock checkbox drawn as a hand-inked box that fills with ink when checked (needs ink-frame).",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "files": [
+        {
+          "path": "checkbox/checkbox.tsx",
+          "type": "registry:ui",
+          "target": "@ui/checkbox.tsx"
+        }
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "title": "Radio Group",
+      "description": "Stock radio group drawn as hand-inked circles that fill with ink when checked (needs ink-frame).",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react"],
+      "files": [
+        {
+          "path": "radio-group/radio-group.tsx",
+          "type": "registry:ui",
+          "target": "@ui/radio-group.tsx"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "Stock switch with a hand-drawn tone track that turns ink when on and a paper thumb (needs ink-frame).",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react"],
+      "files": [
+        {
+          "path": "switch/switch.tsx",
+          "type": "registry:ui",
+          "target": "@ui/switch.tsx"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Stock select with a hand-drawn ink trigger and a heavy-outlined popup, no shadow (needs ink-frame).",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "files": [
+        {
+          "path": "select/select.tsx",
+          "type": "registry:ui",
+          "target": "@ui/select.tsx"
+        }
       ]
     }
   ]
