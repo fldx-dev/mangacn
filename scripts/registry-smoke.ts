@@ -14,7 +14,10 @@ import path from "node:path";
 
 const NEXT_VERSION = "16.4.3";
 const SHADCN_VERSION = "4.23.0";
-const TIMEOUT_MS = 10 * 60 * 1000;
+// Hang guard: a budget for creating the project plus one per item, because `shadcn add` takes
+// 30–40 s per item on Windows (under a second on Linux CI) and the catalog keeps growing.
+const SETUP_TIMEOUT_MS = 5 * 60 * 1000;
+const ITEM_TIMEOUT_MS = 60 * 1000;
 const isWindows = process.platform === "win32";
 
 // pnpm runs package scripts from the repo root.
@@ -60,6 +63,19 @@ const EXPECTED_CONTENT: Record<
   "vertical-text": [
     { file: "components/vertical-text.tsx", includes: ["export function VerticalText("] },
   ],
+  "speed-lines": [
+    { file: "components/speed-lines.tsx", includes: ["export function SpeedLines("] },
+  ],
+  "focus-lines": [
+    { file: "components/focus-lines.tsx", includes: ["export function FocusLines("] },
+  ],
+  "halftone-background": [
+    {
+      file: "components/halftone-background.tsx",
+      includes: ["export function HalftoneBackground("],
+    },
+  ],
+  emanata: [{ file: "components/emanata.tsx", includes: ["export function Emanata("] }],
   "manga-frame": [
     { file: "components/manga-frame.tsx", includes: ["export function MangaFrame("] },
   ],
@@ -103,6 +119,16 @@ class SmokeError extends Error {
 
 let currentChild: ChildProcess | undefined;
 let projectDir: string | undefined;
+let timer: NodeJS.Timeout | undefined;
+
+function armTimeout(ms: number) {
+  timer = setTimeout(() => {
+    if (currentChild) killTree(currentChild);
+    console.error(`✗ registry smoke timed out after ${Math.round(ms / 60000)} min`);
+    if (projectDir) console.error(`Temp project kept for inspection: ${projectDir}`);
+    process.exit(1);
+  }, ms);
+}
 
 function killTree(child: ChildProcess) {
   if (child.pid === undefined || child.exitCode !== null) return;
@@ -206,6 +232,7 @@ async function main() {
   }
   const names = [...INSTALL_FIRST, ...listed.filter((name) => !INSTALL_FIRST.includes(name))];
   console.log(`Smoke-installing ${names.length} item(s): ${names.join(", ")}`);
+  armTimeout(SETUP_TIMEOUT_MS + names.length * ITEM_TIMEOUT_MS);
 
   const workDir = mkdtempSync(path.join(tmpdir(), "mangacn-smoke-"));
   const project = path.join(workDir, "app");
@@ -323,13 +350,6 @@ async function main() {
     }
   }
 }
-
-const timer = setTimeout(() => {
-  if (currentChild) killTree(currentChild);
-  console.error(`✗ registry smoke timed out after ${TIMEOUT_MS / 60000} min`);
-  if (projectDir) console.error(`Temp project kept for inspection: ${projectDir}`);
-  process.exit(1);
-}, TIMEOUT_MS);
 
 main()
   .then(() => {

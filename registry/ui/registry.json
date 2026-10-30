@@ -130,6 +130,70 @@
       ]
     },
     {
+      "name": "speed-lines",
+      "type": "registry:component",
+      "title": "Speed Lines",
+      "description": "Decorative radial or horizontal motion lines behind content, with density, colour and a movable centre.",
+      "categories": ["background"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "speed-lines/speed-lines.tsx",
+          "type": "registry:component",
+          "target": "@components/speed-lines.tsx"
+        }
+      ]
+    },
+    {
+      "name": "focus-lines",
+      "type": "registry:component",
+      "title": "Focus Lines",
+      "description": "Decorative concentration lines bursting in towards a point, as inline SVG at the speed-line width.",
+      "categories": ["background"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "focus-lines/focus-lines.tsx",
+          "type": "registry:component",
+          "target": "@components/focus-lines.tsx"
+        }
+      ]
+    },
+    {
+      "name": "halftone-background",
+      "type": "registry:component",
+      "title": "Halftone Background",
+      "description": "Decorative full-bleed halftone screen in three tones and dot sizes, with an optional top, bottom or radial fade.",
+      "categories": ["background"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "halftone-background/halftone-background.tsx",
+          "type": "registry:component",
+          "target": "@components/halftone-background.tsx"
+        }
+      ]
+    },
+    {
+      "name": "emanata",
+      "type": "registry:component",
+      "title": "Emanata",
+      "description": "Inline SVG emotion marks (sweat drop, anger mark, sparkle, surprise lines, puff), labelled unless decorative.",
+      "categories": ["decoration"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "files": [
+        {
+          "path": "emanata/emanata.tsx",
+          "type": "registry:component",
+          "target": "@components/emanata.tsx"
+        }
+      ]
+    },
+    {
       "name": "manga-frame",
       "type": "registry:component",
       "title": "Manga Frame",

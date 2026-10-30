@@ -273,6 +273,10 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
 
    Add `"use client"` only if the piece uses state, effects, refs or `motion`. Tails,
    bursts and marks are CSS (pseudo-elements, `clip-path`) or small inline SVG; no images.
+   Outlines go through `InkFrame` (recipe 1), including custom shapes via its `outline` prop.
+   Decorative backgrounds (`speed-lines`, `focus-lines`, `halftone-background`) render one
+   `aria-hidden` layer with `pointer-events-none absolute inset-0 -z-1`; the user places it as
+   the first child of a `relative isolate` container.
 2. **Catalog entry:** `"type": "registry:component"`, file type `registry:component`,
    `dependencies` listing every package the file imports (`["class-variance-authority"]` for
    the example above; `@/lib/utils` is always available and is not a dependency).
