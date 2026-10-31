@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-16 text-center">
@@ -8,6 +10,9 @@ export default function Home() {
       <pre className="w-full max-w-full overflow-x-auto rounded-lg border bg-muted px-4 py-3 text-left font-mono text-sm sm:w-auto">
         <code>npx shadcn@latest add @mangacn/&lt;item&gt;</code>
       </pre>
+      <Link href="/demo" className="font-dialogue underline underline-offset-4 hover:text-spot">
+        Browse the gallery →
+      </Link>
     </main>
   );
 }
