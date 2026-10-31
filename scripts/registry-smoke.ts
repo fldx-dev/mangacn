@@ -6,7 +6,15 @@
  */
 import { type ChildProcess, execFileSync, type SpawnOptions, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
@@ -47,6 +55,8 @@ const EXPECTED_CONTENT: Record<
   "ink-frame": [{ file: "components/ink-frame.tsx", includes: ["export function InkFrame"] }],
   // button overwrites the stock button pre-installed after `shadcn init`.
   button: [{ file: "components/ui/button.tsx", attribution: attribution("Button") }],
+  card: [{ file: "components/ui/card.tsx", attribution: attribution("Card") }],
+  dialog: [{ file: "components/ui/dialog.tsx", attribution: attribution("Dialog") }],
   badge: [{ file: "components/ui/badge.tsx", attribution: attribution("Badge") }],
   separator: [{ file: "components/ui/separator.tsx", attribution: attribution("Separator") }],
   // Manga-native pieces: registry:component with `target: "@components/<name>.tsx"`.
@@ -133,7 +143,73 @@ function installOrder(
 }
 
 /** Stock shadcn items installed before the mangacn items, which must overwrite them. */
-const STOCK_PREINSTALL = [{ name: "button", file: "components/ui/button.tsx" }];
+const STOCK_PREINSTALL = [
+  { name: "button", file: "components/ui/button.tsx" },
+  { name: "card", file: "components/ui/card.tsx" },
+  { name: "dialog", file: "components/ui/dialog.tsx" },
+];
+
+/**
+ * A page written against the stock APIs before the mangacn items overwrite them; it must still
+ * typecheck and build afterwards with no edits (SPEC-components §4.1 parity, §11).
+ */
+const STOCK_USAGE_PAGE = `"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+export default function SmokePage() {
+  return (
+    <main>
+      <Card className="max-w-sm">
+        <CardHeader>
+          <CardTitle>Chapter 12</CardTitle>
+          <CardDescription>Inks due Friday.</CardDescription>
+          <CardAction>
+            <Button variant="link" size="sm">
+              Open
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent>18 pages pencilled.</CardContent>
+        <CardFooter>
+          <Dialog>
+            <DialogTrigger render={<Button variant="outline" />}>Rename</DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Rename chapter</DialogTitle>
+                <DialogDescription>Readers see the new title.</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose render={<Button variant="ghost" />}>Cancel</DialogClose>
+                <Button size="lg">Save</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </CardFooter>
+      </Card>
+    </main>
+  );
+}
+`;
 
 class SmokeError extends Error {
   constructor(
@@ -297,6 +373,12 @@ async function main() {
       if (!existsSync(full) || readFileSync(full, "utf8").includes(ATTRIBUTION)) {
         throw new SmokeError(`Stock ${stock.name} did not install a stock ${stock.file}`);
       }
+    }
+    {
+      // Use the stock items as a consumer would; the mangacn overwrites must keep this building.
+      const smokeDir = path.join(project, "app", "smoke");
+      mkdirSync(smokeDir, { recursive: true });
+      writeFileSync(path.join(smokeDir, "page.tsx"), STOCK_USAGE_PAGE);
     }
 
     const owners = new Map<string, string>();
