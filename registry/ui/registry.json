@@ -349,7 +349,7 @@
       "name": "skeleton",
       "type": "registry:ui",
       "title": "Skeleton",
-      "description": "Stock skeleton as a pulsing light halftone, no outline.",
+      "description": "Stock skeleton as a pencilled placeholder: a rough tone outline with hatched shading, pulsing (needs ink-frame); shape=\"ellipse\" for round ones.",
       "categories": ["primitive"],
       "meta": {
         "since": "0.1.0"

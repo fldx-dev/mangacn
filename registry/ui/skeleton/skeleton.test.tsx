@@ -14,14 +14,23 @@ describe("Skeleton", () => {
     expect(skeleton.classList.contains("w-24")).toBe(true);
   });
 
-  it("pulses a light halftone with no fill and no outline", () => {
+  it("pulses a hatched tone-outlined frame, rect by default and ellipse on request", () => {
     render(<Skeleton data-testid="skeleton" />);
     const skeleton = screen.getByTestId("skeleton");
-    for (const name of ["halftone-light", "animate-pulse"]) {
-      expect(skeleton.classList.contains(name), name).toBe(true);
-    }
-    expect(skeleton.className).not.toMatch(/bg-muted|bg-accent|border/);
-    expect(skeleton.querySelector('[data-slot="ink-frame"]')).toBeNull();
+    expect(skeleton.classList.contains("animate-pulse")).toBe(true);
+    expect(skeleton.className).not.toMatch(/bg-muted|bg-accent|halftone/);
+    const frame = skeleton.querySelector('[data-slot="ink-frame"]');
+    expect(frame?.getAttribute("data-fill")).toBe("hatch");
+    expect(frame?.getAttribute("data-shape")).toBe("rect");
+    expect(skeleton.getAttribute("data-shape")).toBe("rect");
+
+    cleanup();
+    render(<Skeleton data-testid="skeleton" shape="ellipse" />);
+    const round = screen.getByTestId("skeleton");
+    expect(round.classList.contains("rounded-full")).toBe(true);
+    expect(round.querySelector('[data-slot="ink-frame"]')?.getAttribute("data-shape")).toBe(
+      "ellipse",
+    );
   });
 
   it("has no axe violations in its default demo", async () => {

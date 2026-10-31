@@ -6,7 +6,8 @@ import rough from "roughjs";
 import { cn } from "@/lib/utils";
 
 type InkFrameShape = "rect" | "ellipse" | "line";
-type InkFrameFill = "none" | "paper" | "ink" | "tone";
+/** `hatch` is pencil shading: diagonal ink hachure with no solid colour behind it. */
+type InkFrameFill = "none" | "paper" | "ink" | "tone" | "hatch";
 type InkFrameShadow = "none" | "hatch" | "solid";
 
 export interface InkFrameProps extends React.HTMLAttributes<HTMLElement> {
@@ -39,6 +40,7 @@ const FILLS: Record<InkFrameFill, string | undefined> = {
   paper: "var(--paper)",
   ink: INK,
   tone: "var(--tone-2)",
+  hatch: INK,
 };
 
 /** CSS fallback shown until the first drawing (server render, no `ResizeObserver`). */
@@ -47,6 +49,8 @@ const FALLBACK_FILLS: Record<InkFrameFill, string> = {
   paper: "bg-paper",
   ink: "bg-ink",
   tone: "bg-tone-2",
+  // A background image, so it is cleared with `bg-none` rather than `bg-transparent`.
+  hatch: "screentone-lines data-[inked=true]:bg-none",
 };
 
 /** FNV-1a over `useId()`, so every instance keeps its own wobble across re-renders. */
@@ -165,7 +169,18 @@ function draw(
   }
 
   const color = FILLS[fill];
-  const options = color ? { ...base, fill: color, fillStyle: "solid" } : base;
+  const options = !color
+    ? base
+    : fill === "hatch"
+      ? {
+          ...base,
+          fill: color,
+          fillStyle: "hachure",
+          hachureGap: readNumber(style, "--ink-hachure-gap", 4),
+          hachureAngle: -45,
+          fillWeight: Math.max(0.6, strokeWidth * 0.4),
+        }
+      : { ...base, fill: color, fillStyle: "solid" };
   if (shape === "line") {
     nodes.push(
       width >= height

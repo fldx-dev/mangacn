@@ -166,7 +166,7 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    | popover/tooltip/dialog `shadow-md` + border | `InkFrame` at `[--outline-width:var(--outline-width-heavy)]`, no shadow       |
    | tabs underline / pill                       | `InkFrame shape="line"` rule; active tab outlined on three sides              |
    | progress track                              | `InkFrame` track; a `tone` variant uses `screentone-lines`                    |
-   | skeleton `animate-pulse bg-accent`          | `halftone-light animate-pulse`, no outline                                    |
+   | skeleton `animate-pulse bg-accent`          | `InkFrame fill="hatch"` in `--tone-3` (pencil hatching), `animate-pulse`      |
    | separator 1 px                              | `InkFrame shape="line"` filling a `var(--outline-width)` box                  |
    | table row borders                           | `shape="line"` rules, header at `--outline-width-heavy`                       |
    | avatar `rounded-full`                       | `InkFrame shape="ellipse"`                                                    |

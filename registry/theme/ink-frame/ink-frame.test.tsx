@@ -207,6 +207,19 @@ describe("InkFrame in the browser", () => {
     expect(rectangleOptions.at(-1)).toMatchObject({ roughness: 1.2, maxRandomnessOffset: 1.5 });
   });
 
+  it("hatches the body for fill hatch, with a lines fallback until drawn", () => {
+    const { container } = render(<InkFrame fill="hatch">x</InkFrame>);
+    const frame = container.querySelector<HTMLElement>('[data-slot="ink-frame"]');
+    expect(frame?.className).toContain("screentone-lines");
+    expect(frame?.className).toContain("data-[inked=true]:bg-none");
+    fireAll(120, 32);
+    expect(rectangleOptions.at(-1)).toMatchObject({ fillStyle: "hachure", fill: "var(--ink)" });
+    const paths = [...container.querySelectorAll<SVGPathElement>("path")];
+    // The hachure is a stroked path in the fill colour, thinner than the outline; no solid fill.
+    expect(paths.some((path) => path.style.fill === "var(--ink)")).toBe(false);
+    expect(paths.filter((path) => path.style.stroke === "var(--ink)").length).toBe(2);
+  });
+
   it("renders the element given by as and forwards attributes", () => {
     const { container } = render(
       <InkFrame as="section" aria-label="Panel" id="p1">
