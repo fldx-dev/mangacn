@@ -49,7 +49,9 @@ const EXPECTED_CONTENT: Record<
     },
   ],
   "font-display": [{ file: "app/layout.tsx", includes: ["Dela_Gothic_One(", "--font-display"] }],
-  "font-dialogue": [{ file: "app/layout.tsx", includes: ["Shantell_Sans(", "--font-dialogue"] }],
+  "font-dialogue": [
+    { file: "app/layout.tsx", includes: ["Shantell_Sans(", "--font-dialogue-latin"] },
+  ],
   "font-dialogue-ja": [
     { file: "app/layout.tsx", includes: ["Yusei_Magic(", "--font-dialogue-ja"] },
   ],
@@ -96,6 +98,33 @@ const EXPECTED_CONTENT: Record<
     { file: "components/manga-frame.tsx", includes: ["export function MangaFrame("] },
   ],
 };
+
+/**
+ * `shadcn add` rewrites a font item's `@theme` entry to `var(<variable>)`. The dialogue fonts
+ * use their own variables so the theme's chained `--font-dialogue` stack survives that rewrite
+ * and Japanese falls through to Yusei Magic (SPEC-manga-theme §8).
+ */
+function dialogueStackProblems(globalsCss: string, layout: string): string[] {
+  const problems: string[] = [];
+  const stack = /--font-dialogue:\s*([^;}]+)/.exec(globalsCss)?.[1]?.trim();
+  if (!stack) {
+    problems.push("app/globals.css has no --font-dialogue declaration");
+  } else if (
+    !stack.includes("var(--font-dialogue-latin") ||
+    !stack.includes("var(--font-dialogue-ja")
+  ) {
+    problems.push(
+      `app/globals.css --font-dialogue lost the Japanese fallback chain: it is "${stack}", ` +
+        "expected var(--font-dialogue-latin, ...), var(--font-dialogue-ja, ...)",
+    );
+  }
+  for (const variable of ["--font-dialogue-latin", "--font-dialogue-ja"]) {
+    if (!layout.includes(`"${variable}"`) && !layout.includes(`'${variable}'`)) {
+      problems.push(`app/layout.tsx does not load a font into ${variable}`);
+    }
+  }
+  return problems;
+}
 
 /** True when `line` is the attribution comment and only imports or a directive precede it. */
 function hasAttributionHeader(content: string, line: string): boolean {
@@ -421,6 +450,18 @@ async function main() {
         for (const needle of includes) {
           if (!content.includes(needle)) missing.push(`${name}: ${file} lacks "${needle}"`);
         }
+      }
+    }
+    if (names.includes("font-dialogue") && names.includes("font-dialogue-ja")) {
+      const read = (file: string) => {
+        const full = path.join(project, file);
+        return existsSync(full) ? readFileSync(full, "utf8") : "";
+      };
+      for (const problem of dialogueStackProblems(
+        read("app/globals.css"),
+        read("app/layout.tsx"),
+      )) {
+        missing.push(`dialogue stack: ${problem}`);
       }
     }
     if (missing.length > 0) {

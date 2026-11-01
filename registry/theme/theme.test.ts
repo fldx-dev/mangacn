@@ -102,6 +102,15 @@ describe("font items", () => {
     ]);
   });
 
+  it("keeps the dialogue faces off --font-dialogue, so shadcn add leaves the stack alone", () => {
+    // In a Next.js project `shadcn add` rewrites each font's @theme entry to var(<variable>);
+    // a font on --font-dialogue would replace the chained stack (SPEC-manga-theme §8).
+    expect(fonts.find((item) => item.name === "font-dialogue")?.font?.variable).toBe(
+      "--font-dialogue-latin",
+    );
+    for (const item of fonts) expect(item.font?.variable).not.toBe("--font-dialogue");
+  });
+
   it("ships Yusei Magic as the Japanese dialogue fallback (SPEC-manga-theme §8)", () => {
     const ja = fonts.find((item) => item.name === "font-dialogue-ja");
     expect(ja?.categories).toEqual(["text"]);
@@ -153,9 +162,9 @@ describe("theme item", () => {
     for (const name of THEME_VARIABLES) expect(Object.keys(vars)).toContain(name);
     expect(vars["font-display"]).toMatch(/^var\(--font-display, "Dela Gothic One",/);
     // Shantell Sans has no Japanese glyphs: kana and kanji fall through to Yusei Magic
-    // (SPEC-manga-theme §8), whether or not next/font set --font-dialogue.
+    // (SPEC-manga-theme §8), whether or not next/font set --font-dialogue-latin.
     expect(vars["font-dialogue"]).toMatch(
-      /^var\(--font-dialogue, "Shantell Sans"\), var\(--font-dialogue-ja, "Yusei Magic"\), /,
+      /^var\(--font-dialogue-latin, "Shantell Sans"\), var\(--font-dialogue-ja, "Yusei Magic"\), /,
     );
     expect(vars["font-dialogue"]).toMatch(/, cursive, sans-serif$/);
   });

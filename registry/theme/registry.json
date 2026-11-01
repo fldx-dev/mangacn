@@ -10,12 +10,12 @@
       "meta": {
         "since": "0.1.0"
       },
-      "docs": "Fonts are separate items: npx shadcn@latest add @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja (or set --font-display / --font-dialogue / --font-dialogue-ja yourself). Outlined components draw through @mangacn/ink-frame: add it before them.",
+      "docs": "Fonts are separate items: npx shadcn@latest add @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja (or set --font-display / --font-dialogue-latin / --font-dialogue-ja yourself). Outlined components draw through @mangacn/ink-frame: add it before them.",
       "files": [],
       "cssVars": {
         "theme": {
           "font-display": "var(--font-display, \"Dela Gothic One\", \"Reggae One\", Impact, \"Arial Black\", sans-serif)",
-          "font-dialogue": "var(--font-dialogue, \"Shantell Sans\"), var(--font-dialogue-ja, \"Yusei Magic\"), \"Patrick Hand SC\", \"Comic Neue\", cursive, sans-serif",
+          "font-dialogue": "var(--font-dialogue-latin, \"Shantell Sans\"), var(--font-dialogue-ja, \"Yusei Magic\"), \"Patrick Hand SC\", \"Comic Neue\", cursive, sans-serif",
           "color-ink": "var(--ink)",
           "color-paper": "var(--paper)",
           "color-spot": "var(--spot)",
@@ -274,7 +274,7 @@
       "name": "font-dialogue",
       "type": "registry:font",
       "title": "Shantell Sans",
-      "description": "Hand-drawn variable sans for speech bubbles and dialogue, exposed as --font-dialogue.",
+      "description": "Hand-drawn variable sans for speech bubbles and dialogue, exposed as --font-dialogue-latin.",
       "categories": ["text"],
       "meta": {
         "since": "0.1.0"
@@ -284,7 +284,7 @@
         "family": "Shantell Sans",
         "provider": "google",
         "import": "Shantell_Sans",
-        "variable": "--font-dialogue",
+        "variable": "--font-dialogue-latin",
         "subsets": ["latin", "latin-ext"]
       }
     },

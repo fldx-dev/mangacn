@@ -22,7 +22,7 @@ const delaGothicOne = Dela_Gothic_One({
 
 // Variable font (300–800); italic is loaded here because registry:font cannot request it.
 const shantellSans = Shantell_Sans({
-  variable: "--font-dialogue",
+  variable: "--font-dialogue-latin",
   subsets: ["latin", "latin-ext"],
   style: ["normal", "italic"],
 });
