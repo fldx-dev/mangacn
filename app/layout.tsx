@@ -46,6 +46,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      // next-themes (site provider) sets the theme class before hydration.
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${delaGothicOne.variable} ${shantellSans.variable} ${yuseiMagic.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
