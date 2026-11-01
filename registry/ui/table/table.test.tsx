@@ -100,6 +100,19 @@ describe("Table", () => {
     );
   });
 
+  it("stops the rule flush at the table's edges and clips its drawing there", () => {
+    // jsdom has no layout; e2e/demos.spec.ts checks the container does not scroll a table
+    // that fits.
+    render(<Chapters />);
+    for (const row of screen.getAllByRole("row")) {
+      expect(row.className).toContain("[&>:first-child>[data-slot=ink-frame]]:start-0");
+      expect(row.className).toContain("[&>:last-child>[data-slot=ink-frame]]:end-0");
+      expect(row.className).toContain(
+        "[&>:is(:first-child,:last-child)>[data-slot=ink-frame]]:overflow-x-clip",
+      );
+    }
+  });
+
   it("draws one stroke per cell once measured", () => {
     const observers = stubResizeObserver();
     render(<Chapters />);

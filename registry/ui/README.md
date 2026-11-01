@@ -253,7 +253,9 @@ merged into `main` with a merge commit and deleted afterwards.
    - **Scroll containers** clip the drawing (it reaches 8 px out). Hang the frame on a
      non-scrolling ancestor of the same size: `select` puts it on the Positioner.
    - **Elements that cannot hold a `<span>`** (`<tr>`): draw from the children. `table`
-     cells each ink their segment of the row rule, overlapping by `--outline-width`.
+     cells each ink their segment of the row rule, overlapping by `--outline-width`. Inside a
+     scroll container a drawing that reaches past the content scrolls with it, so the first
+     and last cells' rules stop flush with the table and clip their drawing (`overflow-x-clip`).
    - **Stock selectors that count children** (`card`'s `>img:first-child`) shift by one;
      rewrite them (`[data-slot=ink-frame]+img`, `img:nth-child(2)`).
    - **Frames above content** (`avatar` outlines over the image) go last with `z-1` and
