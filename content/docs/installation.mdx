@@ -1,0 +1,83 @@
+---
+title: Installation
+description: Add the mangacn registry to a shadcn project and install the theme, the fonts, the ink frame and your first item.
+---
+
+import { Step, Steps } from "fumadocs-ui/components/steps";
+
+## Prerequisites
+
+- **A shadcn project.** Next.js is the reference setup; any framework the shadcn CLI supports
+  works the same way, with your own font loading in place of `next/font`.
+- **Tailwind CSS v4.** The theme ships its tokens as CSS variables and its patterns as
+  `@utility` blocks, which need v4.
+- **The `base-nova` style.** The restyled primitives are built on Base UI, so initialise with
+  that preset (`"style": "base-nova"` in `components.json`).
+- **`cn`.** The `@/lib/utils` helper that `shadcn init` writes.
+
+## Set up
+
+<Steps>
+<Step>
+
+### Add the registry
+
+Name the registry in your `components.json`, so `@mangacn/<item>` resolves to the hosted
+item files:
+
+```json title="components.json"
+{
+  "registries": {
+    "@mangacn": "https://www.mangacn.com/r/{name}.json"
+  }
+}
+```
+
+</Step>
+<Step>
+
+### Install the theme, the fonts, the ink frame and an item
+
+One command takes the theme, the three font items, the ink frame that every drawn component
+outlines itself with, and a first item:
+
+```bash
+npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja @mangacn/ink-frame @mangacn/speech-bubble
+```
+
+After that, any item is one `add` away. Keep the ink frame installed before the outlined
+items: they import it from `@/components/ink-frame`.
+
+</Step>
+<Step>
+
+### Check what landed where
+
+| What | Where |
+|---|---|
+| Restyled primitives (`button`, `dialog`, …) | `components/ui/<item>.tsx` |
+| Manga-native pieces (`speech-bubble`, `panel`, …) | `components/<item>.tsx` |
+| The ink frame | `components/ink-frame.tsx` |
+| Tokens, utilities and keyframes | your `globals.css` |
+| Font loaders (`next/font/google`) | your root `layout.tsx` |
+
+Everything is plain source in your project. Edit it as you would your own code.
+
+</Step>
+</Steps>
+
+## Without the registry entry
+
+The shadcn CLI also installs straight from the GitHub repository, with no `registries` entry:
+
+```bash
+npx shadcn@latest add fldx-dev/mangacn/button
+```
+
+The same items, by their repository path (`fldx-dev/mangacn/<item>`). Use it to try one item
+or when the hosted registry is out of reach.
+
+<Callout title="Every item has its own command">
+  Each component page shows the exact install command for that item, with the ink frame line
+  when the item draws an outline.
+</Callout>
