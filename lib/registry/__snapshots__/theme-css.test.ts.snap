@@ -5,7 +5,7 @@ exports[`renderThemeCssFile > prefixes the generated-file header and matches the
 
 @theme inline {
   --font-display: var(--font-display, "Dela Gothic One", "Reggae One", Impact, "Arial Black", sans-serif);
-  --font-dialogue: var(--font-dialogue, "Shantell Sans", "Patrick Hand SC", "Comic Neue", cursive, sans-serif);
+  --font-dialogue: var(--font-dialogue-latin, "Shantell Sans"), var(--font-dialogue-ja, "Yusei Magic"), "Patrick Hand SC", "Comic Neue", cursive, sans-serif;
   --color-ink: var(--ink);
   --color-paper: var(--paper);
   --color-spot: var(--spot);

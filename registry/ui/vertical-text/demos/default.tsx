@@ -5,7 +5,7 @@ export default function VerticalTextDefaultDemo() {
   return (
     <div className="flex items-start gap-10">
       <SpeechBubble tail="left" className="px-5 py-7">
-        <VerticalText lang="ja" className="h-40 font-display text-xl leading-relaxed">
+        <VerticalText lang="ja" className="h-40 text-xl leading-relaxed">
           まさか、 君がHEROなの？
         </VerticalText>
       </SpeechBubble>

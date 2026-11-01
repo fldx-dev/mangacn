@@ -87,6 +87,46 @@ const UTILITIES = [
 ];
 const KEYFRAMES = ["shake", "pop", "slam", "flash", "speed-in"];
 
+const fonts = loadRegistry().items.filter((item) => item.type === "registry:font") as {
+  name: string;
+  categories?: string[];
+  font?: Record<string, unknown>;
+}[];
+
+describe("font items", () => {
+  it("ships the display, dialogue and Japanese dialogue faces", () => {
+    expect(fonts.map((item) => item.name)).toEqual([
+      "font-display",
+      "font-dialogue",
+      "font-dialogue-ja",
+    ]);
+  });
+
+  it("keeps the dialogue faces off --font-dialogue, so shadcn add leaves the stack alone", () => {
+    // In a Next.js project `shadcn add` rewrites each font's @theme entry to var(<variable>);
+    // a font on --font-dialogue would replace the chained stack (SPEC-manga-theme §8).
+    expect(fonts.find((item) => item.name === "font-dialogue")?.font?.variable).toBe(
+      "--font-dialogue-latin",
+    );
+    for (const item of fonts) expect(item.font?.variable).not.toBe("--font-dialogue");
+  });
+
+  it("ships Yusei Magic as the Japanese dialogue fallback (SPEC-manga-theme §8)", () => {
+    const ja = fonts.find((item) => item.name === "font-dialogue-ja");
+    expect(ja?.categories).toEqual(["text"]);
+    // next/font lists no "japanese" subset for Yusei Magic; the glyphs ship as
+    // unicode-range slices, as for Dela Gothic One.
+    expect(ja?.font).toEqual({
+      family: "Yusei Magic",
+      provider: "google",
+      import: "Yusei_Magic",
+      variable: "--font-dialogue-ja",
+      weight: ["400"],
+      subsets: ["latin"],
+    });
+  });
+});
+
 describe("theme item", () => {
   it("exists", () => {
     expect(theme).toBeDefined();
@@ -121,7 +161,12 @@ describe("theme item", () => {
     const vars = theme?.cssVars?.theme ?? {};
     for (const name of THEME_VARIABLES) expect(Object.keys(vars)).toContain(name);
     expect(vars["font-display"]).toMatch(/^var\(--font-display, "Dela Gothic One",/);
-    expect(vars["font-dialogue"]).toMatch(/^var\(--font-dialogue, "Shantell Sans",/);
+    // Shantell Sans has no Japanese glyphs: kana and kanji fall through to Yusei Magic
+    // (SPEC-manga-theme §8), whether or not next/font set --font-dialogue-latin.
+    expect(vars["font-dialogue"]).toMatch(
+      /^var\(--font-dialogue-latin, "Shantell Sans"\), var\(--font-dialogue-ja, "Yusei Magic"\), /,
+    );
+    expect(vars["font-dialogue"]).toMatch(/, cursive, sans-serif$/);
   });
 
   it("holds the hand-drawn pen defaults the user chose (SPEC-manga-theme §17)", () => {
@@ -161,6 +206,8 @@ describe("theme item", () => {
     // a direct-URL or `owner/repo/item` install fails with "Unknown registry". Fonts are
     // installed alongside the theme instead (see SPEC-manga-theme §4).
     expect(theme?.registryDependencies ?? []).toEqual([]);
-    expect(theme?.docs).toContain("@mangacn/font-display @mangacn/font-dialogue");
+    expect(theme?.docs).toContain(
+      "add @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja",
+    );
   });
 });
