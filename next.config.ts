@@ -1,3 +1,4 @@
+import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -14,4 +15,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Adds the MDX/meta loaders and the `fumadocs-mdx/macro` transform (lib/docs/source.ts);
+// the Turbopack rules above are spread into its own.
+const withMDX = createMDX();
+
+export default withMDX(nextConfig);
