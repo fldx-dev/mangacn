@@ -52,6 +52,13 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Docs and landing chrome span the viewport, sidebar and wordmark flush left (Fumadocs centres
+   them inside 97rem / 1400px). Unlayered so it beats HomeLayout's own utility class. */
+#nd-docs-layout,
+#nd-home-layout {
+  --fd-layout-width: 100%;
+}
+
 /* The theme's own base layer (border, outline, body colours) comes from the import above. */
 @layer base {
   html {
