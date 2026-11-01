@@ -6,13 +6,13 @@
  *
  * Every item is the CI default (Linux, ~2 min). Locally on Windows each install takes
  * 30–40 s, so narrow the set while iterating:
- *   --only=badge,card   the named items (plus `ink-frame` and bare registry dependencies)
+ *   --only=badge,card   the named items (plus `ink-frame` and their registry dependencies)
  *   --changed           the items whose folders differ from origin/main (plus the same);
  *                       exits 0 with a note when nothing under registry/ changed, and
  *                       falls back to every item when the catalog, the smoke script or
  *                       lib/registry changed
  * The stock pre-install + overwrite check runs only when button, card and dialog are all
- * in the set.
+ * in the set; the one-command check (a second project) runs only with every item.
  */
 import { type ChildProcess, execFileSync, type SpawnOptions, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -29,7 +29,7 @@ import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { REGISTRY_URL } from "../lib/registry/index";
+import { mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
 
 const NEXT_VERSION = "16.4.3";
 const SHADCN_VERSION = "4.23.0";
@@ -216,7 +216,10 @@ function changedItems(listed: string[]): string[] | undefined {
   return [...items];
 }
 
-/** `requested` plus INSTALL_FIRST plus the bare registry dependencies that are catalog items. */
+/**
+ * `requested` plus INSTALL_FIRST plus the registry dependencies that are catalog items, by bare
+ * name (`dialog` → `button`) or mangacn URL (`theme` → `font-display`).
+ */
 function withDependencies(
   items: { name: string; registryDependencies?: string[] }[],
   requested: string[],
@@ -227,7 +230,8 @@ function withDependencies(
     if (selected.has(name)) return;
     selected.add(name);
     for (const dep of byName.get(name)?.registryDependencies ?? []) {
-      if (byName.has(dep)) visit(dep);
+      const depName = mangacnItemName(dep) ?? dep;
+      if (byName.has(depName)) visit(depName);
     }
   };
   for (const name of requested) {
@@ -664,7 +668,8 @@ async function main() {
     await check("next build", ["exec", "next", "build"]);
     console.log(`✓ ${names.length} item(s) installed, typechecked and built`);
 
-    await oneCommandCheck(workDir, port);
+    if (selected) console.log("→ partial set: skipping the one-command install check");
+    else await oneCommandCheck(workDir, port);
 
     failed = false;
   } finally {
