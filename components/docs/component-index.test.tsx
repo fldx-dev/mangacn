@@ -13,7 +13,8 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("ComponentIndex", () => {
+// Every test renders all 34 demos in jsdom; the first import of them is slow on a busy machine.
+describe("ComponentIndex", { timeout: 30_000 }, () => {
   it("groups every item under the eight categories in spec order", async () => {
     const { container } = render(await ComponentIndex());
     // Demos bring headings of their own (panel), so only the section headings are read.
