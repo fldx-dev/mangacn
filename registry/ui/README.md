@@ -170,6 +170,7 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
    | separator 1 px                              | `InkFrame shape="line"` filling a `var(--outline-width)` box                  |
    | table row borders                           | `shape="line"` rules, header at `--outline-width-heavy`                       |
    | avatar `rounded-full`                       | `InkFrame shape="ellipse"`                                                    |
+   | badge pill (`rounded-4xl`, `text-xs`)       | caption-box label: `rounded-sm`, `font-display` 11 px uppercase, no press     |
 
    **The frame layer.** `InkFrame` (`registry/theme/ink-frame/ink-frame.tsx`, installed to
    `@/components/ink-frame.tsx`) is a client component that draws a rough.js outline, fill
