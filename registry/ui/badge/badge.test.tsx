@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { expectNoA11yViolations } from "@/lib/test/axe";
 import { Badge, badgeVariants } from "./badge";
 import BadgeDefaultDemo from "./demos/default";
+import BadgeVariantsDemo from "./demos/variants";
 
 afterEach(cleanup);
 
@@ -31,10 +32,44 @@ describe("Badge", () => {
     expect(frameOf(badge)?.getAttribute("data-fill")).toBe("ink");
   });
 
+  it("reads as a caption-box label, not a small button", () => {
+    render(<Badge>New</Badge>);
+    const badge = screen.getByText("New");
+    for (const name of [
+      "rounded-sm",
+      "font-display",
+      "text-[11px]",
+      "leading-none",
+      "tracking-widest",
+      "uppercase",
+      "h-5.5",
+      "px-2",
+      "py-1",
+    ]) {
+      expect(badge.classList.contains(name), name).toBe(true);
+    }
+    for (const name of badge.classList) {
+      expect(name, name).not.toMatch(/^rounded-(4xl|full|lg)$|translate|^font-medium$/);
+    }
+  });
+
+  it.each([
+    ["default", ["bg-primary", "text-primary-foreground"]],
+    ["secondary", ["bg-tone-2", "text-ink"]],
+    ["outline", ["bg-paper", "text-ink"]],
+    ["destructive", ["bg-destructive", "text-spot-foreground"]],
+  ] as const)("colours the %s variant", (variant, classes) => {
+    render(<Badge variant={variant}>x</Badge>);
+    const badge = screen.getByText("x");
+    for (const name of classes) {
+      expect(badge.classList.contains(name), name).toBe(true);
+    }
+  });
+
   it.each([
     ["secondary", "tone"],
     ["outline", "paper"],
-    ["destructive", "paper"],
+    ["destructive", "ink"],
     ["spot", "ink"],
   ] as const)("draws the %s variant with a %s fill", (variant, fill) => {
     render(<Badge variant={variant}>x</Badge>);
@@ -65,5 +100,14 @@ describe("Badge", () => {
 
   it("has no axe violations in its default demo", async () => {
     await expectNoA11yViolations(<BadgeDefaultDemo />);
+  });
+
+  it("has no axe violations in its variants demo", async () => {
+    await expectNoA11yViolations(<BadgeVariantsDemo />);
+  });
+
+  it("marks Japanese labels with lang", () => {
+    render(<BadgeVariantsDemo />);
+    expect(screen.getByText("完結").getAttribute("lang")).toBe("ja");
   });
 });

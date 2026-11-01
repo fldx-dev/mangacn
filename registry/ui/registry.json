@@ -23,7 +23,7 @@
       "name": "badge",
       "type": "registry:ui",
       "title": "Badge",
-      "description": "Stock badge with a hand-drawn ink outline (needs ink-frame) and a spot variant for the one red label.",
+      "description": "Stock badge restyled as a manga caption-box label: square corners, uppercase display face, hand-drawn ink outline (needs ink-frame), no press feedback, plus a spot variant for the one red label.",
       "categories": ["primitive"],
       "meta": {
         "since": "0.1.0"
