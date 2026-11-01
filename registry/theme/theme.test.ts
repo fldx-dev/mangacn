@@ -201,13 +201,17 @@ describe("theme item", () => {
     expect(Object.keys(css["@layer base"] as CssTree)).toEqual(["*", "body"]);
   });
 
-  it("has no namespaced registryDependencies, so URL and GitHub-mode installs resolve", () => {
-    // `@mangacn/...` entries only resolve when the consumer has the namespace configured;
-    // a direct-URL or `owner/repo/item` install fails with "Unknown registry". Fonts are
-    // installed alongside the theme instead (see SPEC-manga-theme §4).
-    expect(theme?.registryDependencies ?? []).toEqual([]);
-    expect(theme?.docs).toContain(
-      "add @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja",
-    );
+  it("pulls in the three fonts by URL, so one add installs them on every install path", () => {
+    // `@mangacn/...` entries only resolve when the consumer has the namespace configured (a
+    // direct-URL or `owner/repo/item` install fails with "Unknown registry"); full URLs
+    // resolve everywhere (SPEC-manga-theme §4).
+    expect(theme?.registryDependencies).toEqual([
+      "https://www.mangacn.com/r/font-display.json",
+      "https://www.mangacn.com/r/font-dialogue.json",
+      "https://www.mangacn.com/r/font-dialogue-ja.json",
+    ]);
+    expect(theme?.docs).toContain("npx shadcn@latest add @mangacn/theme installs the fonts too");
+    expect(theme?.docs).toContain("or set --font-display");
+    expect(theme?.docs).not.toContain("add @mangacn/font-display");
   });
 });

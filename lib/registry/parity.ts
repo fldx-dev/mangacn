@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { mangacnItemName } from "./index";
 
 /** The 21 restyled primitives, by stock base-nova name (SPEC-components §4.3). */
 export const PARITY_PRIMITIVES = [
@@ -219,11 +220,12 @@ function diffList(label: string, expected: string[], actual: string[]): string[]
 }
 
 /**
- * Differences between a restyled primitive and its stock snapshot. Exports, slots and
- * `registryDependencies` must be equal; `dependencies` must include every stock package (an
- * item also declares the base-nova style packages it imports, SPEC-components §4.1). Every
- * stock `cva` group and key must exist, and added groups, keys or `cva` objects are allowed
- * (SPEC-components §4.2: additions only).
+ * Differences between a restyled primitive and its stock snapshot. Exports and slots must be
+ * equal; `dependencies` must include every stock package (an item also declares the base-nova
+ * style packages it imports, SPEC-components §4.1); `registryDependencies` must include every
+ * stock name and may add only mangacn items by URL (`https://www.mangacn.com/r/ink-frame.json`).
+ * Every stock `cva` group and key must exist, and added groups, keys or `cva` objects are
+ * allowed (SPEC-components §4.2: additions only).
  */
 export function compareParity(stock: ParityShape, actual: ParityShape): string[] {
   const problems = [
@@ -232,7 +234,11 @@ export function compareParity(stock: ParityShape, actual: ParityShape): string[]
     ...diffList("dependencies", stock.dependencies, actual.dependencies).filter((problem) =>
       problem.startsWith("dependencies: missing"),
     ),
-    ...diffList("registryDependencies", stock.registryDependencies, actual.registryDependencies),
+    ...diffList(
+      "registryDependencies",
+      stock.registryDependencies,
+      actual.registryDependencies.filter((dep) => mangacnItemName(dep) === null),
+    ),
   ];
   for (const [name, groups] of Object.entries(stock.variants)) {
     const restyled = actual.variants[name];

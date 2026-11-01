@@ -122,6 +122,28 @@ describe("compareParity", () => {
     expect(compareParity(stock, restyled)).toEqual([]);
   });
 
+  it("lets registryDependencies add mangacn items by URL, and nothing else", () => {
+    const withButton = { ...stock, registryDependencies: ["button"] };
+    const restyled = {
+      ...withButton,
+      registryDependencies: ["button", "https://www.mangacn.com/r/ink-frame.json"],
+    };
+    expect(compareParity(withButton, restyled)).toEqual([]);
+    expect(
+      compareParity(withButton, {
+        ...withButton,
+        registryDependencies: [
+          "https://www.mangacn.com/r/ink-frame.json",
+          "https://example.com/r/ink-frame.json",
+          "ink-frame",
+        ],
+      }),
+    ).toEqual([
+      "registryDependencies: missing button",
+      "registryDependencies: unexpected https://example.com/r/ink-frame.json, ink-frame",
+    ]);
+  });
+
   it("reports missing and unexpected exports and slots, missing dependencies and variants", () => {
     const restyled: ParityShape = {
       exports: ["Sample", "SampleAction", "SampleHeading", "sampleVariants", "Extra"],

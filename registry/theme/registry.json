@@ -10,7 +10,12 @@
       "meta": {
         "since": "0.1.0"
       },
-      "docs": "Fonts are separate items: npx shadcn@latest add @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja (or set --font-display / --font-dialogue-latin / --font-dialogue-ja yourself). Outlined components draw through @mangacn/ink-frame: add it before them.",
+      "docs": "npx shadcn@latest add @mangacn/theme installs the fonts too: font-display, font-dialogue and font-dialogue-ja (or set --font-display / --font-dialogue-latin / --font-dialogue-ja yourself). Components install @mangacn/ink-frame, which draws their outlines, on their own.",
+      "registryDependencies": [
+        "https://www.mangacn.com/r/font-display.json",
+        "https://www.mangacn.com/r/font-dialogue.json",
+        "https://www.mangacn.com/r/font-dialogue-ja.json"
+      ],
       "files": [],
       "cssVars": {
         "theme": {
