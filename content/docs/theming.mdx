@@ -1,0 +1,153 @@
+---
+title: Theming
+description: The ink-on-paper tokens, the screentone utilities, the three fonts, dark mode and the pen every outline is drawn with.
+---
+
+The `theme` item writes everything on this page into your `globals.css`: CSS variables for
+light and dark, Tailwind v4 utilities and keyframes. Change a value there and every item
+follows.
+
+## Tokens
+
+Eight tokens carry the whole palette: ink, paper, one spot colour and four screentone greys.
+All values are `oklch`.
+
+<TokenSwatches />
+
+| Token | Role |
+|---|---|
+| `--ink` | line work, text, borders, solid fills |
+| `--paper` | page background, card and popover surfaces |
+| `--spot` | the single accent: focus ring, destructive, emphasis |
+| `--spot-foreground` | text on a spot fill |
+| `--tone-1` … `--tone-4` | screentone greys from 10 % to 70 %: hover and muted surfaces, disabled fills, muted text, halftone dots |
+
+Each token is also a Tailwind colour, so `bg-paper`, `text-spot` and `border-ink` work in your
+own markup.
+
+### How they map onto shadcn
+
+The theme sets the shadcn semantic variables from the tokens, so a stock component that only
+knows `bg-background` still renders ink on paper.
+
+| shadcn variable | Token |
+|---|---|
+| `--background` / `--foreground` | `--paper` / `--ink` |
+| `--card`, `--popover` | `--paper` (the border does the work) |
+| `--primary` / `--primary-foreground` | `--ink` / `--paper` |
+| `--secondary`, `--muted`, `--accent` | `--tone-1`, with `--ink` text (`--tone-3` for muted text) |
+| `--destructive` | `--spot` |
+| `--border`, `--input` | `--ink` |
+| `--ring` | `--spot` |
+| `--chart-1` … `--chart-5` | ink, tone-4, tone-3, tone-2, spot |
+| `--sidebar*` | mirrors background, foreground, accent, border and ring |
+| `--radius` | `0.125rem`, close to square |
+
+shadcn's `--accent` is a hover surface, so the red is `--spot`, never `--accent`.
+
+## Utilities
+
+Screentone, speed lines and ink edges, as Tailwind utilities you can put on any element.
+
+<div className="not-prose my-6 grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-4">
+  <figure className="m-0 grid gap-2">
+    <div className="halftone h-24 rounded-[var(--radius)] ink-border" />
+    <figcaption><code className="text-xs">halftone</code></figcaption>
+  </figure>
+  <figure className="m-0 grid gap-2">
+    <div className="screentone-lines h-24 rounded-[var(--radius)] ink-border" />
+    <figcaption><code className="text-xs">screentone-lines</code></figcaption>
+  </figure>
+  <figure className="m-0 grid gap-2">
+    <div className="screentone-cross h-24 rounded-[var(--radius)] ink-border" />
+    <figcaption><code className="text-xs">screentone-cross</code></figcaption>
+  </figure>
+  <figure className="m-0 grid gap-2">
+    <div className="relative h-24 overflow-hidden rounded-[var(--radius)] ink-border">
+      <div className="speed-lines absolute inset-0" />
+    </div>
+    <figcaption><code className="text-xs">speed-lines</code></figcaption>
+  </figure>
+  <figure className="m-0 grid gap-2">
+    <div className="h-24 rounded-[var(--radius)] bg-paper ink-border" />
+    <figcaption><code className="text-xs">ink-border</code></figcaption>
+  </figure>
+  <figure className="m-0 grid gap-2">
+    <div className="paper-grain h-24 rounded-[var(--radius)] bg-paper ink-border" />
+    <figcaption><code className="text-xs">paper-grain</code></figcaption>
+  </figure>
+</div>
+
+Also in the theme: `halftone-light` and `halftone-dark` (lighter and ink dots),
+`ink-border-heavy`, `ink-shadow`, `ink-shadow-sm` and `ink-shadow-spot`, and the
+`animate-mangacn-shake`, `-pop`, `-slam`, `-flash` and `-speed-in` animations, which stop under
+`prefers-reduced-motion`. The pattern sizes come from `--halftone-size`, `--halftone-dot` and
+`--speed-line-width`.
+
+<Callout title="Decoration only">
+  Screentone is texture. Never let a pattern be the only thing that carries meaning.
+</Callout>
+
+## Fonts
+
+Three font items, each a `next/font/google` loader in your root layout:
+
+<div className="not-prose my-6 grid gap-4">
+  <figure className="m-0 grid gap-1 rounded-[var(--radius)] p-4 ink-border">
+    <p className="font-display text-3xl leading-tight">KA-BOOM! <span lang="ja">ドドド</span></p>
+    <figcaption className="text-sm text-muted-foreground"><code>font-display</code>: Dela Gothic One, <code>--font-display</code>. Sound effects, headings and buttons; ships Latin and Japanese glyphs.</figcaption>
+  </figure>
+  <figure className="m-0 grid gap-1 rounded-[var(--radius)] p-4 ink-border">
+    <p className="font-dialogue text-xl">Wait up, I'm almost there!</p>
+    <figcaption className="text-sm text-muted-foreground"><code>font-dialogue</code>: Shantell Sans, <code>--font-dialogue-latin</code>. Speech bubbles and labels.</figcaption>
+  </figure>
+  <figure className="m-0 grid gap-1 rounded-[var(--radius)] p-4 ink-border">
+    <p lang="ja" className="font-dialogue text-xl">遅いぞ。ここで合ってる…？</p>
+    <figcaption className="text-sm text-muted-foreground"><code>font-dialogue-ja</code>: Yusei Magic, <code>--font-dialogue-ja</code>. Kana and kanji in the dialogue stack.</figcaption>
+  </figure>
+</div>
+
+Components use two utilities, `font-display` and `font-dialogue`. The theme's `--font-dialogue`
+stack chains the two dialogue faces, so the browser picks per glyph: Latin from Shantell Sans,
+Japanese from Yusei Magic. Japanese glyphs are fetched only on pages that use them.
+
+To use your own faces, skip the font items and set `--font-display`, `--font-dialogue-latin` and
+`--font-dialogue-ja` yourself.
+
+## Dark mode
+
+Dark mode is the `.dark` class on an ancestor, usually `<html>`, as shadcn and `next-themes` set
+it. The night palette is dim, not inverted: paper turns a warm charcoal rather than black, ink
+an off-white, and the spot red brightens a little to hold its contrast. Every pair meets
+WCAG AA, ink on paper AAA, in both modes.
+
+```css title="globals.css"
+.dark {
+  --ink: oklch(0.93 0.004 85);
+  --paper: oklch(0.24 0.004 60);
+  /* … the theme writes the full set */
+}
+```
+
+## The pen
+
+Every outline in mangacn is drawn by the ink frame with rough.js, and the pen it draws with is
+a set of CSS variables:
+
+| Variable | Default | What it does |
+|---|---|---|
+| `--outline-width` | `1.5px` | stroke width of every outline |
+| `--outline-width-heavy` | `2.1px` | panels and dialogs |
+| `--ink-roughness` | `1.2` | how much the line wobbles |
+| `--ink-bowing` | `0.8` | how far straight edges bow |
+| `--ink-offset` | `1.5` | how far a stroke strays from its corner points |
+| `--ink-hachure-gap` | `4px` | gap between hatch lines in hatched fills and shadows |
+| `--shadow-offset` | `4px` | shadow distance, only where a component asks for a shadow |
+
+Move the sliders to try a pen, reroll the seed for another wobble, and paste the result into your
+`globals.css`:
+
+<ThemePlayground />
+
+The variables cascade, so a pen can also apply to one region only: set them on a wrapper, as the
+preview above does.
