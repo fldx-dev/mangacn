@@ -67,19 +67,21 @@ export function getPropsGenerator(): Generator {
 }
 
 /**
- * The own props of the `<Pascal>Props` interface in an item's file (repo-relative), or
- * `undefined` when it does not resolve (PropsTable then falls back to a link to the source).
+ * The own props of an interface in an item's file (repo-relative), `<Pascal>Props` unless
+ * `name` says otherwise, or `undefined` when it does not resolve (PropsTable then falls back
+ * to a link to the source).
  */
 export async function generateOwnProps(
   item: string,
   file: string,
   generator: Generator = getPropsGenerator(),
+  name: string = propsInterfaceName(item),
 ): Promise<GeneratedDoc[] | undefined> {
   try {
-    const docs = await generator.generateTypeTable({ path: file, name: propsInterfaceName(item) });
+    const docs = await generator.generateTypeTable({ path: file, name });
     return docs.length > 0 ? docs : undefined;
   } catch (error) {
-    console.warn(`PropsTable: ${propsInterfaceName(item)} did not resolve (${String(error)})`);
+    console.warn(`PropsTable: ${name} did not resolve (${String(error)})`);
     return undefined;
   }
 }

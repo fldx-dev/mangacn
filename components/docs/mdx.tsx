@@ -1,5 +1,6 @@
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
+import { ComponentIndex } from "./component-index";
 import { CopyPrompt } from "./copy-prompt";
 import { DemoFrame } from "./demo-frame";
 import { InstallCommand } from "./install-command";
@@ -11,6 +12,7 @@ import { TokenSwatches } from "./token-swatches";
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
     ...defaultMdxComponents,
+    ComponentIndex,
     CopyPrompt,
     DemoFrame,
     InstallCommand,
