@@ -39,6 +39,25 @@ interface RegistryDocument {
   items?: RegistryItem[];
 }
 
+/**
+ * Where a mangacn item is published (SPEC-registry-core §6.6). Items depend on each other by
+ * this full URL: a bare name resolves to shadcn's registry, and `@mangacn/<name>` only
+ * resolves when the consumer configured that namespace (URL and GitHub-mode installs fail).
+ */
+export const REGISTRY_URL = "https://www.mangacn.com/r/";
+export const REGISTRY_ITEM_URL = `${REGISTRY_URL}{name}.json`;
+
+export function registryItemUrl(name: string): string {
+  return REGISTRY_ITEM_URL.replace("{name}", name);
+}
+
+const ITEM_URL_PATTERN = /^https:\/\/www\.mangacn\.com\/r\/([a-z0-9-]+)\.json$/;
+
+/** The item name of a `https://www.mangacn.com/r/<name>.json` dependency, else `null`. */
+export function mangacnItemName(dependency: string): string | null {
+  return ITEM_URL_PATTERN.exec(dependency)?.[1] ?? null;
+}
+
 /** Repo-relative path with forward slashes, stable on Windows and Linux. */
 function toRepoPath(rootDir: string, absolutePath: string): string {
   return path.relative(rootDir, absolutePath).split(path.sep).join("/");

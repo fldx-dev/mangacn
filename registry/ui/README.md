@@ -54,7 +54,7 @@ Add the item to `registry/ui/registry.json` (never to the root `registry.json`, 
   "categories": ["text"],
   "meta": { "since": "0.1.0" },
   "dependencies": ["class-variance-authority"],
-  "registryDependencies": [],
+  "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
   "files": [{ "path": "speech-bubble/speech-bubble.tsx", "type": "registry:component" }]
 }
 ```
@@ -67,8 +67,12 @@ Add the item to `registry/ui/registry.json` (never to the root `registry.json`, 
 - `dependencies`: every npm package the shipped file imports (`class-variance-authority`,
   `@base-ui/react`, `motion`, `cn`). Anything beyond those needs maintainer sign-off: users
   pay for it.
-- `registryDependencies`: **bare names only** (`button`, never `@mangacn/button`). A
-  namespaced name breaks URL and GitHub-mode installs.
+- `registryDependencies`: stock shadcn items by **bare name** (`button`), mangacn items by
+  **full URL** (`https://www.mangacn.com/r/ink-frame.json`), never `@mangacn/<name>`: a
+  namespaced name only resolves when the user configured `@mangacn`, so URL and GitHub-mode
+  installs fail, and a bare mangacn name resolves to shadcn's registry. Declare every
+  mangacn item a shipped file imports, and nothing it does not import (the theme's fonts are
+  the exception: they install no file to import). `registry/ui/imports.test.ts` enforces it.
 
 Add new entries in spec order (primitives first, then manga-native pieces) so parallel
 branches merge as appended array entries.
@@ -83,7 +87,7 @@ Enforced by `registry/ui/imports.test.ts` for every file in every catalog:
 | packages in the item's `dependencies` (and subpaths)                                                         | `import { Popover } from "@base-ui/react/popover"`  |
 | `@/lib/utils`                                                                                                | `import { cn } from "@/lib/utils"`                  |
 | `@/components/ui/<x>`, `@/components/<x>`, `@/lib/<x>`, `@/hooks/<x>` where `x` is in `registryDependencies` | `import { Button } from "@/components/ui/button"`   |
-| `@/components/ink-frame` (installed explicitly, never declared; see recipe 1)                                | `import { InkFrame } from "@/components/ink-frame"` |
+| the same for a mangacn item declared by URL (`https://www.mangacn.com/r/ink-frame.json`; see recipe 1)       | `import { InkFrame } from "@/components/ink-frame"` |
 | relative imports to another file of the **same** item                                                        | `import { parts } from "./dialog-parts"`            |
 
 Everything else fails with `file:line imports "specifier" (item): reason`: `@/app/…`,
@@ -154,9 +158,9 @@ merged into `main` with a merge commit and deleted afterwards.
    Copy the printed source into `registry/ui/<name>/<name>.tsx`. Do not copy the raw
    `files[0].content` from the JSON instead: it still has shadcn's internal
    `@/app/(create)/components/icon-placeholder` and `@/registry/base-nova/ui/<x>` imports,
-   which the CLI turns into `lucide-react` icons and `@/components/ui/<x>`. Keep
-   `registryDependencies` exactly as stock lists them
-   (`registry/ui/__parity__/base-nova.json` has the current values). For `dependencies`,
+   which the CLI turns into `lucide-react` icons and `@/components/ui/<x>`. Keep every
+   stock `registryDependencies` name (`registry/ui/__parity__/base-nova.json` has the
+   current values) and add the `ink-frame` URL (step 3). For `dependencies`,
    list every package the file imports: stock items declare only `cn`, because
    `@base-ui/react`, `class-variance-authority` and `lucide-react` come with the base-nova
    style at `shadcn init`; mangacn declares them so installs into other setups get them too.
@@ -234,13 +238,13 @@ merged into `main` with a merge commit and deleted afterwards.
      `registry/ui/speech-bubble/speech-bubble.tsx` is the reference. `dashed` dashes the stroke.
    - Cost: one SVG per outlined element, redrawn only on resize. Long lists pass one shared
      `seed` and prefer `shape="line"` row rules over full frames.
-   - **Do not declare it.** `registryDependencies: ["ink-frame"]` would resolve to shadcn's
-     registry and `@mangacn/ink-frame` breaks URL installs, so `registryDependencies` stay
-     equal to stock (parity is unchanged) and users install it first:
-     `npx shadcn@latest add @mangacn/ink-frame @mangacn/button`. The import rule allows
-     `@/components/ink-frame` for this reason, `tsconfig.json` and `vitest.config.mts` map it
-     to the source file in this repo, and the smoke test installs `ink-frame` before every
-     other item. Once mangacn.com is live, items will declare its full URL instead.
+   - **Declare it as a URL.** Add `"https://www.mangacn.com/r/ink-frame.json"` to
+     `registryDependencies`, after stock's names (`["button", "https://…/ink-frame.json"]`
+     for `dialog`), so `npx shadcn@latest add @mangacn/button` installs the frame too, in URL,
+     namespaced and GitHub mode alike. Not `ink-frame` (that resolves to shadcn's registry)
+     and not `@mangacn/ink-frame` (that fails unless the user configured `@mangacn`). Parity
+     allows these URL additions on top of stock's names. `tsconfig.json` and
+     `vitest.config.mts` map `@/components/ink-frame` to the source file in this repo.
 
    Cases the first-child rule does not cover (Tasks 23–25 found these):
    - **Void elements** (`input`, `textarea`) cannot hold the frame, so the `InkFrame` wraps
@@ -283,8 +287,8 @@ merged into `main` with a merge commit and deleted afterwards.
    to the source in `tsconfig.json` `paths` and the `vitest.config.mts` aliases, as
    `@/components/ink-frame` is. Because that entry is a bare stock name, installing
    `@mangacn/dialog` or `@mangacn/sheet` also installs shadcn's **stock** button; users add
-   `@mangacn/button` after them (`npx shadcn@latest add @mangacn/ink-frame @mangacn/dialog`,
-   then `npx shadcn@latest add @mangacn/button --overwrite`), and the smoke test installs every
+   `@mangacn/button` after them (`npx shadcn@latest add @mangacn/dialog`, then
+   `npx shadcn@latest add @mangacn/button --overwrite`), and the smoke test installs every
    item after the items that depend on it.
 
    ```tsx
@@ -337,7 +341,9 @@ merged into `main` with a merge commit and deleted afterwards.
    the first child of a `relative isolate` container.
 2. **Catalog entry:** `"type": "registry:component"`, file type `registry:component`,
    `dependencies` listing every package the file imports (`["class-variance-authority"]` for
-   the example above; `@/lib/utils` is always available and is not a dependency).
+   the example above; `@/lib/utils` is always available and is not a dependency), and
+   `registryDependencies: ["https://www.mangacn.com/r/ink-frame.json"]` if it imports
+   `InkFrame`.
 3. **Demo and test** as in recipe 1. A demo is a default export with no props that imports
    the piece from `@/registry/ui/<name>/<name>`:
 
@@ -387,7 +393,8 @@ page renders that one demo centred on paper and nothing else.
 
 `registry/ui/parity.test.ts` compares every restyled primitive (a `registry:ui` item whose
 name is one of the 21 stock primitives) with `registry/ui/__parity__/base-nova.json`:
-named exports, `data-slot` values and `registryDependencies` must equal stock;
+named exports and `data-slot` values must equal stock; `registryDependencies` must contain
+stock's names and may add only `https://www.mangacn.com/r/<name>.json` entries;
 `dependencies` must contain every stock package (more is fine); every stock `cva` variant
 group and key must still exist (added keys such as `variant="sfx"` are fine).
 A failure lists what is missing or unexpected. Primitives not restyled yet show as `todo`.

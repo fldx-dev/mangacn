@@ -6,13 +6,13 @@
  *
  * Every item is the CI default (Linux, ~2 min). Locally on Windows each install takes
  * 30–40 s, so narrow the set while iterating:
- *   --only=badge,card   the named items (plus `ink-frame` and bare registry dependencies)
+ *   --only=badge,card   the named items (plus `ink-frame` and their registry dependencies)
  *   --changed           the items whose folders differ from origin/main (plus the same);
  *                       exits 0 with a note when nothing under registry/ changed, and
  *                       falls back to every item when the catalog, the smoke script or
  *                       lib/registry changed
  * The stock pre-install + overwrite check runs only when button, card and dialog are all
- * in the set.
+ * in the set; the one-command check (a second project) runs only with every item.
  */
 import { type ChildProcess, execFileSync, type SpawnOptions, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -29,6 +29,7 @@ import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
 
 const NEXT_VERSION = "16.4.3";
 const SHADCN_VERSION = "4.23.0";
@@ -153,10 +154,9 @@ function stripImports(source: string): string {
 }
 
 /**
- * Installed before every other mangacn item, in this order. Outlined items import
- * `@/components/ink-frame` without declaring it (a bare registryDependency would resolve to
- * shadcn's registry, a namespaced one breaks URL installs), so users add it first; see
- * SPEC-components §4.4.
+ * Installed before every other mangacn item, in this order. Outlined items also pull
+ * ink-frame in by its URL (SPEC-components §4.4); installing it alone first checks it on its own
+ * and keeps the per-item installs from all blaming the first item that brings it.
  */
 const INSTALL_FIRST = ["ink-frame"];
 
@@ -216,7 +216,10 @@ function changedItems(listed: string[]): string[] | undefined {
   return [...items];
 }
 
-/** `requested` plus INSTALL_FIRST plus the bare registry dependencies that are catalog items. */
+/**
+ * `requested` plus INSTALL_FIRST plus the registry dependencies that are catalog items, by bare
+ * name (`dialog` → `button`) or mangacn URL (`theme` → `font-display`).
+ */
 function withDependencies(
   items: { name: string; registryDependencies?: string[] }[],
   requested: string[],
@@ -227,7 +230,8 @@ function withDependencies(
     if (selected.has(name)) return;
     selected.add(name);
     for (const dep of byName.get(name)?.registryDependencies ?? []) {
-      if (byName.has(dep)) visit(dep);
+      const depName = mangacnItemName(dep) ?? dep;
+      if (byName.has(depName)) visit(depName);
     }
   };
   for (const name of requested) {
@@ -239,9 +243,10 @@ function withDependencies(
 
 /**
  * Catalog order, except that an item named in another item's `registryDependencies` installs
- * after that item. The names are bare stock names (`dialog` → `button`), so installing
+ * after that item. Stock dependencies are bare names (`dialog` → `button`), so installing
  * `@mangacn/dialog` pulls shadcn's stock button and `--overwrite` replaces a mangacn button
- * installed earlier; users get the same advice (registry/ui/README.md).
+ * installed earlier; users get the same advice (registry/ui/README.md). URL dependencies
+ * (`https://www.mangacn.com/r/ink-frame.json`) install the mangacn item and need no ordering.
  */
 function installOrder(
   items: { name: string; registryDependencies?: string[] }[],
@@ -384,7 +389,15 @@ function run(command: string, args: string[], cwd: string): Promise<string> {
   });
 }
 
-/** Serves `public/r` at `/r/*` on a free port. */
+/** Every `/r/*` path the registry server has answered, in order. */
+const served: string[] = [];
+
+/**
+ * Serves `public/r` at `/r/*` on a free port. Items depend on each other by their published URL
+ * (`https://www.mangacn.com/r/ink-frame.json`, SPEC-registry-core §6.5), which the CLI fetches
+ * as is; the server rewrites that origin to its own, so dependencies come from this build
+ * rather than from the deployed site, which may predate it.
+ */
 function serveRegistry(): Promise<Server> {
   const server = createServer((req, res) => {
     const pathname = decodeURIComponent(new URL(req.url ?? "/", "http://localhost").pathname);
@@ -398,7 +411,10 @@ function serveRegistry(): Promise<Server> {
       res.writeHead(404).end();
       return;
     }
-    res.writeHead(200, { "Content-Type": "application/json" }).end(readFileSync(file));
+    served.push(pathname);
+    const { port } = server.address() as AddressInfo;
+    const body = readFileSync(file, "utf8").replaceAll(REGISTRY_URL, `http://127.0.0.1:${port}/r/`);
+    res.writeHead(200, { "Content-Type": "application/json" }).end(body);
   });
   return new Promise((resolve) => server.listen(0, "127.0.0.1", () => resolve(server)));
 }
@@ -429,6 +445,122 @@ function blame(output: string, owners: Map<string, string>): string[] {
     if (normalized.includes(file)) items.add(item);
   }
   return [...items];
+}
+
+/** A fresh Next.js app in `workDir/<name>`, shadcn-initialised, with `@mangacn` on `port`. */
+async function createProject(workDir: string, name: string, port: number): Promise<string> {
+  const project = path.join(workDir, name);
+  console.log(`→ create-next-app@${NEXT_VERSION} in ${project}`);
+  await run(
+    "pnpm",
+    [
+      "dlx",
+      `create-next-app@${NEXT_VERSION}`,
+      name,
+      "--ts",
+      "--tailwind",
+      "--biome",
+      "--app",
+      "--no-src-dir",
+      "--use-pnpm",
+      "--disable-git",
+      "--no-agent-feedback",
+      "--yes",
+    ],
+    workDir,
+  );
+
+  console.log(`→ shadcn@${SHADCN_VERSION} init`);
+  await run("pnpm", ["dlx", `shadcn@${SHADCN_VERSION}`, "init", "-d", "--yes"], project);
+
+  const componentsPath = path.join(project, "components.json");
+  const components = JSON.parse(readFileSync(componentsPath, "utf8"));
+  components.registries = {
+    ...components.registries,
+    "@mangacn": `http://127.0.0.1:${port}/r/{name}.json`,
+  };
+  writeFileSync(componentsPath, `${JSON.stringify(components, null, 2)}\n`);
+  return project;
+}
+
+/** What `EXPECTED_CONTENT` says `names` should have left in `project` but did not. */
+function contentProblems(project: string, names: string[]): string[] {
+  const read = (file: string) => {
+    const full = path.join(project, file);
+    return existsSync(full) ? readFileSync(full, "utf8") : undefined;
+  };
+  const missing: string[] = [];
+  for (const name of names) {
+    for (const { file, attribution, includes = [] } of EXPECTED_CONTENT[name] ?? []) {
+      const content = read(file);
+      if (content === undefined) {
+        missing.push(`${name}: ${file} was not installed`);
+        continue;
+      }
+      if (attribution && !hasAttributionHeader(content, attribution)) {
+        missing.push(`${name}: ${file} lacks the header "${attribution}" after its imports`);
+      }
+      for (const needle of includes) {
+        if (!content.includes(needle)) missing.push(`${name}: ${file} lacks "${needle}"`);
+      }
+    }
+  }
+  if (names.includes("font-dialogue") && names.includes("font-dialogue-ja")) {
+    for (const problem of dialogueStackProblems(
+      read("app/globals.css") ?? "",
+      read("app/layout.tsx") ?? "",
+    )) {
+      missing.push(`dialogue stack: ${problem}`);
+    }
+  }
+  return missing;
+}
+
+/** The install a user types: the theme and one outlined piece, nothing else named. */
+const ONE_COMMAND = ["theme", "speech-bubble"];
+/** What it must install: the theme's three fonts and the bubble's ink-frame come by URL. */
+const ONE_COMMAND_INSTALLS = [
+  "theme",
+  "font-display",
+  "font-dialogue",
+  "font-dialogue-ja",
+  "ink-frame",
+  "speech-bubble",
+];
+
+/**
+ * In a second fresh project, `shadcn add @mangacn/theme @mangacn/speech-bubble` alone must
+ * install `ONE_COMMAND_INSTALLS`, every one fetched from this build, and typecheck.
+ */
+async function oneCommandCheck(workDir: string, port: number) {
+  const project = await createProject(workDir, "one-command", port);
+  projectDir = project;
+  const items = ONE_COMMAND.map((name) => `@mangacn/${name}`);
+  console.log(`→ shadcn add ${items.join(" ")} (one command)`);
+  served.length = 0;
+  try {
+    await run("pnpm", ["dlx", `shadcn@${SHADCN_VERSION}`, "add", ...items, "--yes"], project);
+  } catch (error) {
+    const output = error instanceof SmokeError ? error.output : "";
+    throw new SmokeError(`One-command install of ${items.join(" ")} failed`, output);
+  }
+  const problems = [
+    ...ONE_COMMAND_INSTALLS.filter((name) => !served.includes(`/r/${name}.json`)).map(
+      (name) => `${name}.json was never fetched from the local registry`,
+    ),
+    ...contentProblems(project, ONE_COMMAND_INSTALLS),
+  ];
+  if (problems.length > 0) {
+    throw new SmokeError(`One-command install check failed:\n  ${problems.join("\n  ")}`);
+  }
+  console.log("→ tsc --noEmit (one command)");
+  try {
+    await run("pnpm", ["exec", "tsc", "--noEmit"], project);
+  } catch (error) {
+    const output = error instanceof SmokeError ? error.output : "";
+    throw new SmokeError("tsc --noEmit failed after the one-command install", output);
+  }
+  console.log(`✓ one command installed ${ONE_COMMAND_INSTALLS.join(", ")} and typechecked`);
 }
 
 async function main() {
@@ -477,36 +609,7 @@ async function main() {
 
   let failed = true;
   try {
-    console.log(`→ create-next-app@${NEXT_VERSION} in ${project}`);
-    await run(
-      "pnpm",
-      [
-        "dlx",
-        `create-next-app@${NEXT_VERSION}`,
-        "app",
-        "--ts",
-        "--tailwind",
-        "--biome",
-        "--app",
-        "--no-src-dir",
-        "--use-pnpm",
-        "--disable-git",
-        "--no-agent-feedback",
-        "--yes",
-      ],
-      workDir,
-    );
-
-    console.log(`→ shadcn@${SHADCN_VERSION} init`);
-    await run("pnpm", ["dlx", `shadcn@${SHADCN_VERSION}`, "init", "-d", "--yes"], project);
-
-    const componentsPath = path.join(project, "components.json");
-    const components = JSON.parse(readFileSync(componentsPath, "utf8"));
-    components.registries = {
-      ...components.registries,
-      "@mangacn": `http://127.0.0.1:${port}/r/{name}.json`,
-    };
-    writeFileSync(componentsPath, `${JSON.stringify(components, null, 2)}\n`);
+    await createProject(workDir, "app", port);
 
     for (const stock of checkOverwrite ? STOCK_PREINSTALL : []) {
       console.log(`→ shadcn add ${stock.name} (stock, to be overwritten)`);
@@ -545,35 +648,7 @@ async function main() {
     }
 
     console.log("→ installed content");
-    const missing: string[] = [];
-    for (const name of names) {
-      for (const { file, attribution, includes = [] } of EXPECTED_CONTENT[name] ?? []) {
-        const full = path.join(project, file);
-        if (!existsSync(full)) {
-          missing.push(`${name}: ${file} was not installed`);
-          continue;
-        }
-        const content = readFileSync(full, "utf8");
-        if (attribution && !hasAttributionHeader(content, attribution)) {
-          missing.push(`${name}: ${file} lacks the header "${attribution}" after its imports`);
-        }
-        for (const needle of includes) {
-          if (!content.includes(needle)) missing.push(`${name}: ${file} lacks "${needle}"`);
-        }
-      }
-    }
-    if (names.includes("font-dialogue") && names.includes("font-dialogue-ja")) {
-      const read = (file: string) => {
-        const full = path.join(project, file);
-        return existsSync(full) ? readFileSync(full, "utf8") : "";
-      };
-      for (const problem of dialogueStackProblems(
-        read("app/globals.css"),
-        read("app/layout.tsx"),
-      )) {
-        missing.push(`dialogue stack: ${problem}`);
-      }
-    }
+    const missing = contentProblems(project, names);
     if (missing.length > 0) {
       throw new SmokeError(`Installed content check failed:\n  ${missing.join("\n  ")}`);
     }
@@ -591,13 +666,16 @@ async function main() {
     };
     await check("tsc --noEmit", ["exec", "tsc", "--noEmit"]);
     await check("next build", ["exec", "next", "build"]);
+    console.log(`✓ ${names.length} item(s) installed, typechecked and built`);
+
+    if (selected) console.log("→ partial set: skipping the one-command install check");
+    else await oneCommandCheck(workDir, port);
 
     failed = false;
-    console.log(`✓ ${names.length} item(s) installed, typechecked and built`);
   } finally {
     server.close();
     if (failed) {
-      console.error(`Temp project kept for inspection: ${project}`);
+      console.error(`Temp project kept for inspection: ${projectDir}`);
     } else {
       rmSync(workDir, { recursive: true, force: true, maxRetries: 3 });
     }
@@ -614,7 +692,8 @@ function itemCount(): number {
   }
 }
 
-const timeoutMs = BASE_TIMEOUT_MS + PER_ITEM_TIMEOUT_MS * itemCount();
+// The one-command check builds a second project: setup budget again.
+const timeoutMs = 2 * BASE_TIMEOUT_MS + PER_ITEM_TIMEOUT_MS * itemCount();
 const timer = setTimeout(() => {
   if (currentChild) killTree(currentChild);
   console.error(`✗ registry smoke timed out after ${timeoutMs / 60000} min`);

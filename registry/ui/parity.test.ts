@@ -10,9 +10,11 @@ import {
   type ParitySnapshot,
 } from "@/lib/registry/parity";
 
-// SPEC-components §4.1: each restyled primitive keeps stock's exports, slots, variant keys and
-// registryDependencies; its dependencies are a superset of stock's (it also declares the
-// base-nova style packages it imports). The snapshot is refreshed only by `pnpm gen:parity`.
+// SPEC-components §4.1: each restyled primitive keeps stock's exports, slots and variant keys;
+// its dependencies are a superset of stock's (it also declares the base-nova style packages it
+// imports), and its registryDependencies are stock's names plus mangacn items by URL
+// (`https://www.mangacn.com/r/ink-frame.json`). The snapshot is refreshed only by
+// `pnpm gen:parity`.
 const snapshot = JSON.parse(
   readFileSync(path.resolve(PARITY_SNAPSHOT_PATH), "utf8"),
 ) as ParitySnapshot;

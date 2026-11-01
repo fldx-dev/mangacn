@@ -1,0 +1,51 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "bad-deps-fixture",
+  "homepage": "https://example.com",
+  "items": [
+    {
+      "name": "ink-frame",
+      "type": "registry:component",
+      "files": [{ "path": "files/ink-frame.ts", "type": "registry:component" }]
+    },
+    { "name": "font-display", "type": "registry:font" },
+    {
+      "name": "theme",
+      "type": "registry:theme",
+      "registryDependencies": ["https://www.mangacn.com/r/font-display.json"]
+    },
+    {
+      "name": "framed",
+      "type": "registry:component",
+      "registryDependencies": ["button", "https://www.mangacn.com/r/ink-frame.json"],
+      "files": [{ "path": "files/framed.ts", "type": "registry:component" }]
+    },
+    {
+      "name": "undeclared",
+      "type": "registry:component",
+      "files": [{ "path": "files/framed.ts", "type": "registry:component" }]
+    },
+    {
+      "name": "unused",
+      "type": "registry:component",
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [{ "path": "files/plain.ts", "type": "registry:component" }]
+    },
+    {
+      "name": "bare",
+      "type": "registry:component",
+      "registryDependencies": ["button", "ink-frame"],
+      "files": [{ "path": "files/framed.ts", "type": "registry:component" }]
+    },
+    {
+      "name": "elsewhere",
+      "type": "registry:component",
+      "registryDependencies": [
+        "@mangacn/ink-frame",
+        "https://example.com/r/ink-frame.json",
+        "https://www.mangacn.com/r/missing.json"
+      ],
+      "files": [{ "path": "files/plain.ts", "type": "registry:component" }]
+    }
+  ]
+}

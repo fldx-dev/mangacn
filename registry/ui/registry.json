@@ -11,6 +11,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "button/button.tsx",
@@ -29,6 +30,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "badge/badge.tsx",
@@ -47,6 +49,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "separator/separator.tsx",
@@ -65,6 +68,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "card/card.tsx",
@@ -83,6 +87,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "input/input.tsx",
@@ -101,6 +106,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "textarea/textarea.tsx",
@@ -119,6 +125,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "checkbox/checkbox.tsx",
@@ -137,6 +144,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "radio-group/radio-group.tsx",
@@ -155,6 +163,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "switch/switch.tsx",
@@ -173,6 +182,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "select/select.tsx",
@@ -191,6 +201,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "tabs/tabs.tsx",
@@ -209,7 +220,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "lucide-react"],
-      "registryDependencies": ["button"],
+      "registryDependencies": ["button", "https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "dialog/dialog.tsx",
@@ -228,7 +239,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "lucide-react"],
-      "registryDependencies": ["button"],
+      "registryDependencies": ["button", "https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "sheet/sheet.tsx",
@@ -247,6 +258,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "tooltip/tooltip.tsx",
@@ -265,6 +277,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "popover/popover.tsx",
@@ -283,6 +296,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "accordion/accordion.tsx",
@@ -301,6 +315,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "alert/alert.tsx",
@@ -319,6 +334,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "avatar/avatar.tsx",
@@ -337,6 +353,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "progress/progress.tsx",
@@ -355,6 +372,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "skeleton/skeleton.tsx",
@@ -373,6 +391,7 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "table/table.tsx",
@@ -389,6 +408,7 @@
       "categories": ["layout"],
       "meta": { "since": "0.1.0" },
       "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "panel/panel.tsx",
@@ -421,6 +441,7 @@
       "categories": ["text"],
       "meta": { "since": "0.1.0" },
       "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "speech-bubble/speech-bubble.tsx",
@@ -437,6 +458,7 @@
       "categories": ["text"],
       "meta": { "since": "0.1.0" },
       "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "thought-bubble/thought-bubble.tsx",
@@ -581,6 +603,7 @@
       "categories": ["data"],
       "meta": { "since": "0.1.0" },
       "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
         {
           "path": "manga-frame/manga-frame.tsx",

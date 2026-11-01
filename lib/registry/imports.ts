@@ -1,6 +1,12 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import type { LoadedRegistry, LoadedRegistryItem } from "./index";
+import {
+  type LoadedRegistry,
+  type LoadedRegistryItem,
+  mangacnItemName,
+  registryItemUrl,
+} from "./index";
+import { PARITY_PRIMITIVES } from "./parity";
 
 export interface ImportSpecifier {
   specifier: string;
@@ -84,23 +90,26 @@ export function packageName(specifier: string): string {
   return name.replace(/(.)@.*$/, "$1");
 }
 
-/**
- * mangacn components that items import without declaring them, because users install them
- * explicitly first (SPEC-components §4.4: a bare registryDependency would resolve to shadcn's
- * registry and a namespaced one breaks URL installs). The registry smoke test installs them
- * before every other item.
- */
-export const EXPLICIT_INSTALL_IMPORTS = ["@/components/ink-frame"];
-
 /** Install folders (shadcn aliases) that a declared registry dependency can be imported from. */
 const REGISTRY_DEPENDENCY_PREFIXES = ["@/components/ui/", "@/components/", "@/lib/", "@/hooks/"];
+
+/** `@/components/ui/button` → `button`; `null` for anything not directly in an install folder. */
+function aliasedItemName(specifier: string): string | null {
+  for (const prefix of REGISTRY_DEPENDENCY_PREFIXES) {
+    if (!specifier.startsWith(prefix)) continue;
+    const name = specifier.slice(prefix.length);
+    if (!name.includes("/")) return name;
+  }
+  return null;
+}
 
 /**
  * Why `specifier` may not appear in a file shipped by `item`, or `null` when it is allowed.
  * Allowed (SPEC-registry-core §6.5): `react`, `react-dom`, packages in the item's
- * `dependencies`, `@/lib/utils`, `@/components/ink-frame` (installed explicitly), and
- * `@/components/ui/<x>` (or the lib/component/hook alias) where `x` is in the item's
- * `registryDependencies`; relative imports only to another file of the same item.
+ * `dependencies`, `@/lib/utils`, and `@/components/ui/<x>` (or the lib/component/hook alias)
+ * where `x` is in the item's `registryDependencies`, as a bare stock name or a
+ * `https://www.mangacn.com/r/<x>.json` URL; relative imports only to another file of the same
+ * item.
  */
 export function importViolation(
   specifier: string,
@@ -114,13 +123,10 @@ export function importViolation(
   }
 
   if (specifier.startsWith("@/")) {
-    if (specifier === "@/lib/utils" || EXPLICIT_INSTALL_IMPORTS.includes(specifier)) return null;
-    const declared = (item.registryDependencies ?? []).map((dep) => dep.split("/").pop());
-    for (const prefix of REGISTRY_DEPENDENCY_PREFIXES) {
-      if (!specifier.startsWith(prefix)) continue;
-      const name = specifier.slice(prefix.length);
-      if (!name.includes("/") && declared.includes(name)) return null;
-    }
+    if (specifier === "@/lib/utils") return null;
+    const declared = (item.registryDependencies ?? []).map((dep) => mangacnItemName(dep) ?? dep);
+    const name = aliasedItemName(specifier);
+    if (name && declared.includes(name)) return null;
     return "alias import that is not @/lib/utils or a declared registryDependency";
   }
 
@@ -146,6 +152,67 @@ export function findImportViolations(
     }
   }
   return violations;
+}
+
+/** Item types whose files land in an install folder, so a dependent must import them. */
+const IMPORTED_TYPES = ["registry:ui", "registry:component", "registry:lib", "registry:hook"];
+
+/**
+ * Checks every item's `registryDependencies` against its shipped imports (SPEC-registry-core
+ * §6.5): stock items by bare name, mangacn items only by `https://www.mangacn.com/r/<name>.json`
+ * (a bare `ink-frame` would resolve to shadcn's registry, `@mangacn/ink-frame` fails URL and
+ * GitHub-mode installs), every imported mangacn item declared, and every declared mangacn
+ * component imported. One `item: problem` line each.
+ */
+export function findRegistryDependencyProblems(
+  registry: LoadedRegistry,
+  rootDir = process.cwd(),
+): string[] {
+  const catalog = new Map(registry.items.map((item) => [item.name, item]));
+  // Restyled primitives keep stock names, so a bare `button` is shadcn's and stays bare.
+  const mangacnOnly = (name: string) =>
+    catalog.has(name) && !(PARITY_PRIMITIVES as readonly string[]).includes(name);
+  const problems: string[] = [];
+  for (const item of registry.items) {
+    const imported = new Set<string>();
+    for (const entry of item.files) {
+      const source = readFileSync(path.resolve(rootDir, entry.path), "utf8");
+      for (const { specifier } of extractImports(source)) {
+        const name = aliasedItemName(specifier);
+        if (name) imported.add(name);
+      }
+    }
+    const declared = new Set<string>();
+    for (const dep of item.registryDependencies ?? []) {
+      const name = mangacnItemName(dep);
+      if (dep.startsWith("@")) {
+        const url = registryItemUrl(dep.split("/").pop() ?? dep);
+        problems.push(`${item.name}: "${dep}" is namespaced; declare ${url}`);
+      } else if (name === null && dep.includes(":")) {
+        problems.push(`${item.name}: "${dep}" is not a stock name or ${registryItemUrl("<name>")}`);
+      } else if (name === null) {
+        if (mangacnOnly(dep)) {
+          problems.push(
+            `${item.name}: "${dep}" resolves to shadcn's registry; declare ${registryItemUrl(dep)}`,
+          );
+        }
+      } else if (!catalog.has(name)) {
+        problems.push(`${item.name}: "${dep}" names no item in the catalog`);
+      } else {
+        declared.add(name);
+        const type = catalog.get(name)?.type ?? "";
+        if (IMPORTED_TYPES.includes(type) && !imported.has(name)) {
+          problems.push(`${item.name}: declares ${dep} but no shipped file imports it`);
+        }
+      }
+    }
+    for (const name of imported) {
+      if (mangacnOnly(name) && !declared.has(name)) {
+        problems.push(`${item.name}: imports ${name} without declaring ${registryItemUrl(name)}`);
+      }
+    }
+  }
+  return problems;
 }
 
 /** One line per violation: `file:line imports "specifier" (item): reason`. */
