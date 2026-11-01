@@ -121,6 +121,31 @@ another item, undeclared packages, Node built-ins. Demos and tests may import an
 Code style: double quotes, semicolons, width 100 (Biome enforces it), named exports only in
 shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` for state.
 
+### Branches and commits
+
+Work happens on short-lived branches off `main`, named by what they change, not by who or
+which task made them:
+
+| Prefix   | For                                  | Example                                           |
+| -------- | ------------------------------------ | ------------------------------------------------- |
+| `feat/`  | a new item, demo, page or capability | `feat/add-page-turn`, `feat/docs-install-command` |
+| `fix/`   | a behaviour or visual fix            | `fix/badge-label`, `fix/ink-line-ends`            |
+| `chore/` | tooling, dependencies, CI, scripts   | `chore/fast-local-loop`                           |
+| `docs/`  | site content and guides              | `docs/theming-guide`                              |
+| `test/`  | tests and baselines only             | `test/site-visual-suite`                          |
+
+Slugs are kebab-case. A Claude Code session's worktree branch is named by the app
+(`claude/<slug>-<suffix>`); that local name stays local. Publish under the conventional name
+with an explicit refspec and keep pushing to it:
+
+```bash
+git push -u origin HEAD:refs/heads/feat/add-page-turn
+```
+
+Commit subjects carry the matching prefix (`feat:`, `fix:`, `chore:`, `docs:`, `test:`), one
+change per commit, baselines in the same commit as the change that moved them. Branches are
+merged into `main` with a merge commit and deleted afterwards.
+
 ## Recipe 1: restyle a stock primitive
 
 1. **Fetch the current stock source** (never write a primitive from memory). This prints
@@ -334,12 +359,28 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
 
 ## Run the checks
 
+The fast loop while you work, under a minute on Windows:
+
 ```bash
-pnpm gen:demos       # regenerate the demo map (also runs in predev/prebuild/ci)
-pnpm test            # unit tests, import rule, demo map staleness, stock parity
-pnpm run ci          # the `ci` job: lint, typecheck, tests, validate, build, smoke install
+pnpm check                    # Biome, demo map, typecheck, tests (no coverage)
+pnpm test:changed             # only the test files related to your diff against origin/main
+pnpm registry:build && pnpm registry:smoke --only=badge,card   # install just these (+ ink-frame, deps)
+pnpm registry:build && pnpm registry:smoke:changed             # items whose folders changed
+```
+
+The full gate, which CI runs on every push and dispatch (Linux, a few minutes); locally it
+takes 25–40 minutes because of the 40-item smoke, so leave it to CI unless you changed the
+smoke, the catalog or `lib/registry`:
+
+```bash
+pnpm run ci                   # lint, typecheck, tests with coverage, validate, build, full smoke
 pnpm build && pnpm test:e2e   # the `visual` job: every demo × 360/768/1280 px × light/dark
 ```
+
+Working in a branch: run `pnpm check` after each change, smoke the items you touched once,
+then dispatch the branch's CI run (`gh workflow run ci.yml --ref <branch>`, then
+`gh run watch <id> --exit-status`) for the full smoke and the visual suite. Coverage and its
+90 % threshold are enforced in CI (`pnpm test:coverage`), not in `pnpm test`.
 
 Preview a demo in isolation with `pnpm dev` and open
 `http://localhost:3000/demo/<name>/<demo>` (add `?mode=dark` for the night theme). The

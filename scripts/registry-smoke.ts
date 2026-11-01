@@ -3,6 +3,16 @@
  * then typechecks and builds that project. See SPEC-registry-core §7.
  *
  * Usage: pnpm registry:build && pnpm registry:smoke
+ *
+ * Every item is the CI default (Linux, ~2 min). Locally on Windows each install takes
+ * 30–40 s, so narrow the set while iterating:
+ *   --only=badge,card   the named items (plus `ink-frame` and bare registry dependencies)
+ *   --changed           the items whose folders differ from origin/main (plus the same);
+ *                       exits 0 with a note when nothing under registry/ changed, and
+ *                       falls back to every item when the catalog, the smoke script or
+ *                       lib/registry changed
+ * The stock pre-install + overwrite check runs only when button, card and dialog are all
+ * in the set.
  */
 import { type ChildProcess, execFileSync, type SpawnOptions, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -149,6 +159,83 @@ function stripImports(source: string): string {
  * and keeps the per-item installs from all blaming the first item that brings it.
  */
 const INSTALL_FIRST = ["ink-frame"];
+
+/** Parses `--only=a,b` and `--changed`; anything else is an error so typos do not run everything. */
+function parseArgs(argv: string[]): { only?: string[]; changed: boolean } {
+  let only: string[] | undefined;
+  let changed = false;
+  for (const arg of argv) {
+    if (arg === "--changed") changed = true;
+    else if (arg.startsWith("--only=")) {
+      only = arg
+        .slice("--only=".length)
+        .split(",")
+        .map((name) => name.trim())
+        .filter(Boolean);
+    } else throw new SmokeError(`Unknown argument "${arg}" (expected --changed or --only=a,b)`);
+  }
+  return { only, changed };
+}
+
+/** Paths that differ from the base branch, in the index, or untracked. */
+function changedPaths(): string[] {
+  const git = (args: string[]) =>
+    execFileSync("git", args, { encoding: "utf8" }).split(/\r?\n/).filter(Boolean);
+  let base = "origin/main";
+  try {
+    execFileSync("git", ["rev-parse", "--verify", "--quiet", base], { stdio: "ignore" });
+  } catch {
+    base = "main";
+  }
+  return [
+    ...git(["diff", "--name-only", `${base}...HEAD`]),
+    ...git(["diff", "--name-only", "HEAD"]),
+    ...git(["ls-files", "--others", "--exclude-standard"]),
+  ];
+}
+
+/**
+ * Items whose folders changed; `undefined` means "every item" because something that affects
+ * all of them changed (a catalog file, this script, the registry library).
+ */
+function changedItems(listed: string[]): string[] | undefined {
+  const items = new Set<string>();
+  for (const file of changedPaths()) {
+    const posix = file.split(path.sep).join("/");
+    if (
+      posix === "scripts/registry-smoke.ts" ||
+      posix.startsWith("lib/registry/") ||
+      /^registry\/[^/]+\/registry\.json$/.test(posix) ||
+      posix === "registry.json"
+    ) {
+      return undefined;
+    }
+    const match = /^registry\/[^/]+\/([^/]+)\//.exec(posix);
+    if (match && listed.includes(match[1])) items.add(match[1]);
+  }
+  return [...items];
+}
+
+/** `requested` plus INSTALL_FIRST plus the bare registry dependencies that are catalog items. */
+function withDependencies(
+  items: { name: string; registryDependencies?: string[] }[],
+  requested: string[],
+): Set<string> {
+  const byName = new Map(items.map((item) => [item.name, item]));
+  const selected = new Set<string>(INSTALL_FIRST);
+  const visit = (name: string) => {
+    if (selected.has(name)) return;
+    selected.add(name);
+    for (const dep of byName.get(name)?.registryDependencies ?? []) {
+      if (byName.has(dep)) visit(dep);
+    }
+  };
+  for (const name of requested) {
+    if (!byName.has(name)) throw new SmokeError(`"${name}" is not in the catalog`);
+    visit(name);
+  }
+  return selected;
+}
 
 /**
  * Catalog order, except that an item named in another item's `registryDependencies` installs
@@ -484,8 +571,31 @@ async function main() {
   for (const name of INSTALL_FIRST) {
     if (!listed.includes(name)) throw new SmokeError(`"${name}" is missing from the catalog`);
   }
-  const names = installOrder(catalog.items, INSTALL_FIRST);
-  console.log(`Smoke-installing ${names.length} item(s): ${names.join(", ")}`);
+  const { only, changed } = parseArgs(process.argv.slice(2));
+  let requested: string[] | undefined;
+  if (only) requested = only;
+  else if (changed) {
+    requested = changedItems(listed);
+    if (requested === undefined) {
+      console.log(
+        "→ --changed: a catalog, smoke or registry-library file changed; smoking every item",
+      );
+    } else if (requested.length === 0) {
+      console.log(
+        "✓ --changed: nothing under registry/ differs from origin/main; nothing to smoke",
+      );
+      return;
+    }
+  }
+  const selected = requested === undefined ? undefined : withDependencies(catalog.items, requested);
+  const items = selected ? catalog.items.filter((item) => selected.has(item.name)) : catalog.items;
+  const names = installOrder(items, INSTALL_FIRST);
+  const label = selected ? `${names.length} of ${listed.length}` : `${names.length}`;
+  console.log(`Smoke-installing ${label} item(s): ${names.join(", ")}`);
+  // The overwrite check needs the three stock items it pre-installs and the page that uses them.
+  const checkOverwrite = STOCK_PREINSTALL.every((stock) => names.includes(stock.name));
+  if (!checkOverwrite)
+    console.log("→ partial set: skipping the stock pre-install and overwrite check");
 
   const workDir = mkdtempSync(path.join(tmpdir(), "mangacn-smoke-"));
   const project = path.join(workDir, "app");
@@ -497,7 +607,7 @@ async function main() {
   try {
     await createProject(workDir, "app", port);
 
-    for (const stock of STOCK_PREINSTALL) {
+    for (const stock of checkOverwrite ? STOCK_PREINSTALL : []) {
       console.log(`→ shadcn add ${stock.name} (stock, to be overwritten)`);
       await run("pnpm", ["dlx", `shadcn@${SHADCN_VERSION}`, "add", stock.name, "--yes"], project);
       const full = path.join(project, stock.file);
@@ -505,7 +615,7 @@ async function main() {
         throw new SmokeError(`Stock ${stock.name} did not install a stock ${stock.file}`);
       }
     }
-    {
+    if (checkOverwrite) {
       // Use the stock items as a consumer would; the mangacn overwrites must keep this building.
       const smokeDir = path.join(project, "app", "smoke");
       mkdirSync(smokeDir, { recursive: true });

@@ -23,6 +23,7 @@
     "registry:build": "shadcn build --output public/r",
     "registry:validate": "shadcn registry validate",
     "registry:smoke": "tsx scripts/registry-smoke.ts",
+    "registry:smoke:changed": "tsx scripts/registry-smoke.ts --changed",
     "registry:list": "shadcn list http://localhost:3000/r/registry.json",
     "gen:theme": "tsx scripts/gen-theme-css.ts",
     "gen:demos": "tsx scripts/gen-demos.ts",
@@ -31,11 +32,14 @@
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run",
+    "check": "pnpm lint && pnpm gen:demos && pnpm typecheck && pnpm test",
+    "test": "vitest run --coverage.enabled=false",
+    "test:changed": "vitest run --coverage.enabled=false --changed origin/main",
+    "test:coverage": "vitest run",
     "test:watch": "vitest --coverage.enabled=false",
     "test:e2e": "playwright test -c e2e/playwright.config.ts",
     "test:e2e:update": "playwright test -c e2e/playwright.config.ts --update-snapshots=all",
-    "ci": "pnpm lint && pnpm gen:demos && pnpm typecheck && pnpm gen:theme && pnpm test && pnpm registry:validate && pnpm registry:build && pnpm registry:smoke"
+    "ci": "pnpm lint && pnpm gen:demos && pnpm typecheck && pnpm gen:theme && pnpm test:coverage && pnpm registry:validate && pnpm registry:build && pnpm registry:smoke"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",
@@ -58,6 +62,7 @@
     "@tailwindcss/turbopack": "4.3.3",
     "@testing-library/dom": "10.4.2",
     "@testing-library/react": "16.3.3",
+    "@types/mdx": "^2.0.14",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

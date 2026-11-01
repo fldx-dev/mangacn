@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* Docs chrome: every --color-fd-* maps onto the theme's shadcn variables (no second palette). */
+@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/preset.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "./mangacn-theme.css";
@@ -47,6 +50,13 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Docs and landing chrome span the viewport, sidebar and wordmark flush left (Fumadocs centres
+   them inside 97rem / 1400px). Unlayered so it beats HomeLayout's own utility class. */
+#nd-docs-layout,
+#nd-home-layout {
+  --fd-layout-width: 100%;
 }
 
 /* The theme's own base layer (border, outline, body colours) comes from the import above. */
