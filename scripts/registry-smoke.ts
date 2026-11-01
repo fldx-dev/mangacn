@@ -50,6 +50,9 @@ const EXPECTED_CONTENT: Record<
   ],
   "font-display": [{ file: "app/layout.tsx", includes: ["Dela_Gothic_One(", "--font-display"] }],
   "font-dialogue": [{ file: "app/layout.tsx", includes: ["Shantell_Sans(", "--font-dialogue"] }],
+  "font-dialogue-ja": [
+    { file: "app/layout.tsx", includes: ["Yusei_Magic(", "--font-dialogue-ja"] },
+  ],
   "manga-motion": [{ file: "lib/manga-motion.ts", includes: ["export const popIn"] }],
   // registry:component with `target: "@components/ink-frame.tsx"` (SPEC-components §4.4).
   "ink-frame": [{ file: "components/ink-frame.tsx", includes: ["export function InkFrame"] }],

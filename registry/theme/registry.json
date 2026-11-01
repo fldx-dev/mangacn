@@ -10,12 +10,12 @@
       "meta": {
         "since": "0.1.0"
       },
-      "docs": "Fonts are separate items: npx shadcn@latest add @mangacn/font-display @mangacn/font-dialogue (or set --font-display / --font-dialogue yourself). Outlined components draw through @mangacn/ink-frame: add it before them.",
+      "docs": "Fonts are separate items: npx shadcn@latest add @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja (or set --font-display / --font-dialogue / --font-dialogue-ja yourself). Outlined components draw through @mangacn/ink-frame: add it before them.",
       "files": [],
       "cssVars": {
         "theme": {
           "font-display": "var(--font-display, \"Dela Gothic One\", \"Reggae One\", Impact, \"Arial Black\", sans-serif)",
-          "font-dialogue": "var(--font-dialogue, \"Shantell Sans\", \"Patrick Hand SC\", \"Comic Neue\", cursive, sans-serif)",
+          "font-dialogue": "var(--font-dialogue, \"Shantell Sans\"), var(--font-dialogue-ja, \"Yusei Magic\"), \"Patrick Hand SC\", \"Comic Neue\", cursive, sans-serif",
           "color-ink": "var(--ink)",
           "color-paper": "var(--paper)",
           "color-spot": "var(--spot)",
@@ -286,6 +286,25 @@
         "import": "Shantell_Sans",
         "variable": "--font-dialogue",
         "subsets": ["latin", "latin-ext"]
+      }
+    },
+    {
+      "name": "font-dialogue-ja",
+      "type": "registry:font",
+      "title": "Yusei Magic",
+      "description": "Handwritten Japanese face the dialogue stack falls through to for kana and kanji, exposed as --font-dialogue-ja.",
+      "categories": ["text"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "files": [],
+      "font": {
+        "family": "Yusei Magic",
+        "provider": "google",
+        "import": "Yusei_Magic",
+        "variable": "--font-dialogue-ja",
+        "weight": ["400"],
+        "subsets": ["latin"]
       }
     },
     {
