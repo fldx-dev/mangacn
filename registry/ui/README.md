@@ -117,6 +117,31 @@ another item, undeclared packages, Node built-ins. Demos and tests may import an
 Code style: double quotes, semicolons, width 100 (Biome enforces it), named exports only in
 shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` for state.
 
+### Branches and commits
+
+Work happens on short-lived branches off `main`, named by what they change, not by who or
+which task made them:
+
+| Prefix | For | Example |
+|---|---|---|
+| `feat/` | a new item, demo, page or capability | `feat/add-page-turn`, `feat/docs-install-command` |
+| `fix/` | a behaviour or visual fix | `fix/badge-label`, `fix/ink-line-ends` |
+| `chore/` | tooling, dependencies, CI, scripts | `chore/fast-local-loop` |
+| `docs/` | site content and guides | `docs/theming-guide` |
+| `test/` | tests and baselines only | `test/site-visual-suite` |
+
+Slugs are kebab-case. A Claude Code session's worktree branch is named by the app
+(`claude/<slug>-<suffix>`); that local name stays local. Publish under the conventional name
+with an explicit refspec and keep pushing to it:
+
+```bash
+git push -u origin HEAD:refs/heads/feat/add-page-turn
+```
+
+Commit subjects carry the matching prefix (`feat:`, `fix:`, `chore:`, `docs:`, `test:`), one
+change per commit, baselines in the same commit as the change that moved them. Branches are
+merged into `main` with a merge commit and deleted afterwards.
+
 ## Recipe 1: restyle a stock primitive
 
 1. **Fetch the current stock source** (never write a primitive from memory). This prints
