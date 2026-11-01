@@ -59,6 +59,14 @@
   --fd-layout-width: 100%;
 }
 
+/* Inline code in prose is a bordered chip (Fumadocs typography). A chip must not break across
+   lines, where its box would be sliced at the wrap; tokens like `--outline-width` stay whole. */
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *, pre *)) {
+  white-space: nowrap;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
 /* The theme's own base layer (border, outline, body colours) comes from the import above. */
 @layer base {
   html {

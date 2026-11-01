@@ -136,7 +136,16 @@ export function ThemePlayground() {
       </div>
       <CodeBlock title="globals.css">
         <Pre>
-          <code>{snippet}</code>
+          {/* One `.line` per line, as Shiki emits, so Fumadocs' per-line padding applies. */}
+          <code>
+            {snippet.split("\n").map((line, index, lines) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: lines have no identity beyond order
+              <span key={index} className="line">
+                {line}
+                {index < lines.length - 1 ? "\n" : null}
+              </span>
+            ))}
+          </code>
         </Pre>
       </CodeBlock>
     </div>
