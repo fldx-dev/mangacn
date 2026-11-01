@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* Docs chrome: every --color-fd-* maps onto the theme's shadcn variables (no second palette). */
+@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/preset.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "./mangacn-theme.css";

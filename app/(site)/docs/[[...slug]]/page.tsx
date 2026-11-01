@@ -1,11 +1,9 @@
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layouts/docs/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { getMDXComponents } from "@/components/docs/mdx";
 import { source } from "@/lib/docs/source";
-
-// Docs page, bare for now: the MDX body with its title and description. The docs layout,
-// provider and styles arrive with the site shell (SPEC-docs-site §7).
 
 export function generateStaticParams() {
   return source.generateParams();
@@ -19,11 +17,9 @@ type DocsProps = PageProps<"/docs/[[...slug]]">;
 
 export default function DocsRoute({ params }: DocsProps) {
   return (
-    <main data-slot="docs-page">
-      <Suspense fallback={null}>
-        <DocsContent params={params} />
-      </Suspense>
-    </main>
+    <Suspense fallback={null}>
+      <DocsContent params={params} />
+    </Suspense>
   );
 }
 
@@ -35,10 +31,12 @@ async function DocsContent({ params }: Pick<DocsProps, "params">) {
   if (!page) notFound();
   const MDX = page.data.body;
   return (
-    <article>
-      <h1>{page.data.title}</h1>
-      <p>{page.data.description}</p>
-      <MDX components={getMDXComponents()} />
-    </article>
+    <DocsPage toc={page.data.toc}>
+      <DocsTitle>{page.data.title}</DocsTitle>
+      <DocsDescription>{page.data.description}</DocsDescription>
+      <DocsBody>
+        <MDX components={getMDXComponents()} />
+      </DocsBody>
+    </DocsPage>
   );
 }
