@@ -1,7 +1,9 @@
+import { cn } from "cn";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { installCommand } from "@/lib/docs/install-command";
 import { Panel } from "@/registry/ui/panel/panel";
 import { PanelGrid, PanelGridItem } from "@/registry/ui/panel-grid/panel-grid";
+import { CODE_WRAPS } from "./fit";
 
 /** The three adds a project needs, in order; the commands come from `installCommand()`. */
 const STEPS = [
@@ -44,7 +46,7 @@ export function ThreeCommands() {
               >
                 <h3 className="font-display text-xl">{step.title}</h3>
                 <CodeBlock
-                  className="my-0"
+                  className={cn("my-0", CODE_WRAPS)}
                   viewportProps={{ "aria-label": `${step.title}: command` }}
                 >
                   <Pre>

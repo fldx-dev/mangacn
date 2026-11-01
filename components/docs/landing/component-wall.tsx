@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CATEGORY_LABELS, type DocItem, groupByCategory } from "@/lib/docs/catalog";
@@ -7,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/ui/tabs/tab
 import { DemoPreview, OVERLAY_ITEMS } from "../demo-frame";
 import type { LandingCatalog } from "./catalog";
 import { CopyButton } from "./copy-button";
+import { TABLE_FITS } from "./fit";
 
 const FEATURED_TAB = "featured";
 
@@ -29,8 +31,10 @@ export async function ComponentWall({ catalog }: { catalog: LandingCatalog }) {
                 item: item.name,
                 demo: "default",
                 // A thumbnail: the demo laid out at twice the room, then drawn at half size.
-                className:
+                className: cn(
                   "h-36 min-h-0 overflow-hidden p-2 *:[zoom:0.5] sm:h-40 sm:p-3 md:*:[zoom:0.6]",
+                  TABLE_FITS,
+                ),
               }),
             ] as const,
         ),
@@ -60,17 +64,20 @@ export async function ComponentWall({ catalog }: { catalog: LandingCatalog }) {
         </div>
 
         <Tabs defaultValue={FEATURED_TAB} className="min-w-0 gap-6">
-          <div className="-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
-            <TabsList variant="line" aria-label="Component categories">
-              <TabsTrigger value={FEATURED_TAB}>Featured</TabsTrigger>
-              {groups.map(([category, group]) => (
-                <TabsTrigger key={category} value={category}>
-                  {CATEGORY_LABELS[category]}{" "}
-                  <span className="text-xs text-muted-foreground tabular-nums">{group.length}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
+          {/* Nine tabs wrap onto a second line on narrow screens rather than scroll. */}
+          <TabsList
+            variant="line"
+            aria-label="Component categories"
+            className="w-full flex-wrap justify-start gap-x-1 gap-y-3 group-data-horizontal/tabs:h-auto"
+          >
+            <TabsTrigger value={FEATURED_TAB}>Featured</TabsTrigger>
+            {groups.map(([category, group]) => (
+              <TabsTrigger key={category} value={category}>
+                {CATEGORY_LABELS[category]}{" "}
+                <span className="text-xs text-muted-foreground tabular-nums">{group.length}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
           <TabsContent value={FEATURED_TAB}>
             <CardGrid items={featured} previews={previews} />
           </TabsContent>

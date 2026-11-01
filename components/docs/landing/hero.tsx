@@ -1,27 +1,30 @@
+import { cn } from "cn";
+import type { ReactNode } from "react";
 import { Badge } from "@/registry/ui/badge/badge";
-import { Checkbox } from "@/registry/ui/checkbox/checkbox";
 import { Emanata } from "@/registry/ui/emanata/emanata";
 import { Panel } from "@/registry/ui/panel/panel";
 import { PanelGrid, PanelGridItem } from "@/registry/ui/panel-grid/panel-grid";
 import { SfxText } from "@/registry/ui/sfx-text/sfx-text";
 import { SpeechBubble } from "@/registry/ui/speech-bubble/speech-bubble";
 import { SpeedLines } from "@/registry/ui/speed-lines/speed-lines";
-import { Switch } from "@/registry/ui/switch/switch";
-import { DemoPreview } from "../demo-frame";
 import { InstallCommand } from "../install-command";
 import { ButtonLink } from "./button-link";
+import { CODE_WRAPS } from "./fit";
+import { HeroBadges } from "./hero-badges";
+import { HeroForm } from "./hero-form";
+import { HeroPage } from "./hero-page";
+import { HeroProduct } from "./hero-product";
 
-/** The demo box inside a panel: the panel is the frame, so the box drops its own border. */
-const IN_PANEL = "min-h-32 border-0 bg-transparent p-2 sm:p-2";
+/** The four hero cells: each a small composition sized to its cell, captioned by its idea. */
+const CELLS: { caption: string; content: ReactNode }[] = [
+  { caption: "In a product", content: <HeroProduct /> },
+  { caption: "A form", content: <HeroForm /> },
+  { caption: "On the page", content: <HeroPage /> },
+  { caption: "Badges and buttons", content: <HeroBadges /> },
+];
 
-/** Section 2: the pitch on the left, four live demos in a 2×2 panel grid on the right. */
-export async function Hero({ total }: { total: number }) {
-  const [buttons, bubble, badges] = await Promise.all([
-    DemoPreview({ item: "button", demo: "variants", className: IN_PANEL }),
-    DemoPreview({ item: "speech-bubble", demo: "japanese", className: IN_PANEL }),
-    DemoPreview({ item: "badge", demo: "variants", className: IN_PANEL }),
-  ]);
-
+/** Section 2: the pitch on the left, four live compositions in a 2×2 panel grid on the right. */
+export function Hero() {
   return (
     <section
       data-landing="hero"
@@ -37,9 +40,15 @@ export async function Hero({ total }: { total: number }) {
       />
       <div className="mx-auto grid w-full max-w-6xl gap-12 px-4 py-12 sm:px-6 md:py-16 lg:grid-cols-2 lg:items-center lg:py-20">
         <div className="flex min-w-0 flex-col items-start gap-6">
-          <Badge variant="spot" className="-rotate-2">
-            {total} items · shadcn registry · MIT
-          </Badge>
+          <div className="flex items-center gap-4">
+            <Badge variant="spot" className="-rotate-2">
+              Open source · MIT
+            </Badge>
+            {/* An accent, so the Japanese faces show above the fold at every width. */}
+            <SfxText lang="ja" size="sm" rotate={8} aria-hidden="true">
+              ドン！
+            </SfxText>
+          </div>
           <h1
             id="landing-hero"
             className="font-display text-4xl leading-[1.1] text-balance sm:text-5xl lg:text-[3.5rem]"
@@ -51,9 +60,9 @@ export async function Hero({ total }: { total: number }) {
             by hand.
           </h1>
           <SpeechBubble className="max-w-md text-base sm:text-lg">
-            Same shadcn API. Swap an import, keep your call sites.
+            Dashboards, landing pages, manga readers. Same shadcn API, swap an import.
           </SpeechBubble>
-          <div className="w-full min-w-0">
+          <div className={cn("w-full min-w-0", CODE_WRAPS)}>
             <InstallCommand item="speech-bubble" />
           </div>
           <div className="flex flex-wrap gap-3">
@@ -68,35 +77,13 @@ export async function Hero({ total }: { total: number }) {
 
         <div className="relative min-w-0">
           <PanelGrid columns={2} gutter="md" role="group" aria-label="Live demos">
-            <PanelGridItem>
-              <Panel as="div" caption="button · variants">
-                {buttons}
-              </Panel>
-            </PanelGridItem>
-            <PanelGridItem>
-              <Panel as="div" caption="speech-bubble · japanese">
-                {bubble}
-              </Panel>
-            </PanelGridItem>
-            <PanelGridItem>
-              <Panel as="div" caption="checkbox · switch">
-                <div className="flex min-h-32 flex-col items-start justify-center gap-4 p-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Checkbox id="hero-checkbox" defaultChecked />
-                    <label htmlFor="hero-checkbox">Bookmark chapter 12</label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Switch id="hero-switch" />
-                    <label htmlFor="hero-switch">Show furigana</label>
-                  </div>
-                </div>
-              </Panel>
-            </PanelGridItem>
-            <PanelGridItem>
-              <Panel as="div" caption="badge · variants">
-                {badges}
-              </Panel>
-            </PanelGridItem>
+            {CELLS.map((cell) => (
+              <PanelGridItem key={cell.caption}>
+                <Panel as="div" caption={cell.caption} className="gap-4">
+                  <div className="flex flex-1 items-center justify-center">{cell.content}</div>
+                </Panel>
+              </PanelGridItem>
+            ))}
           </PanelGrid>
           <Emanata
             kind="sparkle"

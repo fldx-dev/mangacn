@@ -51,7 +51,7 @@ async function renderLanding() {
 }
 
 describe("the landing", () => {
-  it("has the nine sections of SPEC-docs-site §4.1 in order, the navbar first", async () => {
+  it("has the ten sections in order, the navbar first", async () => {
     const { container } = await renderLanding();
     const main = container.querySelector("main");
     const nav = main?.querySelector("header");
@@ -62,6 +62,7 @@ describe("the landing", () => {
       "hero",
       "three-commands",
       "component-wall",
+      "any-app",
       "why",
       "theme",
       "whole-page",
@@ -80,13 +81,15 @@ describe("the landing", () => {
   it("reads its counts from the catalog", async () => {
     const { items, primitives } = landingCatalog();
     await renderLanding();
-    expect(screen.getByText(`${items.length} items · shadcn registry · MIT`)).not.toBeNull();
     expect(
       screen.getByRole("heading", { name: `${items.length} items. Two kinds.` }),
     ).not.toBeNull();
     expect(screen.getByRole("link", { name: `All ${items.length} →` })).not.toBeNull();
     expect(screen.getByRole("tab", { name: `Primitives ${primitives}` })).not.toBeNull();
     expect(screen.getByText(new RegExp(`^The ${primitives} restyled primitives`))).not.toBeNull();
+    expect(
+      screen.getByText(new RegExp(`^The ${primitives} primitives keep shadcn`)),
+    ).not.toBeNull();
   });
 
   it("has one h1 and section headings at h2, with no iframes", async () => {
@@ -97,6 +100,7 @@ describe("the landing", () => {
     expect(headings).toEqual([
       "landing-commands",
       "landing-wall",
+      "landing-any-app",
       "landing-why",
       "landing-theme",
       "landing-page",

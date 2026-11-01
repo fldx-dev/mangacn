@@ -25,14 +25,14 @@ export function Why({ primitives }: { primitives: number }) {
         </SfxText>
       ),
       mark: "sparkle",
-      body: "Every outline is a rough.js stroke from InkFrame, seeded per element so it holds still between renders and redraws when the box resizes. No 2 px borders pretending.",
+      body: "Every outline is a rough.js stroke from InkFrame, seeded per element so it holds still between renders and redraws when the box resizes. No flat CSS borders pretending.",
     },
     {
       key: "same-api",
       tone: "lines",
       heading: <Badge className="h-auto px-3 py-1.5 text-sm">Same API</Badge>,
       mark: "surprise",
-      body: `The ${primitives} restyled primitives keep shadcn's exports, slots and variant names. A parity test checks them against stock base-nova in CI.`,
+      body: `The ${primitives} restyled primitives keep shadcn's exports, slots and variant names: swap the import and your call sites stay. A parity test checks them against stock base-nova in CI.`,
     },
     {
       key: "yours",
