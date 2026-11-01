@@ -82,6 +82,8 @@ describe("PropsTable for a manga-native piece", () => {
     expect(generateOwnProps).toHaveBeenCalledWith(
       "speech-bubble",
       "registry/ui/speech-bubble/speech-bubble.tsx",
+      undefined,
+      "SpeechBubbleProps",
     );
     const { container } = await renderAutoTypeTable(element);
     const rows = within(container).getAllByRole("button");
@@ -91,6 +93,20 @@ describe("PropsTable for a manga-native piece", () => {
       "tone?",
       "font?",
     ]);
+  });
+
+  it("generates the table of another interface the item exports when named", async () => {
+    vi.mocked(generateOwnProps).mockResolvedValue(undefined);
+    const { container } = render(
+      await PropsTable({ item: "panel-grid", name: "PanelGridItemProps" }),
+    );
+    expect(generateOwnProps).toHaveBeenCalledWith(
+      "panel-grid",
+      "registry/ui/panel-grid/panel-grid.tsx",
+      undefined,
+      "PanelGridItemProps",
+    );
+    expect(container.textContent).toContain("PanelGridItemProps could not be generated");
   });
 
   it("falls back to a link to the source when the interface does not resolve", async () => {
