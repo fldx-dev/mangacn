@@ -328,12 +328,28 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
 
 ## Run the checks
 
+The fast loop while you work, under a minute on Windows:
+
 ```bash
-pnpm gen:demos       # regenerate the demo map (also runs in predev/prebuild/ci)
-pnpm test            # unit tests, import rule, demo map staleness, stock parity
-pnpm run ci          # the `ci` job: lint, typecheck, tests, validate, build, smoke install
+pnpm check                    # Biome, demo map, typecheck, tests (no coverage)
+pnpm test:changed             # only the test files related to your diff against origin/main
+pnpm registry:build && pnpm registry:smoke --only=badge,card   # install just these (+ ink-frame, deps)
+pnpm registry:build && pnpm registry:smoke:changed             # items whose folders changed
+```
+
+The full gate, which CI runs on every push and dispatch (Linux, a few minutes); locally it
+takes 25–40 minutes because of the 40-item smoke, so leave it to CI unless you changed the
+smoke, the catalog or `lib/registry`:
+
+```bash
+pnpm run ci                   # lint, typecheck, tests with coverage, validate, build, full smoke
 pnpm build && pnpm test:e2e   # the `visual` job: every demo × 360/768/1280 px × light/dark
 ```
+
+Working in a branch: run `pnpm check` after each change, smoke the items you touched once,
+then dispatch the branch's CI run (`gh workflow run ci.yml --ref <branch>`, then
+`gh run watch <id> --exit-status`) for the full smoke and the visual suite. Coverage and its
+90 % threshold are enforced in CI (`pnpm test:coverage`), not in `pnpm test`.
 
 Preview a demo in isolation with `pnpm dev` and open
 `http://localhost:3000/demo/<name>/<demo>` (add `?mode=dark` for the night theme). The
