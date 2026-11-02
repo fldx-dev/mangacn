@@ -4,6 +4,7 @@ import { expectNoA11yViolations } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { Button, buttonVariants } from "./button";
 import ButtonDefaultDemo from "./demos/default";
+import ButtonLinkDemo from "./demos/link";
 
 afterEach(() => {
   cleanup();
@@ -108,6 +109,20 @@ describe("Button", () => {
     const link = screen.getByRole("button", { name: "Read" });
     expect(link.tagName).toBe("A");
     expect(frameOf(link)?.getAttribute("data-fill")).toBe("ink");
+  });
+
+  it("renders the link demo as anchors announced as links", async () => {
+    render(<ButtonLinkDemo />);
+    const read = screen.getByRole("link", { name: "Read chapter 12" });
+    expect(read.tagName).toBe("A");
+    expect(read.getAttribute("href")).toBe("#chapter-12");
+    expect(frameOf(read)?.getAttribute("data-fill")).toBe("ink");
+    expect(
+      frameOf(screen.getByRole("link", { name: "All chapters" }))?.getAttribute("data-fill"),
+    ).toBe("paper");
+    expect(screen.queryByRole("button")).toBeNull();
+    cleanup();
+    await expectNoA11yViolations(<ButtonLinkDemo />);
   });
 
   it("has no axe violations in its default demo", async () => {
