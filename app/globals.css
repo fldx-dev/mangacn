@@ -67,6 +67,16 @@
   -webkit-box-decoration-break: clone;
 }
 
+/* A marquee track made of two identical halves scrolls by one half, so the loop has no seam. */
+@keyframes mangacn-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 /* The theme's own base layer (border, outline, body colours) comes from the import above. */
 @layer base {
   html {
