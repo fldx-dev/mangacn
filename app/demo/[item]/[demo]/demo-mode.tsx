@@ -1,13 +1,19 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { useLayoutEffect } from "react";
 
 /**
  * Applies `?mode=dark` by toggling `.dark` on `<html>` for as long as the stage is mounted.
  * Reads `location.search` instead of the `searchParams` prop so the stage stays fully
  * prerendered; `data-demo-ready` tells Playwright the mode has been applied.
+ *
+ * Also renders the stage's accessible name. It lives here, not beside the demo, because a
+ * sibling there would shift the demo's `useId` values, which seed every rough.js drawing.
  */
 export function DemoMode() {
+  const { item, demo } = useParams<{ item: string; demo: string }>();
+
   useLayoutEffect(() => {
     const root = document.documentElement;
     const dark = new URLSearchParams(window.location.search).get("mode") === "dark";
@@ -19,5 +25,5 @@ export function DemoMode() {
     };
   }, []);
 
-  return null;
+  return <span id="demo-stage-label" className="sr-only">{`${item} / ${demo}`}</span>;
 }

@@ -21,7 +21,8 @@ export default function DemoStage({ params }: StageProps) {
   return (
     <main
       data-slot="demo-stage"
-      // Named per demo, so stages embedded in a docs page do not repeat the page's own main.
+      // Named per demo (the label is in DemoMode), so stages embedded in a docs page do not
+      // repeat the page's own main.
       aria-labelledby="demo-stage-label"
       className="flex flex-1 items-center justify-center bg-paper p-4 text-ink sm:p-8"
     >
@@ -42,10 +43,5 @@ async function Demo({ params }: Pick<StageProps, "params">) {
   // not-found page with a 200 (`dynamicParams = false` is not allowed with cacheComponents).
   if (!load) notFound();
   const { default: Component } = await load();
-  return (
-    <>
-      <span id="demo-stage-label" className="sr-only">{`${item} / ${demo}`}</span>
-      <Component />
-    </>
-  );
+  return <Component />;
 }
