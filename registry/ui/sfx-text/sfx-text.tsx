@@ -45,9 +45,30 @@ const ENTRANCES = {
 export interface SfxTextProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, "color">,
     VariantProps<typeof sfxTextVariants> {
-  /** Tilt in degrees. */
+  /**
+   * Text size, with the stroke and shadow scaled to match; `lg` and `xl` grow again from `sm` up.
+   * @default "md"
+   */
+  size?: VariantProps<typeof sfxTextVariants>["size"];
+  /**
+   * Letter colour: paper with an ink stroke, ink with a paper stroke, or spot red.
+   * @default "paper"
+   */
+  color?: VariantProps<typeof sfxTextVariants>["color"];
+  /**
+   * Outlines the letters with the stroke colour.
+   * @default true
+   */
+  stroke?: VariantProps<typeof sfxTextVariants>["stroke"];
+  /**
+   * Tilt in degrees.
+   * @default -6
+   */
   rotate?: number;
-  /** A one-shot entrance on mount. Skipped (shown at rest) under reduced motion. */
+  /**
+   * A one-shot entrance on mount. Skipped (shown at rest) under reduced motion.
+   * @default "none"
+   */
   enter?: "none" | "pop" | "slam";
 }
 

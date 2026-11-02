@@ -40,13 +40,19 @@ export function createPropsGenerator(cache?: Cache): Generator {
           if (inherited) entry.tags.push({ name: INHERITED, text: "" });
         },
         typeSimplifier: {
-          // Short types read better in full ("round" | "shout" …) than as Fumadocs' "union".
+          // Every type in full, however long, never Fumadocs' "union". A union behind one of the
+          // item's own aliases (emanata's `Kind`) is spelled out, since readers cannot look the
+          // alias up; library aliases (`React.ReactNode`) keep their name.
           override: ({ checker, type, location }) => {
-            const full = checker
-              .typeToString(type, location)
-              .replace(/ \| (null|undefined)\b/g, "")
-              .replace(/^(null|undefined) \| /, "");
-            return full.length <= 60 ? full : undefined;
+            const print = (t: typeof type) => checker.typeToString(t, location);
+            // An optional prop's `| undefined` and cva's `| null` say nothing a reader needs.
+            const defined = type.getNonNullableType();
+            const alias = type.getAliasSymbol() ?? defined.getAliasSymbol();
+            const own = alias?.declarations.every(
+              (d) => !String(d.path).includes("/node_modules/"),
+            );
+            if (own && defined.isUnionType()) return defined.getTypes().map(print).join(" | ");
+            return print(alias ? type : defined);
           },
         },
       });

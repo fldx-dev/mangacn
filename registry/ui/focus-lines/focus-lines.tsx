@@ -24,11 +24,25 @@ function jitter(index: number): number {
 export interface FocusLinesProps
   extends Omit<React.SVGAttributes<SVGSVGElement>, "color" | "children">,
     VariantProps<typeof focusLinesVariants> {
-  /** Where the lines converge, in percent of the box: `[x, y]`. */
+  /**
+   * Line colour: ink, or the mid tone for a quieter background.
+   * @default "ink"
+   */
+  color?: VariantProps<typeof focusLinesVariants>["color"];
+  /**
+   * Where the lines converge, in percent of the box: `[x, y]`.
+   * @default [50, 50]
+   */
   center?: readonly [number, number];
-  /** Number of lines. */
+  /**
+   * Number of lines.
+   * @default 64
+   */
   count?: number;
-  /** How far the lines reach in towards the centre. */
+  /**
+   * How far the lines reach in towards the centre.
+   * @default "short"
+   */
   length?: "short" | "long";
 }
 

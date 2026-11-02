@@ -18,7 +18,14 @@ const verticalTextVariants = cva("inline-block [writing-mode:vertical-rl]", {
 
 export interface VerticalTextProps
   extends React.HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof verticalTextVariants> {}
+    VariantProps<typeof verticalTextVariants> {
+  /**
+   * How characters stand: Japanese upright with Latin on its side, everything upright, or
+   * everything on its side.
+   * @default "mixed"
+   */
+  orientation?: VariantProps<typeof verticalTextVariants>["orientation"];
+}
 
 /** Vertical writing, top to bottom and right to left (`vertical-rl`), as in manga. */
 export function VerticalText({ className, orientation, ...props }: VerticalTextProps) {

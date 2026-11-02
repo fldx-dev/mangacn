@@ -40,8 +40,17 @@ const panelGridVariants = cva("grid w-full min-w-0 sm:grid-flow-dense", {
 export interface PanelGridProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof panelGridVariants> {
-  /** 1–4, or per breakpoint: `{ base: 1, sm: 2, lg: 3 }`. */
+  /**
+   * 1–4 columns from `sm` up (one on phones), or a count per breakpoint (`base`, `sm`, `md`,
+   * `lg`): `{ base: 1, sm: 2, lg: 3 }`.
+   * @default 2
+   */
   columns?: Columns | Partial<Record<Breakpoint, Columns>>;
+  /**
+   * The paper gap between panels: 8, 16 or 24 px.
+   * @default "md"
+   */
+  gutter?: VariantProps<typeof panelGridVariants>["gutter"];
 }
 
 /** A manga page: panels laid out on a grid, one column on phones. */
@@ -77,7 +86,18 @@ const panelGridItemVariants = cva("grid min-w-0", {
 
 export interface PanelGridItemProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof panelGridItemVariants> {}
+    VariantProps<typeof panelGridItemVariants> {
+  /**
+   * Columns the cell spans from `sm` up; `full` spans every column at every width.
+   * @default 1
+   */
+  colSpan?: VariantProps<typeof panelGridItemVariants>["colSpan"];
+  /**
+   * Rows the cell spans from `sm` up.
+   * @default 1
+   */
+  rowSpan?: VariantProps<typeof panelGridItemVariants>["rowSpan"];
+}
 
 /** One cell of a `PanelGrid`; its child (usually a `Panel`) stretches to fill the cell. */
 export function PanelGridItem({ className, colSpan, rowSpan, ...props }: PanelGridItemProps) {

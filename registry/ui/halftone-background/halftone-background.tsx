@@ -31,7 +31,21 @@ const TONES = {
 export interface HalftoneBackgroundProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "children">,
     VariantProps<typeof halftoneBackgroundVariants> {
+  /**
+   * How dark the screen is: the theme's light, mid or dark halftone.
+   * @default "mid"
+   */
   tone?: keyof typeof TONES;
+  /**
+   * Dot and cell size: the theme's screen, or 1.5 or 2.5 times it.
+   * @default "md"
+   */
+  size?: VariantProps<typeof halftoneBackgroundVariants>["size"];
+  /**
+   * Fades the screen out towards the top, the bottom or the edges.
+   * @default "none"
+   */
+  fade?: VariantProps<typeof halftoneBackgroundVariants>["fade"];
 }
 
 /**

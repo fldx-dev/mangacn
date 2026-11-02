@@ -146,7 +146,29 @@ const speechBubbleVariants = cva(
 
 export interface SpeechBubbleProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof speechBubbleVariants> {}
+    VariantProps<typeof speechBubbleVariants> {
+  /**
+   * The outline: an ellipse, a box, a spiky burst in bold capitals, or a dashed ellipse in
+   * light italics.
+   * @default "round"
+   */
+  shape?: VariantProps<typeof speechBubbleVariants>["shape"];
+  /**
+   * Where the tail leaves the bubble, pointing at the speaker; `none` draws no tail.
+   * @default "bottom-left"
+   */
+  tail?: VariantProps<typeof speechBubbleVariants>["tail"];
+  /**
+   * `light` fills the bubble with the lightest tone instead of paper.
+   * @default "none"
+   */
+  tone?: VariantProps<typeof speechBubbleVariants>["tone"];
+  /**
+   * `dialogue` sets the text in the lettering face; `inherit` keeps the surrounding font.
+   * @default "dialogue"
+   */
+  font?: VariantProps<typeof speechBubbleVariants>["font"];
+}
 
 /**
  * A dialogue bubble with a hand-drawn outline and tail. The text stays real text; pass

@@ -84,8 +84,22 @@ const MARKS: Record<Kind, React.ReactNode> = {
 export interface EmanataProps
   extends Omit<React.SVGAttributes<SVGSVGElement>, "color" | "children">,
     VariantProps<typeof emanataVariants> {
+  /** The mark to draw; it also gives the default label ("Sweat drop", "Anger mark" …). */
   kind: Kind;
-  /** Hide the mark from assistive tech when the surrounding text already says it. */
+  /**
+   * Mark size: 20, 32 or 48 px square.
+   * @default "md"
+   */
+  size?: VariantProps<typeof emanataVariants>["size"];
+  /**
+   * Stroke colour: ink, spot red or the mid tone.
+   * @default "ink"
+   */
+  color?: VariantProps<typeof emanataVariants>["color"];
+  /**
+   * Hide the mark from assistive tech when the surrounding text already says it.
+   * @default false
+   */
   decorative?: boolean;
 }
 

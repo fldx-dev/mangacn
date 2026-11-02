@@ -38,6 +38,26 @@ describe("generateOwnProps", () => {
     expect(docs?.[0]?.entries[0]?.simplifiedType).toBe('"round" | "shout" | "square" | "whisper"');
   });
 
+  it("prints every type in full, spelling out the item's own aliases", async () => {
+    const types = async (item: string, file: string) =>
+      Object.fromEntries(
+        ((await generateOwnProps(item, file, generator))?.[0]?.entries ?? []).map((entry) => [
+          entry.name,
+          entry.simplifiedType,
+        ]),
+      );
+    const bubble = await types("speech-bubble", "registry/ui/speech-bubble/speech-bubble.tsx");
+    expect(bubble.tail).toBe(
+      '"bottom-left" | "bottom-right" | "left" | "none" | "right" | "top-left" | "top-right"',
+    );
+    const emanata = await types("emanata", "registry/ui/emanata/emanata.tsx");
+    expect(emanata.kind).toBe('"anger" | "puff" | "sparkle" | "surprise" | "sweat"');
+    expect(emanata.decorative).toBe("boolean");
+    const panel = await types("panel", "registry/ui/panel/panel.tsx");
+    expect(panel.caption).toBe("React.ReactNode");
+    expect(panel.as).toBe("keyof React.JSX.IntrinsicElements");
+  });
+
   it("keeps DOM props an item redeclares (manga-frame's src and alt)", async () => {
     const docs = await generateOwnProps(
       "manga-frame",
@@ -49,12 +69,29 @@ describe("generateOwnProps", () => {
     expect(names).not.toContain("onClick");
   });
 
-  it("resolves every manga-native props interface to a short table", async () => {
-    for (const item of mangaNative) {
-      const docs = await generateOwnProps(item.name, item.files[0].path, generator);
+  it("resolves every manga-native props interface to a short, described table", async () => {
+    const tables = [
+      ...mangaNative.map((item) => ({
+        item: item.name,
+        file: item.files[0].path,
+        name: undefined,
+      })),
+      {
+        item: "panel-grid",
+        file: "registry/ui/panel-grid/panel-grid.tsx",
+        name: "PanelGridItemProps",
+      },
+    ];
+    for (const { item, file, name } of tables) {
+      const label = name ?? propsInterfaceName(item);
+      const docs = await generateOwnProps(item, file, generator, name);
       const entries = docs?.[0]?.entries ?? [];
-      expect(entries.length, `${propsInterfaceName(item.name)} props`).toBeGreaterThan(0);
-      expect(entries.length, `${propsInterfaceName(item.name)} props`).toBeLessThan(10);
+      expect(entries.length, `${label} props`).toBeGreaterThan(0);
+      expect(entries.length, `${label} props`).toBeLessThan(10);
+      for (const entry of entries) {
+        expect(entry.description, `${label}.${entry.name} JSDoc`).not.toBe("");
+        expect(entry.simplifiedType, `${label}.${entry.name} type`).not.toBe("union");
+      }
     }
   });
 
