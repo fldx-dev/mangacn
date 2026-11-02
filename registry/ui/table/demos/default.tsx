@@ -19,7 +19,7 @@ const chapters = [
 export default function TableDefaultDemo() {
   return (
     <div className="w-full max-w-md">
-      <Table>
+      <Table label="Chapters in progress">
         <TableCaption>Volume 2, chapters in progress.</TableCaption>
         <TableHeader>
           <TableRow>
