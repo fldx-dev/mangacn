@@ -5,6 +5,13 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // Every docs page as Markdown for agents at its own URL plus `.md` (app/llms.mdx).
+  async rewrites() {
+    return [
+      { source: "/docs.md", destination: "/llms.mdx" },
+      { source: "/docs/:slug*.md", destination: "/llms.mdx/:slug*" },
+    ];
+  },
   turbopack: {
     rules: {
       "*.css": {
