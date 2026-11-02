@@ -2,7 +2,9 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layo
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { CopyMarkdownButton } from "@/components/docs/copy-markdown-button";
 import { getMDXComponents } from "@/components/docs/mdx";
+import { markdownUrl } from "@/lib/docs/llms";
 import { source } from "@/lib/docs/source";
 
 export function generateStaticParams() {
@@ -32,7 +34,10 @@ async function DocsContent({ params }: Pick<DocsProps, "params">) {
   const MDX = page.data.body;
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
-      <DocsTitle>{page.data.title}</DocsTitle>
+      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+        <DocsTitle>{page.data.title}</DocsTitle>
+        <CopyMarkdownButton markdownUrl={markdownUrl(page.url)} />
+      </div>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
         <MDX components={getMDXComponents()} />

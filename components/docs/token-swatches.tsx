@@ -1,7 +1,7 @@
 import type * as React from "react";
 import themeRegistry from "@/registry/theme/registry.json";
 
-const TOKENS = [
+export const TOKENS = [
   "ink",
   "paper",
   "spot",
@@ -15,6 +15,11 @@ const TOKENS = [
 type Mode = "light" | "dark";
 
 const theme = themeRegistry.items.find((item) => item.name === "theme");
+
+/** The theme item's CSS variable values for one mode, keyed without the `--`. */
+export function tokenValues(mode: Mode): Record<string, string> {
+  return (theme?.cssVars?.[mode] ?? {}) as Record<string, string>;
+}
 
 /**
  * The eight theme tokens, one row per mode. Each row sets that mode's values from the theme
@@ -31,7 +36,7 @@ export function TokenSwatches() {
 }
 
 function SwatchRow({ mode }: { mode: Mode }) {
-  const values = (theme?.cssVars?.[mode] ?? {}) as Record<string, string>;
+  const values = tokenValues(mode);
   const style = Object.fromEntries(
     TOKENS.map((token) => [`--${token}`, values[token]]),
   ) as React.CSSProperties;
