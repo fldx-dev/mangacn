@@ -21,6 +21,9 @@ export default function DemoStage({ params }: StageProps) {
   return (
     <main
       data-slot="demo-stage"
+      // Named per demo (the label is in DemoMode), so stages embedded in a docs page do not
+      // repeat the page's own main.
+      aria-labelledby="demo-stage-label"
       className="flex flex-1 items-center justify-center bg-paper p-4 text-ink sm:p-8"
     >
       {/* The URL-dependent part renders inside the boundary; the stage itself is the shell. */}

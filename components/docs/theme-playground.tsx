@@ -134,7 +134,10 @@ export function ThemePlayground() {
           </InkFrame>
         </div>
       </div>
-      <CodeBlock title="globals.css">
+      <CodeBlock
+        title="globals.css"
+        viewportProps={{ "aria-label": "Theme playground: globals.css" }}
+      >
         <Pre>
           {/* One `.line` per line, as Shiki emits, so Fumadocs' per-line padding applies. */}
           <code>

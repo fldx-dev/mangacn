@@ -13,9 +13,10 @@ export function SwapToggle() {
   return (
     <div data-slot="swap-toggle" className="flex w-full min-w-0 flex-col gap-5">
       <div className="flex items-center justify-center gap-3 text-sm">
-        <span className={cn(drawn && "text-muted-foreground")}>Stock shadcn</span>
+        {/* The off label sits on the section's tone-1; tone-4 keeps it at 4.5:1 there. */}
+        <span className={cn(drawn && "text-tone-4")}>Stock shadcn</span>
         <Switch id={id} checked={drawn} onCheckedChange={setDrawn} aria-label="Draw with mangacn" />
-        <label htmlFor={id} className={cn("font-display", !drawn && "text-muted-foreground")}>
+        <label htmlFor={id} className={cn("font-display", !drawn && "text-tone-4")}>
           mangacn
         </label>
       </div>

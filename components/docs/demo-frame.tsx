@@ -78,15 +78,19 @@ export async function DemoPreview({
     );
   }
   const { default: Demo } = await load();
+  // A demo wider than its box scrolls sideways; the box takes focus so a keyboard can scroll it.
   return (
-    <div
+    <section
+      aria-label={`${item} / ${demo}`}
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: a scroll container must be focusable
+      tabIndex={0}
       className={cn(
         "relative isolate flex min-h-40 min-w-0 items-center justify-center overflow-x-auto rounded-sm border bg-paper p-4 text-ink sm:p-8",
         className,
       )}
     >
       <Demo />
-    </div>
+    </section>
   );
 }
 
@@ -102,5 +106,6 @@ async function highlightDemoSource(item: string, demo: string) {
     code: getDemoSource(item, demo),
     lang: "tsx",
     themes: { light: inkLight, dark: inkDark },
+    codeblock: { viewportProps: { "aria-label": `${item} / ${demo}: source` } },
   });
 }
