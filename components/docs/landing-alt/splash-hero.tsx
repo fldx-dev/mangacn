@@ -46,10 +46,10 @@ export function SplashHero() {
       <div className="relative mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-4 pt-14 text-center sm:px-6 lg:pt-20">
         <div className="flex items-center gap-4">
           <Badge variant="spot" className="-rotate-2">
-            Open source · MIT
+            Open source
           </Badge>
-          <SfxText lang="ja" size="sm" rotate={8} enter="pop" aria-hidden="true">
-            ドン！
+          <SfxText lang="ja" size="md" rotate={8} enter="pop" aria-hidden="true">
+            漫画
           </SfxText>
         </div>
 
