@@ -4,8 +4,8 @@ import themeRegistry from "@/registry/theme/registry.json";
 import { Badge } from "@/registry/ui/badge/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/registry/ui/card/card";
 import { SpeechBubble } from "@/registry/ui/speech-bubble/speech-bubble";
-import { ButtonLink } from "../landing/button-link";
-import { InkTeaser } from "../landing/ink-teaser";
+import { ButtonLink } from "./button-link";
+import { InkTeaser } from "./ink-teaser";
 
 type Mode = "light" | "dark";
 
@@ -30,9 +30,9 @@ const HALVES: { mode: Mode; label: string; line: string; greeting: string }[] = 
  */
 export function ModeSplit() {
   return (
-    <section data-landing="mode-split" aria-labelledby="alt-modes" className="border-b">
+    <section data-landing="mode-split" aria-labelledby="landing-modes" className="border-b">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 pt-14 sm:px-6 md:pt-20">
-        <h2 id="alt-modes" className="font-display text-3xl sm:text-4xl lg:text-5xl">
+        <h2 id="landing-modes" className="font-display text-3xl sm:text-4xl lg:text-5xl">
           Day and night, one pen.
         </h2>
         <p className="max-w-prose text-pretty text-lg">

@@ -3,7 +3,7 @@
 import { cn } from "cn";
 import { useId, useState } from "react";
 import { Switch } from "@/registry/ui/switch/switch";
-import { HeroProduct } from "../landing/hero-product";
+import { HeroProduct } from "./hero-product";
 import { StockCard } from "./stock-card";
 
 /** One switch, the same card twice: stock on the left of the switch, mangacn on the right. */

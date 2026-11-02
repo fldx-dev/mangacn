@@ -1,7 +1,7 @@
 import { cn } from "cn";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { installCommand } from "@/lib/docs/install-command";
-import { CODE_WRAPS } from "../landing/fit";
+import { CODE_WRAPS } from "./fit";
 import { SwapToggle } from "./swap-toggle";
 
 const LINES = [
@@ -19,10 +19,17 @@ const LINES = [
  */
 export function SwapImport() {
   return (
-    <section data-landing="swap-import" aria-labelledby="alt-swap" className="border-b bg-tone-1">
+    <section
+      data-landing="swap-import"
+      aria-labelledby="landing-swap"
+      className="border-b bg-tone-1"
+    >
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[1.1fr_1fr] lg:items-center">
         <div className="flex min-w-0 flex-col gap-5">
-          <h2 id="alt-swap" className="font-display text-3xl text-balance sm:text-4xl lg:text-5xl">
+          <h2
+            id="landing-swap"
+            className="font-display text-3xl text-balance sm:text-4xl lg:text-5xl"
+          >
             Swap an import. Keep your code.
           </h2>
           <p className="max-w-prose text-pretty text-lg">

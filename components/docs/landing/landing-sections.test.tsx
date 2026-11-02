@@ -6,7 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { baseOptions } from "@/lib/docs/layout.shared";
 import { axe } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import { landingCatalog } from "./catalog";
 import { LandingSections } from "./landing-sections";
 
 beforeEach(() => {
@@ -27,90 +26,86 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-// The page renders every non-overlay default demo; the first import of them is slow.
 vi.setConfig({ testTimeout: 30_000 });
 
 // As app/(site)/layout.tsx and page.tsx compose it, with the framework hooks stubbed (the
-// Next.js provider imports `next/navigation`, which Node cannot resolve outside Next). The page
-// itself renders LandingSections as an async element, which only the server can.
+// Next.js provider imports `next/navigation`, which Node cannot resolve outside Next).
 const framework = {
   usePathname: () => "/",
   useParams: () => ({}),
   useRouter: () => ({ push: () => {}, refresh: () => {} }),
 };
 
-async function renderLanding() {
-  const sections = await LandingSections();
+function renderLanding() {
   return render(
     <FrameworkProvider {...framework}>
       <RootProvider>
-        <HomeLayout {...baseOptions()}>{sections}</HomeLayout>
+        <HomeLayout {...baseOptions()}>
+          <LandingSections />
+        </HomeLayout>
       </RootProvider>
     </FrameworkProvider>,
   );
 }
 
 describe("the landing", () => {
-  it("has the ten sections in order, the navbar first", async () => {
-    const { container } = await renderLanding();
+  it("has its sections in order under the navbar, the footer last", () => {
+    const { container } = renderLanding();
     const main = container.querySelector("main");
-    const nav = main?.querySelector("header");
-    expect(nav?.textContent).toContain("mangacn");
+    expect(main?.querySelector("header")?.textContent).toContain("mangacn");
     const sections = [...(main?.querySelectorAll<HTMLElement>("[data-landing]") ?? [])];
-    expect(["nav", ...sections.map((section) => section.dataset.landing)]).toEqual([
-      "nav",
+    expect(sections.map((section) => section.dataset.landing)).toEqual([
       "hero",
-      "three-commands",
-      "component-wall",
-      "any-app",
-      "why",
-      "theme",
+      "sfx-band",
+      "swap-import",
+      "bento",
+      "mode-split",
       "whole-page",
+      "three-commands",
       "agent-ready",
       "footer",
     ]);
-    // The navbar precedes every section in document order.
-    expect(
-      nav &&
-        sections[0] &&
-        nav.compareDocumentPosition(sections[0]) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
     expect(sections.at(-1)?.tagName).toBe("FOOTER");
   });
 
-  it("reads its counts from the catalog", async () => {
-    const { items, primitives } = landingCatalog();
-    await renderLanding();
-    expect(
-      screen.getByRole("heading", { name: `${items.length} items. Two kinds.` }),
-    ).not.toBeNull();
-    expect(screen.getByRole("link", { name: `All ${items.length} →` })).not.toBeNull();
-    expect(screen.getByRole("tab", { name: `Primitives ${primitives}` })).not.toBeNull();
-    expect(screen.getByText(new RegExp(`^The ${primitives} restyled primitives`))).not.toBeNull();
-    expect(
-      screen.getByText(new RegExp(`^The ${primitives} primitives keep shadcn`)),
-    ).not.toBeNull();
-  });
-
-  it("has one h1 and section headings at h2, with no iframes", async () => {
-    const { container } = await renderLanding();
+  it("has one h1, h2 per section and no iframes", () => {
+    const { container } = renderLanding();
     expect(container.querySelectorAll("h1")).toHaveLength(1);
     expect(container.querySelector("h1")?.id).toBe("landing-hero");
-    const headings = [...container.querySelectorAll('h2[id^="landing-"]')].map((h) => h.id);
-    expect(headings).toEqual([
-      "landing-commands",
-      "landing-wall",
-      "landing-any-app",
-      "landing-why",
-      "landing-theme",
+    expect([...container.querySelectorAll('h2[id^="landing-"]')].map((h) => h.id)).toEqual([
+      "landing-swap",
+      "landing-bento",
+      "landing-modes",
       "landing-page",
+      "landing-commands",
       "landing-agents",
     ]);
     expect(container.querySelector("iframe")).toBeNull();
   });
 
+  it("marks Japanese text and hides the decorative band", () => {
+    const { container } = renderLanding();
+    const band = container.querySelector('[data-landing="sfx-band"]');
+    expect(band?.getAttribute("aria-hidden")).toBe("true");
+    for (const node of container.querySelectorAll("[data-landing] *")) {
+      const text = node.textContent ?? "";
+      if (/[぀-ヿ一-鿿]/.test(text) && node.children.length === 0) {
+        expect(node.closest("[lang='ja']"), text).not.toBeNull();
+      }
+    }
+  });
+
+  it("swaps the stock card for the drawn one", async () => {
+    const { container } = renderLanding();
+    const toggle = container.querySelector('[data-slot="swap-toggle"]');
+    const stock = toggle?.querySelector('[data-slot="stock-card"]')?.parentElement;
+    expect(stock?.hidden).toBe(true);
+    screen.getByRole("switch", { name: "Draw with mangacn" }).click();
+    await vi.waitFor(() => expect(stock?.hidden).toBe(false));
+  });
+
   it("has no axe violations", async () => {
-    const { container } = await renderLanding();
+    const { container } = renderLanding();
     expect(await axe(container)).toHaveNoViolations();
   });
 });

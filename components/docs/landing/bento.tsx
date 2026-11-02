@@ -11,7 +11,7 @@ import { SpeechBubble } from "@/registry/ui/speech-bubble/speech-bubble";
 import { Switch } from "@/registry/ui/switch/switch";
 import { ThoughtBubble } from "@/registry/ui/thought-bubble/thought-bubble";
 import { VerticalText } from "@/registry/ui/vertical-text/vertical-text";
-import { ButtonLink } from "../landing/button-link";
+import { ButtonLink } from "./button-link";
 
 /**
  * Section 5: the catalog as a bento of panels, sized by what each piece needs rather than a
@@ -19,11 +19,11 @@ import { ButtonLink } from "../landing/button-link";
  */
 export function Bento() {
   return (
-    <section data-landing="bento" aria-labelledby="alt-bento" className="border-b">
+    <section data-landing="bento" aria-labelledby="landing-bento" className="border-b">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-14 sm:px-6 md:py-20">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-3">
-            <h2 id="alt-bento" className="font-display text-3xl sm:text-4xl lg:text-5xl">
+            <h2 id="landing-bento" className="font-display text-3xl sm:text-4xl lg:text-5xl">
               The pieces a page is made of
             </h2>
             <p className="max-w-prose text-pretty text-lg">
