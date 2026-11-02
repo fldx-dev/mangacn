@@ -9,7 +9,12 @@ import { StageFrame } from "./stage-frame";
 
 // Overlay items render their stage in an iframe, so two open dialogs or sheets never stack on
 // one page; every other demo renders inline, which keeps the docs pages free of iframes.
-const OVERLAY_ITEMS = new Set(["dialog", "sheet", "tooltip", "popover"]);
+export const OVERLAY_ITEMS: ReadonlySet<string> = new Set([
+  "dialog",
+  "sheet",
+  "tooltip",
+  "popover",
+]);
 
 export interface DemoFrameProps {
   item: string;
