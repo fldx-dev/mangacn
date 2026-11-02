@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { demoEntries } from "../lib/registry/demos.generated";
+import { waitForInk } from "./ready";
 
 // Every demo in the generated map, light and dark, at each project's width. Baselines are
 // Linux-only (CI); elsewhere the page is loaded and checked for errors, without pixels.
@@ -19,22 +20,7 @@ for (const { item, demo } of demoEntries) {
       expect(response?.status()).toBe(200);
       await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
       if (mode === "dark") await expect(page.locator("html")).toHaveClass(/\bdark\b/);
-      await page.evaluate(() => document.fonts.ready);
-      // InkFrame shows a CSS fallback until rough.js has drawn; never snapshot that frame.
-      await expect(
-        page.locator('[data-slot="ink-frame"]:not([data-inked="true"])').filter({ visible: true }),
-      ).toHaveCount(0);
-      // A web font swap after the first drawing resizes the box; wait until every drawing was
-      // measured against the box it now covers, so no frame is captured mid-redraw.
-      await page.waitForFunction(() =>
-        [...document.querySelectorAll<HTMLElement>('[data-slot="ink-frame"][data-inked="true"]')]
-          .filter((host) => host.getClientRects().length > 0)
-          .every((host) => {
-            const [width, height] = (host.dataset.inkSize ?? "").split("x").map(Number);
-            const box = host.getBoundingClientRect();
-            return Math.abs(width - box.width) < 1 && Math.abs(height - box.height) < 1;
-          }),
-      );
+      await waitForInk(page);
 
       if (comparePixels) {
         await expect(page).toHaveScreenshot(`${item}-${demo}-${mode}.png`, { fullPage: true });

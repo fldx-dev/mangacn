@@ -29,7 +29,7 @@ export function InstallCommand({ item }: { item: string }) {
       </CodeBlockTabsList>
       {PACKAGE_MANAGERS.map((manager) => (
         <CodeBlockTab key={manager} value={manager}>
-          <CodeBlock>
+          <CodeBlock viewportProps={{ "aria-label": `Install ${item} with ${manager}` }}>
             <Pre>
               <code>
                 <span className="line">{installCommand(item, manager)}</span>
