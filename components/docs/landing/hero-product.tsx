@@ -1,4 +1,3 @@
-import { cn } from "cn";
 import { Badge } from "@/registry/ui/badge/badge";
 import { Button } from "@/registry/ui/button/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/registry/ui/card/card";
@@ -11,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/registry/ui/table/table";
-import { TABLE_FITS } from "./fit";
 
 const PAGES = [
   { pages: "1–6", status: "Inked" },
@@ -22,7 +20,7 @@ const PAGES = [
 /** Hero cell "In a product": a small status card built from stock primitives only. */
 export function HeroProduct() {
   return (
-    <Card size="sm" className={cn("w-full text-xs", TABLE_FITS)}>
+    <Card size="sm" className="w-full text-xs">
       <CardHeader>
         <CardTitle className="text-sm">Chapter 12 · Rooftop</CardTitle>
         <div className="flex flex-wrap gap-1.5">
