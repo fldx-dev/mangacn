@@ -425,3 +425,32 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   in the same commit. Two runs of the same commit also differ in a few dozen PNGs by one to a
   few hundred pixels (renderer antialiasing at text and stroke edges); that is within the
   threshold and not something to chase.
+
+## Docs page per item
+
+Every catalog item with demos has a page at `content/docs/components/<item>.mdx`, and the
+site (`/docs/components/<item>`) is built from it. `pnpm gen:docs` writes the page for any
+item that has none (never overwriting one) and rewrites `content/docs/components/meta.json`,
+the sidebar order under category separators; `pnpm gen:docs --check` fails naming every
+missing page or a stale meta, and runs in `pnpm build` and `pnpm run ci`.
+
+The scaffold is short: frontmatter (`title`, `description` copied from the catalog, `item`),
+`<InstallCommand item="…" />`, `<CopyPrompt item="…" />`, a placeholder comment where the
+prose goes, an `## Examples` section with one `<DemoFrame item="…" demo="…" />` per demo in
+the demo map, and `## Props` with `<PropsTable item="…" />`. Replace the placeholder with
+one or two sentences on when to use the piece and what it pairs with (see
+`speech-bubble.mdx`); Japanese samples go under `lang="ja"`. The pieces:
+
+- `DemoFrame` renders the demo inline under Preview / Code tabs, with the source as it
+  lands in a consumer project. Overlay items (dialog, sheet, tooltip, popover) render it as
+  an iframe of the demo stage instead, so open popups never stack on the page.
+- `PropsTable` is an `AutoTypeTable` over the item's exported props interface for a
+  manga-native piece, and for a restyled primitive a link to shadcn's page plus the table of
+  what mangacn adds (`lib/docs/props-delta.ts`: add a row there when you add a variant).
+- `InstallCommand` and `CopyPrompt` read the catalog; nothing on the page is typed by hand
+  except the prose.
+
+`lib/docs/pages.test.ts` keeps pages and catalog in step: every item has a page, every page
+names a catalog item, every demo in the map is framed or listed in the frontmatter's
+`skipDemos` (`skipDemos: ["open"]`), and the placeholder is gone. The site suite
+(`e2e/site.spec.ts`) screenshots and axe-checks a sample of pages, not every item page.
