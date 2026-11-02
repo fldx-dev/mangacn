@@ -12,6 +12,23 @@ const nextConfig: NextConfig = {
       { source: "/docs/:slug*.md", destination: "/llms.mdx/:slug*" },
     ];
   },
+  // The registry (`public/r`, built by `pnpm registry:build`): a short browser cache, a longer
+  // CDN cache, and open CORS so any tool can fetch the items. Next sets the JSON content type.
+  async headers() {
+    return [
+      {
+        source: "/r/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+          },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET" },
+        ],
+      },
+    ];
+  },
   turbopack: {
     rules: {
       "*.css": {
