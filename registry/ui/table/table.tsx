@@ -8,6 +8,8 @@ import { InkFrame } from "@/components/ink-frame";
 // Restyled for mangacn: rows have no CSS borders. A <tr> cannot hold the drawing, so every
 // cell inks its own segment of the row rule (`RowRule`); the segments meet at the cell edges.
 // The header rule is heavy, the last body row has none, and footer cells rule above themselves.
+// At the table's edges the rule stops flush and clips its drawing (which reaches 8 px past its
+// box), or the overhang would make the container scroll a table that fits.
 
 /** One hand-drawn segment of a row rule along the bottom of its cell, overlapping its neighbours. */
 function RowRule() {
@@ -75,6 +77,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
       data-slot="table-row"
       className={cn(
         "transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        "[&>:first-child>[data-slot=ink-frame]]:start-0 [&>:last-child>[data-slot=ink-frame]]:end-0 [&>:is(:first-child,:last-child)>[data-slot=ink-frame]]:overflow-x-clip",
         className,
       )}
       {...props}
