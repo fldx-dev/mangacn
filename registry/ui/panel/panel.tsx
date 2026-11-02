@@ -33,11 +33,27 @@ export interface PanelProps
   extends React.HTMLAttributes<HTMLElement>,
     VariantProps<typeof toneVariants>,
     VariantProps<typeof captionVariants> {
-  /** A hatched ink shadow behind the panel. Off by default. */
+  /**
+   * Screentone over the paper inside the frame: halftone dots, diagonal lines or cross-hatching.
+   * @default "none"
+   */
+  tone?: VariantProps<typeof toneVariants>["tone"];
+  /**
+   * A hatched ink shadow behind the panel.
+   * @default false
+   */
   shadow?: boolean;
   /** Narration box in one corner, rendered as text. */
   caption?: React.ReactNode;
-  /** The element to render; its role is the panel's role. */
+  /**
+   * The corner the caption box sits on, its outline overlapping the panel's.
+   * @default "top-left"
+   */
+  captionSide?: VariantProps<typeof captionVariants>["captionSide"];
+  /**
+   * The element to render; its role is the panel's role.
+   * @default "section"
+   */
   as?: keyof React.JSX.IntrinsicElements;
 }
 

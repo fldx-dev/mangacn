@@ -25,7 +25,7 @@ export function SwapToggle() {
           <StockCard />
         </div>
         <div hidden={!drawn}>
-          <HeroProduct />
+          <HeroProduct tableLabel="Chapter 12 pages, drawn with mangacn" />
         </div>
       </div>
     </div>

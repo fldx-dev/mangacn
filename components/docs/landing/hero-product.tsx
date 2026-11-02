@@ -17,8 +17,11 @@ const PAGES = [
   { pages: "13–18", status: "Pencils" },
 ];
 
-/** Hero cell "In a product": a small status card built from stock primitives only. */
-export function HeroProduct() {
+/**
+ * Hero cell "In a product": a small status card built from stock primitives only. The landing
+ * shows it twice (the hero and the swap), so each copy names its table region differently.
+ */
+export function HeroProduct({ tableLabel = "Chapter 12 pages" }: { tableLabel?: string }) {
   return (
     <Card size="sm" className="w-full text-xs">
       <CardHeader>
@@ -29,7 +32,7 @@ export function HeroProduct() {
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <Table className="text-xs">
+        <Table label={tableLabel} className="text-xs">
           <TableHeader>
             <TableRow>
               <TableHead className="h-7 px-1.5">Pages</TableHead>

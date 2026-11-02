@@ -32,7 +32,25 @@ const speedLinesVariants = cva("pointer-events-none absolute inset-0 -z-1", {
 export interface SpeedLinesProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "color" | "children">,
     VariantProps<typeof speedLinesVariants> {
-  /** Where radial lines converge, in percent of the box: `[x, y]`. */
+  /**
+   * Lines radiating from `center`, or horizontal streaks fading towards the left or the right.
+   * @default "radial"
+   */
+  direction?: VariantProps<typeof speedLinesVariants>["direction"];
+  /**
+   * How close together the lines are drawn.
+   * @default "normal"
+   */
+  density?: VariantProps<typeof speedLinesVariants>["density"];
+  /**
+   * Line colour: ink, or the mid tone for a quieter background.
+   * @default "ink"
+   */
+  color?: VariantProps<typeof speedLinesVariants>["color"];
+  /**
+   * Where radial lines converge, in percent of the box: `[x, y]`.
+   * @default [50, 50]
+   */
   center?: readonly [number, number];
 }
 

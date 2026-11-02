@@ -2,7 +2,6 @@
 // stock prop and value (registry/ui/parity.test.ts), so the docs link to shadcn for those and
 // list only these. Checked against each item's source and the stock cva variants in
 // registry/ui/__parity__/base-nova.json: no other primitive adds a prop or a variant value.
-
 export interface PropDelta {
   /** The TypeScript type; for an added value of a stock prop, only the added value. */
   type: string;
@@ -44,6 +43,14 @@ export const PROPS_DELTA: Readonly<Record<string, Readonly<Record<string, PropDe
       type: '"rect" | "ellipse"',
       default: '"rect"',
       description: "`ellipse` for round placeholders, such as an avatar.",
+    },
+  },
+  table: {
+    label: {
+      type: "string",
+      default: '"Table"',
+      description:
+        "Names the scroll region around the table, which takes focus so a keyboard can scroll it. Give each table on a page its own.",
     },
   },
 };

@@ -23,9 +23,21 @@ const STEP = { left: ["", "-ml-3", "-ml-5"], right: ["", "-mr-3", "-mr-5"] };
 export interface ThoughtBubbleProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof thoughtBubbleVariants> {
-  /** Dots in the trail, 1–3. */
+  /**
+   * Dots in the trail, each smaller than the last.
+   * @default 2
+   */
   dots?: 1 | 2 | 3;
+  /**
+   * The side the trail of dots leaves from, towards the thinker.
+   * @default "left"
+   */
   tailSide?: "left" | "right";
+  /**
+   * `dialogue` sets the text in the lettering face; `inherit` keeps the surrounding font.
+   * @default "dialogue"
+   */
+  font?: VariantProps<typeof thoughtBubbleVariants>["font"];
 }
 
 /** A dashed, hand-drawn thought bubble with a trail of rough ink dots. The text stays real. */

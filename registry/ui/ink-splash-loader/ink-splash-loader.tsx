@@ -36,7 +36,15 @@ const PULSE = {
 export interface InkSplashLoaderProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, "children">,
     VariantProps<typeof inkSplashLoaderVariants> {
-  /** Announced to assistive tech and kept visually hidden. */
+  /**
+   * Loader size: 24, 40 or 64 px square.
+   * @default "md"
+   */
+  size?: VariantProps<typeof inkSplashLoaderVariants>["size"];
+  /**
+   * Announced to assistive tech and kept visually hidden.
+   * @default "Loading"
+   */
   label?: string;
 }
 

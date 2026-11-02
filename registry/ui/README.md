@@ -115,7 +115,10 @@ another item, undeclared packages, Node built-ins. Demos and tests may import an
    `import { motion, useReducedMotion } from "motion/react"` and checking `useReducedMotion()`.
 6. **Accessibility is stock or better.** Keep every ARIA attribute, keyboard handler and
    focus style from stock. Decorative pieces are `aria-hidden`; text effects keep the plain
-   text in the DOM.
+   text in the DOM. A button that navigates is an anchor drawn as a button:
+   `<Button nativeButton={false} role="link" render={<a href="…" />}>`. Base UI marks every
+   non-native button `role="button"`, an `<a href>` included, so `role="link"` is needed (the
+   button page's `link` demo; the landing's `ButtonLink` wraps the same recipe).
 7. **Responsive.** Every demo renders without horizontal overflow at 360 px.
 
 Code style: double quotes, semicolons, width 100 (Biome enforces it), named exports only in

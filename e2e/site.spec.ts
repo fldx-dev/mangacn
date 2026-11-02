@@ -23,17 +23,6 @@ function slug(path: string): string {
 }
 
 /**
- * One known axe finding, outside the site: the registry Table keeps shadcn's scroll container,
- * which is not focusable, so a table wider than its index card fails
- * `scrollable-region-focusable`. Skipped node by node so the rule still checks everything else.
- */
-function knownIssue(rule: string, html: string): boolean {
-  return (
-    rule === "scrollable-region-focusable" && html.startsWith('<div data-slot="table-container"')
-  );
-}
-
-/**
  * Overlay demos (dialog, sheet, tooltip, popover) render their stage in an iframe, which takes
  * `?mode=dark` once the page has hydrated: wait for that stage to load, then for its ink.
  */
@@ -78,12 +67,10 @@ for (const path of pages) {
       expect(width, "no horizontal overflow").toBeLessThanOrEqual(page.viewportSize()?.width ?? 0);
 
       const { violations } = await new AxeBuilder({ page }).analyze();
-      const found = violations
-        .map(({ id, nodes }) => ({
-          id,
-          targets: nodes.filter((node) => !knownIssue(id, node.html)).map((node) => node.target),
-        }))
-        .filter(({ targets }) => targets.length > 0);
+      const found = violations.map(({ id, nodes }) => ({
+        id,
+        targets: nodes.map((node) => node.target),
+      }));
       expect(found, "axe violations").toEqual([]);
       expect(errors).toEqual([]);
     });

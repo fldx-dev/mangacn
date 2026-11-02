@@ -28,9 +28,15 @@ const edgeVariants = {
 export interface PageTurnProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Change it to turn the page; the children are the page shown for that key. */
   pageKey: string | number;
-  /** `rtl` (default) turns like a manga, spine on the right; `ltr` like a western book. */
+  /**
+   * `rtl` turns like a manga, spine on the right; `ltr` like a western book.
+   * @default "rtl"
+   */
   direction?: "rtl" | "ltr";
-  /** Seconds per turn. */
+  /**
+   * Seconds per turn.
+   * @default 0.5
+   */
   duration?: number;
 }
 

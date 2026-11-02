@@ -72,6 +72,28 @@ describe("Table", () => {
     }
   });
 
+  it("makes the scroll container a focusable region named by the label prop", () => {
+    render(<Chapters />);
+    const region = screen.getByRole("region", { name: "Table" });
+    expect(region.getAttribute("data-slot")).toBe("table-container");
+    expect(region.tabIndex).toBe(0);
+    region.focus();
+    expect(document.activeElement).toBe(region);
+    cleanup();
+
+    render(
+      <Table label="Volume 2 chapters">
+        <TableBody>
+          <TableRow>
+            <TableCell>12</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    expect(screen.getByRole("region", { name: "Volume 2 chapters" })).not.toBeNull();
+    expect(screen.getByRole("table").hasAttribute("aria-label")).toBe(false);
+  });
+
   it("draws every row rule as hand-drawn segments instead of CSS borders", () => {
     render(<Chapters />);
     const table = screen.getByRole("table");

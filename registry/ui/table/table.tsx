@@ -23,9 +23,30 @@ function RowRule() {
   );
 }
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+// Unlike stock, the scroll container is a named region in the tab order, so a keyboard user can
+// scroll a table wider than its container (axe `scrollable-region-focusable`).
+function Table({
+  className,
+  label = "Table",
+  ...props
+}: React.ComponentProps<"table"> & {
+  /**
+   * Accessible name of the scroll region around the table, read when it takes focus. Give
+   * each table on a page its own, as for any landmark.
+   * @default "Table"
+   */
+  label?: string;
+}) {
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
+    // biome-ignore lint/a11y/useSemanticElements: stock's <div>, named as a region rather than retagged.
+    <div
+      data-slot="table-container"
+      role="region"
+      aria-label={label}
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: a scroll container must take focus to scroll by keyboard.
+      tabIndex={0}
+      className="relative w-full overflow-x-auto outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+    >
       <table
         data-slot="table"
         className={cn("w-full caption-bottom text-sm", className)}

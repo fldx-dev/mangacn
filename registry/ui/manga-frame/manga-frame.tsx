@@ -21,11 +21,21 @@ const FRAME = "pointer-events-none absolute inset-0 z-1";
 export interface MangaFrameProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src" | "alt" | "className">,
     VariantProps<typeof imageVariants> {
+  /** The picture's URL, passed to the `<img>`. */
   src: string;
   /** Required: describe the picture, or pass `""` when it is purely decorative. */
   alt: string;
-  /** A halftone mat between the frame and the picture. */
+  /**
+   * The picture's aspect ratio; it is cropped to fill (`object-cover`).
+   * @default "4/3"
+   */
+  aspect?: VariantProps<typeof imageVariants>["aspect"];
+  /**
+   * A halftone mat between the frame and the picture.
+   * @default false
+   */
   matte?: boolean;
+  /** Shown under the frame in a `<figcaption>`. */
   caption?: React.ReactNode;
   /** Applied to the `<figure>`; other props go to the `<img>`. */
   className?: string;

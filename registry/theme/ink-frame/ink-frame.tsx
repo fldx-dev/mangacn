@@ -11,10 +11,20 @@ type InkFrameFill = "none" | "paper" | "ink" | "tone" | "hatch";
 type InkFrameShadow = "none" | "hatch" | "solid";
 
 export interface InkFrameProps extends React.HTMLAttributes<HTMLElement> {
-  /** `line` draws one stroke across the box, horizontal or vertical by aspect ratio. */
+  /**
+   * `line` draws one stroke across the box, horizontal or vertical by aspect ratio.
+   * @default "rect"
+   */
   shape?: InkFrameShape;
+  /**
+   * What fills the outline: nothing, paper, solid ink, the mid tone, or pencil hatching.
+   * @default "paper"
+   */
   fill?: InkFrameFill;
-  /** Off by default: mangacn draws no shadow unless a component asks for one. */
+  /**
+   * A hatched or solid ink shadow; mangacn draws none unless a component asks for one.
+   * @default "none"
+   */
   shadow?: InkFrameShadow;
   /** Same seed, same wobble. Defaults to a stable hash of `useId()`. */
   seed?: number;
@@ -24,8 +34,15 @@ export interface InkFrameProps extends React.HTMLAttributes<HTMLElement> {
    * fill and shadow. `shape` still picks the CSS fallback. A new function redraws, so memoise it.
    */
   outline?: (width: number, height: number) => string;
-  /** Draws the stroke dashed (whisper and thought bubbles). */
+  /**
+   * Draws the stroke dashed (whisper and thought bubbles).
+   * @default false
+   */
   dashed?: boolean;
+  /**
+   * The element to render; use `span` inside phrasing content such as a button.
+   * @default "div"
+   */
   as?: keyof React.JSX.IntrinsicElements;
 }
 

@@ -16,6 +16,12 @@ The everyday action, inked: a solid ink fill for the main call, outline, seconda
 <DemoFrame item="button" demo="sizes" />
 <DemoFrame item="button" demo="variants" />
 
+## As a link
+
+When a button takes the reader to another page rather than doing something on this one, render it as an anchor: `nativeButton={false}` with `render={<a href="…" />}` (or your router's link). Pass `role="link"` too: Base UI marks every non-native button `role="button"`, an `<a href>` included, so without it the link is announced as a button. A `ButtonLink`-style wrapper sets `role="link"` once for every link it draws.
+
+<DemoFrame item="button" demo="link" />
+
 ## Props
 
 <PropsTable item="button" />
