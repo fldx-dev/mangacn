@@ -679,6 +679,38 @@
           "target": "@ui/kbd.tsx"
         }
       ]
+    },
+    {
+      "name": "ink-mark",
+      "type": "registry:component",
+      "title": "Ink Mark",
+      "description": "Hand-drawn underline, circle, box, strike, highlight or brackets around inline text, one per line, drawn on when shown.",
+      "categories": ["text"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "motion", "roughjs@4.6.6"],
+      "files": [
+        {
+          "path": "ink-mark/ink-mark.tsx",
+          "type": "registry:component",
+          "target": "@components/ink-mark.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ink-arrow",
+      "type": "registry:component",
+      "title": "Ink Arrow",
+      "description": "Hand-drawn arrow, straight or bowed, in four directions and three lengths, with an optional label at its tail.",
+      "categories": ["decoration"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "roughjs@4.6.6"],
+      "files": [
+        {
+          "path": "ink-arrow/ink-arrow.tsx",
+          "type": "registry:component",
+          "target": "@components/ink-arrow.tsx"
+        }
+      ]
     }
   ]
 }
