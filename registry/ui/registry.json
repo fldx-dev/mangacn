@@ -681,6 +681,55 @@
       ]
     },
     {
+      "name": "breadcrumb",
+      "type": "registry:ui",
+      "title": "Breadcrumb",
+      "description": "Stock breadcrumb with hand-inked chevron separators and the current page in the display face.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "files": [
+        {
+          "path": "breadcrumb/breadcrumb.tsx",
+          "type": "registry:ui",
+          "target": "@ui/breadcrumb.tsx"
+        }
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Stock pagination on outlined buttons, the current page in ink, with hand-inked previous and next chevrons.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": ["button"],
+      "files": [
+        {
+          "path": "pagination/pagination.tsx",
+          "type": "registry:ui",
+          "target": "@ui/pagination.tsx"
+        }
+      ]
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "Stock collapsible; its trigger can carry accordion's + / − ink glyph, which flips when the panel opens.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "files": [
+        {
+          "path": "collapsible/collapsible.tsx",
+          "type": "registry:ui",
+          "target": "@ui/collapsible.tsx"
+        }
+      ]
+    },
+    {
       "name": "ink-mark",
       "type": "registry:component",
       "title": "Ink Mark",

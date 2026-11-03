@@ -83,6 +83,10 @@ const EXPECTED_CONTENT: Record<
     { file: "components/ui/toggle-group.tsx", attribution: attribution("ToggleGroup") },
   ],
   kbd: [{ file: "components/ui/kbd.tsx", attribution: attribution("Kbd") }],
+  breadcrumb: [{ file: "components/ui/breadcrumb.tsx", attribution: attribution("Breadcrumb") }],
+  // pagination pulls shadcn's stock button (a bare name), as dialog does.
+  pagination: [{ file: "components/ui/pagination.tsx", attribution: attribution("Pagination") }],
+  collapsible: [{ file: "components/ui/collapsible.tsx", attribution: attribution("Collapsible") }],
   // Manga-native pieces: registry:component with `target: "@components/<name>.tsx"`.
   panel: [{ file: "components/panel.tsx", includes: ["export function Panel("] }],
   "panel-grid": [{ file: "components/panel-grid.tsx", includes: ["export function PanelGrid("] }],

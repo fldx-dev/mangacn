@@ -31,6 +31,9 @@ export const PARITY_PRIMITIVES = [
   "toggle",
   "toggle-group",
   "kbd",
+  "breadcrumb",
+  "pagination",
+  "collapsible",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";
