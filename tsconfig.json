@@ -21,6 +21,7 @@
     "paths": {
       "@/components/ink-frame": ["./registry/theme/ink-frame/ink-frame.tsx"],
       "@/components/ui/button": ["./registry/ui/button/button.tsx"],
+      "@/components/ui/toggle": ["./registry/ui/toggle/toggle.tsx"],
       "@/*": ["./*"]
     }
   },

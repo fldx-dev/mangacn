@@ -1,7 +1,10 @@
 import { createHash } from "node:crypto";
 import { mangacnItemName } from "./index";
 
-/** The 21 restyled primitives, by stock base-nova name (SPEC-components §4.3). */
+/**
+ * The restyled primitives, by stock base-nova name: the 21 of SPEC-components §4.3, then
+ * batch 2 (SPEC-components-2 §4) in build order.
+ */
 export const PARITY_PRIMITIVES = [
   "button",
   "badge",
@@ -24,6 +27,10 @@ export const PARITY_PRIMITIVES = [
   "skeleton",
   "separator",
   "table",
+  "slider",
+  "toggle",
+  "toggle-group",
+  "kbd",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";

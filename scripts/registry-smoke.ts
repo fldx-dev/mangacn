@@ -75,6 +75,14 @@ const EXPECTED_CONTENT: Record<
   dialog: [{ file: "components/ui/dialog.tsx", attribution: attribution("Dialog") }],
   badge: [{ file: "components/ui/badge.tsx", attribution: attribution("Badge") }],
   separator: [{ file: "components/ui/separator.tsx", attribution: attribution("Separator") }],
+  // Batch 2. toggle-group pulls shadcn's stock toggle (a bare name); mangacn's toggle, installed
+  // after it, overwrites it.
+  slider: [{ file: "components/ui/slider.tsx", attribution: attribution("Slider") }],
+  toggle: [{ file: "components/ui/toggle.tsx", attribution: attribution("Toggle") }],
+  "toggle-group": [
+    { file: "components/ui/toggle-group.tsx", attribution: attribution("ToggleGroup") },
+  ],
+  kbd: [{ file: "components/ui/kbd.tsx", attribution: attribution("Kbd") }],
   // Manga-native pieces: registry:component with `target: "@components/<name>.tsx"`.
   panel: [{ file: "components/panel.tsx", includes: ["export function Panel("] }],
   "panel-grid": [{ file: "components/panel-grid.tsx", includes: ["export function PanelGrid("] }],

@@ -3,6 +3,7 @@
 import type * as React from "react";
 import { useId, useState } from "react";
 import { InkFrame } from "@/registry/theme/ink-frame/ink-frame";
+import { Slider } from "@/registry/ui/slider/slider";
 
 /** Two of the pen variables, with the theme's defaults (the full set is on the theming page). */
 const PEN = [
@@ -19,7 +20,7 @@ function cssValue(value: number, unit: string) {
   return `${Number(value.toFixed(2))}${unit}`;
 }
 
-/** Two sliders bound to one live InkFrame: the landing's teaser for `ThemePlayground`. */
+/** Two registry sliders bound to one live InkFrame: the landing's teaser for `ThemePlayground`. */
 export function InkTeaser() {
   const id = useId();
   const [values, setValues] = useState(DEFAULTS);
@@ -36,28 +37,31 @@ export function InkTeaser() {
       <fieldset className="grid min-w-0 gap-4">
         <legend className="sr-only">Pen variables</legend>
         {PEN.map((pen) => {
-          const inputId = `${id}${pen.name}`;
+          const sliderId = `${id}${pen.name}`;
+          const labelId = `${sliderId}-label`;
           return (
             <div key={pen.name} className="grid gap-1.5">
               <div className="flex items-baseline justify-between gap-3 text-sm">
-                <label htmlFor={inputId} className="font-medium">
+                <span id={labelId} className="font-medium">
                   {pen.label}
-                </label>
-                <output htmlFor={inputId} className="font-mono text-xs tabular-nums">
+                </span>
+                <output htmlFor={sliderId} className="font-mono text-xs tabular-nums">
                   {cssValue(values[pen.name], pen.unit)}
                 </output>
               </div>
-              <input
-                id={inputId}
-                type="range"
+              <Slider
+                id={sliderId}
+                aria-labelledby={labelId}
                 min={pen.min}
                 max={pen.max}
                 step={pen.step}
-                value={values[pen.name]}
-                onChange={(event) =>
-                  setValues((current) => ({ ...current, [pen.name]: Number(event.target.value) }))
+                value={[values[pen.name]]}
+                onValueChange={(value) =>
+                  setValues((current) => ({
+                    ...current,
+                    [pen.name]: Array.isArray(value) ? value[0] : value,
+                  }))
                 }
-                className="w-full accent-ink"
               />
             </div>
           );
