@@ -563,6 +563,74 @@
       ],
       "registryDependencies": [],
       "sha1": "a1553d67c822a3676e44c9537aa382a45e479631"
+    },
+    "breadcrumb": {
+      "exports": [
+        "Breadcrumb",
+        "BreadcrumbEllipsis",
+        "BreadcrumbItem",
+        "BreadcrumbLink",
+        "BreadcrumbList",
+        "BreadcrumbPage",
+        "BreadcrumbSeparator"
+      ],
+      "dataSlots": [
+        "breadcrumb",
+        "breadcrumb-ellipsis",
+        "breadcrumb-item",
+        "breadcrumb-link",
+        "breadcrumb-list",
+        "breadcrumb-page",
+        "breadcrumb-separator"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "sha1": "9b2c45719468eb12eca88f3561b8b476cae33fdf"
+    },
+    "pagination": {
+      "exports": [
+        "Pagination",
+        "PaginationContent",
+        "PaginationEllipsis",
+        "PaginationItem",
+        "PaginationLink",
+        "PaginationNext",
+        "PaginationPrevious"
+      ],
+      "dataSlots": [
+        "pagination",
+        "pagination-content",
+        "pagination-ellipsis",
+        "pagination-item",
+        "pagination-link"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "sha1": "462fbac491288c2d7d535e22cbf3fdd525060886"
+    },
+    "collapsible": {
+      "exports": [
+        "Collapsible",
+        "CollapsibleContent",
+        "CollapsibleTrigger"
+      ],
+      "dataSlots": [
+        "collapsible",
+        "collapsible-content",
+        "collapsible-trigger"
+      ],
+      "variants": {},
+      "dependencies": [],
+      "registryDependencies": [],
+      "sha1": "609c3529f008cec70c51b4f1799d5b61f550b06c"
     }
   }
 }
