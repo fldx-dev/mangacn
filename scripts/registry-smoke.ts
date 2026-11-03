@@ -120,6 +120,8 @@ const EXPECTED_CONTENT: Record<
   "manga-frame": [
     { file: "components/manga-frame.tsx", includes: ["export function MangaFrame("] },
   ],
+  "ink-mark": [{ file: "components/ink-mark.tsx", includes: ["export function InkMark("] }],
+  "ink-arrow": [{ file: "components/ink-arrow.tsx", includes: ["export function InkArrow("] }],
 };
 
 /**
