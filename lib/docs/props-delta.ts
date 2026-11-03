@@ -31,6 +31,14 @@ export const PROPS_DELTA: Readonly<Record<string, Readonly<Record<string, PropDe
       description: "An ink shadow behind the card: solid (`ink`) or hatched (`hatch`).",
     },
   },
+  collapsible: {
+    variant: {
+      type: '"default" | "glyph"',
+      default: '"default"',
+      description:
+        "On `CollapsibleTrigger`: `glyph` adds Accordion's + / − ink glyph after the label, flipped when the panel opens; `default` is the stock trigger.",
+    },
+  },
   progress: {
     variant: {
       type: '"default" | "tone"',
