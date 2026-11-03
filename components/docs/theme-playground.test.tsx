@@ -16,6 +16,22 @@ const framesOf = (container: HTMLElement) => [
   ...(previewOf(container)?.querySelectorAll<HTMLElement>('[data-slot="ink-frame"]') ?? []),
 ];
 const snippet = (container: HTMLElement) => container.querySelector("pre")?.textContent ?? "";
+/**
+ * The slider thumb named by the label ending in `name`. Base UI hides thumbs until it has
+ * measured the track, which jsdom never does, so the query includes hidden elements and reads
+ * the name from `aria-labelledby` (a hidden element has no computed name).
+ */
+const sliderFor = (name: string) => {
+  const thumb = screen
+    .getAllByRole("slider", { hidden: true })
+    .find((input) =>
+      document
+        .getElementById(input.getAttribute("aria-labelledby") ?? "")
+        ?.textContent?.endsWith(name),
+    );
+  if (!thumb) throw new Error(`no slider labelled …${name}`);
+  return thumb;
+};
 
 describe("ThemePlayground", () => {
   it("starts from the theme's pen values in the preview and the snippet", () => {
@@ -38,7 +54,7 @@ describe("ThemePlayground", () => {
     );
   });
 
-  it("labels every slider and updates the preview style and the snippet", () => {
+  it("labels every registry slider and updates the preview style and the snippet", () => {
     const { container } = render(<ThemePlayground />);
     for (const name of [
       "--outline-width",
@@ -48,11 +64,11 @@ describe("ThemePlayground", () => {
       "--ink-offset",
       "--ink-hachure-gap",
     ]) {
-      expect(screen.getByLabelText(new RegExp(`${name}$`))).toHaveProperty("type", "range");
+      expect(sliderFor(name)).toHaveProperty("type", "range");
     }
 
-    fireEvent.change(screen.getByLabelText(/--outline-width$/), { target: { value: "3" } });
-    fireEvent.change(screen.getByLabelText(/--ink-roughness$/), { target: { value: "0.3" } });
+    fireEvent.change(sliderFor("--outline-width"), { target: { value: "3" } });
+    fireEvent.change(sliderFor("--ink-roughness"), { target: { value: "0.3" } });
 
     const preview = previewOf(container);
     expect(preview?.style.getPropertyValue("--outline-width")).toBe("3px");
@@ -70,7 +86,7 @@ describe("ThemePlayground", () => {
     for (const frame of before) expect(frame.dataset.inked).toBe("true");
 
     observer.reset();
-    fireEvent.change(screen.getByLabelText(/--ink-bowing$/), { target: { value: "2" } });
+    fireEvent.change(sliderFor("--ink-bowing"), { target: { value: "2" } });
     const after = framesOf(container);
     // New frames, which draw again on their first resize callback.
     for (const [index, frame] of after.entries()) expect(frame).not.toBe(before[index]);
@@ -87,7 +103,7 @@ describe("ThemePlayground", () => {
     fireEvent.click(screen.getByRole("button", { name: "Reroll seed" }));
     expect(previewOf(container)?.dataset.seed).toBe(String(Math.floor(0.5 * 2147483645) + 1));
 
-    fireEvent.change(screen.getByLabelText(/--ink-offset$/), { target: { value: "4" } });
+    fireEvent.change(sliderFor("--ink-offset"), { target: { value: "4" } });
     fireEvent.click(screen.getByRole("button", { name: "Reset" }));
     expect(previewOf(container)?.style.getPropertyValue("--ink-offset")).toBe("1.5");
   });
