@@ -1,5 +1,5 @@
 /**
- * Fetches the stock base-nova source of the 21 restyled primitives and writes
+ * Fetches the stock base-nova source of the restyled primitives (`PARITY_PRIMITIVES`) and writes
  * registry/ui/__parity__/base-nova.json, the snapshot registry/ui/parity.test.ts compares
  * against (SPEC-components §4.1). Network only; never runs in CI. Refreshing the snapshot
  * after a shadcn release is a deliberate, reviewed change.

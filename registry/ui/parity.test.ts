@@ -24,7 +24,7 @@ const restyled = PARITY_PRIMITIVES.filter((name) => items.get(name)?.type === "r
 const pending = PARITY_PRIMITIVES.filter((name) => !restyled.includes(name));
 
 describe("parity snapshot", () => {
-  it("has an entry for each of the 21 primitives", () => {
+  it(`has an entry for each of the ${PARITY_PRIMITIVES.length} primitives`, () => {
     expect(Object.keys(snapshot.items).sort()).toEqual([...PARITY_PRIMITIVES].sort());
     expect(snapshot.fetchedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });

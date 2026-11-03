@@ -397,8 +397,8 @@ page renders that one demo centred on paper and nothing else.
 ### Stock parity
 
 `registry/ui/parity.test.ts` compares every restyled primitive (a `registry:ui` item whose
-name is one of the 21 stock primitives) with `registry/ui/__parity__/base-nova.json`:
-named exports and `data-slot` values must equal stock; `registryDependencies` must contain
+name is in `PARITY_PRIMITIVES` in `lib/registry/parity.ts`, 25 so far) with
+`registry/ui/__parity__/base-nova.json`: named exports and `data-slot` values must equal stock; `registryDependencies` must contain
 stock's names and may add only `https://www.mangacn.com/r/<name>.json` entries;
 `dependencies` must contain every stock package (more is fine); every stock `cva` variant
 group and key must still exist (added keys such as `variant="sfx"` are fine).
