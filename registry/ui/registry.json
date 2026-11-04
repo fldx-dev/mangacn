@@ -852,6 +852,46 @@
           "target": "@components/ink-splatter.tsx"
         }
       ]
+    },
+    {
+      "name": "caption-box",
+      "type": "registry:component",
+      "title": "Caption Box",
+      "description": "Narration box with square corners and a heavy hand-drawn outline, on paper or tone; pins to a panel corner (needs ink-frame).",
+      "categories": ["text"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "caption-box/caption-box.tsx",
+          "type": "registry:component",
+          "target": "@components/caption-box.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sfx-ticker",
+      "type": "registry:component",
+      "title": "SFX Ticker",
+      "description": "Marquee band of sound effects in both scripts, paused on hover and still under reduced motion; ships its keyframes.",
+      "categories": ["decoration"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/sfx-text.json"],
+      "files": [
+        {
+          "path": "sfx-ticker/sfx-ticker.tsx",
+          "type": "registry:component",
+          "target": "@components/sfx-ticker.tsx"
+        }
+      ],
+      "css": {
+        "@keyframes mangacn-marquee": {
+          "from": { "transform": "translateX(0)" },
+          "to": { "transform": "translateX(-50%)" }
+        }
+      }
     }
   ]
 }

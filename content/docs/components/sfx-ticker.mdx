@@ -1,0 +1,21 @@
+---
+title: SFX Ticker
+description: "Marquee band of sound effects in both scripts, paused on hover and still under reduced motion; ships its keyframes."
+item: sfx-ticker
+---
+
+<InstallCommand item="sfx-ticker" />
+
+<CopyPrompt item="sfx-ticker" />
+
+A band of sound effects sliding past, the strip between two sections of a page (the landing's band is this item). Each word is an SFX Text with alternating tilt; give a word its own `color` for a spot-red hit and its own `lang` for katakana. The band is decoration, hidden from assistive tech, paused on hover and still under reduced motion; pass `label` to give screen readers a still copy of the words. Installing it adds the `mangacn-marquee` keyframes to your `globals.css`. Each pass is at least as wide as the screen, so a short list still loops without a gap.
+
+## Examples
+
+<DemoFrame item="sfx-ticker" demo="default" />
+<DemoFrame item="sfx-ticker" demo="spot-and-speed" />
+<DemoFrame item="sfx-ticker" demo="right-to-left" />
+
+## Props
+
+<PropsTable item="sfx-ticker" />

@@ -1,6 +1,7 @@
 /**
- * Renders the `theme` registry item to app/mangacn-theme.css, the stylesheet the docs app
- * imports, so the site and the registry cannot drift. See SPEC-manga-theme §4.
+ * Renders the `theme` registry item, then the `css` of any other item (sfx-ticker's keyframes),
+ * to app/mangacn-theme.css, the stylesheet the docs app imports, so the site and the registry
+ * cannot drift. See SPEC-manga-theme §4.
  *
  * Usage: pnpm gen:theme (also runs in predev/prebuild)
  */
