@@ -12,7 +12,8 @@
  *                       falls back to every item when the catalog, the smoke script or
  *                       lib/registry changed
  * The stock pre-install + overwrite check runs only when button, card and dialog are all
- * in the set; the one-command check (a second project) runs only with every item.
+ * in the set. Each one-command check (a fresh project per command, ONE_COMMANDS) runs with
+ * every item, or when the set names all of its items (`--only=pagination`).
  */
 import { type ChildProcess, execFileSync, type SpawnOptions, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -69,8 +70,15 @@ const EXPECTED_CONTENT: Record<
   "manga-motion": [{ file: "lib/manga-motion.ts", includes: ["export const popIn"] }],
   // registry:component with `target: "@components/ink-frame.tsx"` (SPEC-components §4.4).
   "ink-frame": [{ file: "components/ink-frame.tsx", includes: ["export function InkFrame"] }],
-  // button overwrites the stock button pre-installed after `shadcn init`.
-  button: [{ file: "components/ui/button.tsx", attribution: attribution("Button") }],
+  // button overwrites the stock button pre-installed after `shadcn init`; dialog, sheet,
+  // pagination and alert-dialog bring it by URL, so it must be mangacn's after them too.
+  button: [
+    {
+      file: "components/ui/button.tsx",
+      attribution: attribution("Button"),
+      includes: ['import { InkFrame, type InkFrameProps } from "@/components/ink-frame"'],
+    },
+  ],
   card: [{ file: "components/ui/card.tsx", attribution: attribution("Card") }],
   dialog: [{ file: "components/ui/dialog.tsx", attribution: attribution("Dialog") }],
   badge: [{ file: "components/ui/badge.tsx", attribution: attribution("Badge") }],
@@ -84,13 +92,11 @@ const EXPECTED_CONTENT: Record<
   ],
   kbd: [{ file: "components/ui/kbd.tsx", attribution: attribution("Kbd") }],
   breadcrumb: [{ file: "components/ui/breadcrumb.tsx", attribution: attribution("Breadcrumb") }],
-  // pagination pulls shadcn's stock button (a bare name), as dialog does.
   pagination: [{ file: "components/ui/pagination.tsx", attribution: attribution("Pagination") }],
   collapsible: [{ file: "components/ui/collapsible.tsx", attribution: attribution("Collapsible") }],
   "dropdown-menu": [
     { file: "components/ui/dropdown-menu.tsx", attribution: attribution("Dropdown Menu") },
   ],
-  // alert-dialog pulls shadcn's stock button (a bare name), as dialog does.
   "alert-dialog": [
     { file: "components/ui/alert-dialog.tsx", attribution: attribution("Alert Dialog") },
   ],
@@ -268,11 +274,12 @@ function withDependencies(
 }
 
 /**
- * Catalog order, except that an item named in another item's `registryDependencies` installs
- * after that item. Stock dependencies are bare names (`dialog` → `button`), so installing
- * `@mangacn/dialog` pulls shadcn's stock button and `--overwrite` replaces a mangacn button
- * installed earlier; users get the same advice (registry/ui/README.md). URL dependencies
- * (`https://www.mangacn.com/r/ink-frame.json`) install the mangacn item and need no ordering.
+ * Catalog order, except that an item named by bare name in another item's
+ * `registryDependencies` installs after that item. A bare stock name (`toggle-group` →
+ * `toggle`) pulls shadcn's stock item, and `--overwrite` would replace a mangacn one installed
+ * earlier. URL dependencies (`https://www.mangacn.com/r/ink-frame.json`, and `dialog` →
+ * `https://www.mangacn.com/r/button.json`) install the mangacn item and need no ordering, so
+ * `button` keeps its catalog place ahead of `dialog`, `sheet`, `pagination` and `alert-dialog`.
  */
 function installOrder(
   items: { name: string; registryDependencies?: string[] }[],
@@ -542,26 +549,47 @@ function contentProblems(project: string, names: string[]): string[] {
   return missing;
 }
 
-/** The install a user types: the theme and one outlined piece, nothing else named. */
-const ONE_COMMAND = ["theme", "speech-bubble"];
-/** What it must install: the theme's three fonts and the bubble's ink-frame come by URL. */
-const ONE_COMMAND_INSTALLS = [
-  "theme",
-  "font-display",
-  "font-dialogue",
-  "font-dialogue-ja",
-  "ink-frame",
-  "speech-bubble",
+/** An install a user types, nothing else named, and every item that one `add` must leave. */
+interface OneCommand {
+  /** Folder of its own fresh project in the smoke's temp directory. */
+  project: string;
+  items: string[];
+  installs: string[];
+}
+
+const ONE_COMMANDS: OneCommand[] = [
+  // The theme and one outlined piece: the theme's three fonts and the bubble's ink-frame come
+  // by URL.
+  {
+    project: "one-command",
+    items: ["theme", "speech-bubble"],
+    installs: [
+      "theme",
+      "font-display",
+      "font-dialogue",
+      "font-dialogue-ja",
+      "ink-frame",
+      "speech-bubble",
+    ],
+  },
+  // An item on a restyled primitive: pagination declares mangacn's button by URL in place of
+  // stock's bare `button` (SPEC-components §4.1), so the installed button is mangacn's
+  // (attribution header, InkFrame import), and it brings ink-frame.
+  {
+    project: "one-command-button",
+    items: ["pagination"],
+    installs: ["ink-frame", "button", "pagination"],
+  },
 ];
 
 /**
- * In a second fresh project, `shadcn add @mangacn/theme @mangacn/speech-bubble` alone must
- * install `ONE_COMMAND_INSTALLS`, every one fetched from this build, and typecheck.
+ * In a fresh project, `shadcn add` of `command.items` alone must install `command.installs`,
+ * every one fetched from this build with the content EXPECTED_CONTENT asks for, and typecheck.
  */
-async function oneCommandCheck(workDir: string, port: number) {
-  const project = await createProject(workDir, "one-command", port);
+async function oneCommandCheck(workDir: string, port: number, command: OneCommand) {
+  const project = await createProject(workDir, command.project, port);
   projectDir = project;
-  const items = ONE_COMMAND.map((name) => `@mangacn/${name}`);
+  const items = command.items.map((name) => `@mangacn/${name}`);
   console.log(`→ shadcn add ${items.join(" ")} (one command)`);
   served.length = 0;
   try {
@@ -571,10 +599,10 @@ async function oneCommandCheck(workDir: string, port: number) {
     throw new SmokeError(`One-command install of ${items.join(" ")} failed`, output);
   }
   const problems = [
-    ...ONE_COMMAND_INSTALLS.filter((name) => !served.includes(`/r/${name}.json`)).map(
-      (name) => `${name}.json was never fetched from the local registry`,
-    ),
-    ...contentProblems(project, ONE_COMMAND_INSTALLS),
+    ...command.installs
+      .filter((name) => !served.includes(`/r/${name}.json`))
+      .map((name) => `${name}.json was never fetched from the local registry`),
+    ...contentProblems(project, command.installs),
   ];
   if (problems.length > 0) {
     throw new SmokeError(`One-command install check failed:\n  ${problems.join("\n  ")}`);
@@ -586,7 +614,7 @@ async function oneCommandCheck(workDir: string, port: number) {
     const output = error instanceof SmokeError ? error.output : "";
     throw new SmokeError("tsc --noEmit failed after the one-command install", output);
   }
-  console.log(`✓ one command installed ${ONE_COMMAND_INSTALLS.join(", ")} and typechecked`);
+  console.log(`✓ one command installed ${command.installs.join(", ")} and typechecked`);
 }
 
 async function main() {
@@ -694,8 +722,13 @@ async function main() {
     await check("next build", ["exec", "next", "build"]);
     console.log(`✓ ${names.length} item(s) installed, typechecked and built`);
 
-    if (selected) console.log("→ partial set: skipping the one-command install check");
-    else await oneCommandCheck(workDir, port);
+    for (const command of ONE_COMMANDS) {
+      if (requested && !command.items.every((name) => requested.includes(name))) {
+        console.log(`→ partial set: skipping the one-command check of ${command.items.join(", ")}`);
+      } else {
+        await oneCommandCheck(workDir, port, command);
+      }
+    }
 
     failed = false;
   } finally {
@@ -718,8 +751,8 @@ function itemCount(): number {
   }
 }
 
-// The one-command check builds a second project: setup budget again.
-const timeoutMs = 2 * BASE_TIMEOUT_MS + PER_ITEM_TIMEOUT_MS * itemCount();
+// Each one-command check builds a project of its own: setup budget again per command.
+const timeoutMs = (1 + ONE_COMMANDS.length) * BASE_TIMEOUT_MS + PER_ITEM_TIMEOUT_MS * itemCount();
 const timer = setTimeout(() => {
   if (currentChild) killTree(currentChild);
   console.error(`✗ registry smoke timed out after ${timeoutMs / 60000} min`);

@@ -67,8 +67,9 @@ Add the item to `registry/ui/registry.json` (never to the root `registry.json`, 
 - `dependencies`: every npm package the shipped file imports (`class-variance-authority`,
   `@base-ui/react`, `motion`, `cn`). Anything beyond those needs maintainer sign-off: users
   pay for it.
-- `registryDependencies`: stock shadcn items by **bare name** (`button`), mangacn items by
-  **full URL** (`https://www.mangacn.com/r/ink-frame.json`), never `@mangacn/<name>`: a
+- `registryDependencies`: stock shadcn items mangacn does not restyle by **bare name**,
+  mangacn items by **full URL** (`https://www.mangacn.com/r/ink-frame.json`, and restyled
+  primitives: `https://www.mangacn.com/r/button.json`), never `@mangacn/<name>`: a
   namespaced name only resolves when the user configured `@mangacn`, so URL and GitHub-mode
   installs fail, and a bare mangacn name resolves to shadcn's registry. Declare every
   mangacn item a shipped file imports, and nothing it does not import (the theme's fonts are
@@ -242,8 +243,8 @@ merged into `main` with a merge commit and deleted afterwards.
    - Cost: one SVG per outlined element, redrawn only on resize. Long lists pass one shared
      `seed` and prefer `shape="line"` row rules over full frames.
    - **Declare it as a URL.** Add `"https://www.mangacn.com/r/ink-frame.json"` to
-     `registryDependencies`, after stock's names (`["button", "https://…/ink-frame.json"]`
-     for `dialog`), so `npx shadcn@latest add @mangacn/button` installs the frame too, in URL,
+     `registryDependencies`, after stock's names (`["https://…/button.json",
+     "https://…/ink-frame.json"]` for `dialog`), so `npx shadcn@latest add @mangacn/button` installs the frame too, in URL,
      namespaced and GitHub mode alike. Not `ink-frame` (that resolves to shadcn's registry)
      and not `@mangacn/ink-frame` (that fails unless the user configured `@mangacn`). Parity
      allows these URL additions on top of stock's names. `tsconfig.json` and
@@ -290,11 +291,10 @@ merged into `main` with a merge commit and deleted afterwards.
    (jsdom tests do not catch this; the page shows empty buttons). An item that imports a
    `registryDependencies` entry (`dialog` → `@/components/ui/button`) needs that path mapped
    to the source in `tsconfig.json` `paths` and the `vitest.config.mts` aliases, as
-   `@/components/ink-frame` is. Because that entry is a bare stock name, installing
-   `@mangacn/dialog` or `@mangacn/sheet` also installs shadcn's **stock** button; users add
-   `@mangacn/button` after them (`npx shadcn@latest add @mangacn/dialog`, then
-   `npx shadcn@latest add @mangacn/button --overwrite`), and the smoke test installs every
-   item after the items that depend on it.
+   `@/components/ink-frame` is. **A stock dependency on a restyled primitive is declared by
+   its mangacn URL** (`dialog` → `https://www.mangacn.com/r/button.json` in place of stock's
+   `button`; parity accepts the URL of the same name), so `@mangacn/dialog` alone installs
+   mangacn's button, not shadcn's.
 
    ```tsx
    import { expectNoA11yViolations } from "@/lib/test/axe";

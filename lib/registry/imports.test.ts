@@ -159,6 +159,11 @@ describe("findRegistryDependencyProblems", () => {
     expect(problems.filter((p) => /^(ink-frame|font-display|theme|framed):/.test(p))).toEqual([]);
   });
 
+  it("pairs a restyled primitive's URL with its @/components/ui/<item> import", () => {
+    // restyled declares https://www.mangacn.com/r/button.json and imports @/components/ui/button.
+    expect(problems.filter((p) => /^(button|restyled):/.test(p))).toEqual([]);
+  });
+
   it("reports undeclared, unused, bare, namespaced, foreign and unknown dependencies", () => {
     expect(problems).toEqual([
       "undeclared: imports ink-frame without declaring https://www.mangacn.com/r/ink-frame.json",

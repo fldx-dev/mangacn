@@ -144,6 +144,36 @@ describe("compareParity", () => {
     ]);
   });
 
+  it("lets a mangacn URL of the same name replace a stock dependency", () => {
+    const withButton = { ...stock, registryDependencies: ["button"] };
+    expect(
+      compareParity(withButton, {
+        ...withButton,
+        registryDependencies: [
+          "https://www.mangacn.com/r/button.json",
+          "https://www.mangacn.com/r/ink-frame.json",
+        ],
+      }),
+    ).toEqual([]);
+  });
+
+  it("still fails a dropped stock name, and an unrelated URL is only an addition", () => {
+    const withButton = { ...stock, registryDependencies: ["button"] };
+    expect(compareParity(withButton, { ...withButton, registryDependencies: [] })).toEqual([
+      "registryDependencies: missing button",
+    ]);
+    // ink-frame's URL does not stand in for button, and toggle's URL is not stock's here.
+    expect(
+      compareParity(withButton, {
+        ...withButton,
+        registryDependencies: [
+          "https://www.mangacn.com/r/ink-frame.json",
+          "https://www.mangacn.com/r/toggle.json",
+        ],
+      }),
+    ).toEqual(["registryDependencies: missing button"]);
+  });
+
   it("reports missing and unexpected exports and slots, missing dependencies and variants", () => {
     const restyled: ParityShape = {
       exports: ["Sample", "SampleAction", "SampleHeading", "sampleVariants", "Extra"],
