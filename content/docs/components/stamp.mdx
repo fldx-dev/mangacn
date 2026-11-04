@@ -1,0 +1,22 @@
+---
+title: Stamp
+description: Hanko-style seal, round or square, with a rough outline, an inner ring and an inked grain around one or two words.
+item: stamp
+---
+
+<InstallCommand item="stamp" />
+
+<CopyPrompt item="stamp" />
+
+A red hanko pressed onto the page: approved, complete, new. The word inside stays real text, so it is read and translated like any other; when the word is more of a picture than something to read, pass `aria-label` and the stamp becomes an image named by it. It takes only its own box, so to press it over a Card or Panel corner, make the wrapper `relative` and place the stamp `absolute` yourself, as the card example does. Japanese words go under `lang="ja"`.
+
+## Examples
+
+<DemoFrame item="stamp" demo="default" />
+<DemoFrame item="stamp" demo="shapes-and-sizes" />
+<DemoFrame item="stamp" demo="over-a-card" />
+<DemoFrame item="stamp" demo="japanese" />
+
+## Props
+
+<PropsTable item="stamp" />

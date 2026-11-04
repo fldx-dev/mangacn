@@ -760,6 +760,42 @@
           "target": "@components/ink-arrow.tsx"
         }
       ]
+    },
+    {
+      "name": "stamp",
+      "type": "registry:component",
+      "title": "Stamp",
+      "description": "Hanko-style seal, round or square, with a rough outline, an inner ring and an inked grain around one or two words.",
+      "categories": ["decoration"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "roughjs@4.6.6"],
+      "files": [
+        {
+          "path": "stamp/stamp.tsx",
+          "type": "registry:component",
+          "target": "@components/stamp.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ink-splatter",
+      "type": "registry:component",
+      "title": "Ink Splatter",
+      "description": "Decorative ink splash, drips or dots, seeded so every instance differs; hidden from assistive tech.",
+      "categories": ["decoration"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "roughjs@4.6.6"],
+      "files": [
+        {
+          "path": "ink-splatter/ink-splatter.tsx",
+          "type": "registry:component",
+          "target": "@components/ink-splatter.tsx"
+        }
+      ]
     }
   ]
 }

@@ -1,12 +1,13 @@
 import { expect, type Frame, type Page } from "@playwright/test";
 
 /** Everything rough.js draws after hydration, stamping `data-inked="true"` when it has. */
-const INKED_SLOTS = ["ink-frame", "ink-mark", "ink-arrow"];
+const INKED_SLOTS = ["ink-frame", "ink-mark", "ink-arrow", "stamp", "ink-splatter"];
 
 /**
  * Waits until a page (or an iframe's frame) is safe to snapshot: web fonts loaded, every
- * visible InkFrame, ink mark and ink arrow drawn by rough.js, and every drawing measured against
- * the box it now covers.
+ * visible InkFrame, ink mark, ink arrow, stamp and ink splatter drawn by rough.js (the last
+ * three draw on the server too; `data-inked` says they re-read the theme's pen), and every
+ * drawing measured against the box it now covers.
  */
 export async function waitForInk(target: Page | Frame): Promise<void> {
   const frame = "mainFrame" in target ? target.mainFrame() : target;

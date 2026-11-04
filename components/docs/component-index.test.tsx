@@ -13,7 +13,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-// Every test renders all 43 demos in jsdom; the first import of them is slow on a busy machine.
+// Every test renders all 45 demos in jsdom; the first import of them is slow on a busy machine.
 vi.setConfig({ testTimeout: 30_000 });
 
 describe("ComponentIndex", () => {
@@ -33,7 +33,7 @@ describe("ComponentIndex", () => {
         "Data",
       ]
     `);
-    expect(document.querySelectorAll("[data-item]")).toHaveLength(43);
+    expect(document.querySelectorAll("[data-item]")).toHaveLength(45);
   });
 
   it("links each card's title to the item page and renders its default demo", async () => {
