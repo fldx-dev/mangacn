@@ -134,6 +134,14 @@ const EXPECTED_CONTENT: Record<
   "ink-splatter": [
     { file: "components/ink-splatter.tsx", includes: ["export function InkSplatter("] },
   ],
+  "caption-box": [
+    { file: "components/caption-box.tsx", includes: ["export function CaptionBox("] },
+  ],
+  // The ticker ships its keyframes in the item's `css`; `shadcn add` writes them to globals.css.
+  "sfx-ticker": [
+    { file: "components/sfx-ticker.tsx", includes: ["export function SfxTicker("] },
+    { file: "app/globals.css", includes: ["@keyframes mangacn-marquee"] },
+  ],
 };
 
 /**

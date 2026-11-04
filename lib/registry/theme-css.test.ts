@@ -121,6 +121,50 @@ describe("renderThemeCssFile", () => {
     expect(css).toMatchSnapshot();
   });
 
+  it("appends the css of other items after the theme, each under its source", () => {
+    const item = (name: string, extra: Record<string, unknown>) => ({
+      name,
+      type: "registry:component",
+      files: [],
+      source: "registry.json",
+      ...extra,
+    });
+    const css = renderThemeCssFile({
+      name: "fixture",
+      homepage: "https://example.com",
+      items: [
+        item("button", {}),
+        item("theme", { cssVars: { light: { ink: "black" } } }),
+        item("ticker", { css: { "@keyframes slide": { to: { transform: "translateX(-50%)" } } } }),
+        item("empty", { css: {} }),
+      ],
+    });
+    expect(css).toBe(
+      [
+        THEME_CSS_HEADER,
+        "",
+        ":root {",
+        "  --ink: black;",
+        "}",
+        "",
+        "/* From the registry item `ticker`. */",
+        "@keyframes slide {",
+        "  to {",
+        "    transform: translateX(-50%);",
+        "  }",
+        "}",
+        "",
+      ].join("\n"),
+    );
+  });
+
+  it("carries sfx-ticker's marquee keyframes to the site", () => {
+    const css = renderThemeCssFile(loadRegistry());
+    expect(css).toContain(
+      "/* From the registry item `sfx-ticker`. */\n@keyframes mangacn-marquee {",
+    );
+  });
+
   it("throws for an unknown item", () => {
     expect(() => renderThemeCssFile(loadRegistry(), "nope")).toThrow('"nope" not found');
   });
