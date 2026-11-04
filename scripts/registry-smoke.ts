@@ -130,6 +130,10 @@ const EXPECTED_CONTENT: Record<
   ],
   "ink-mark": [{ file: "components/ink-mark.tsx", includes: ["export function InkMark("] }],
   "ink-arrow": [{ file: "components/ink-arrow.tsx", includes: ["export function InkArrow("] }],
+  stamp: [{ file: "components/stamp.tsx", includes: ["export function Stamp("] }],
+  "ink-splatter": [
+    { file: "components/ink-splatter.tsx", includes: ["export function InkSplatter("] },
+  ],
 };
 
 /**

@@ -43,6 +43,10 @@ async function waitForStages(page: Page, mode: "light" | "dark") {
 for (const path of pages) {
   for (const mode of ["light", "dark"] as const) {
     test(`${path} (${mode})`, async ({ page }) => {
+      // The component index renders every item's default demo as a card (45 and growing), so
+      // loading, inking, screenshotting and axe-checking it takes most of the default 30 s on a
+      // busy machine. Triple the budget for that one page; every other page keeps the default.
+      if (path === "/docs/components") test.slow();
       const errors: string[] = [];
       page.on("console", (message) => {
         if (message.type() === "error") errors.push(message.text());
