@@ -13,7 +13,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-// Every test renders all 45 demos in jsdom; the first import of them is slow on a busy machine.
+// Every test renders all 48 demos in jsdom; the first import of them is slow on a busy machine.
 vi.setConfig({ testTimeout: 30_000 });
 
 describe("ComponentIndex", () => {
@@ -33,7 +33,7 @@ describe("ComponentIndex", () => {
         "Data",
       ]
     `);
-    expect(document.querySelectorAll("[data-item]")).toHaveLength(45);
+    expect(document.querySelectorAll("[data-item]")).toHaveLength(48);
   });
 
   it("links each card's title to the item page and renders its default demo", async () => {
@@ -50,7 +50,7 @@ describe("ComponentIndex", () => {
   it("shows overlay items through their stage iframe", async () => {
     render(await ComponentIndex());
     expect(screen.getByTitle("dialog / default").getAttribute("src")).toBe("/demo/dialog/default");
-    expect(document.querySelectorAll("iframe")).toHaveLength(4);
+    expect(document.querySelectorAll("iframe")).toHaveLength(7);
   });
 
   it("has no axe violations", async () => {

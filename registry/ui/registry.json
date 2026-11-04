@@ -762,14 +762,63 @@
       ]
     },
     {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Dropdown Menu",
+      "description": "Stock dropdown menu as a heavy-outlined paper cut-out: ink highlight, hand-drawn separators, no shadow (needs ink-frame).",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "dropdown-menu/dropdown-menu.tsx",
+          "type": "registry:ui",
+          "target": "@ui/dropdown-menu.tsx"
+        }
+      ]
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "Stock alert dialog on an ink overlay with dialog's heavy hand-inked outline; a destructive action is the spot button (needs ink-frame).",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": ["button", "https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "alert-dialog/alert-dialog.tsx",
+          "type": "registry:ui",
+          "target": "@ui/alert-dialog.tsx"
+        }
+      ]
+    },
+    {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "Hover Card",
+      "description": "Stock hover card as a round-cornered paper panel with a heavy hand-drawn outline, no tail and no shadow (needs ink-frame).",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "hover-card/hover-card.tsx",
+          "type": "registry:ui",
+          "target": "@ui/hover-card.tsx"
+        }
+      ]
+    },
+    {
       "name": "stamp",
       "type": "registry:component",
       "title": "Stamp",
       "description": "Hanko-style seal, round or square, with a rough outline, an inner ring and an inked grain around one or two words.",
       "categories": ["decoration"],
-      "meta": {
-        "since": "0.1.0"
-      },
+      "meta": { "since": "0.1.0" },
       "dependencies": ["cn", "roughjs@4.6.6"],
       "files": [
         {
@@ -785,9 +834,7 @@
       "title": "Ink Splatter",
       "description": "Decorative ink splash, drips or dots, seeded so every instance differs; hidden from assistive tech.",
       "categories": ["decoration"],
-      "meta": {
-        "since": "0.1.0"
-      },
+      "meta": { "since": "0.1.0" },
       "dependencies": ["cn", "roughjs@4.6.6"],
       "files": [
         {

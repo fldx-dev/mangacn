@@ -87,6 +87,14 @@ const EXPECTED_CONTENT: Record<
   // pagination pulls shadcn's stock button (a bare name), as dialog does.
   pagination: [{ file: "components/ui/pagination.tsx", attribution: attribution("Pagination") }],
   collapsible: [{ file: "components/ui/collapsible.tsx", attribution: attribution("Collapsible") }],
+  "dropdown-menu": [
+    { file: "components/ui/dropdown-menu.tsx", attribution: attribution("Dropdown Menu") },
+  ],
+  // alert-dialog pulls shadcn's stock button (a bare name), as dialog does.
+  "alert-dialog": [
+    { file: "components/ui/alert-dialog.tsx", attribution: attribution("Alert Dialog") },
+  ],
+  "hover-card": [{ file: "components/ui/hover-card.tsx", attribution: attribution("Hover Card") }],
   // Manga-native pieces: registry:component with `target: "@components/<name>.tsx"`.
   panel: [{ file: "components/panel.tsx", includes: ["export function Panel("] }],
   "panel-grid": [{ file: "components/panel-grid.tsx", includes: ["export function PanelGrid("] }],
