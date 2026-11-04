@@ -66,7 +66,14 @@ for (const path of pages) {
       const width = await page.evaluate(() => document.documentElement.scrollWidth);
       expect(width, "no horizontal overflow").toBeLessThanOrEqual(page.viewportSize()?.width ?? 0);
 
-      const { violations } = await new AxeBuilder({ page }).analyze();
+      // Base UI's focus guards around an open popup are aria-hidden sentinels with tabindex 0
+      // that hand focus on at once; axe only lets them pass under an open dialog, so an open
+      // menu or select stage (an iframe) would fail on Base UI's own markup. Every other node
+      // of those stages is still checked.
+      const { violations } = await new AxeBuilder({ page })
+        .exclude("[data-base-ui-focus-guard]")
+        .exclude(["iframe", "[data-base-ui-focus-guard]"])
+        .analyze();
       const found = violations.map(({ id, nodes }) => ({
         id,
         targets: nodes.map((node) => node.target),
