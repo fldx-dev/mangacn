@@ -237,21 +237,25 @@ function diffList(label: string, expected: string[], actual: string[]): string[]
  * equal; `dependencies` must include every stock package (an item also declares the base-nova
  * style packages it imports, SPEC-components §4.1); `registryDependencies` must include every
  * stock name and may add only mangacn items by URL (`https://www.mangacn.com/r/ink-frame.json`).
- * Every stock `cva` group and key must exist, and added groups, keys or `cva` objects are
- * allowed (SPEC-components §4.2: additions only).
+ * A stock name may be replaced, never dropped, by the mangacn URL of the same name: `button`
+ * satisfied by `https://www.mangacn.com/r/button.json`, so one `shadcn add` of `dialog` ends
+ * with mangacn's button rather than shadcn's. Every stock `cva` group and key must exist, and
+ * added groups, keys or `cva` objects are allowed (SPEC-components §4.2: additions only).
  */
 export function compareParity(stock: ParityShape, actual: ParityShape): string[] {
+  // A URL naming a stock dependency stands in for it; any other mangacn URL is an addition.
+  const registryDependencies = actual.registryDependencies.flatMap((dep) => {
+    const name = mangacnItemName(dep);
+    if (name === null) return [dep];
+    return stock.registryDependencies.includes(name) ? [name] : [];
+  });
   const problems = [
     ...diffList("exports", stock.exports, actual.exports),
     ...diffList("data-slot", stock.dataSlots, actual.dataSlots),
     ...diffList("dependencies", stock.dependencies, actual.dependencies).filter((problem) =>
       problem.startsWith("dependencies: missing"),
     ),
-    ...diffList(
-      "registryDependencies",
-      stock.registryDependencies,
-      actual.registryDependencies.filter((dep) => mangacnItemName(dep) === null),
-    ),
+    ...diffList("registryDependencies", stock.registryDependencies, registryDependencies),
   ];
   for (const [name, groups] of Object.entries(stock.variants)) {
     const restyled = actual.variants[name];

@@ -220,7 +220,10 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "lucide-react"],
-      "registryDependencies": ["button", "https://www.mangacn.com/r/ink-frame.json"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
       "files": [
         {
           "path": "dialog/dialog.tsx",
@@ -239,7 +242,10 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "@base-ui/react", "lucide-react"],
-      "registryDependencies": ["button", "https://www.mangacn.com/r/ink-frame.json"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
       "files": [
         {
           "path": "sheet/sheet.tsx",
@@ -704,7 +710,7 @@
       "categories": ["primitive"],
       "meta": { "since": "0.1.0" },
       "dependencies": ["cn", "lucide-react"],
-      "registryDependencies": ["button"],
+      "registryDependencies": ["https://www.mangacn.com/r/button.json"],
       "files": [
         {
           "path": "pagination/pagination.tsx",
@@ -786,7 +792,10 @@
       "categories": ["primitive"],
       "meta": { "since": "0.1.0" },
       "dependencies": ["cn", "@base-ui/react"],
-      "registryDependencies": ["button", "https://www.mangacn.com/r/ink-frame.json"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
       "files": [
         {
           "path": "alert-dialog/alert-dialog.tsx",
