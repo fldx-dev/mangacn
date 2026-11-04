@@ -21,6 +21,20 @@
       "files": [{ "path": "files/framed.ts", "type": "registry:component" }]
     },
     {
+      "name": "button",
+      "type": "registry:ui",
+      "files": [{ "path": "files/plain.ts", "type": "registry:ui" }]
+    },
+    {
+      "name": "restyled",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [{ "path": "files/framed.ts", "type": "registry:ui" }]
+    },
+    {
       "name": "undeclared",
       "type": "registry:component",
       "files": [{ "path": "files/framed.ts", "type": "registry:component" }]
