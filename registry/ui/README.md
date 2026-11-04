@@ -294,7 +294,8 @@ merged into `main` with a merge commit and deleted afterwards.
    `@/components/ink-frame` is. **A stock dependency on a restyled primitive is declared by
    its mangacn URL** (`dialog` → `https://www.mangacn.com/r/button.json` in place of stock's
    `button`; parity accepts the URL of the same name), so `@mangacn/dialog` alone installs
-   mangacn's button, not shadcn's.
+   mangacn's button, not shadcn's (shadcn asks to overwrite the stock button `shadcn init`
+   wrote).
 
    ```tsx
    import { expectNoA11yViolations } from "@/lib/test/axe";

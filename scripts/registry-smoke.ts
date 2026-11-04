@@ -555,6 +555,11 @@ interface OneCommand {
   project: string;
   items: string[];
   installs: string[];
+  /**
+   * Pass `--overwrite`: the add replaces a file `shadcn init` wrote, where a user answers "y"
+   * to "already exists. Would you like to overwrite?" (with stdin closed the prompt aborts).
+   */
+  overwrite?: boolean;
 }
 
 const ONE_COMMANDS: OneCommand[] = [
@@ -574,11 +579,14 @@ const ONE_COMMANDS: OneCommand[] = [
   },
   // An item on a restyled primitive: pagination declares mangacn's button by URL in place of
   // stock's bare `button` (SPEC-components §4.1), so the installed button is mangacn's
-  // (attribution header, InkFrame import), and it brings ink-frame.
+  // (attribution header, InkFrame import), and it brings ink-frame. `shadcn init` (4.23)
+  // writes stock's components/ui/button.tsx, so the add asks to overwrite it. With a bare
+  // `button` the overwrite would write stock's again and fail this check.
   {
     project: "one-command-button",
     items: ["pagination"],
     installs: ["ink-frame", "button", "pagination"],
+    overwrite: true,
   },
 ];
 
@@ -590,10 +598,11 @@ async function oneCommandCheck(workDir: string, port: number, command: OneComman
   const project = await createProject(workDir, command.project, port);
   projectDir = project;
   const items = command.items.map((name) => `@mangacn/${name}`);
-  console.log(`→ shadcn add ${items.join(" ")} (one command)`);
+  const flags = command.overwrite ? ["--yes", "--overwrite"] : ["--yes"];
+  console.log(`→ shadcn add ${[...items, ...flags].join(" ")} (one command)`);
   served.length = 0;
   try {
-    await run("pnpm", ["dlx", `shadcn@${SHADCN_VERSION}`, "add", ...items, "--yes"], project);
+    await run("pnpm", ["dlx", `shadcn@${SHADCN_VERSION}`, "add", ...items, ...flags], project);
   } catch (error) {
     const output = error instanceof SmokeError ? error.output : "";
     throw new SmokeError(`One-command install of ${items.join(" ")} failed`, output);
