@@ -397,7 +397,7 @@ page renders that one demo centred on paper and nothing else.
 ### Stock parity
 
 `registry/ui/parity.test.ts` compares every restyled primitive (a `registry:ui` item whose
-name is in `PARITY_PRIMITIVES` in `lib/registry/parity.ts`, 28 so far) with
+name is in `PARITY_PRIMITIVES` in `lib/registry/parity.ts`, 31 so far) with
 `registry/ui/__parity__/base-nova.json`: named exports and `data-slot` values must equal stock; `registryDependencies` must contain
 stock's names and may add only `https://www.mangacn.com/r/<name>.json` entries;
 `dependencies` must contain every stock package (more is fine); every stock `cva` variant
@@ -445,8 +445,9 @@ one or two sentences on when to use the piece and what it pairs with (see
 `speech-bubble.mdx`); Japanese samples go under `lang="ja"`. The pieces:
 
 - `DemoFrame` renders the demo inline under Preview / Code tabs, with the source as it
-  lands in a consumer project. Overlay items (dialog, sheet, tooltip, popover) render it as
-  an iframe of the demo stage instead, so open popups never stack on the page.
+  lands in a consumer project. Overlay items (dialog, sheet, tooltip, popover, dropdown-menu,
+  alert-dialog, hover-card) render it as an iframe of the demo stage instead, so open popups
+  never stack on the page.
 - `PropsTable` is an `AutoTypeTable` over the item's exported props interface for a
   manga-native piece, and for a restyled primitive a link to shadcn's page plus the table of
   what mangacn adds (`lib/docs/props-delta.ts`: add a row there when you add a variant).
