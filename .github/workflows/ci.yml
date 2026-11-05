@@ -7,7 +7,15 @@ on:
   workflow_dispatch:
     inputs:
       update-snapshots:
-        description: Regenerate the Playwright baselines and upload them as an artifact
+        description: Rewrite the baselines that differ or are missing and upload just those as an artifact
+        type: boolean
+        default: false
+      items:
+        description: "Visual set (E2E_ITEMS): items and site/mcp/annotations, comma-separated; empty = computed from the diff against main"
+        type: string
+        default: ""
+      full:
+        description: Run what main runs (every visual shot, the full registry smoke)
         type: boolean
         default: false
 
@@ -15,8 +23,9 @@ permissions:
   contents: read
 
 concurrency:
-  # Keep manual runs (baseline updates) from cancelling the push run on the same ref.
-  group: ci-${{ github.ref }}-${{ github.event_name }}
+  # Keep manual runs (baseline updates) from cancelling the push run on the same ref, and
+  # dispatches with different inputs from cancelling each other.
+  group: ci-${{ github.ref }}-${{ github.event_name }}-${{ inputs.items }}-${{ inputs.full }}-${{ inputs.update-snapshots }}
   cancel-in-progress: true
 
 jobs:
@@ -25,6 +34,10 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
+        with:
+          # `registry:smoke --changed` diffs against origin/main: full history, trees only.
+          fetch-depth: 0
+          filter: blob:none
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
@@ -34,33 +47,96 @@ jobs:
       # `pnpm skill:validate` runs the Agent Skills validator (Python) through uvx.
       - uses: astral-sh/setup-uv@v10.3.3
       # `pnpm ci` is a reserved (unimplemented) pnpm command, so call the script with `run`.
-      - run: pnpm run ci
+      # A branch dispatch smokes only the items its diff touches: pnpm appends `--changed` to the
+      # script's last command, `pnpm registry:smoke`. Push, pull requests, main and `full` smoke
+      # every item.
+      - name: pnpm run ci
+        env:
+          SMOKE_ARGS: ${{ github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main' && !inputs.full && '--changed' || '' }}
+        run: pnpm run ci $SMOKE_ARGS
 
   visual:
     runs-on: ubuntu-latest
     # `playwright install --with-deps` waits on the Ubuntu apt mirror, which took 11 minutes on
-    # 2026-11-05 (15 MB at 23 kB/s); the suite itself needs about 7.
+    # 2026-11-05 (15 MB at 23 kB/s); the full suite needs about 7. A browser cache hit skips apt.
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
+        with:
+          # scripts/changed-e2e.ts diffs against origin/main: full history, trees only.
+          fetch-depth: 0
+          filter: blob:none
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm build
-      - if: ${{ !inputs.update-snapshots }}
+      # Push, pull requests, main and `full` run every shot; a branch dispatch runs the `items`
+      # input, or the set its diff needs (lib/registry/e2e-filter.ts has the rules).
+      - name: Choose the visual set
+        id: filter
+        env:
+          ITEMS: ${{ inputs.items }}
+          FULL: ${{ inputs.full }}
+        run: |
+          ITEMS="${ITEMS// /}"
+          if [ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ] || [ "$GITHUB_REF" = "refs/heads/main" ] || [ "$FULL" = "true" ]; then
+            items=all; why="$GITHUB_EVENT_NAME on $GITHUB_REF_NAME${FULL:+, full=$FULL}: every demo and spec"
+          elif [ -n "$ITEMS" ]; then
+            if ! [[ "$ITEMS" =~ ^[a-z0-9,-]+$ ]]; then echo "::error::items must be names separated by commas"; exit 1; fi
+            items="$ITEMS"; why="the items input"
+          else
+            items=$(pnpm exec tsx scripts/changed-e2e.ts --base=origin/main); why="computed from the diff against origin/main"
+          fi
+          echo "E2E_ITEMS=$items ($why)"
+          echo "E2E_ITEMS=$items" >> "$GITHUB_ENV"
+          echo "items=$items" >> "$GITHUB_OUTPUT"
+          echo "Visual set: \`E2E_ITEMS=$items\` ($why)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Playwright version
+        id: playwright
+        if: steps.filter.outputs.items != 'none'
+        run: echo "version=$(grep -m1 -oP '^  playwright-core@\K[0-9.]+' pnpm-lock.yaml)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v6
+        id: browsers
+        if: steps.filter.outputs.items != 'none'
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - if: steps.filter.outputs.items != 'none'
+        run: pnpm exec playwright install chromium
+      # System libraries and fonts come from apt; only a cache miss pays for the mirror.
+      - if: steps.filter.outputs.items != 'none' && steps.browsers.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install-deps chromium
+      - if: steps.filter.outputs.items != 'none'
+        run: pnpm build
+      - if: ${{ steps.filter.outputs.items != 'none' && !inputs.update-snapshots }}
         run: pnpm test:e2e
-      - if: ${{ inputs.update-snapshots }}
-        run: pnpm test:e2e:update
-      - if: ${{ inputs.update-snapshots }}
+      # `changed` rewrites only the baselines that are missing or fail the comparison, so the
+      # artifact holds exactly the PNGs to commit: a straight copy, no sifting.
+      - if: ${{ steps.filter.outputs.items != 'none' && inputs.update-snapshots }}
+        run: pnpm test:e2e --update-snapshots=changed
+      - name: Collect the rewritten baselines
+        if: ${{ steps.filter.outputs.items != 'none' && inputs.update-snapshots }}
+        run: |
+          out="$RUNNER_TEMP/playwright-baselines"
+          mkdir -p "$out"
+          git status --porcelain --untracked-files=all -- e2e/__screenshots__ | cut -c4- > "$RUNNER_TEMP/baselines.txt"
+          while read -r file; do
+            target="$out/${file#e2e/__screenshots__/}"
+            mkdir -p "$(dirname "$target")"
+            cp "$file" "$target"
+          done < "$RUNNER_TEMP/baselines.txt"
+          count=$(wc -l < "$RUNNER_TEMP/baselines.txt")
+          echo "$count baseline(s) rewritten"
+          cat "$RUNNER_TEMP/baselines.txt"
+          { echo "**$count baseline(s) rewritten**"; sed 's/^/- /' "$RUNNER_TEMP/baselines.txt"; } >> "$GITHUB_STEP_SUMMARY"
+      - if: ${{ steps.filter.outputs.items != 'none' && inputs.update-snapshots }}
         uses: actions/upload-artifact@v7
         with:
           name: playwright-baselines
-          path: e2e/__screenshots__
-          if-no-files-found: error
+          path: ${{ runner.temp }}/playwright-baselines
+          if-no-files-found: warn
       - if: ${{ failure() }}
         uses: actions/upload-artifact@v7
         with:

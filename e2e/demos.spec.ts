@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { demoEntries } from "../lib/registry/demos.generated";
+import { parseE2eItems, selectedDemoItems } from "../lib/registry/e2e-filter";
 import { waitForInk } from "./ready";
 
 // Every demo in the generated map, light and dark, at each project's width. Baselines are
@@ -13,7 +14,15 @@ const TOASTS_ON_MOUNT: Record<string, number> = {
   "sonner/with-action": 1,
 };
 
-for (const { item, demo } of demoEntries) {
+// `E2E_ITEMS` (playwright.config.ts) keeps only the named items' demos; a name with no demos is
+// an error, so a typo never passes by running nothing.
+const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const unknown = only?.filter((name) => !demoEntries.some((entry) => entry.item === name)) ?? [];
+if (unknown.length > 0)
+  throw new Error(`E2E_ITEMS names items without demos: ${unknown.join(", ")}`);
+const entries = only ? demoEntries.filter((entry) => only.includes(entry.item)) : demoEntries;
+
+for (const { item, demo } of entries) {
   for (const mode of ["light", "dark"] as const) {
     test(`${item}/${demo} (${mode})`, async ({ page }) => {
       const errors: string[] = [];
