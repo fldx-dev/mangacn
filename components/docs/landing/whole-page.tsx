@@ -8,7 +8,7 @@ import { SfxText } from "@/registry/ui/sfx-text/sfx-text";
 import { SpeechBubble } from "@/registry/ui/speech-bubble/speech-bubble";
 import { SpeedLines } from "@/registry/ui/speed-lines/speed-lines";
 import { ThoughtBubble } from "@/registry/ui/thought-bubble/thought-bubble";
-import { PageNumber, TurningPage, TurnPageButton } from "./turning-page";
+import { CurrentPageNumber, TurningPage, TurnPageButton } from "./turning-page";
 
 const ITEMS = [
   "panel-grid",
@@ -20,6 +20,7 @@ const ITEMS = [
   "halftone-background",
   "emanata",
   "page-turn",
+  "page-number",
 ];
 
 /** A background layer kept inside the panel's outline, so lines and dots never cross the ink. */
@@ -88,7 +89,7 @@ const PAGE_SEVEN = (
       </Panel>
     </PanelGridItem>
     <Wide>
-      <Panel as="div" caption={<PageNumber />} tone="lines">
+      <Panel as="div" caption={<CurrentPageNumber />} tone="lines">
         <div className="mt-auto flex flex-wrap items-end justify-between gap-4">
           <SpeechBubble lang="ja" aria-label="Aiko">
             じゃあ、始めようか。
@@ -127,7 +128,7 @@ const PAGE_EIGHT = (
       </Panel>
     </PanelGridItem>
     <Wide>
-      <Panel as="div" caption={<PageNumber />} tone="lines">
+      <Panel as="div" caption={<CurrentPageNumber />} tone="lines">
         <div className="mt-auto flex flex-wrap items-end justify-between gap-4">
           <SpeechBubble lang="ja" aria-label="Aiko">
             続きは、次のページで。

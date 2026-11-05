@@ -3,6 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import { createContext, type ReactNode, use, useEffect, useRef, useState } from "react";
 import { Button } from "@/registry/ui/button/button";
+import { PageNumber } from "@/registry/ui/page-number/page-number";
 import { PageTurn } from "@/registry/ui/page-turn/page-turn";
 
 const TurnContext = createContext<{ turn: () => void; turned: boolean } | null>(null);
@@ -33,9 +34,9 @@ export function TurningPage({ pages, first }: TurningPageProps) {
   );
 }
 
-/** "p. 7": the number of the page it is printed on. */
-export function PageNumber() {
-  return <>p. {use(PageNumberContext)}</>;
+/** The folio (the `page-number` item) of the page it is printed on. */
+export function CurrentPageNumber() {
+  return <PageNumber page={use(PageNumberContext)} side="left" />;
 }
 
 /** Turns the page. The copy on the new page takes focus, so the keyboard stays on the button. */

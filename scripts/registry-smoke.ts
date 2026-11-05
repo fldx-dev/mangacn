@@ -155,6 +155,12 @@ const EXPECTED_CONTENT: Record<
     { file: "components/sfx-ticker.tsx", includes: ["export function SfxTicker("] },
     { file: "app/globals.css", includes: ["@keyframes mangacn-marquee"] },
   ],
+  "power-gauge": [
+    { file: "components/power-gauge.tsx", includes: ["export function PowerGauge("] },
+  ],
+  "page-number": [
+    { file: "components/page-number.tsx", includes: ["export function PageNumber("] },
+  ],
 };
 
 /**

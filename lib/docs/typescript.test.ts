@@ -19,8 +19,8 @@ describe("propsInterfaceName", () => {
 });
 
 describe("generateOwnProps", () => {
-  it("covers the 19 manga-native pieces", () => {
-    expect(mangaNative).toHaveLength(19);
+  it("covers the 21 manga-native pieces", () => {
+    expect(mangaNative).toHaveLength(21);
   });
 
   it("lists speech-bubble's own props, without the inherited HTML attributes", async () => {
