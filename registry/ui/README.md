@@ -414,7 +414,7 @@ What each change may skip:
 | Change                                                     | `check:changed` | smoke                            | `build` + `test:e2e:changed`    | dispatch                                |
 | ---------------------------------------------------------- | --------------- | -------------------------------- | ------------------------------- | --------------------------------------- |
 | item (component, demo, catalog entry)                      | yes             | `--only=<items>`                 | yes: items, their users, `site` | `update-snapshots=true`                 |
-| docs site (`content/`, `components/`, `app/`, `lib/docs/`) | yes             | skip                             | yes: `site`                     | `update-snapshots=true` if pages change |
+| docs site (`content/`, `components/`, `app/`, `lib/docs/`) | yes             | skip                             | yes: `site` (+ `mcp`)           | `update-snapshots=true` if pages change |
 | MCP (`lib/mcp/`, `app/api/mcp/`, `skills/`)                | yes             | skip                             | yes: `mcp` (3 tests, no pixels) | plain                                   |
 | Markdown, scripts, CI                                      | yes             | skip (`--changed` finds nothing) | skip (`none`)                   | plain, only if CI or a script changed   |
 
@@ -431,8 +431,9 @@ diff against origin/main (`pnpm exec tsx scripts/changed-e2e.ts` prints it and w
   `registryDependencies` or an import in its folder, transitively), and `site`, whose component
   index renders every default demo; `ink-mark` and `ink-arrow` add `annotations`;
 - a baseline PNG → its item (or `site` for `site-*.png`);
-- `lib/mcp/`, `app/api/mcp/`, `skills/`, `e2e/mcp.spec.ts` → `mcp`; other `app/`,
-  `components/`, `content/`, `lib/docs/`, `e2e/site.spec.ts` → `site`;
+- `lib/mcp/`, `app/api/mcp/`, `skills/`, `e2e/mcp.spec.ts` → `mcp`; `content/`, `lib/docs/`
+  and `scripts/gen-props.ts` → `mcp` and `site` (the MCP serves the pages and props tables);
+  other `app/`, `components/`, `e2e/site.spec.ts` → `site`;
 - everything: the suite's config, demo spec or `e2e/ready.ts`, the demo stage (`app/demo/`),
   `app/layout.tsx`, `app/globals.css`, `ink-frame`, `lib/registry/`, `lib/utils.ts`, the theme
   catalog or any item's `css`, a dependency (`pnpm-lock.yaml`, `package.json` outside

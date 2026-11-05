@@ -81,7 +81,9 @@ describe("selectE2e", () => {
   });
 
   it("maps docs, MCP and spec paths to their suites", () => {
-    expect(pick(["content/docs/theming.mdx", "components/docs/demo-frame.tsx"])).toBe("site");
+    expect(pick(["components/docs/demo-frame.tsx", "app/(site)/page.tsx"])).toBe("site");
+    expect(pick(["content/docs/theming.mdx"])).toBe("site,mcp");
+    expect(pick(["lib/docs/props.generated.json"])).toBe("site,mcp");
     expect(pick(["lib/mcp/tools.ts", "app/api/mcp/route.ts"])).toBe("mcp");
     expect(pick(["skills/mangacn/SKILL.md"])).toBe("mcp");
     expect(pick(["e2e/annotations.spec.ts"])).toBe("annotations");

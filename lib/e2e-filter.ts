@@ -95,21 +95,31 @@ const EVERYTHING: (string | RegExp)[] = [
   /^postcss\.config\./,
 ];
 
+/** A path may select several suites: the MCP serves the docs pages and the props tables too. */
 const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
   {
     suite: "mcp",
-    paths: [/^lib\/mcp\//, /^app\/api\/mcp\//, "e2e/mcp.spec.ts", /^skills\//],
+    paths: [
+      /^lib\/mcp\//,
+      /^app\/api\/mcp\//,
+      "e2e/mcp.spec.ts",
+      /^skills\//,
+      /^content\//,
+      /^lib\/docs\//,
+      "scripts/gen-props.ts",
+    ],
   },
   { suite: "annotations", paths: ["e2e/annotations.spec.ts"] },
   {
     suite: "site",
     paths: [
-      /^app\//,
+      /^app\/(?!api\/mcp\/)/,
       /^components\//,
       /^content\//,
       /^lib\/docs\//,
       "e2e/site.spec.ts",
       "scripts/gen-docs.ts",
+      "scripts/gen-props.ts",
       /^source\.config\./,
     ],
   },
@@ -208,8 +218,9 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  *   item that uses it (registryDependencies or an import, transitively), and `site`, whose
  *   component index renders every item's default demo; `ink-mark`/`ink-arrow` add `annotations`
  * - a baseline PNG → its item, or `site` for `site-*.png`
- * - `lib/mcp/`, `app/api/mcp/`, `skills/`, the MCP spec → `mcp`
- * - other `app/`, `components/`, `content/`, `lib/docs/`, the site spec → `site`
+ * - `lib/mcp/`, `app/api/mcp/`, `skills/`, the MCP spec → `mcp`; `content/`, `lib/docs/` and the
+ *   props generator → `mcp` and `site` (the MCP serves pages and props tables)
+ * - other `app/`, `components/`, the site spec → `site`
  * - the suite's config, demo spec or readiness wait, the demo stage, root layout and CSS,
  *   `ink-frame`, `lib/registry/`, the theme catalog or any item's CSS, a dependency → everything
  * - tests, Markdown, scripts, CI → nothing; any other path → everything
@@ -284,10 +295,12 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
       continue;
     }
 
-    const suite = SUITE_RULES.find((rule) => matches(path, rule.paths));
-    if (suite) {
-      selected.add(suite.suite);
-      reasons.push(`${path} → ${suite.suite}`);
+    const suites = SUITE_RULES.filter((rule) => matches(path, rule.paths)).map(
+      (rule) => rule.suite,
+    );
+    if (suites.length > 0) {
+      for (const suite of suites) selected.add(suite);
+      reasons.push(`${path} → ${suites.join(", ")}`);
       continue;
     }
 
