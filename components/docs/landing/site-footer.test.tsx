@@ -28,7 +28,7 @@ describe("SiteFooter", () => {
 
   it("links three columns to real pages", () => {
     render(<SiteFooter />);
-    expect(hrefs("Docs")).toEqual(["/docs", "/docs/installation", "/docs/theming"]);
+    expect(hrefs("Docs")).toEqual(["/docs", "/docs/installation", "/docs/theming", "/docs/agents"]);
     expect(hrefs("Components")).toEqual([
       "/docs/components",
       "/docs/components#category-primitive",

@@ -1,14 +1,13 @@
 import { asMarkdown } from "fumadocs-core/server";
-import { type DocEntry, type GeneratedDoc, typeTableToMarkdown } from "fumadocs-typescript";
+import type { DocEntry } from "fumadocs-typescript";
 import type { MDXComponents } from "mdx/types";
-import { cacheLife } from "next/cache";
 import type { ReactNode } from "react";
 import { agentsSnippet, MCP_CLIENTS } from "@/lib/docs/agents";
 import { CATEGORY_LABELS, docItems, groupByCategory } from "@/lib/docs/catalog";
 import { getDemoSource } from "@/lib/docs/demo-source";
 import { installCommand, PACKAGE_MANAGERS } from "@/lib/docs/install-command";
+import { generatedProps, propsInterfaceName, typeTableToMarkdown } from "@/lib/docs/props";
 import { PROPS_DELTA, shadcnDocsUrl } from "@/lib/docs/props-delta";
-import { generateOwnProps, propsInterfaceName } from "@/lib/docs/typescript";
 import { loadRegistry } from "@/lib/registry";
 import { listDemos } from "@/lib/registry/demos";
 import type { DemoFrameProps } from "./demo-frame";
@@ -97,21 +96,12 @@ export async function PropsTableMarkdown({
     return `\n${stock}. mangacn adds:\n\n${table}\n\n`;
   }
 
-  const file = entry.files[0]?.path;
-  const docs = file ? await ownProps(item, file, name) : undefined;
+  // Read from lib/docs/props.generated.json (`pnpm gen:props`): the MCP route renders this on
+  // Vercel, where the compiler cannot run. Missing only when the file is stale, which
+  // `gen:props --check` and the e2e guard on get_item catch.
+  const docs = generatedProps(item, name);
   if (!docs) return `\nThe props of \`${name}\` are in the ${item} source.\n\n`;
   return `\n${docs.map(typeTableToMarkdown).join("\n\n")}\n\n`;
-}
-
-/** As in PropsTable: the compiler runs at build time only. */
-async function ownProps(
-  item: string,
-  file: string,
-  name: string,
-): Promise<GeneratedDoc[] | undefined> {
-  "use cache";
-  cacheLife({ revalidate: Infinity, expire: Infinity });
-  return generateOwnProps(item, file, undefined, name);
 }
 
 /** Every item as a link with its description, grouped by category in sidebar order. */

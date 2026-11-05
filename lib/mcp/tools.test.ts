@@ -7,6 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createMcpServer, type McpDeps } from "./server";
 import {
   type CatalogReaders,
+  filesLine,
   installTarget,
   readCatalog,
   readSkill,
@@ -157,7 +158,23 @@ describe("get_item", () => {
     expect(isError).toBe(false);
     expect(text).toContain("npx shadcn@latest add @mangacn/speech-bubble");
     expect(text).toContain("## Props");
-    expect(text).toMatch(/\n\nFiles: components\/speech-bubble\.tsx \(/);
+    expect(text).toMatch(
+      /\n\nFiles: components\/speech-bubble\.tsx; also adds components\/ink-frame\.tsx through its registry dependencies \(/,
+    );
+  });
+
+  it("names the files its registry dependencies add, transitively and once each", async () => {
+    const { text } = await call("get_item", { name: "power-gauge" });
+    expect(text).toContain(
+      "Files: components/power-gauge.tsx; also adds components/ink-frame.tsx, components/sfx-text.tsx through its registry dependencies (where `shadcn add` writes them with the default components.json aliases).",
+    );
+    const dialog = catalog.find((entry) => entry.name === "dialog");
+    expect(dialog?.dependencyFiles).toEqual([
+      "components/ui/button.tsx",
+      "components/ink-frame.tsx",
+    ]);
+    const inkFrame = catalog.find((entry) => entry.name === "ink-frame");
+    expect(inkFrame?.dependencyFiles).toEqual([]);
   });
 
   it("places primitives under components/ui and accepts the @mangacn/ form", async () => {
@@ -173,6 +190,19 @@ describe("get_item", () => {
     expect(text).toContain("pnpm dlx shadcn@latest add @mangacn/font-display");
     expect(text).toContain("https://www.mangacn.com/docs/theming covers it");
     expect(text).toContain("Files: none;");
+  });
+
+  it("words the Files line for every mix of own and dependency files", () => {
+    const note = "(where `shadcn add` writes them with the default components.json aliases)";
+    expect(filesLine({ files: ["components/stamp.tsx"], dependencyFiles: [] })).toBe(
+      `Files: components/stamp.tsx ${note}.`,
+    );
+    expect(filesLine({ files: [], dependencyFiles: ["components/ink-frame.tsx"] })).toBe(
+      `Files: none of its own; adds components/ink-frame.tsx through its registry dependencies ${note}.`,
+    );
+    expect(filesLine({ files: [], dependencyFiles: [] })).toBe(
+      "Files: none; the item writes into your globals.css and root layout instead.",
+    );
   });
 
   it("is an error naming the nearest items for an unknown name", async () => {

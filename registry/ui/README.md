@@ -454,6 +454,11 @@ one or two sentences on when to use the piece and what it pairs with (see
 - `PropsTable` is an `AutoTypeTable` over the item's exported props interface for a
   manga-native piece, and for a restyled primitive a link to shadcn's page plus the table of
   what mangacn adds (`lib/docs/props-delta.ts`: add a row there when you add a variant).
+  The manga-native tables are generated: `pnpm gen:props` runs the TypeScript compiler over
+  each props interface and writes `lib/docs/props.generated.json`, which the page, the `.md`
+  route and the MCP all read (the MCP runs on Vercel, where the compiler cannot). A changed
+  props interface or JSDoc: run `pnpm gen:props` and commit the result; `gen:props --check`
+  (in `prebuild` and `pnpm run ci`) and `lib/docs/typescript.test.ts` fail when it is stale.
 - `InstallCommand` and `CopyPrompt` read the catalog; nothing on the page is typed by hand
   except the prose.
 

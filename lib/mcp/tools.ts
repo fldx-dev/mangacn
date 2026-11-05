@@ -13,6 +13,7 @@ import {
 import {
   type LoadedRegistry,
   loadRegistry,
+  mangacnItemName,
   REGISTRY_ITEM_URL,
   registryItemUrl,
 } from "@/lib/registry";
@@ -33,6 +34,11 @@ export interface CatalogEntry {
   dependencies: string[];
   /** Where `shadcn add` writes each shipped file, at the default `components.json` aliases. */
   files: string[];
+  /**
+   * What the item's mangacn registry dependencies write too, transitively, in the same form
+   * (`components/ink-frame.tsx`), without the item's own files.
+   */
+  dependencyFiles: string[];
   /** The items one add names for this item, as bare names (ink-frame first when it outlines). */
   adds: string[];
   /** The item's own docs page (`/docs/components/speech-bubble`), or null when it has none. */
@@ -62,6 +68,31 @@ function categoryRank(category: string): number {
   return index === -1 ? CATEGORIES.length : index;
 }
 
+/**
+ * The install targets of every mangacn item `name` depends on, depth first in declaration order,
+ * each once: power-gauge → ink-frame's and sfx-text's files. Dependencies outside mangacn
+ * (shadcn's own items) are not followed.
+ */
+export function dependencyFiles(name: string, registry: LoadedRegistry): string[] {
+  const byName = new Map(registry.items.map((item) => [item.name, item]));
+  const seen = new Set([name]);
+  const files: string[] = [];
+  const visit = (itemName: string) => {
+    for (const dependency of byName.get(itemName)?.registryDependencies ?? []) {
+      const depName = mangacnItemName(dependency);
+      if (!depName || seen.has(depName)) continue;
+      seen.add(depName);
+      const depItem = byName.get(depName);
+      if (!depItem) continue;
+      files.push(...depItem.files.map(installTarget));
+      visit(depName);
+    }
+  };
+  visit(name);
+  const own = new Set(byName.get(name)?.files.map(installTarget) ?? []);
+  return [...new Set(files)].filter((file) => !own.has(file));
+}
+
 /** Every registry item in `CATEGORIES` order, catalog order within a category. */
 export function readCatalog(registry: LoadedRegistry = loadRegistry()): CatalogEntry[] {
   const entries = registry.items.map((item): CatalogEntry => {
@@ -79,6 +110,7 @@ export function readCatalog(registry: LoadedRegistry = loadRegistry()): CatalogE
       description: item.description ?? "",
       dependencies: item.dependencies ?? [],
       files: item.files.map(installTarget),
+      dependencyFiles: dependencyFiles(item.name, registry),
       adds: itemsToAdd(item.name),
       page,
       docs: `${SITE_URL}${page ?? THEMING_PAGE}`,
@@ -146,10 +178,24 @@ export function listItemsText(catalog: readonly CatalogEntry[], category?: strin
   ].join("\n");
 }
 
-function filesLine(entry: CatalogEntry): string {
-  return entry.files.length > 0
-    ? `Files: ${entry.files.join(", ")} (where \`shadcn add\` writes them with the default components.json aliases).`
-    : "Files: none; the item writes into your globals.css and root layout instead.";
+const ALIASES_NOTE = "(where `shadcn add` writes them with the default components.json aliases)";
+
+/**
+ * `Files: components/power-gauge.tsx; also adds components/ink-frame.tsx, components/sfx-text.tsx
+ * through its registry dependencies (where …)`: everything one add writes, the item's own first.
+ */
+export function filesLine(entry: Pick<CatalogEntry, "files" | "dependencyFiles">): string {
+  const deps = entry.dependencyFiles;
+  const through = `through its registry dependencies ${ALIASES_NOTE}.`;
+  if (entry.files.length === 0) {
+    return deps.length > 0
+      ? `Files: none of its own; adds ${deps.join(", ")} ${through}`
+      : "Files: none; the item writes into your globals.css and root layout instead.";
+  }
+  const own = entry.files.join(", ");
+  return deps.length > 0
+    ? `Files: ${own}; also adds ${deps.join(", ")} ${through}`
+    : `Files: ${own} ${ALIASES_NOTE}.`;
 }
 
 /** The Markdown get_item returns for an item without a page of its own (fonts, ink-frame). */
