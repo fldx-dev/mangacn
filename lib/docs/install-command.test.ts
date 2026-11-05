@@ -63,6 +63,10 @@ describe("promptFor", () => {
     expect(prompt).toContain("https://www.mangacn.com/docs/installation");
   });
 
+  it("tells an agent to pass --overwrite, since add --yes stops at stock's button", () => {
+    expect(promptFor("speech-bubble")).toMatch(/Add --overwrite .*components\/ui\/button\.tsx/);
+  });
+
   it("points the theme at the theming guide", () => {
     expect(docsUrl("theme")).toBe("https://www.mangacn.com/docs/theming");
     expect(promptFor("theme")).toContain("@mangacn/font-dialogue-ja");

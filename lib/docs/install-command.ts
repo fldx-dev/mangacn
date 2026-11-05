@@ -75,6 +75,7 @@ export function promptFor(name: string): string {
     item.description,
     "",
     `Install it with: ${installCommand(name, "npm")}`,
+    "Add --overwrite when you run it without a prompt: shadcn init already wrote stock's components/ui/button.tsx, and add --yes stops at the overwrite question without an error.",
     `The @mangacn registry setup is at ${SITE_URL}/docs/installation.`,
     `Docs: ${url}`,
     `Markdown for agents (props and examples): ${url}.md`,
