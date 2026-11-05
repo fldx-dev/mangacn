@@ -16,7 +16,8 @@
       "!coverage",
       "!public/r",
       "!registry/ui/__parity__",
-      "!font-specimen.html"
+      "!font-specimen.html",
+      "!**/SKILL.md"
     ]
   },
   "formatter": {
