@@ -70,7 +70,13 @@ describe("Sonner", () => {
       toast("Two");
     });
     const toasts = await framedToasts(2);
-    ink.drawAll(356, 64);
+    // The frame registers its observer in a passive effect, and sonner mounts toasts from its
+    // own timers, so that effect may still be pending when the toast is on the page. Draw
+    // until every toast reports inked rather than once (CI hit the gap at run 42089974973).
+    await waitFor(() => {
+      ink.drawAll(356, 64);
+      for (const element of toasts) expect(frameOf(element)?.dataset.inked).toBe("true");
+    });
     for (const element of toasts) {
       const frame = frameOf(element);
       expect(frame?.getAttribute("data-fill")).toBe("paper");
