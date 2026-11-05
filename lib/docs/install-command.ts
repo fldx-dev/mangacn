@@ -43,7 +43,7 @@ function importsInkFrame(item: LoadedRegistryItem): boolean {
  * shipped files import `@/components/ink-frame` brings ink-frame first. Once the catalog
  * declares ink-frame as a URL registryDependency the prefix is redundant but harmless.
  */
-function itemsToAdd(name: string): string[] {
+export function itemsToAdd(name: string): string[] {
   const item = catalogItem(name);
   if (item.type === "registry:theme") {
     const fonts = [...(catalog?.values() ?? [])].filter((entry) => entry.type === "registry:font");
@@ -52,10 +52,14 @@ function itemsToAdd(name: string): string[] {
   return importsInkFrame(item) ? [INK_FRAME, name] : [name];
 }
 
+/** One `shadcn add` for `items` (bare names, added as `@mangacn/<name>`) through `manager`. */
+export function addCommand(items: readonly string[], manager: PackageManager): string {
+  return `${RUNNERS[manager]} shadcn@latest add ${items.map((item) => `@mangacn/${item}`).join(" ")}`;
+}
+
 /** `pnpm dlx shadcn@latest add @mangacn/ink-frame @mangacn/button` and its npm/yarn/bun forms. */
 export function installCommand(name: string, manager: PackageManager): string {
-  const items = itemsToAdd(name).map((item) => `@mangacn/${item}`);
-  return `${RUNNERS[manager]} shadcn@latest add ${items.join(" ")}`;
+  return addCommand(itemsToAdd(name), manager);
 }
 
 /** The docs page for an item; the theme is documented on the theming guide. */
