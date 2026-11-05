@@ -31,6 +31,8 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # `pnpm skill:validate` runs the Agent Skills validator (Python) through uvx.
+      - uses: astral-sh/setup-uv@v10.3.3
       # `pnpm ci` is a reserved (unimplemented) pnpm command, so call the script with `run`.
       - run: pnpm run ci
 

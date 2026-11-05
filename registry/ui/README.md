@@ -461,3 +461,15 @@ one or two sentences on when to use the piece and what it pairs with (see
 names a catalog item, every demo in the map is framed or listed in the frontmatter's
 `skipDemos` (`skipDemos: ["open"]`), and the placeholder is gone. The site suite
 (`e2e/site.spec.ts`) screenshots and axe-checks a sample of pages, not every item page.
+
+### Agent Skill
+
+`skills/mangacn/` is the Agent Skill that teaches coding agents to use mangacn: `SKILL.md`
+(the workflow and the three rules) and `references/` (design rules, install, Japanese,
+composing pages, an `AGENTS.md` snippet). Agents install it with `npx skills add
+fldx-dev/mangacn`; the MCP's `get_skill` serves the same files. `references/catalog.md` is
+generated: `pnpm gen:skill` rewrites it from the catalog, and `pnpm gen:skill --check` (in
+`pnpm run ci`, beside `gen:docs --check`) fails when it is stale. A new item or a changed
+description: run `pnpm gen:skill` and commit the result. A changed design rule, install step
+or default face: edit the matching reference file in the same PR. `pnpm skill:validate`
+runs the Agent Skills validator (`skills-ref`, through `uvx`; install uv locally).
