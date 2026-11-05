@@ -1,0 +1,1440 @@
+{
+  "caption-box": {
+    "CaptionBoxProps": [
+      {
+        "id": "caption-box.tsx-CaptionBoxProps",
+        "name": "CaptionBoxProps",
+        "entries": [
+          {
+            "name": "tone",
+            "description": "The fill inside the outline: paper, or the lightest screentone grey.",
+            "type": "\"paper\" | \"tone\" | null | undefined",
+            "simplifiedType": "\"paper\" | \"tone\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"paper\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "font",
+            "description": "`dialogue` sets the narration in the lettering face; `body` in the page's body face.",
+            "type": "\"body\" | \"dialogue\" | null | undefined",
+            "simplifiedType": "\"body\" | \"dialogue\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"dialogue\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "corner",
+            "description": "`none` keeps the box in the flow. A corner places it absolutely on that corner of its\nnearest positioned parent (a `panel`), its outline overlapping the parent's frame.",
+            "type": "\"bottom-left\" | \"bottom-right\" | \"none\" | \"top-left\" | \"top-right\" | null | undefined",
+            "simplifiedType": "\"bottom-left\" | \"bottom-right\" | \"none\" | \"top-left\" | \"top-right\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"none\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-label",
+            "description": "Names the box (the narrator, say) and exposes it as a `note`. Without it, plain text.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "emanata": {
+    "EmanataProps": [
+      {
+        "id": "emanata.tsx-EmanataProps",
+        "name": "EmanataProps",
+        "entries": [
+          {
+            "name": "kind",
+            "description": "The mark to draw; it also gives the default label (\"Sweat drop\", \"Anger mark\" …).",
+            "type": "Kind",
+            "simplifiedType": "\"anger\" | \"puff\" | \"sparkle\" | \"surprise\" | \"sweat\"",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "Mark size: 20, 32 or 48 px square.",
+            "type": "\"lg\" | \"md\" | \"sm\" | null | undefined",
+            "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"md\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "color",
+            "description": "Stroke colour: ink, spot red or the mid tone.",
+            "type": "\"ink\" | \"spot\" | \"tone\" | null | undefined",
+            "simplifiedType": "\"ink\" | \"spot\" | \"tone\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ink\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "decorative",
+            "description": "Hide the mark from assistive tech when the surrounding text already says it.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "focus-lines": {
+    "FocusLinesProps": [
+      {
+        "id": "focus-lines.tsx-FocusLinesProps",
+        "name": "FocusLinesProps",
+        "entries": [
+          {
+            "name": "color",
+            "description": "Line colour: ink, or the mid tone for a quieter background.",
+            "type": "\"ink\" | \"tone\" | null | undefined",
+            "simplifiedType": "\"ink\" | \"tone\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ink\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "center",
+            "description": "Where the lines converge, in percent of the box: `[x, y]`.",
+            "type": "readonly [number, number] | undefined",
+            "simplifiedType": "readonly [number, number]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "[50, 50]"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "count",
+            "description": "Number of lines.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "64"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "length",
+            "description": "How far the lines reach in towards the centre.",
+            "type": "\"long\" | \"short\" | undefined",
+            "simplifiedType": "\"long\" | \"short\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"short\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "halftone-background": {
+    "HalftoneBackgroundProps": [
+      {
+        "id": "halftone-background.tsx-HalftoneBackgroundProps",
+        "name": "HalftoneBackgroundProps",
+        "entries": [
+          {
+            "name": "tone",
+            "description": "How dark the screen is: the theme's light, mid or dark halftone.",
+            "type": "\"dark\" | \"light\" | \"mid\" | undefined",
+            "simplifiedType": "\"dark\" | \"light\" | \"mid\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"mid\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "Dot and cell size: the theme's screen, or 1.5 or 2.5 times it.",
+            "type": "\"lg\" | \"md\" | \"sm\" | null | undefined",
+            "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"md\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "fade",
+            "description": "Fades the screen out towards the top, the bottom or the edges.",
+            "type": "\"bottom\" | \"none\" | \"radial\" | \"top\" | null | undefined",
+            "simplifiedType": "\"bottom\" | \"none\" | \"radial\" | \"top\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"none\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "ink-arrow": {
+    "InkArrowProps": [
+      {
+        "id": "ink-arrow.tsx-InkArrowProps",
+        "name": "InkArrowProps",
+        "entries": [
+          {
+            "name": "direction",
+            "description": "Where the head points.",
+            "type": "InkArrowDirection | undefined",
+            "simplifiedType": "\"down\" | \"left\" | \"right\" | \"up\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"right\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "curve",
+            "description": "Bows the shaft to the arrow's own left or right, seen along its direction.",
+            "type": "InkArrowCurve | undefined",
+            "simplifiedType": "\"left\" | \"none\" | \"right\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"none\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "length",
+            "description": "Shaft length: 40, 72 or 112 px.",
+            "type": "InkArrowLength | undefined",
+            "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"md\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "color",
+            "description": "Pen colour: ink, or spot red for the one thing on the page to look at.",
+            "type": "InkArrowColor | undefined",
+            "simplifiedType": "\"ink\" | \"spot\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ink\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "label",
+            "description": "Text at the arrow's tail (\"Start here\"). With a label the arrow is `role=\"img\"` named by it;\nwithout one it is decoration and `aria-hidden`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "seed",
+            "description": "Same seed, same wobble. Defaults to a stable hash of `useId()`.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "ink-frame": {
+    "InkFrameProps": [
+      {
+        "id": "ink-frame.tsx-InkFrameProps",
+        "name": "InkFrameProps",
+        "entries": [
+          {
+            "name": "shape",
+            "description": "`line` draws one stroke across the box, horizontal or vertical by aspect ratio.",
+            "type": "InkFrameShape | undefined",
+            "simplifiedType": "\"ellipse\" | \"line\" | \"rect\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"rect\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "fill",
+            "description": "What fills the outline: nothing, paper, solid ink, the mid tone, or pencil hatching.",
+            "type": "InkFrameFill | undefined",
+            "simplifiedType": "\"hatch\" | \"ink\" | \"none\" | \"paper\" | \"tone\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"paper\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "shadow",
+            "description": "A hatched or solid ink shadow; mangacn draws none unless a component asks for one.",
+            "type": "InkFrameShadow | undefined",
+            "simplifiedType": "\"hatch\" | \"none\" | \"solid\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"none\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "seed",
+            "description": "Same seed, same wobble. Defaults to a stable hash of `useId()`.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "outline",
+            "description": "A custom outline (a speech bubble with its tail, a burst): an SVG path in border-box\npixels, `0 0` at the top-left corner, drawn instead of `shape`'s outline with the same pen,\nfill and shadow. `shape` still picks the CSS fallback. A new function redraws, so memoise it.",
+            "type": "((width: number, height: number) => string) | undefined",
+            "simplifiedType": "(width: number, height: number) => string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "dashed",
+            "description": "Draws the stroke dashed (whisper and thought bubbles).",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "as",
+            "description": "The element to render; use `span` inside phrasing content such as a button.",
+            "type": "keyof React.JSX.IntrinsicElements | undefined",
+            "simplifiedType": "keyof React.JSX.IntrinsicElements",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"div\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "ink-mark": {
+    "InkMarkProps": [
+      {
+        "id": "ink-mark.tsx-InkMarkProps",
+        "name": "InkMarkProps",
+        "entries": [
+          {
+            "name": "kind",
+            "description": "The annotation: an underline, a loop around the words, a box, a strike-through, a tone\nhighlight behind the glyphs, or brackets at the start and end of the phrase.",
+            "type": "InkMarkKind | undefined",
+            "simplifiedType": "\"box\" | \"bracket\" | \"circle\" | \"highlight\" | \"strike\" | \"underline\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"underline\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "color",
+            "description": "Pen colour: ink, spot red or the mid tone. A highlight paints a light wash of it instead\n(tone-2 for ink, tone-1 for tone, spot at 30 %), so the text keeps its contrast.",
+            "type": "InkMarkColor | undefined",
+            "simplifiedType": "\"ink\" | \"spot\" | \"tone\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ink\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "show",
+            "description": "Whether the mark is drawn. Turning it on draws the stroke on, line by line; under reduced\nmotion, and when the mark is already on at mount, it appears at once.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "seed",
+            "description": "Same seed, same wobble. Defaults to a stable hash of `useId()`.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "ink-splash-loader": {
+    "InkSplashLoaderProps": [
+      {
+        "id": "ink-splash-loader.tsx-InkSplashLoaderProps",
+        "name": "InkSplashLoaderProps",
+        "entries": [
+          {
+            "name": "size",
+            "description": "Loader size: 24, 40 or 64 px square.",
+            "type": "\"lg\" | \"md\" | \"sm\" | null | undefined",
+            "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"md\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "label",
+            "description": "Announced to assistive tech and kept visually hidden.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Loading\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "ink-splatter": {
+    "InkSplatterProps": [
+      {
+        "id": "ink-splatter.tsx-InkSplatterProps",
+        "name": "InkSplatterProps",
+        "entries": [
+          {
+            "name": "kind",
+            "description": "The mark: a splash with flung droplets, a band of ink running down in drips, or a spray of\ndots.",
+            "type": "InkSplatterKind | undefined",
+            "simplifiedType": "\"dots\" | \"drip\" | \"splat\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"splat\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "Drawing size: 64, 112 or 160 px square.",
+            "type": "InkSplatterSize | undefined",
+            "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"md\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "color",
+            "description": "Ink colour: ink, or spot red.",
+            "type": "InkSplatterColor | undefined",
+            "simplifiedType": "\"ink\" | \"spot\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ink\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "seed",
+            "description": "Picks the shape: the same seed draws the same splatter, another seed a different one.\nDefaults to a stable hash of `useId()`, so every instance on a page differs.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "manga-frame": {
+    "MangaFrameProps": [
+      {
+        "id": "manga-frame.tsx-MangaFrameProps",
+        "name": "MangaFrameProps",
+        "entries": [
+          {
+            "name": "src",
+            "description": "The picture's URL, passed to the `<img>`.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "alt",
+            "description": "Required: describe the picture, or pass `\"\"` when it is purely decorative.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "aspect",
+            "description": "The picture's aspect ratio; it is cropped to fill (`object-cover`).",
+            "type": "\"1/1\" | \"16/9\" | \"3/4\" | \"4/3\" | null | undefined",
+            "simplifiedType": "\"1/1\" | \"16/9\" | \"3/4\" | \"4/3\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"4/3\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "matte",
+            "description": "A halftone mat between the frame and the picture.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "caption",
+            "description": "Shown under the frame in a `<figcaption>`.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Applied to the `<figure>`; other props go to the `<img>`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "page-number": {
+    "PageNumberProps": [
+      {
+        "id": "page-number.tsx-PageNumberProps",
+        "name": "PageNumberProps",
+        "entries": [
+          {
+            "name": "page",
+            "description": "The number of this page.",
+            "type": "number",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "of",
+            "description": "The number of pages, printed after the page as `7 / 24` and read as \"Page 7 of 24\".",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "side",
+            "description": "The page's outer corner, which the folio hugs: `right` for a right-hand page (the\ndefault, as on most manga pages), `left` for a left-hand one. It aligns the text; place\nthe folio itself with `absolute` and the corner's edges.",
+            "type": "\"left\" | \"right\" | undefined",
+            "simplifiedType": "\"left\" | \"right\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"right\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "chapter",
+            "description": "A small chapter mark above the number (\"Ch. 12\", or `<span lang=\"ja\">第12話</span>`),\nread before the page.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "page-turn": {
+    "PageTurnProps": [
+      {
+        "id": "page-turn.tsx-PageTurnProps",
+        "name": "PageTurnProps",
+        "entries": [
+          {
+            "name": "pageKey",
+            "description": "Change it to turn the page; the children are the page shown for that key.",
+            "type": "string | number",
+            "simplifiedType": "string | number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "direction",
+            "description": "`rtl` turns like a manga, spine on the right; `ltr` like a western book.",
+            "type": "\"ltr\" | \"rtl\" | undefined",
+            "simplifiedType": "\"ltr\" | \"rtl\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"rtl\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "duration",
+            "description": "Seconds per turn.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "0.5"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "panel": {
+    "PanelProps": [
+      {
+        "id": "panel.tsx-PanelProps",
+        "name": "PanelProps",
+        "entries": [
+          {
+            "name": "tone",
+            "description": "Screentone over the paper inside the frame: halftone dots, diagonal lines or cross-hatching.",
+            "type": "\"cross\" | \"halftone\" | \"lines\" | \"none\" | null | undefined",
+            "simplifiedType": "\"cross\" | \"halftone\" | \"lines\" | \"none\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"none\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "shadow",
+            "description": "A hatched ink shadow behind the panel.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "caption",
+            "description": "Narration box in one corner, rendered as text.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "captionSide",
+            "description": "The corner the caption box sits on, its outline overlapping the panel's.",
+            "type": "\"bottom-left\" | \"bottom-right\" | \"top-left\" | \"top-right\" | null | undefined",
+            "simplifiedType": "\"bottom-left\" | \"bottom-right\" | \"top-left\" | \"top-right\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"top-left\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "as",
+            "description": "The element to render; its role is the panel's role.",
+            "type": "keyof React.JSX.IntrinsicElements | undefined",
+            "simplifiedType": "keyof React.JSX.IntrinsicElements",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"section\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "panel-grid": {
+    "PanelGridItemProps": [
+      {
+        "id": "panel-grid.tsx-PanelGridItemProps",
+        "name": "PanelGridItemProps",
+        "entries": [
+          {
+            "name": "colSpan",
+            "description": "Columns the cell spans from `sm` up; `full` spans every column at every width.",
+            "type": "\"full\" | 1 | 2 | 3 | 4 | null | undefined",
+            "simplifiedType": "\"full\" | 1 | 2 | 3 | 4",
+            "tags": [
+              {
+                "name": "default",
+                "text": "1"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "rowSpan",
+            "description": "Rows the cell spans from `sm` up.",
+            "type": "1 | 2 | 3 | null | undefined",
+            "simplifiedType": "1 | 2 | 3",
+            "tags": [
+              {
+                "name": "default",
+                "text": "1"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "PanelGridProps": [
+      {
+        "id": "panel-grid.tsx-PanelGridProps",
+        "name": "PanelGridProps",
+        "entries": [
+          {
+            "name": "columns",
+            "description": "1–4 columns from `sm` up (one on phones), or a count per breakpoint (`base`, `sm`, `md`,\n`lg`): `{ base: 1, sm: 2, lg: 3 }`.",
+            "type": "Partial<Record<Breakpoint, Columns>> | Columns | undefined",
+            "simplifiedType": "Partial<Record<Breakpoint, Columns>> | Columns",
+            "tags": [
+              {
+                "name": "default",
+                "text": "2"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "gutter",
+            "description": "The paper gap between panels: 8, 16 or 24 px.",
+            "type": "\"lg\" | \"md\" | \"sm\" | null | undefined",
+            "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"md\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "power-gauge": {
+    "PowerGaugeProps": [
+      {
+        "id": "power-gauge.tsx-PowerGaugeProps",
+        "name": "PowerGaugeProps",
+        "entries": [
+          {
+            "name": "label",
+            "description": "The stat's name, set in the display face above the bar; it also names the meter.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "value",
+            "description": "The current value, clamped to `0`…`max`.",
+            "type": "number",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "max",
+            "description": "The value of a full bar.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "100"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "segments",
+            "description": "`0` (or none) draws one solid ink fill; a number splits the bar into that many ink blocks\nwith paper gaps, filling whole blocks only.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "0"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "color",
+            "description": "The fill: ink, or spot red for the one stat that matters.",
+            "type": "\"ink\" | \"spot\" | undefined",
+            "simplifiedType": "\"ink\" | \"spot\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ink\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "burst",
+            "description": "Shows a tilted \"MAX\" beside the bar once the value reaches `max`. Its room is kept while\nthe bar is short of full, so gauges stacked in a column stay the same length.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "format",
+            "description": "The value as text, shown beside the label and read as the meter's value. Defaults to\n`7 / 10` on screen and \"7 of 10\" for assistive tech.",
+            "type": "((value: number, max: number) => string) | undefined",
+            "simplifiedType": "(value: number, max: number) => string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "sfx-text": {
+    "SfxTextProps": [
+      {
+        "id": "sfx-text.tsx-SfxTextProps",
+        "name": "SfxTextProps",
+        "entries": [
+          {
+            "name": "size",
+            "description": "Text size, with the stroke and shadow scaled to match; `lg` and `xl` grow again from `sm` up.",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | null | undefined",
+            "simplifiedType": "\"lg\" | \"md\" | \"sm\" | \"xl\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"md\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "color",
+            "description": "Letter colour: paper with an ink stroke, ink with a paper stroke, or spot red.",
+            "type": "\"ink\" | \"paper\" | \"spot\" | null | undefined",
+            "simplifiedType": "\"ink\" | \"paper\" | \"spot\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"paper\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "stroke",
+            "description": "Outlines the letters with the stroke colour.",
+            "type": "boolean | null | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "rotate",
+            "description": "Tilt in degrees.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "-6"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "enter",
+            "description": "A one-shot entrance on mount. Skipped (shown at rest) under reduced motion.",
+            "type": "\"none\" | \"pop\" | \"slam\" | undefined",
+            "simplifiedType": "\"none\" | \"pop\" | \"slam\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"none\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "sfx-ticker": {
+    "SfxTickerProps": [
+      {
+        "id": "sfx-ticker.tsx-SfxTickerProps",
+        "name": "SfxTickerProps",
+        "entries": [
+          {
+            "name": "words",
+            "description": "The sound effects, in order: plain strings, or `{ text, color, lang }` for a word with its\nown colour or language. Rendered twice for a seamless loop.",
+            "type": "(string | SfxTickerWord)[]",
+            "simplifiedType": "(string | SfxTickerWord)[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "speed",
+            "description": "How long one pass of the words takes: 60, 40 or 20 seconds.",
+            "type": "\"fast\" | \"normal\" | \"slow\" | null | undefined",
+            "simplifiedType": "\"fast\" | \"normal\" | \"slow\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"normal\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "direction",
+            "description": "Which way the words travel.",
+            "type": "\"left\" | \"right\" | undefined",
+            "simplifiedType": "\"left\" | \"right\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"left\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "color",
+            "description": "The words' colour, as `sfx-text`'s: ink with a paper stroke, paper with an ink stroke, or\nspot red.",
+            "type": "SfxColor | undefined",
+            "simplifiedType": "\"ink\" | \"paper\" | \"spot\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ink\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "label",
+            "description": "Names the band for assistive tech, followed by the words once, in a visually hidden\nparagraph. Without it the band is decoration and wholly hidden.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "speech-bubble": {
+    "SpeechBubbleProps": [
+      {
+        "id": "speech-bubble.tsx-SpeechBubbleProps",
+        "name": "SpeechBubbleProps",
+        "entries": [
+          {
+            "name": "shape",
+            "description": "The outline: an ellipse, a box, a spiky burst in bold capitals, or a dashed ellipse in\nlight italics.",
+            "type": "\"round\" | \"shout\" | \"square\" | \"whisper\" | null | undefined",
+            "simplifiedType": "\"round\" | \"shout\" | \"square\" | \"whisper\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"round\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "tail",
+            "description": "Where the tail leaves the bubble, pointing at the speaker; `none` draws no tail.",
+            "type": "\"bottom-left\" | \"bottom-right\" | \"left\" | \"none\" | \"right\" | \"top-left\" | \"top-right\" | null | undefined",
+            "simplifiedType": "\"bottom-left\" | \"bottom-right\" | \"left\" | \"none\" | \"right\" | \"top-left\" | \"top-right\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"bottom-left\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "tone",
+            "description": "`light` fills the bubble with the lightest tone instead of paper.",
+            "type": "\"light\" | \"none\" | null | undefined",
+            "simplifiedType": "\"light\" | \"none\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"none\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "font",
+            "description": "`dialogue` sets the text in the lettering face; `inherit` keeps the surrounding font.",
+            "type": "\"dialogue\" | \"inherit\" | null | undefined",
+            "simplifiedType": "\"dialogue\" | \"inherit\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"dialogue\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "speed-lines": {
+    "SpeedLinesProps": [
+      {
+        "id": "speed-lines.tsx-SpeedLinesProps",
+        "name": "SpeedLinesProps",
+        "entries": [
+          {
+            "name": "direction",
+            "description": "Lines radiating from `center`, or horizontal streaks fading towards the left or the right.",
+            "type": "\"left\" | \"radial\" | \"right\" | null | undefined",
+            "simplifiedType": "\"left\" | \"radial\" | \"right\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"radial\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "density",
+            "description": "How close together the lines are drawn.",
+            "type": "\"dense\" | \"normal\" | \"sparse\" | null | undefined",
+            "simplifiedType": "\"dense\" | \"normal\" | \"sparse\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"normal\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "color",
+            "description": "Line colour: ink, or the mid tone for a quieter background.",
+            "type": "\"ink\" | \"tone\" | null | undefined",
+            "simplifiedType": "\"ink\" | \"tone\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ink\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "center",
+            "description": "Where radial lines converge, in percent of the box: `[x, y]`.",
+            "type": "readonly [number, number] | undefined",
+            "simplifiedType": "readonly [number, number]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "[50, 50]"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "stamp": {
+    "StampProps": [
+      {
+        "id": "stamp.tsx-StampProps",
+        "name": "StampProps",
+        "entries": [
+          {
+            "name": "shape",
+            "description": "The seal's outline: a round hanko or a square one.",
+            "type": "StampShape | undefined",
+            "simplifiedType": "\"round\" | \"square\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"round\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "color",
+            "description": "Ink colour: spot red like a real seal, or ink for a black rubber stamp.",
+            "type": "StampColor | undefined",
+            "simplifiedType": "\"ink\" | \"spot\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"spot\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "rotate",
+            "description": "Tilt in degrees; a stamp is rarely pressed straight.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "-8"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "Seal size: 56, 80 or 112 px square, with the text scaled to match.",
+            "type": "StampSize | undefined",
+            "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"md\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-label",
+            "description": "Names the stamp as an image (\"Approved\") when its word is a picture rather than text to\nread; the root becomes `role=\"img\"`. Without it the stamp's text speaks for itself.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "seed",
+            "description": "Same seed, same wobble. Defaults to a stable hash of `useId()`.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "thought-bubble": {
+    "ThoughtBubbleProps": [
+      {
+        "id": "thought-bubble.tsx-ThoughtBubbleProps",
+        "name": "ThoughtBubbleProps",
+        "entries": [
+          {
+            "name": "dots",
+            "description": "Dots in the trail, each smaller than the last.",
+            "type": "1 | 2 | 3 | undefined",
+            "simplifiedType": "1 | 2 | 3",
+            "tags": [
+              {
+                "name": "default",
+                "text": "2"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "tailSide",
+            "description": "The side the trail of dots leaves from, towards the thinker.",
+            "type": "\"left\" | \"right\" | undefined",
+            "simplifiedType": "\"left\" | \"right\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"left\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "font",
+            "description": "`dialogue` sets the text in the lettering face; `inherit` keeps the surrounding font.",
+            "type": "\"dialogue\" | \"inherit\" | null | undefined",
+            "simplifiedType": "\"dialogue\" | \"inherit\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"dialogue\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "vertical-text": {
+    "VerticalTextProps": [
+      {
+        "id": "vertical-text.tsx-VerticalTextProps",
+        "name": "VerticalTextProps",
+        "entries": [
+          {
+            "name": "orientation",
+            "description": "How characters stand: Japanese upright with Latin on its side, everything upright, or\neverything on its side.",
+            "type": "\"mixed\" | \"sideways\" | \"upright\" | null | undefined",
+            "simplifiedType": "\"mixed\" | \"sideways\" | \"upright\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"mixed\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -77,13 +77,22 @@ test("the MCP route", async ({ request }, testInfo) => {
   const item = await callTool(request, "get_item", { name: "speech-bubble" });
   expect(item).toContain("npx shadcn@latest add @mangacn/ink-frame @mangacn/speech-bubble");
   expect(item).toContain("## Props");
-  expect(item).toContain("Files: components/speech-bubble.tsx");
+  // The table itself, not the fallback line: the route renders the page on its first call, at
+  // runtime, so it must read lib/docs/props.generated.json rather than run the compiler.
+  expect(item).toContain("### SpeechBubbleProps\n\n| Prop");
+  expect(item).not.toContain("are in the speech-bubble source");
+  const files =
+    "Files: components/speech-bubble.tsx; also adds components/ink-frame.tsx through its registry dependencies (where `shadcn add` writes them with the default components.json aliases).";
 
-  // Same text as the page's Markdown route, plus the Files line.
+  // Byte for byte the page's Markdown route, plus the Files line.
   const markdown = await (await request.get("/docs/components/speech-bubble.md")).text();
-  expect(item.startsWith(markdown.trimEnd())).toBe(true);
+  expect(markdown).toContain("### SpeechBubbleProps\n\n| Prop");
+  expect(item).toBe(`${markdown.trimEnd()}\n\n${files}\n`);
 
   expect(await callTool(request, "get_page", { url: "/docs/theming" })).toContain("# Theming");
+  const gauge = await callTool(request, "get_page", { url: "/docs/components/power-gauge" });
+  expect(gauge).toContain("### PowerGaugeProps\n\n| Prop");
+  expect(gauge).not.toContain("are in the power-gauge source");
 
   // SKILL.md's frontmatter once Task 60's skill folder is in the build, the placeholder before.
   expect(await callTool(request, "get_skill")).toMatch(

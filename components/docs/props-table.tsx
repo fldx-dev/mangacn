@@ -3,8 +3,8 @@ import { AutoTypeTable } from "fumadocs-typescript/ui";
 import { type TypeNode, TypeTable } from "fumadocs-ui/components/type-table";
 import { cacheLife } from "next/cache";
 import type { ReactNode } from "react";
+import { generatedProps, propsInterfaceName } from "@/lib/docs/props";
 import { PROPS_DELTA, type PropDelta, shadcnDocsUrl } from "@/lib/docs/props-delta";
-import { generateOwnProps, propsInterfaceName } from "@/lib/docs/typescript";
 import { loadRegistry } from "@/lib/registry";
 
 const SOURCE_URL = "https://github.com/fldx-dev/mangacn/blob/main";
@@ -22,7 +22,8 @@ export interface PropsTableProps {
 
 /**
  * The props of one catalog item. Manga-native pieces (`registry:component`) get a table of
- * their exported `<Pascal>Props` interface, generated from the source at build time;
+ * their exported `<Pascal>Props` interface, generated from the source by `pnpm gen:props`
+ * into lib/docs/props.generated.json (the same tables the `.md` routes and the MCP print);
  * restyled primitives (`registry:ui`) keep the stock API, so they link to shadcn's page and
  * list only what mangacn adds. Throws on an unknown item.
  */
@@ -38,13 +39,13 @@ export async function PropsTable({ item, name = propsInterfaceName(item) }: Prop
 }
 
 /**
- * The generated table, cached for good: the compiler and Shiki run at build time only, never
- * as a background revalidation on the server (where there is no TypeScript to run).
+ * The generated table, cached for good: Shiki runs at build time only, never as a background
+ * revalidation on the server.
  */
 async function ownPropsTable(item: string, file: string, name: string) {
   "use cache";
   cacheLife({ revalidate: Infinity, expire: Infinity });
-  const docs = await generateOwnProps(item, file, undefined, name);
+  const docs = generatedProps(item, name);
   if (!docs) return <PropsFallback item={item} name={name} file={file} />;
   return (
     <div data-slot="props-table">
@@ -53,7 +54,7 @@ async function ownPropsTable(item: string, file: string, name: string) {
   );
 }
 
-/** A generator that hands AutoTypeTable the docs PropsTable already generated. */
+/** A generator that hands AutoTypeTable the docs `pnpm gen:props` generated. */
 function resolved(docs: GeneratedDoc[]): Generator {
   return {
     generateDocumentation: async () => docs,
