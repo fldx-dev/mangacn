@@ -367,28 +367,84 @@ merged into `main` with a merge commit and deleted afterwards.
 
 ## Run the checks
 
-The fast loop while you work, under a minute on Windows:
+Every check runs on what your branch changed; main runs everything on each push, so nothing
+here weakens the gate, it only stops a branch from paying for the whole of it. The
+recommended loop, in order, for a branch that adds or changes items:
 
 ```bash
-pnpm check                    # Biome, demo map, typecheck, tests (no coverage)
-pnpm test:changed             # only the test files related to your diff against origin/main
-pnpm registry:build && pnpm registry:smoke --only=badge,card   # install just these (+ ink-frame, deps)
-pnpm registry:build && pnpm registry:smoke:changed             # items whose folders changed
+pnpm check:changed                                   # Biome on changed files, demo map, typecheck, related tests
+pnpm registry:build && pnpm registry:smoke --only=<items>   # install just these (+ ink-frame, deps)
+pnpm build && pnpm test:e2e:changed                  # the visual set your diff needs (see below)
+git push -u origin HEAD:refs/heads/<type>/<slug>
+gh workflow run ci.yml --ref <type>/<slug> -f update-snapshots=true   # only when shots change; else no -f
+gh run watch <id> --exit-status
 ```
 
-The full gate, which CI runs on every push and dispatch (Linux, a few minutes); locally it
-takes 25–40 minutes because of the 40-item smoke, so leave it to CI unless you changed the
-smoke, the catalog or `lib/registry`:
+1. **`pnpm check:changed`** (TIME_CHECK_CHANGED) is the gate while you work. `pnpm check`
+   (TIME_CHECK, every file and every test) stays the full local gate; run it when you changed
+   shared code (`lib/registry`, the theme, `ink-frame`) or before handing over a large change.
+2. **`registry:smoke --only=<items>`** installs your items into a fresh Next app (3–5 min);
+   `registry:smoke:changed` picks them from the diff instead.
+3. **`pnpm build && pnpm test:e2e:changed`**: the demo stage is a production build, so a new or
+   changed demo needs `pnpm build` first (about a minute); then `test:e2e:changed` prints the
+   filter it chose and runs only that (on Windows without pixels: errors, overflow, axe).
+4. **Push and dispatch once.** With `update-snapshots=true` the run rewrites only the baselines
+   that are missing or fail the comparison (`--update-snapshots=changed`) and uploads exactly
+   those, so the artifact is a straight copy, no comparison or sifting:
 
-```bash
-pnpm run ci                   # lint, typecheck, tests with coverage, validate, build, full smoke
-pnpm build && pnpm test:e2e   # the `visual` job: every demo × 360/768/1280 px × light/dark
-```
+   ```bash
+   gh run download <id> -n playwright-baselines -D e2e/__screenshots__
+   ```
 
-Working in a branch: run `pnpm check` after each change, smoke the items you touched once,
-then dispatch the branch's CI run (`gh workflow run ci.yml --ref <branch>`, then
-`gh run watch <id> --exit-status`) for the full smoke and the visual suite. Coverage and its
-90 % threshold are enforced in CI (`pnpm test:coverage`), not in `pnpm test`.
+   Look at the PNGs (the run summary lists them): every one must belong to an item you changed
+   or one that uses it; anything else is a regression to fix, not a baseline. Commit them and
+   push; that is the end of the loop, no second dispatch: the PNGs are that run's own render,
+   and the same run's `ci` job (lint, docs, skill, typecheck, tests with coverage, validate,
+   smoke of the changed items) is the verification. An update run that rewrote nothing has
+   passed the visual suite as is. Dispatch without `update-snapshots` when no shot should
+   change (a refactor, a fix that must not move pixels); a diff then fails the run.
+5. The orchestrator merges on green; main's push run then checks every shot and smokes every
+   item.
+
+What each change may skip:
+
+| Change                                                     | `check:changed` | smoke                            | `build` + `test:e2e:changed`    | dispatch                                |
+| ---------------------------------------------------------- | --------------- | -------------------------------- | ------------------------------- | --------------------------------------- |
+| item (component, demo, catalog entry)                      | yes             | `--only=<items>`                 | yes: items, their users, `site` | `update-snapshots=true`                 |
+| docs site (`content/`, `components/`, `app/`, `lib/docs/`) | yes             | skip                             | yes: `site`                     | `update-snapshots=true` if pages change |
+| MCP (`lib/mcp/`, `app/api/mcp/`, `skills/`)                | yes             | skip                             | yes: `mcp` (3 tests, no pixels) | plain                                   |
+| Markdown, scripts, CI                                      | yes             | skip (`--changed` finds nothing) | skip (`none`)                   | plain, only if CI or a script changed   |
+
+### The visual set (`E2E_ITEMS`)
+
+`E2E_ITEMS` is a comma-separated list of item names (their demos) and the suites `site`,
+`mcp` and `annotations`; unset or `all` runs everything, `none` nothing. The Playwright run
+prints the filter on its first line, and a name with no demos is an error. Set it by hand
+(`E2E_ITEMS=slider,site pnpm test:e2e`) or let `scripts/changed-e2e.ts` compute it from the
+diff against origin/main (`pnpm exec tsx scripts/changed-e2e.ts` prints it and why;
+`--paths=a,b` tries paths without changing them). The rules, in `lib/e2e-filter.ts`:
+
+- an item's folder or catalog entry → that item, every item that uses it (its
+  `registryDependencies` or an import in its folder, transitively), and `site`, whose component
+  index renders every default demo; `ink-mark` and `ink-arrow` add `annotations`;
+- a baseline PNG → its item (or `site` for `site-*.png`);
+- `lib/mcp/`, `app/api/mcp/`, `skills/`, `e2e/mcp.spec.ts` → `mcp`; other `app/`,
+  `components/`, `content/`, `lib/docs/`, `e2e/site.spec.ts` → `site`;
+- everything: the suite's config, demo spec or `e2e/ready.ts`, the demo stage (`app/demo/`),
+  `app/layout.tsx`, `app/globals.css`, `ink-frame`, `lib/registry/`, `lib/utils.ts`, the theme
+  catalog or any item's `css`, a dependency (`pnpm-lock.yaml`, `package.json` outside
+  `scripts`), the Next or TypeScript config, and any path no rule knows;
+- nothing: unit tests, Markdown, `scripts/` (but the demo, theme and docs generators), CI.
+
+CI (`.github/workflows/ci.yml`): a `workflow_dispatch` on a branch runs the `items` input, or
+the computed set when it is empty, and its `ci` job smokes only the changed items
+(`registry:smoke --changed`); `full=true` runs what main runs. Push to main and pull requests
+always run every shot and the full smoke. Playwright's browser is cached per version, so apt
+(`install-deps`) runs only on a cache miss.
+
+Coverage and its 90 % threshold are enforced in CI (`pnpm test:coverage`), not in `pnpm test`.
+`pnpm run ci` is the whole CI gate locally (25–40 min on Windows for the 60-item smoke); leave
+it to CI.
 
 Preview a demo in isolation with `pnpm dev` and open
 `http://localhost:3000/demo/<name>/<demo>` (add `?mode=dark` for the night theme). The
@@ -421,16 +477,15 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   `e2e/__screenshots__/linux/w<width>/<item>-<demo>-<mode>.png` (`maxDiffPixelRatio` 0.01).
   On Windows and macOS it skips the pixel comparison, because font rendering differs.
 - A new demo has no baseline, so the `visual` CI job fails until you add one. Baselines are
-  only made on CI: run the workflow manually with `update-snapshots` checked
-  (`gh workflow run ci.yml -f update-snapshots=true`), download the `playwright-baselines`
-  artifact into `e2e/__screenshots__/` (`gh run download <run-id> -n playwright-baselines -D e2e/__screenshots__`),
-  look at the new PNGs, and commit them with the item.
+  only made on CI: dispatch with `update-snapshots` checked (step 4 of the loop above), which
+  uploads only the missing and changed PNGs, copy them in and commit them with the item.
 - Every `InkFrame` without an explicit `seed` hashes `useId()`, and React ids depend on the
   tree above the component. Changing the demo stage's tree (`app/demo/[item]/[demo]/page.tsx`)
-  therefore changes every wobble and shifts every baseline a little; regenerate all of them
-  in the same commit. Two runs of the same commit also differ in a few dozen PNGs by one to a
-  few hundred pixels (renderer antialiasing at text and stroke edges); that is within the
-  threshold and not something to chase.
+  therefore changes every wobble; such a change selects every shot, and the update run
+  rewrites each one that moved past the threshold. Two runs of the same commit also differ in
+  a few dozen PNGs by one to a few hundred pixels (renderer antialiasing at text and stroke
+  edges); that is within the threshold, so `--update-snapshots=changed` leaves them alone.
+  `pnpm test:e2e:update` (`--update-snapshots=all`) still rewrites every shot it runs.
 
 ## Docs page per item
 

@@ -1,4 +1,4 @@
-import { mangacnItemName } from "./index";
+import { mangacnItemName } from "./registry/index";
 
 /**
  * The Playwright filter (`E2E_ITEMS`): which demos and specs a change needs. `e2e/playwright.config.ts`
@@ -81,6 +81,7 @@ const EVERYTHING: (string | RegExp)[] = [
   /^registry\/theme\/ink-frame\//,
   "registry.json",
   /^lib\/registry\//,
+  "lib/e2e-filter.ts", // these rules themselves
   "lib/utils.ts",
   "scripts/gen-demos.ts",
   "scripts/gen-theme-css.ts",

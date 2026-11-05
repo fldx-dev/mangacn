@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
+import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
 import { demoEntries } from "../lib/registry/demos.generated";
-import { parseE2eItems, selectedDemoItems } from "../lib/registry/e2e-filter";
 import { waitForInk } from "./ready";
 
 // Every demo in the generated map, light and dark, at each project's width. Baselines are

@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { defineConfig } from "@playwright/test";
-import { E2E_SUITES, parseE2eItems, selectedDemoItems } from "../lib/registry/e2e-filter";
+import { E2E_SUITES, parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
 
 const root = path.resolve(__dirname, "..");
 
@@ -24,7 +24,7 @@ function freePort(): string {
 const port = freePort();
 const widths = [360, 768, 1280];
 
-// `E2E_ITEMS` narrows the run (lib/registry/e2e-filter.ts): demo items for demos.spec.ts, and the
+// `E2E_ITEMS` narrows the run (lib/e2e-filter.ts): demo items for demos.spec.ts, and the
 // suites `site`, `mcp`, `annotations` for their specs. Unset, empty or `all` runs everything.
 const filter = parseE2eItems(process.env.E2E_ITEMS);
 const demoItems = selectedDemoItems(filter);

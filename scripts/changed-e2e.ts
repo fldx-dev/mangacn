@@ -1,5 +1,5 @@
 /**
- * Picks the Playwright set for a diff: prints `E2E_ITEMS` (lib/registry/e2e-filter.ts has the
+ * Picks the Playwright set for a diff: prints `E2E_ITEMS` (lib/e2e-filter.ts has the
  * rules) for the changes against a base ref, committed or not.
  *
  * Usage:
@@ -20,7 +20,7 @@ import {
   formatE2eItems,
   importedItems,
   selectE2e,
-} from "../lib/registry/e2e-filter";
+} from "../lib/e2e-filter";
 import { loadRegistry } from "../lib/registry/index";
 import { changedPaths, defaultBase, fileAt } from "./changed-paths";
 

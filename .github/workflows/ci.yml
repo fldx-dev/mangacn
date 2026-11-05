@@ -73,7 +73,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       # Push, pull requests, main and `full` run every shot; a branch dispatch runs the `items`
-      # input, or the set its diff needs (lib/registry/e2e-filter.ts has the rules).
+      # input, or the set its diff needs (lib/e2e-filter.ts has the rules).
       - name: Choose the visual set
         id: filter
         env:

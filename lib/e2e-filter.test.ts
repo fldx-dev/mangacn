@@ -95,6 +95,7 @@ describe("selectE2e", () => {
       "app/demo/[item]/[demo]/page.tsx",
       "registry/theme/ink-frame/ink-frame.tsx",
       "lib/registry/demos.ts",
+      "lib/e2e-filter.ts",
       "pnpm-lock.yaml",
       "something/new.ts",
     ]) {
