@@ -48,6 +48,10 @@ npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogu
 After that, any item is one `add` away. Keep the ink frame installed before the outlined
 items: they import it from `@/components/ink-frame`.
 
+A fresh shadcn project already has stock's `components/ui/button.tsx` (`shadcn init` writes
+it), so an add that brings mangacn's button asks to overwrite it: answer yes. Scripted
+installs pass `--overwrite`, since `--yes` alone stops at that question without an error.
+
 </Step>
 <Step>
 

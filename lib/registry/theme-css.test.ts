@@ -2,7 +2,13 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { loadRegistry } from "./index";
-import { renderThemeCss, renderThemeCssFile, THEME_CSS_HEADER, THEME_CSS_PATH } from "./theme-css";
+import {
+  renderThemeCss,
+  renderThemeCssFile,
+  THEME_CSS_HEADER,
+  THEME_CSS_PATH,
+  type ThemeCssSource,
+} from "./theme-css";
 
 describe("renderThemeCss", () => {
   it("renders cssVars into @theme inline, :root and .dark blocks in source order", () => {
@@ -163,6 +169,17 @@ describe("renderThemeCssFile", () => {
     expect(css).toContain(
       "/* From the registry item `sfx-ticker`. */\n@keyframes mangacn-marquee {",
     );
+  });
+
+  it("finds every item's css keys unique across items (each lands once in globals.css)", () => {
+    const owners = new Map<string, string[]>();
+    for (const entry of loadRegistry().items) {
+      for (const key of Object.keys((entry as ThemeCssSource).css ?? {})) {
+        owners.set(key, [...(owners.get(key) ?? []), entry.name]);
+      }
+    }
+    const shared = [...owners].filter(([, names]) => names.length > 1);
+    expect(shared.map(([key, names]) => `${key}: ${names.join(", ")}`)).toEqual([]);
   });
 
   it("throws for an unknown item", () => {
