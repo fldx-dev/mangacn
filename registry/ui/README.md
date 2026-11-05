@@ -380,9 +380,12 @@ gh workflow run ci.yml --ref <type>/<slug> -f update-snapshots=true   # only whe
 gh run watch <id> --exit-status
 ```
 
-1. **`pnpm check:changed`** (TIME_CHECK_CHANGED) is the gate while you work. `pnpm check`
-   (TIME_CHECK, every file and every test) stays the full local gate; run it when you changed
-   shared code (`lib/registry`, the theme, `ink-frame`) or before handing over a large change.
+1. **`pnpm check:changed`** is the gate while you work: about 75 s on Windows for a one-item
+   change (Biome on your files, `gen:demos`, typecheck, the 9 or so test files that import what
+   you touched) against about 6 min for `pnpm check` (every file, all 841 tests). Vitest reruns
+   every test when `package.json` or its config changed. `pnpm check` stays the full local gate;
+   run it when you changed shared code (`lib/registry`, the theme, `ink-frame`) or before handing
+   over a large change.
 2. **`registry:smoke --only=<items>`** installs your items into a fresh Next app (3–5 min);
    `registry:smoke:changed` picks them from the diff instead.
 3. **`pnpm build && pnpm test:e2e:changed`**: the demo stage is a production build, so a new or
