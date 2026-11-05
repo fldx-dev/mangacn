@@ -67,6 +67,12 @@ describe("promptFor", () => {
     expect(promptFor("speech-bubble")).toMatch(/Add --overwrite .*components\/ui\/button\.tsx/);
   });
 
+  it("names the docs MCP and the skill install command", () => {
+    expect(promptFor("speech-bubble")).toContain(
+      "Or read it through the mangacn docs MCP at https://www.mangacn.com/api/mcp, and install the rules with: npx skills add fldx-dev/mangacn",
+    );
+  });
+
   it("points the theme at the theming guide", () => {
     expect(docsUrl("theme")).toBe("https://www.mangacn.com/docs/theming");
     expect(promptFor("theme")).toContain("@mangacn/font-dialogue-ja");

@@ -3,6 +3,7 @@ import type { GeneratedDoc } from "fumadocs-typescript";
 import type { MDXComponents } from "mdx/types";
 import { createElement, type FC } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { agentsSnippet, MCP_URL } from "@/lib/docs/agents";
 import { getDemoSource } from "@/lib/docs/demo-source";
 import { installCommand } from "@/lib/docs/install-command";
 import { renderMarkdownPage } from "@/lib/docs/llms";
@@ -100,6 +101,24 @@ describe("Markdown forms of the docs components", () => {
     const out = await render("TokenSwatches");
     expect(out).toMatch(/^\| Token \| Light \| Dark \|/);
     expect(out).toContain("| `--spot-foreground` |");
+  });
+
+  it("writes each MCP client in bold with its config fenced", async () => {
+    const out = await render("McpConfig");
+    expect(out).toMatch(
+      /^\*\*Claude Code\*\*\n\n```bash\nclaude mcp add --transport http mangacn /,
+    );
+    expect(out).toContain(`\`.mcp.json\`:\n\n\`\`\`json\n{\n  "mcpServers": {`);
+    expect(out).toContain("**Cursor**");
+    expect(out).toContain('`.vscode/mcp.json`:\n\n```json\n{\n  "servers": {');
+    expect(out).toContain(
+      `**Codex**\n\n\`~/.codex/config.toml\`:\n\n\`\`\`toml\n[mcp_servers.mangacn]\nurl = "${MCP_URL}"\n\`\`\``,
+    );
+    expect(out.match(/```(bash|json|toml)\n/g)).toHaveLength(5);
+  });
+
+  it("writes the AGENTS.md snippet as a fenced markdown block", async () => {
+    expect(await render("AgentsSnippet")).toBe(`\`\`\`markdown\n${agentsSnippet()}\n\`\`\``);
   });
 
   it("writes a callout as a blockquote with its title", async () => {

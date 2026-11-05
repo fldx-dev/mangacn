@@ -11,6 +11,7 @@ const pages = [
   "/docs",
   "/docs/installation",
   "/docs/theming",
+  "/docs/agents",
   "/docs/components",
   "/docs/components/button",
   "/docs/components/speech-bubble",
@@ -103,6 +104,17 @@ test("markdown and registry routes", async ({ request }, testInfo) => {
   const markdown = await request.get("/docs/components/button.md");
   expect(markdown.status()).toBe(200);
   expect(markdown.headers()["content-type"]).toMatch(/^text\/markdown\b/);
+  // Demo sources import each item from where `shadcn add` writes it.
+  expect(await markdown.text()).toContain('from "@/components/ui/button"');
+  const bubble = await (await request.get("/docs/components/speech-bubble.md")).text();
+  expect(bubble).toContain('from "@/components/speech-bubble"');
+  expect(bubble).not.toContain("@/components/ui/speech-bubble");
+
+  // The agents page carries each client's MCP config and the AGENTS.md snippet as fences.
+  const agents = await (await request.get("/docs/agents.md")).text();
+  expect(agents).toContain("**Codex**");
+  expect(agents).toContain("```toml\n[mcp_servers.mangacn]\n");
+  expect(agents).toContain("```markdown\n## UI: mangacn");
 
   const item = await request.get("/r/button.json");
   expect(item.status()).toBe(200);

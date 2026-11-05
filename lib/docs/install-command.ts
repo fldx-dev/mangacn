@@ -9,6 +9,12 @@ export const PACKAGE_MANAGERS: PackageManager[] = ["pnpm", "npm", "yarn", "bun"]
 
 export const SITE_URL = "https://www.mangacn.com";
 
+/** The read-only docs MCP (streamable HTTP, no account). */
+export const MCP_URL = `${SITE_URL}/api/mcp`;
+
+/** The skills CLI line that installs the mangacn Agent Skill. */
+export const SKILL_INSTALL_COMMAND = "npx skills add fldx-dev/mangacn";
+
 const RUNNERS: Record<PackageManager, string> = {
   pnpm: "pnpm dlx",
   npm: "npx",
@@ -83,6 +89,7 @@ export function promptFor(name: string): string {
     `The @mangacn registry setup is at ${SITE_URL}/docs/installation.`,
     `Docs: ${url}`,
     `Markdown for agents (props and examples): ${url}.md`,
+    `Or read it through the mangacn docs MCP at ${MCP_URL}, and install the rules with: ${SKILL_INSTALL_COMMAND}`,
   ]
     .filter((line) => line !== undefined)
     .join("\n");

@@ -2,10 +2,12 @@ import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import { type HTMLAttributes, isValidElement, type ReactNode } from "react";
+import { AgentsSnippet } from "./agents-snippet";
 import { ComponentIndex } from "./component-index";
 import { CopyPrompt } from "./copy-prompt";
 import { DemoFrame } from "./demo-frame";
 import { InstallCommand } from "./install-command";
+import { McpConfig } from "./mcp-config";
 import { PropsTable } from "./props-table";
 import { ThemePlayground } from "./theme-playground";
 import { TokenSwatches } from "./token-swatches";
@@ -36,10 +38,12 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
     ...defaultMdxComponents,
     pre: CodeFence,
+    AgentsSnippet,
     ComponentIndex,
     CopyPrompt,
     DemoFrame,
     InstallCommand,
+    McpConfig,
     PropsTable,
     ThemePlayground,
     TokenSwatches,

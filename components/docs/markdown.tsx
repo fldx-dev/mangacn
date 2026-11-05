@@ -3,6 +3,7 @@ import { type DocEntry, type GeneratedDoc, typeTableToMarkdown } from "fumadocs-
 import type { MDXComponents } from "mdx/types";
 import { cacheLife } from "next/cache";
 import type { ReactNode } from "react";
+import { agentsSnippet, MCP_CLIENTS } from "@/lib/docs/agents";
 import { CATEGORY_LABELS, docItems, groupByCategory } from "@/lib/docs/catalog";
 import { getDemoSource } from "@/lib/docs/demo-source";
 import { installCommand, PACKAGE_MANAGERS } from "@/lib/docs/install-command";
@@ -35,6 +36,25 @@ export function InstallCommandMarkdown({ item }: { item: string }) {
     ),
     "bash",
   );
+}
+
+/** Each client under its name in bold, then its blocks, each fenced, the file named before it. */
+export function McpConfigMarkdown() {
+  asMarkdown();
+  return MCP_CLIENTS.map(
+    (client) =>
+      `\n**${client.label}**\n\n${client.blocks
+        .map(
+          (block) => `${block.file ? `\`${block.file}\`:\n` : ""}${fence(block.code, block.lang)}`,
+        )
+        .join("")}`,
+  ).join("");
+}
+
+/** The AGENTS.md block, as the skill's reference holds it. */
+export function AgentsSnippetMarkdown() {
+  asMarkdown();
+  return fence(agentsSnippet(), "markdown");
 }
 
 /** The page itself is what an agent reads, so the prompt button has no Markdown form. */
@@ -148,6 +168,8 @@ export function StepsMarkdown({ children }: { children?: ReactNode }) {
 export function getMarkdownComponents(): MDXComponents {
   return {
     InstallCommand: InstallCommandMarkdown,
+    McpConfig: McpConfigMarkdown,
+    AgentsSnippet: AgentsSnippetMarkdown,
     CopyPrompt: CopyPromptMarkdown,
     DemoFrame: DemoFrameMarkdown,
     PropsTable: PropsTableMarkdown,

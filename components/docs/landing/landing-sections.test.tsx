@@ -95,6 +95,13 @@ describe("the landing", () => {
     }
   });
 
+  it("links the agents page from the agent strip, with the MCP chip live", () => {
+    const { container } = renderLanding();
+    const strip = container.querySelector('[data-landing="agent-ready"]');
+    expect(strip?.querySelector('a[href="/docs/agents"]')?.textContent).toBe("set up your agent");
+    expect(strip?.textContent).not.toContain("soon");
+  });
+
   it("swaps the stock card for the drawn one", async () => {
     const { container } = renderLanding();
     const toggle = container.querySelector('[data-slot="swap-toggle"]');
