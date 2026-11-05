@@ -7,20 +7,21 @@ import { agentsSnippet, MCP_URL } from "@/lib/docs/agents";
 import { getDemoSource } from "@/lib/docs/demo-source";
 import { installCommand } from "@/lib/docs/install-command";
 import { renderMarkdownPage } from "@/lib/docs/llms";
-import { generateOwnProps } from "@/lib/docs/typescript";
+import { generatedProps } from "@/lib/docs/props";
 import { fence, getMarkdownComponents } from "./markdown";
 
 // `cacheLife` only runs inside a Next.js "use cache" scope; Vitest ignores the directive.
 vi.mock("next/cache", () => ({ cacheLife: () => {} }));
 
-// The compiler-backed generation has its own test (lib/docs/typescript.test.ts).
-vi.mock(import("@/lib/docs/typescript"), async (original) => ({
-  ...(await original()),
-  generateOwnProps: vi.fn(),
-}));
+// The tables come from lib/docs/props.generated.json (checked against the compiler in
+// lib/docs/typescript.test.ts); the reader is spied on so a test can stand in its own docs.
+vi.mock(import("@/lib/docs/props"), async (original) => {
+  const props = await original();
+  return { ...props, generatedProps: vi.fn(props.generatedProps) };
+});
 
 afterEach(() => {
-  vi.mocked(generateOwnProps).mockReset();
+  vi.mocked(generatedProps).mockReset();
 });
 
 const md = getMarkdownComponents();
@@ -62,6 +63,16 @@ describe("Markdown forms of the docs components", () => {
     );
   });
 
+  it("reads a manga-native item's table from the generated file, no compiler involved", async () => {
+    const out = await render("PropsTable", { item: "speech-bubble" });
+    expect(generatedProps).toHaveBeenCalledWith("speech-bubble", "SpeechBubbleProps");
+    expect(out).toMatch(/^### SpeechBubbleProps\n\n\| Prop +\| Type +\| Description +\|\n/);
+    expect(out).toMatch(/\| `shape\?` +\| `"round" \\\| "shout" \\\| "square" \\\| "whisper"` +\|/);
+    expect(await render("PropsTable", { item: "panel-grid", name: "PanelGridItemProps" })).toMatch(
+      /^### PanelGridItemProps\n/,
+    );
+  });
+
   it("tables a manga-native item's generated props", async () => {
     const docs: GeneratedDoc[] = [
       {
@@ -80,12 +91,12 @@ describe("Markdown forms of the docs components", () => {
         ],
       },
     ];
-    vi.mocked(generateOwnProps).mockResolvedValue(docs);
+    vi.mocked(generatedProps).mockReturnValue(docs);
     const out = await render("PropsTable", { item: "speech-bubble" });
     expect(out).toMatch(/^### SpeechBubbleProps\n/);
     expect(out).toMatch(/\| `shape\?` +\| `"round" \\\| "square"` +\| The outline\. Default/);
 
-    vi.mocked(generateOwnProps).mockResolvedValue(undefined);
+    vi.mocked(generatedProps).mockReturnValue(undefined);
     expect(await render("PropsTable", { item: "speech-bubble" })).toBe(
       "The props of `SpeechBubbleProps` are in the speech-bubble source.",
     );

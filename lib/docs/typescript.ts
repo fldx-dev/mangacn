@@ -1,24 +1,18 @@
-import {
-  type Cache,
-  createFileSystemGeneratorCache,
-  createGenerator,
-  type GeneratedDoc,
-  type Generator,
-} from "fumadocs-typescript";
+import { readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
+import type { GeneratedDoc, Generator } from "fumadocs-typescript";
+import { type LoadedRegistry, loadRegistry } from "@/lib/registry";
+import { COMPONENT_PAGES_DIR } from "./catalog";
+import { type GeneratedProps, propsInterfaceName } from "./props";
 
-// Server-only: fumadocs-typescript runs the TypeScript compiler (a native process) and reads
-// tsconfig.json from the working directory, the project root under `next build` and Vitest.
+// Build time only: fumadocs-typescript runs the TypeScript compiler (a native process) and reads
+// tsconfig.json from the working directory (the repo root under pnpm scripts and Vitest).
+// `pnpm gen:props` writes what this generates to lib/docs/props.generated.json, which the pages,
+// the `.md` routes and the MCP read through lib/docs/props.ts; no route runs this module.
+
+export { propsInterfaceName };
 
 const INHERITED = "mangacnInherited";
-
-/** `speech-bubble` → `SpeechBubbleProps`, the interface every manga-native item exports. */
-export function propsInterfaceName(item: string): string {
-  const pascal = item
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("");
-  return `${pascal}Props`;
-}
 
 /**
  * Creates a generator for manga-native props tables. Every props interface extends a DOM
@@ -26,11 +20,22 @@ export function propsInterfaceName(item: string): string {
  * event props from @types/react) is marked and dropped; what is left is what the item
  * declares, including its cva variants and DOM props it redeclares (manga-frame's `alt`).
  */
-export function createPropsGenerator(cache?: Cache): Generator {
-  const generator = createGenerator({ cache: cache ?? false });
+export function createPropsGenerator(): Generator {
+  // fumadocs-typescript is ESM only and tsx runs the gen scripts as CommonJS (the package has no
+  // "type": "module"), so it is loaded with import(), on the first table asked for.
+  let loading: Promise<Generator> | undefined;
+  const base = () => {
+    loading ??= import("fumadocs-typescript").then(({ createGenerator }) =>
+      createGenerator({ cache: false }),
+    );
+    return loading;
+  };
   return {
-    ...generator,
+    async generateDocumentation(file, name, options) {
+      return (await base()).generateDocumentation(file, name, options);
+    },
     async generateTypeTable(props, options) {
+      const generator = await base();
       const docs = await generator.generateTypeTable(props, {
         ...options,
         transform(entry, _type, symbol) {
@@ -66,21 +71,21 @@ export function createPropsGenerator(cache?: Cache): Generator {
 
 let shared: Generator | undefined;
 
-/** The build's generator, with results cached on disk across builds. */
-export function getPropsGenerator(): Generator {
-  shared ??= createPropsGenerator(createFileSystemGeneratorCache(".next/fumadocs-typescript"));
+/** One uncached generator per process, so a changed simplifier is never hidden by a cache. */
+function sharedGenerator(): Generator {
+  shared ??= createPropsGenerator();
   return shared;
 }
 
 /**
  * The own props of an interface in an item's file (repo-relative), `<Pascal>Props` unless
  * `name` says otherwise, or `undefined` when it does not resolve (PropsTable then falls back
- * to a link to the source).
+ * to a line naming the source).
  */
 export async function generateOwnProps(
   item: string,
   file: string,
-  generator: Generator = getPropsGenerator(),
+  generator: Generator = sharedGenerator(),
   name: string = propsInterfaceName(item),
 ): Promise<GeneratedDoc[] | undefined> {
   try {
@@ -90,4 +95,85 @@ export async function generateOwnProps(
     console.warn(`PropsTable: ${name} did not resolve (${String(error)})`);
     return undefined;
   }
+}
+
+/** One props table to generate: an item, its source file and the interface name. */
+export interface PropsTarget {
+  item: string;
+  file: string;
+  name: string;
+}
+
+const PROPS_TABLE_TAG = /<PropsTable\s+item="([^"]+)"(?:\s+name="([^"]+)")?\s*\/>/g;
+
+/**
+ * Every manga-native table the docs print: `<Pascal>Props` of each `registry:component` item,
+ * plus any other interface a page names (`<PropsTable item="panel-grid" name="PanelGridItemProps" />`).
+ * Primitives (`registry:ui`) are left out; their table is the static PROPS_DELTA.
+ */
+export function propsTargets(
+  registry: LoadedRegistry = loadRegistry(),
+  pagesDir: string = path.resolve(COMPONENT_PAGES_DIR),
+): PropsTarget[] {
+  const targets = new Map<string, PropsTarget>();
+  const add = (item: string, name: string) => {
+    const entry = registry.items.find((candidate) => candidate.name === item);
+    if (!entry || entry.type === "registry:ui") return;
+    const file = entry.files[0]?.path;
+    if (file) targets.set(`${item}/${name}`, { item, file, name });
+  };
+  for (const entry of registry.items) {
+    if (entry.type === "registry:component") add(entry.name, propsInterfaceName(entry.name));
+  }
+  for (const page of readdirSync(pagesDir).filter((file) => file.endsWith(".mdx"))) {
+    for (const match of readFileSync(path.join(pagesDir, page), "utf8").matchAll(PROPS_TABLE_TAG)) {
+      add(match[1], match[2] ?? propsInterfaceName(match[1]));
+    }
+  }
+  return [...targets.values()].sort(
+    (a, b) => a.item.localeCompare(b.item, "en") || a.name.localeCompare(b.name, "en"),
+  );
+}
+
+/**
+ * The text of lib/docs/props.generated.json: every target's tables, keys sorted, two-space
+ * JSON with a final newline, so `gen:props --check` is a byte comparison. Throws naming every
+ * interface that did not resolve, so a broken props interface fails the build, not the page.
+ */
+export async function renderPropsFile(
+  targets: readonly PropsTarget[] = propsTargets(),
+  generator: Generator = sharedGenerator(),
+): Promise<string> {
+  const props: GeneratedProps = {};
+  const missing: string[] = [];
+  for (const { item, file, name } of targets) {
+    const docs = await generateOwnProps(item, file, generator, name);
+    if (!docs) {
+      missing.push(`${name} in ${file}`);
+      continue;
+    }
+    props[item] ??= {};
+    props[item][name] = docs.map(stableDoc);
+  }
+  if (missing.length > 0) throw new Error(`No props table for ${missing.join(", ")}`);
+  return `${JSON.stringify(props, null, 2)}\n`;
+}
+
+/** A doc with its fields in one fixed order and no machine-specific values. */
+function stableDoc(doc: GeneratedDoc): GeneratedDoc {
+  return {
+    id: doc.id,
+    name: doc.name,
+    ...(doc.description ? { description: doc.description } : {}),
+    entries: doc.entries.map((entry) => ({
+      name: entry.name,
+      description: entry.description,
+      type: entry.type,
+      ...(entry.typeHref ? { typeHref: entry.typeHref } : {}),
+      simplifiedType: entry.simplifiedType,
+      tags: entry.tags.map((tag) => ({ name: tag.name, text: tag.text })),
+      required: entry.required,
+      deprecated: entry.deprecated,
+    })),
+  };
 }

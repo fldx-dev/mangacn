@@ -17,7 +17,7 @@
     "postinstall": "fumadocs-mdx",
     "predev": "pnpm registry:build && pnpm gen:theme && pnpm gen:demos",
     "dev": "next dev",
-    "prebuild": "pnpm registry:build && pnpm gen:theme && pnpm gen:demos && pnpm gen:docs --check",
+    "prebuild": "pnpm registry:build && pnpm gen:theme && pnpm gen:demos && pnpm gen:docs --check && pnpm gen:props --check",
     "build": "next build",
     "start": "next start",
     "registry:build": "shadcn build --output public/r",
@@ -28,6 +28,7 @@
     "gen:theme": "tsx scripts/gen-theme-css.ts",
     "gen:demos": "tsx scripts/gen-demos.ts",
     "gen:docs": "tsx scripts/gen-docs.ts",
+    "gen:props": "tsx scripts/gen-props.ts",
     "gen:skill": "tsx scripts/gen-skill.ts",
     "skill:validate": "tsx scripts/skill-validate.ts",
     "gen:parity": "tsx scripts/gen-parity-snapshot.ts",
@@ -44,7 +45,7 @@
     "test:e2e": "playwright test -c e2e/playwright.config.ts",
     "test:e2e:changed": "tsx scripts/changed-e2e.ts --run",
     "test:e2e:update": "playwright test -c e2e/playwright.config.ts --update-snapshots=all",
-    "ci": "pnpm lint && pnpm gen:demos && pnpm gen:docs --check && pnpm gen:skill --check && pnpm skill:validate && pnpm typecheck && pnpm gen:theme && pnpm test:coverage && pnpm registry:validate && pnpm registry:build && pnpm registry:smoke"
+    "ci": "pnpm lint && pnpm gen:demos && pnpm gen:docs --check && pnpm gen:props --check && pnpm gen:skill --check && pnpm skill:validate && pnpm typecheck && pnpm gen:theme && pnpm test:coverage && pnpm registry:validate && pnpm registry:build && pnpm registry:smoke"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",
