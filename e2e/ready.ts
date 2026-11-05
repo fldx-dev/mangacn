@@ -12,6 +12,17 @@ const INKED_SLOTS = ["ink-frame", "ink-mark", "ink-arrow", "stamp", "ink-splatte
 export async function waitForInk(target: Page | Frame): Promise<void> {
   const frame = "mainFrame" in target ? target.mainFrame() : target;
   await frame.evaluate(() => document.fonts.ready);
+  // sonner adds a toast one task after `toast()` (a demo calls it in a mount effect) and the
+  // Toaster portals its frame into it a render later: let that task run, then wait until every
+  // toast on the page is mounted and has its frame, so the checks below see the frame.
+  await frame.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
+  await frame.waitForFunction(() =>
+    [...document.querySelectorAll<HTMLElement>('[data-sonner-toast][data-styled="true"]')].every(
+      (toast) =>
+        toast.dataset.mounted === "true" &&
+        toast.querySelector(':scope > [data-slot="ink-frame"]') !== null,
+    ),
+  );
   // InkFrame shows a CSS fallback until rough.js has drawn; never snapshot that frame.
   await expect(
     frame

@@ -37,6 +37,8 @@ export const PARITY_PRIMITIVES = [
   "dropdown-menu",
   "alert-dialog",
   "hover-card",
+  "drawer",
+  "sonner",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";

@@ -17,11 +17,16 @@ export const axe = configureAxe({
 
 /**
  * Renders `ui` and fails with axe's report on any violation. Checks `document.body`, so
- * content that Base UI portals out of the render container is covered too.
+ * content that Base UI portals out of the render container is covered too. `ready` runs after
+ * the render and before axe, for demos whose content arrives late (toasts fired on mount).
  */
-export async function expectNoA11yViolations(ui: ReactElement): Promise<void> {
+export async function expectNoA11yViolations(
+  ui: ReactElement,
+  ready?: () => Promise<unknown>,
+): Promise<void> {
   const { baseElement } = render(ui);
   try {
+    await ready?.();
     expect(await axe(baseElement)).toHaveNoViolations();
   } finally {
     cleanup();

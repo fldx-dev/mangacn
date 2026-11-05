@@ -83,10 +83,15 @@ const EXPECTED_CONTENT: Record<
   dialog: [{ file: "components/ui/dialog.tsx", attribution: attribution("Dialog") }],
   badge: [{ file: "components/ui/badge.tsx", attribution: attribution("Badge") }],
   separator: [{ file: "components/ui/separator.tsx", attribution: attribution("Separator") }],
-  // Batch 2. toggle-group pulls shadcn's stock toggle (a bare name); mangacn's toggle, installed
-  // after it, overwrites it.
+  // Batch 2. toggle-group brings mangacn's toggle by URL, so the toggle must be mangacn's after it.
   slider: [{ file: "components/ui/slider.tsx", attribution: attribution("Slider") }],
-  toggle: [{ file: "components/ui/toggle.tsx", attribution: attribution("Toggle") }],
+  toggle: [
+    {
+      file: "components/ui/toggle.tsx",
+      attribution: attribution("Toggle"),
+      includes: ['import { InkFrame } from "@/components/ink-frame"'],
+    },
+  ],
   "toggle-group": [
     { file: "components/ui/toggle-group.tsx", attribution: attribution("ToggleGroup") },
   ],
@@ -101,6 +106,8 @@ const EXPECTED_CONTENT: Record<
     { file: "components/ui/alert-dialog.tsx", attribution: attribution("Alert Dialog") },
   ],
   "hover-card": [{ file: "components/ui/hover-card.tsx", attribution: attribution("Hover Card") }],
+  drawer: [{ file: "components/ui/drawer.tsx", attribution: attribution("Drawer") }],
+  sonner: [{ file: "components/ui/sonner.tsx", attribution: attribution("Sonner") }],
   // Manga-native pieces: registry:component with `target: "@components/<name>.tsx"`.
   panel: [{ file: "components/panel.tsx", includes: ["export function Panel("] }],
   "panel-grid": [{ file: "components/panel-grid.tsx", includes: ["export function PanelGrid("] }],
@@ -283,10 +290,10 @@ function withDependencies(
 
 /**
  * Catalog order, except that an item named by bare name in another item's
- * `registryDependencies` installs after that item. A bare stock name (`toggle-group` →
- * `toggle`) pulls shadcn's stock item, and `--overwrite` would replace a mangacn one installed
- * earlier. URL dependencies (`https://www.mangacn.com/r/ink-frame.json`, and `dialog` →
- * `https://www.mangacn.com/r/button.json`) install the mangacn item and need no ordering, so
+ * `registryDependencies` installs after that item. A bare stock name pulls shadcn's stock item,
+ * and `--overwrite` would replace a mangacn one installed earlier (no catalog item declares one
+ * on a restyled primitive since toggle-group took toggle's URL). URL dependencies
+ * (`https://www.mangacn.com/r/ink-frame.json`, and `dialog` → `https://www.mangacn.com/r/button.json`) install the mangacn item and need no ordering, so
  * `button` keeps its catalog place ahead of `dialog`, `sheet`, `pagination` and `alert-dialog`.
  */
 function installOrder(
@@ -595,6 +602,14 @@ const ONE_COMMANDS: OneCommand[] = [
     items: ["pagination"],
     installs: ["ink-frame", "button", "pagination"],
     overwrite: true,
+  },
+  // The same rule for toggle-group, which declares mangacn's toggle by URL in place of stock's
+  // bare `toggle`: alone it must leave mangacn's toggle (attribution header, InkFrame import).
+  // `shadcn init` writes no toggle, so there is nothing to overwrite.
+  {
+    project: "one-command-toggle-group",
+    items: ["toggle-group"],
+    installs: ["ink-frame", "toggle", "toggle-group"],
   },
 ];
 
