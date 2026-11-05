@@ -37,11 +37,13 @@
     "format": "biome format --write .",
     "typecheck": "next typegen && tsc --noEmit",
     "check": "pnpm lint && pnpm gen:demos && pnpm typecheck && pnpm test",
+    "check:changed": "tsx scripts/lint-changed.ts && pnpm gen:demos && pnpm typecheck && pnpm test:changed",
     "test": "vitest run --coverage.enabled=false",
     "test:changed": "vitest run --coverage.enabled=false --changed origin/main",
     "test:coverage": "vitest run",
     "test:watch": "vitest --coverage.enabled=false",
     "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "test:e2e:changed": "tsx scripts/changed-e2e.ts --run",
     "test:e2e:update": "playwright test -c e2e/playwright.config.ts --update-snapshots=all",
     "ci": "pnpm lint && pnpm gen:demos && pnpm gen:docs --check && pnpm gen:props --check && pnpm gen:skill --check && pnpm skill:validate && pnpm typecheck && pnpm gen:theme && pnpm test:coverage && pnpm registry:validate && pnpm registry:build && pnpm registry:smoke"
   },
