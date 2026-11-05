@@ -59,6 +59,8 @@
     "---Animation---",
     "page-turn",
     "---Data---",
-    "manga-frame"
+    "manga-frame",
+    "power-gauge",
+    "page-number"
   ]
 }

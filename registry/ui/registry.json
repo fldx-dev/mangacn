@@ -892,6 +892,42 @@
           "to": { "transform": "translateX(-50%)" }
         }
       }
+    },
+    {
+      "name": "power-gauge",
+      "type": "registry:component",
+      "title": "Power Gauge",
+      "description": "Anime-style stat bar: a display-face label, a solid or segmented ink fill, a max tick and a MAX burst; a labelled meter.",
+      "categories": ["data"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/ink-frame.json",
+        "https://www.mangacn.com/r/sfx-text.json"
+      ],
+      "files": [
+        {
+          "path": "power-gauge/power-gauge.tsx",
+          "type": "registry:component",
+          "target": "@components/power-gauge.tsx"
+        }
+      ]
+    },
+    {
+      "name": "page-number",
+      "type": "registry:component",
+      "title": "Page Number",
+      "description": "Page folio in the display face, with an optional page count and chapter mark; read as \"Page 7 of 24\".",
+      "categories": ["data"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn"],
+      "files": [
+        {
+          "path": "page-number/page-number.tsx",
+          "type": "registry:component",
+          "target": "@components/page-number.tsx"
+        }
+      ]
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
@@ -24,17 +24,22 @@ describe("WholePage", () => {
     for (const text of ["ドドド", "遅いぞ。", "ここで合ってる…？", "じゃあ、始めようか。"]) {
       expect(screen.getByText(text).closest('[lang="ja"]')).not.toBeNull();
     }
-    expect(screen.getByText("p. 7")).not.toBeNull();
+    // The folio is the page-number item, read as "Page 7".
+    const folio = container.querySelector<HTMLElement>('[data-slot="page-number"]');
+    expect(folio?.closest('[data-slot="panel-caption"]')).not.toBeNull();
+    expect(within(folio as HTMLElement).getByText("Page 7")).not.toBeNull();
   });
 
   it("turns to the next page with its own button", async () => {
-    render(<WholePage />);
+    const { container } = render(<WholePage />);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "Turn page" }));
     });
-    expect(screen.getByText("p. 8")).not.toBeNull();
+    // The page that turned away may still be leaving; the new one carries folio 8.
+    const folios = [...container.querySelectorAll<HTMLElement>('[data-slot="page-number"]')];
+    expect(folios.some((folio) => within(folio).queryByText("Page 8"))).toBe(true);
     expect(screen.getByText("続きは、次のページで。").closest('[lang="ja"]')).not.toBeNull();
-    expect(screen.getByText("Page 8").getAttribute("aria-live")).toBe("polite");
+    expect(container.querySelector('[aria-live="polite"]')?.textContent).toBe("Page 8");
   });
 
   it("has no axe violations", async () => {

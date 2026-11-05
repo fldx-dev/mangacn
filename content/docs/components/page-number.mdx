@@ -1,0 +1,21 @@
+---
+title: Page Number
+description: "Page folio in the display face, with an optional page count and chapter mark; read as \"Page 7 of 24\"."
+item: page-number
+---
+
+<InstallCommand item="page-number" />
+
+<CopyPrompt item="page-number" />
+
+The folio in the corner of a manga page: the number in the display face, `7 / 24` with `of`, and an optional chapter mark above it. It is real text read as "Page 7 of 24", and it does not place itself: give it `absolute` and a corner inside a Panel or a reader page, and set `side="left"` on a left-hand page so it hugs the outer edge. Put a Japanese chapter mark under `lang="ja"` (`chapter={<span lang="ja">第12話</span>}`); the landing's whole-page section prints its folio with this item.
+
+## Examples
+
+<DemoFrame item="page-number" demo="default" />
+<DemoFrame item="page-number" demo="with-chapter" />
+<DemoFrame item="page-number" demo="in-a-page" />
+
+## Props
+
+<PropsTable item="page-number" />
