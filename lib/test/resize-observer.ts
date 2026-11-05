@@ -8,11 +8,14 @@ import { vi } from "vitest";
  */
 export function stubResizeObserver() {
   const observers: { callback: ResizeObserverCallback; self: ResizeObserver }[] = [];
+  const observed = new Set<Element>();
   class StubResizeObserver {
     constructor(callback: ResizeObserverCallback) {
       observers.push({ callback, self: this as unknown as ResizeObserver });
     }
-    observe() {}
+    observe(target: Element) {
+      observed.add(target);
+    }
     unobserve() {}
     disconnect() {}
   }
@@ -29,9 +32,18 @@ export function stubResizeObserver() {
         for (const { callback, self } of observers) callback([entry], self);
       });
     },
+    /**
+     * Whether a frame has registered its observer yet. InkFrame does that in a passive effect,
+     * so a frame that a library mounted from its own timers (sonner's toasts) can be on the page
+     * before `drawAll()` would reach it; wait on this, not on the DOM.
+     */
+    observes(target: Element | null | undefined) {
+      return target !== null && target !== undefined && observed.has(target);
+    },
     /** Forgets earlier observers (call between renders in one test). */
     reset() {
       observers.length = 0;
+      observed.clear();
     },
   };
 }
