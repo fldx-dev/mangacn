@@ -33,9 +33,23 @@ describe("AgentStrip", () => {
       "/llms.txt",
       "/docs/*.md",
       "copy prompt",
-      "MCP · soon",
+      "MCP",
     ]);
-    for (const chip of chips) expect(chip.querySelector('[data-slot="badge"]')).not.toBeNull();
+    for (const chip of chips) {
+      expect(chip.querySelector('[data-slot="badge"]')?.getAttribute("data-variant")).toBe(
+        "secondary",
+      );
+    }
+  });
+
+  it("says the MCP and the skill are live and links the agents page inside the note", () => {
+    const { container } = render(<AgentStrip />);
+    const note = container.querySelector('[role="note"]') as HTMLElement;
+    expect(note.textContent).toContain("The MCP server and the Agent Skill are live");
+    expect(note.textContent).not.toContain("comes next");
+    expect(within(note).getByRole("link", { name: "set up your agent" }).getAttribute("href")).toBe(
+      "/docs/agents",
+    );
   });
 
   it("has no axe violations", async () => {

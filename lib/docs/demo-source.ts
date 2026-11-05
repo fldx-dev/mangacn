@@ -1,25 +1,46 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { type LoadedRegistry, loadRegistry } from "@/lib/registry";
 import { type Demo, listDemos } from "@/lib/registry/demos";
+import { importSpecifier, installTarget } from "@/lib/registry/install-target";
 
 // Demos import items by repo path; a reader copies the code into an app where the shadcn CLI
-// installed them, so the docs show the install paths instead.
-const INSTALL_PATHS: [RegExp, string][] = [
-  [/(["'])@\/registry\/ui\/([a-z0-9-]+)\/\2\1/g, "$1@/components/ui/$2$1"],
-  // ink-frame installs to its own target (registry:component), manga-motion as a registry:lib.
-  [/(["'])@\/registry\/theme\/ink-frame\/ink-frame\1/g, "$1@/components/ink-frame$1"],
-  [/(["'])@\/registry\/theme\/manga-motion\/manga-motion\1/g, "$1@/lib/manga-motion$1"],
-];
+// installed them, so the docs show the install paths instead. Each shipped file's install path
+// comes from its catalog entry: `registry:ui` items land in `components/ui/`, the manga-native
+// `registry:component` items in `components/`, manga-motion (`registry:lib`) in `lib/`.
+
+let installPaths: Map<string, string> | undefined;
+
+/** `@/registry/ui/speech-bubble/speech-bubble` → `@/components/speech-bubble`, for every shipped file. */
+export function demoInstallPaths(registry: LoadedRegistry = loadRegistry()): Map<string, string> {
+  return new Map(
+    registry.items.flatMap((item) =>
+      item.files.map((file) => [importSpecifier(file.path), importSpecifier(installTarget(file))]),
+    ),
+  );
+}
+
+/** The catalog's install paths, read once from disk (server only). */
+function catalogInstallPaths(): Map<string, string> {
+  installPaths ??= demoInstallPaths();
+  return installPaths;
+}
+
+const REPO_IMPORT = /(["'])(@\/registry\/[A-Za-z0-9/_-]+)\1/g;
 
 /**
- * Rewrites a demo's repo imports (`@/registry/ui/<x>/<x>`) to install paths
- * (`@/components/ui/<x>`). Demo-local helpers (`./portrait`) are left as they are.
+ * Rewrites a demo's repo imports of shipped files (`@/registry/ui/<x>/<x>`) to their install
+ * paths (`@/components/ui/button`, `@/components/speech-bubble`). Demo-local helpers
+ * (`./portrait`) and repo paths that ship nothing are left as they are.
  */
-export function rewriteDemoImports(source: string): string {
-  return INSTALL_PATHS.reduce(
-    (code, [pattern, replacement]) => code.replace(pattern, replacement),
-    source,
-  );
+export function rewriteDemoImports(
+  source: string,
+  paths: Map<string, string> = catalogInstallPaths(),
+): string {
+  return source.replace(REPO_IMPORT, (match, quote: string, specifier: string) => {
+    const target = paths.get(specifier);
+    return target ? `${quote}${target}${quote}` : match;
+  });
 }
 
 /** The demo map entry for one demo; throws naming the item and demo when there is none. */

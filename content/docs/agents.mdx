@@ -1,0 +1,91 @@
+---
+title: Agents
+description: Set up an AI coding agent to find, install and use mangacn items through shadcn's MCP, the mangacn docs MCP and the Agent Skill.
+---
+
+An agent can work with mangacn in three ways, and they stack: shadcn's MCP installs items,
+the mangacn docs MCP reads their props and demos, and the Agent Skill teaches the rules.
+Set up the first, add the others as you need them.
+
+## shadcn's MCP
+
+shadcn's own MCP server searches and installs from any registry named in `components.json`,
+so it works with mangacn as is. Name the registry once:
+
+```json title="components.json"
+{
+  "registries": {
+    "@mangacn": "https://www.mangacn.com/r/{name}.json"
+  }
+}
+```
+
+Then write the server into your client's config:
+
+```bash
+npx shadcn@latest mcp init --client <claude|cursor|vscode|codex>
+```
+
+For Codex the command prints the `~/.codex/config.toml` lines instead of writing them; paste
+them in and restart Codex. Ask "add the mangacn speech bubble" and the agent runs the add.
+
+## The mangacn docs MCP
+
+`https://www.mangacn.com/api/mcp` serves the docs to agents: read-only, no account, streamable
+HTTP. It reads the same source as these pages, so an agent gets the real props and demos
+instead of guessing them.
+
+<McpConfig />
+
+| Tool | Returns |
+|---|---|
+| `search` | Docs search hits for a query: the matching page, heading or text, with its URL |
+| `list_pages` | The `/llms.txt` index: every docs page as a Markdown link |
+| `get_page` | One docs page as Markdown, the same text as its `.md` twin |
+| `list_items` | Every registry item on one line: type, category, description, install command, docs URL |
+| `get_item` | An item's page as Markdown (install, demos, props) plus the files it writes |
+| `get_install_command` | One `shadcn add` line for a set of items, with `--overwrite` and the registry setup |
+| `get_skill` | The Agent Skill's `SKILL.md`, or one of its references by name |
+
+Two prompts to try once it is connected:
+
+- "Using the mangacn MCP, what props does the speech bubble take, and which tails can it draw?"
+- "Find a mangacn item for a loading state and give me the pnpm command to install it."
+
+The server cannot write files. Install with the command `get_install_command` returns, or
+through shadcn's MCP.
+
+## The Agent Skill
+
+The skill carries mangacn's workflow and design rules into agents that load skills (Claude
+Code, Cursor, Codex and the others the skills CLI supports):
+
+```bash
+npx skills add fldx-dev/mangacn
+```
+
+- The workflow: set up the registry, find the item, read its props, install with `--overwrite`.
+- The pen: ink on paper, outlines from `InkFrame`, no shadows or gradients, red once per surface.
+- Japanese text under `lang="ja"`, and which item fits which part of a manga page.
+
+For Claude Code it lands in `.claude/skills/mangacn/` (`-g` puts it in `~/.claude/skills/`).
+Agents without a local install read the same files through `get_skill`.
+
+## Markdown for agents
+
+Every page has a Markdown twin: add `.md` to its URL, as in
+[`/docs/components/speech-bubble.md`](/docs/components/speech-bubble.md). Two files cover the
+whole site:
+
+- [`/llms.txt`](/llms.txt): the index, every page as a link to its Markdown.
+- [`/llms-full.txt`](/llms-full.txt): every page's Markdown in one file.
+
+Each component page also has a **Copy prompt for AI** button with the install command and
+the links an agent needs.
+
+## AGENTS.md
+
+Paste this into your project's `AGENTS.md` (or `CLAUDE.md`) so every agent session starts with
+mangacn's rules:
+
+<AgentsSnippet />

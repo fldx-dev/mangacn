@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@/registry/ui/alert/alert";
 import { Badge } from "@/registry/ui/badge/badge";
 
-const CHIPS = ["/llms.txt", "/docs/*.md", "copy prompt", "MCP · soon"];
+const CHIPS = ["/llms.txt", "/docs/*.md", "copy prompt", "MCP"];
 
 /** Section 8: what an agent can read and copy, in an alert used as a callout. */
 export function AgentStrip() {
@@ -18,12 +19,19 @@ export function AgentStrip() {
           <AlertDescription className="text-base text-foreground">
             The docs come as Markdown for agents: an index at /llms.txt and a .md twin of every
             page. Each item page copies a prompt that installs the right item with the right
-            command. An MCP server comes next.
+            command. The MCP server and the Agent Skill are live:{" "}
+            <Link
+              href="/docs/agents"
+              className="font-semibold underline underline-offset-4 hover:decoration-2"
+            >
+              set up your agent
+            </Link>
+            .
           </AlertDescription>
           <ul className="flex flex-wrap gap-2" aria-label="Agent features">
             {CHIPS.map((chip) => (
               <li key={chip}>
-                <Badge variant={chip.startsWith("MCP") ? "outline" : "secondary"}>{chip}</Badge>
+                <Badge variant="secondary">{chip}</Badge>
               </li>
             ))}
           </ul>

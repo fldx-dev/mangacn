@@ -34,7 +34,7 @@ describe("DemoFrame", () => {
     const { container } = render(await DemoFrame({ item: "speech-bubble", demo: "tails" }));
     fireEvent.mouseDown(screen.getByRole("tab", { name: "Code" }));
     const code = container.querySelector("pre")?.textContent ?? "";
-    expect(code).toContain('import { SpeechBubble } from "@/components/ui/speech-bubble";');
+    expect(code).toContain('import { SpeechBubble } from "@/components/speech-bubble";');
     expect(code).not.toContain("@/registry/");
   });
 

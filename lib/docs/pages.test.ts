@@ -125,6 +125,7 @@ describe("components/meta.json", () => {
       "index",
       "installation",
       "theming",
+      "agents",
       "components",
     ]);
   });

@@ -14,9 +14,9 @@ import {
   type LoadedRegistry,
   loadRegistry,
   REGISTRY_ITEM_URL,
-  type RegistryFile,
   registryItemUrl,
 } from "@/lib/registry";
+import { installTarget } from "@/lib/registry/install-target";
 
 // The four mangacn tools of the MCP server (SPEC-agent-tooling §4): list_items, get_item,
 // get_install_command and get_skill. Everything here is plain functions over the catalog and the
@@ -53,31 +53,9 @@ export interface CatalogReaders {
 /** The skill folder Task 60 writes, repo-relative. */
 export const SKILL_DIR = "skills/mangacn";
 
+export { installTarget };
+
 const THEMING_PAGE = "/docs/theming";
-
-const ALIASES: [prefix: string, dir: string][] = [
-  ["@ui/", "components/ui/"],
-  ["@components/", "components/"],
-  ["@lib/", "lib/"],
-  ["@hooks/", "hooks/"],
-];
-
-const TYPE_DIRS: Record<string, string> = {
-  "registry:ui": "components/ui",
-  "registry:component": "components",
-  "registry:block": "components",
-  "registry:lib": "lib",
-  "registry:hook": "hooks",
-};
-
-/** `@ui/button.tsx` → `components/ui/button.tsx`; no target → the shadcn default for the type. */
-export function installTarget(file: RegistryFile): string {
-  if (file.target) {
-    const alias = ALIASES.find(([prefix]) => file.target?.startsWith(prefix));
-    return alias ? alias[1] + file.target.slice(alias[0].length) : file.target;
-  }
-  return `${TYPE_DIRS[file.type] ?? "components"}/${path.posix.basename(file.path)}`;
-}
 
 function categoryRank(category: string): number {
   const index = (CATEGORIES as readonly string[]).indexOf(category);
