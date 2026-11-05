@@ -660,7 +660,10 @@
       "categories": ["primitive"],
       "meta": { "since": "0.1.0" },
       "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
-      "registryDependencies": ["toggle", "https://www.mangacn.com/r/ink-frame.json"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/toggle.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
       "files": [
         {
           "path": "toggle-group/toggle-group.tsx",
@@ -892,6 +895,40 @@
           "to": { "transform": "translateX(-50%)" }
         }
       }
+    },
+    {
+      "name": "drawer",
+      "type": "registry:ui",
+      "title": "Drawer",
+      "description": "Stock Base UI drawer on an ink overlay; its open edge is one heavy hand-drawn rule and the handle an ink stroke (needs ink-frame).",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "drawer/drawer.tsx",
+          "type": "registry:ui",
+          "target": "@ui/drawer.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "title": "Sonner",
+      "description": "Stock sonner Toaster whose toasts are paper cards with a heavy hand-drawn outline and ink glyph icons (needs ink-frame).",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["sonner", "next-themes", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "sonner/sonner.tsx",
+          "type": "registry:ui",
+          "target": "@ui/sonner.tsx"
+        }
+      ]
     },
     {
       "name": "power-gauge",

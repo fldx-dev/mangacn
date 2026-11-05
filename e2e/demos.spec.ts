@@ -6,6 +6,13 @@ import { waitForInk } from "./ready";
 // Linux-only (CI); elsewhere the page is loaded and checked for errors, without pixels.
 const comparePixels = process.platform === "linux";
 
+// Toasts fired on mount by the sonner demos; the snapshot waits until all of them are shown.
+const TOASTS_ON_MOUNT: Record<string, number> = {
+  "sonner/default": 1,
+  "sonner/kinds": 4,
+  "sonner/with-action": 1,
+};
+
 for (const { item, demo } of demoEntries) {
   for (const mode of ["light", "dark"] as const) {
     test(`${item}/${demo} (${mode})`, async ({ page }) => {
@@ -20,6 +27,10 @@ for (const { item, demo } of demoEntries) {
       expect(response?.status()).toBe(200);
       await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
       if (mode === "dark") await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+      const toasts = TOASTS_ON_MOUNT[`${item}/${demo}`];
+      if (toasts) {
+        await expect(page.locator('[data-sonner-toast][data-mounted="true"]')).toHaveCount(toasts);
+      }
       await waitForInk(page);
 
       if (comparePixels) {
