@@ -91,7 +91,7 @@ test("the MCP route", async ({ request }, testInfo) => {
     manager: "pnpm",
   });
   expect(install.trimEnd().split("\n").at(-1)).toBe(
-    "pnpm dlx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite",
+    "pnpm dlx shadcn@latest add @mangacn/theme @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite",
   );
 
   const item = await callTool(request, "get_item", { name: "speech-bubble" });

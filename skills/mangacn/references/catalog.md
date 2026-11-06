@@ -17,7 +17,7 @@ read it, or the MCP's `get_item`, before using a prop.
 The theme, its fonts, the pen and the motion presets. Install the theme once per project.
 
 - `theme`: Ink-on-paper tokens, screentone utilities and impact keyframes for manga-styled UIs.
-  Install: `npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja --yes --overwrite`
+  Install: `npx shadcn@latest add @mangacn/theme --yes --overwrite`
   Docs: https://www.mangacn.com/docs/theming
 - `font-display`: Ultra-bold gothic display face for SFX and headings, exposed as --font-display.
   Install: `npx shadcn@latest add @mangacn/font-display --overwrite`

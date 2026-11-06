@@ -288,7 +288,7 @@ describe("get_install_command", () => {
   it("puts the theme and its fonts first", async () => {
     const { text } = await call("get_install_command", { names: ["speech-bubble", "theme"] });
     expect(text.trimEnd().split("\n").at(-1)).toBe(
-      "npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite",
+      "npx shadcn@latest add @mangacn/theme @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite",
     );
     expect(text).toContain(`--yes answers the theme's "You are about to install a new theme`);
   });

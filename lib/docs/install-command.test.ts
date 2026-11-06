@@ -39,9 +39,9 @@ describe("installCommand", () => {
     );
   });
 
-  it("names the three fonts on the theme line and no ink-frame", () => {
+  it("names the theme alone (it brings its three fonts by URL) and no ink-frame", () => {
     expect(installCommand("theme", "pnpm")).toBe(
-      "pnpm dlx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja --yes --overwrite",
+      "pnpm dlx shadcn@latest add @mangacn/theme --yes --overwrite",
     );
   });
 
@@ -81,18 +81,20 @@ describe("setCommand", () => {
   it("names each item once: the theme, its fonts, ink-frame, then the rest", () => {
     expect(setToAdd(["button", "speech-bubble", "theme"])).toEqual([
       "theme",
-      "font-display",
-      "font-dialogue",
-      "font-dialogue-ja",
       "ink-frame",
       "button",
       "speech-bubble",
     ]);
   });
 
+  it("leaves the fonts out beside the theme, which brings them (two sources double them)", () => {
+    expect(setToAdd(["font-display", "theme", "font-dialogue-ja"])).toEqual(["theme"]);
+    expect(setToAdd(["font-display", "font-dialogue"])).toEqual(["font-display", "font-dialogue"]);
+  });
+
   it("prints the Installation page's first install with both flags", () => {
     expect(setCommand(SETUP_ITEMS, "pnpm")).toBe(
-      "pnpm dlx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite",
+      "pnpm dlx shadcn@latest add @mangacn/theme @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite",
     );
     expect(commandFor({ setup: true }, "npm")).toBe(setCommand(SETUP_ITEMS, "npm"));
     expect(commandFor({ item: "badge" }, "npm")).toBe(installCommand("badge", "npm"));
@@ -141,6 +143,8 @@ describe("promptFor", () => {
 
   it("points the theme at the theming guide", () => {
     expect(docsUrl("theme")).toBe("https://www.mangacn.com/docs/theming");
-    expect(promptFor("theme")).toContain("@mangacn/font-dialogue-ja");
+    expect(promptFor("theme")).toContain(
+      "Install it with: npx shadcn@latest add @mangacn/theme --yes --overwrite\n",
+    );
   });
 });

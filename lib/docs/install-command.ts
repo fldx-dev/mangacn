@@ -46,16 +46,15 @@ function importsInkFrame(item: LoadedRegistryItem): boolean {
 }
 
 /**
- * The items one `add` names for `name`: the theme brings the font items, and an item whose
- * shipped files import `@/components/ink-frame` brings ink-frame first. Once the catalog
- * declares ink-frame as a URL registryDependency the prefix is redundant but harmless.
+ * The items one `add` names for `name`: an item whose shipped files import
+ * `@/components/ink-frame` brings ink-frame first (redundant since the catalog declares it as
+ * a URL registryDependency, but harmless). The theme is named alone: it brings its three font
+ * items by URL, and naming them too in the same add gives the CLI a second source for each,
+ * which writes every font's `.variable` into layout.tsx twice (shadcn 4.23).
  */
 export function itemsToAdd(name: string): string[] {
   const item = catalogItem(name);
-  if (item.type === "registry:theme") {
-    const fonts = [...(catalog?.values() ?? [])].filter((entry) => entry.type === "registry:font");
-    return [name, ...fonts.map((font) => font.name)];
-  }
+  if (item.type === "registry:theme") return [name];
   return importsInkFrame(item) ? [INK_FRAME, name] : [name];
 }
 
@@ -104,9 +103,17 @@ function addRank(name: string): number {
   return name === INK_FRAME ? 2 : 3;
 }
 
-/** Every item one add names for the set `names`, each once, in install order. */
+/**
+ * Every item one add names for the set `names`, each once, in install order. With the theme in
+ * the set its font items are left out: the theme brings them, and naming them twice doubles
+ * their layout.tsx edits (see `itemsToAdd`).
+ */
 export function setToAdd(names: readonly string[]): string[] {
-  return [...new Set(names.flatMap(itemsToAdd))].sort((a, b) => addRank(a) - addRank(b));
+  const items = [...new Set(names.flatMap(itemsToAdd))];
+  const withTheme = items.some((name) => catalogItem(name).type === "registry:theme");
+  return items
+    .filter((name) => !(withTheme && catalogItem(name).type === "registry:font"))
+    .sort((a, b) => addRank(a) - addRank(b));
 }
 
 /** One `shadcn add` for a set of items, as `get_install_command` and the Installation page print it. */

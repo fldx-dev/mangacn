@@ -31,13 +31,17 @@ entry, so it can search and install mangacn items once this line exists.
 ## 2. The theme, once
 
 ```bash
-npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja --yes --overwrite
+npx shadcn@latest add @mangacn/theme --yes --overwrite
 ```
 
 Keep `--yes` on any add that names the theme: the CLI asks "You are about to install a new
 theme. Existing CSS variables and components will be overwritten. Continue? (y/N)", and
 `--overwrite` does not answer it. Without a terminal the run then exits 0 with nothing
 written.
+
+Name the theme alone: it brings its three font items by URL. Listing `@mangacn/font-*` in
+the same add gives the CLI a second copy of each, and every font's `.variable` lands in
+`layout.tsx` twice. A font added later in a command of its own is fine.
 
 The theme writes the tokens, utilities and keyframes into `globals.css`. The three font
 items add `next/font/google` loaders to the root `layout.tsx`: Dela Gothic One

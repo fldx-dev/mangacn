@@ -32,7 +32,7 @@ style with `pnpm dlx shadcn@latest init -b base -p nova` ("Base UI", then "Nova"
 2. Install the theme, its three fonts, the ink frame and a first item in one command:
 
    ```bash
-   npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite
+   npx shadcn@latest add @mangacn/theme @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite
    ```
 
    The flags let it run without a prompt: `--yes` answers the theme's "You are about to

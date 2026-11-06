@@ -37,7 +37,7 @@ the reference setup; any framework the shadcn CLI supports works the same way.
    ```
 
    Then install the theme, which brings its three fonts:
-   `npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja --yes --overwrite`.
+   `npx shadcn@latest add @mangacn/theme --yes --overwrite`.
    Keep `--yes`: the theme asks "You are about to install a new theme… Continue?", which only
    `--yes` answers, and unanswered the CLI exits 0 having written nothing.
    Skip this when `globals.css` already has `--ink` and `--paper`.
