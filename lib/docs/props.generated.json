@@ -35,7 +35,7 @@
           },
           {
             "name": "corner",
-            "description": "`none` keeps the box in the flow. A corner places it absolutely on that corner of its\nnearest positioned parent (a `panel`), its outline overlapping the parent's frame.",
+            "description": "`none` keeps the box in the flow. A corner places it absolutely on that corner of its\nnearest positioned parent (a `panel`), its outline overlapping the parent's frame, so the\nparent's content needs room on that side: one line of the box is\n`calc(var(--text-sm)*var(--leading-snug)+--spacing(3))` tall (about 2 rem), and with a\npanel's gap that is `pt-[calc(var(--text-sm)*var(--leading-snug)+--spacing(6))]` (about\n2.75 rem, `pt-11`) for a top corner, `pb-…` for a bottom one; add a line for each line it\nwraps to. `<Panel caption>` draws this same box and keeps that room for you.",
             "type": "\"bottom-left\" | \"bottom-right\" | \"none\" | \"top-left\" | \"top-right\" | null | undefined",
             "simplifiedType": "\"bottom-left\" | \"bottom-right\" | \"none\" | \"top-left\" | \"top-right\"",
             "tags": [
@@ -807,7 +807,7 @@
           },
           {
             "name": "caption",
-            "description": "Narration box in one corner, rendered as text.",
+            "description": "Narration box on one corner, rendered as text: the same box as caption-box's `corner`. The\npanel keeps one line of room for it on that side; for a caption that wraps, add padding\non that side (`pt-16`), or the content runs under it.",
             "type": "React.ReactNode",
             "simplifiedType": "React.ReactNode",
             "tags": [],
@@ -823,6 +823,20 @@
               {
                 "name": "default",
                 "text": "\"top-left\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "captionFont",
+            "description": "The caption's face: `dialogue` (the lettering face, as caption-box) or `body`.",
+            "type": "\"body\" | \"dialogue\" | null | undefined",
+            "simplifiedType": "\"body\" | \"dialogue\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"dialogue\""
               }
             ],
             "required": false,

@@ -94,7 +94,7 @@ export function Hero() {
             key={cell.caption}
             caption={cell.caption}
             className={cn(
-              "min-w-0 bg-paper px-5 pt-7 pb-5 transition-transform duration-300 hover:z-10 hover:rotate-0 hover:scale-[1.02] motion-reduce:transition-none lg:w-[calc(25%+1.25rem)] lg:-mx-2.5",
+              "min-w-0 bg-paper px-5 pb-5 transition-transform duration-300 hover:z-10 hover:rotate-0 hover:scale-[1.02] motion-reduce:transition-none lg:w-[calc(25%+1.25rem)] lg:-mx-2.5",
               cell.tilt,
             )}
           >

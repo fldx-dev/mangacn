@@ -2,6 +2,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { expectNoA11yViolations } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
+import { CaptionBox } from "@/registry/ui/caption-box/caption-box";
 import PanelDefaultDemo from "./demos/default";
 import { Panel } from "./panel";
 
@@ -73,21 +74,76 @@ describe("Panel", () => {
   });
 
   it.each([
-    ["top-left", "self-start"],
-    ["top-right", "self-end"],
-    ["bottom-left", "order-last"],
-    ["bottom-right", "order-last"],
-  ] as const)("puts the caption %s as text", (side, name) => {
-    render(
-      <Panel caption="Later that night" captionSide={side}>
+    ["top-left", ["top-0", "left-0"], "pt-(--panel-caption-room)"],
+    ["top-right", ["top-0", "right-0"], "pt-(--panel-caption-room)"],
+    ["bottom-left", ["bottom-0", "left-0"], "pb-(--panel-caption-room)"],
+    ["bottom-right", ["bottom-0", "right-0"], "pb-(--panel-caption-room)"],
+  ] as const)(
+    "puts the caption %s as text and keeps room for it on that side",
+    (side, corner, room) => {
+      const { container } = render(
+        <Panel caption="Later that night" captionSide={side}>
+          Hi
+        </Panel>,
+      );
+      const caption = screen.getByText("Later that night");
+      expect(caption.dataset.slot).toBe("panel-caption");
+      expect(caption.dataset.side).toBe(side);
+      for (const name of ["absolute", ...corner]) {
+        expect(caption.classList.contains(name), name).toBe(true);
+      }
+      const panel = container.firstElementChild as HTMLElement;
+      expect(panel.classList.contains(room)).toBe(true);
+      // One line of `text-sm` at `leading-snug`, the box's `py-1.5` and the panel's `gap-3`.
+      expect(panel.className).toContain(
+        "[--panel-caption-room:calc(var(--text-sm)*var(--leading-snug)+--spacing(6))]",
+      );
+    },
+  );
+
+  it("keeps no room without a caption, and lets the author's padding win", () => {
+    const bare = render(<Panel>Hi</Panel>).container.firstElementChild as HTMLElement;
+    expect(bare.className).not.toContain("panel-caption-room");
+    cleanup();
+    const padded = render(
+      <Panel caption="Later" className="pt-14">
         Hi
       </Panel>,
-    );
-    const caption = screen.getByText("Later that night");
-    expect(caption.dataset.slot).toBe("panel-caption");
-    expect(caption.dataset.side).toBe(side);
-    expect(caption.classList.contains(name)).toBe(true);
+    ).container.firstElementChild as HTMLElement;
+    expect(padded.classList.contains("pt-14")).toBe(true);
+    expect(padded.classList.contains("pt-(--panel-caption-room)")).toBe(false);
   });
+
+  // The dogfood run found the two mechanisms in two faces side by side (Task 66).
+  it.each([
+    ["top-left", undefined],
+    ["bottom-right", "body"],
+  ] as const)(
+    "draws the %s caption as caption-box draws its corner box (%s face)",
+    (side, font) => {
+      const classes = (element: Element) => [...element.classList].sort();
+      const panel = render(
+        <Panel caption="Later" captionSide={side} captionFont={font}>
+          Hi
+        </Panel>,
+      ).container;
+      const box = render(
+        <CaptionBox corner={side} font={font}>
+          Later
+        </CaptionBox>,
+      ).container;
+      const caption = panel.querySelector('[data-slot="panel-caption"]') as HTMLElement;
+      const captionBox = box.querySelector('[data-slot="caption-box"]') as HTMLElement;
+      expect(caption.dataset.font).toBe(font ?? "dialogue");
+      expect(caption.dataset.font).toBe(captionBox.dataset.font);
+      expect(classes(caption)).toEqual(classes(captionBox));
+      const [frame, boxFrame] = [caption, captionBox].map(
+        (element) => element.querySelector(':scope > [data-slot="ink-frame"]') as HTMLElement,
+      );
+      expect(frame.dataset.fill).toBe(boxFrame.dataset.fill);
+      expect(classes(frame)).toEqual(classes(boxFrame));
+    },
+  );
 
   it("has no axe violations in its default demo", async () => {
     await expectNoA11yViolations(<PanelDefaultDemo />);

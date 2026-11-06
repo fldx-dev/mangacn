@@ -41,7 +41,12 @@ export interface CaptionBoxProps
   font?: VariantProps<typeof captionBoxVariants>["font"];
   /**
    * `none` keeps the box in the flow. A corner places it absolutely on that corner of its
-   * nearest positioned parent (a `panel`), its outline overlapping the parent's frame.
+   * nearest positioned parent (a `panel`), its outline overlapping the parent's frame, so the
+   * parent's content needs room on that side: one line of the box is
+   * `calc(var(--text-sm)*var(--leading-snug)+--spacing(3))` tall (about 2 rem), and with a
+   * panel's gap that is `pt-[calc(var(--text-sm)*var(--leading-snug)+--spacing(6))]` (about
+   * 2.75 rem, `pt-11`) for a top corner, `pb-…` for a bottom one; add a line for each line it
+   * wraps to. `<Panel caption>` draws this same box and keeps that room for you.
    * @default "none"
    */
   corner?: VariantProps<typeof captionBoxVariants>["corner"];
