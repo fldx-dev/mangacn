@@ -4,8 +4,10 @@
 
 All 60 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
-Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and add
-`--overwrite` when the command runs without a prompt (see install.md).
+Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
+flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
+(on the theme's line) answers the theme's own prompt, so the command runs unattended
+(see install.md).
 
 A component page's Markdown (the `.md` URL) holds its props table and every demo's source:
 read it, or the MCP's `get_item`, before using a prop.
@@ -15,206 +17,206 @@ read it, or the MCP's `get_item`, before using a prop.
 The theme, its fonts, the pen and the motion presets. Install the theme once per project.
 
 - `theme`: Ink-on-paper tokens, screentone utilities and impact keyframes for manga-styled UIs.
-  Install: `npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja`
+  Install: `npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja --yes --overwrite`
   Docs: https://www.mangacn.com/docs/theming
 - `font-display`: Ultra-bold gothic display face for SFX and headings, exposed as --font-display.
-  Install: `npx shadcn@latest add @mangacn/font-display`
+  Install: `npx shadcn@latest add @mangacn/font-display --overwrite`
   Docs: https://www.mangacn.com/docs/theming#fonts
 - `font-dialogue`: Hand-drawn variable sans for speech bubbles and dialogue, exposed as --font-dialogue-latin.
-  Install: `npx shadcn@latest add @mangacn/font-dialogue`
+  Install: `npx shadcn@latest add @mangacn/font-dialogue --overwrite`
   Docs: https://www.mangacn.com/docs/theming#fonts
 - `font-dialogue-ja`: Handwritten Japanese face the dialogue stack falls through to for kana and kanji, exposed as --font-dialogue-ja.
-  Install: `npx shadcn@latest add @mangacn/font-dialogue-ja`
+  Install: `npx shadcn@latest add @mangacn/font-dialogue-ja --overwrite`
   Docs: https://www.mangacn.com/docs/theming#fonts
 - `ink-frame`: Hand-drawn rough.js outline, fill and optional shadow behind any element; every outlined mangacn item uses it.
-  Install: `npx shadcn@latest add @mangacn/ink-frame`
+  Install: `npx shadcn@latest add @mangacn/ink-frame --overwrite`
   Docs: https://www.mangacn.com/docs/theming#the-pen
 - `manga-motion`: Spring and easing presets plus popIn, slamIn, shake and flash variants for motion.
-  Install: `npx shadcn@latest add @mangacn/manga-motion`
+  Install: `npx shadcn@latest add @mangacn/manga-motion --overwrite`
   Docs: https://www.mangacn.com/r/manga-motion.json
 
 ## Primitives
 
 - `button`: Stock button with a hand-drawn ink outline and solid ink fill (needs ink-frame), plus an sfx variant.
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/button`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/button --overwrite`
   Docs: https://www.mangacn.com/docs/components/button (Markdown: https://www.mangacn.com/docs/components/button.md)
 - `badge`: Stock badge restyled as a manga caption-box label: square corners, uppercase display face, hand-drawn ink outline (needs ink-frame), no press feedback, plus a spot variant for the one red label.
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/badge`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/badge --overwrite`
   Docs: https://www.mangacn.com/docs/components/badge (Markdown: https://www.mangacn.com/docs/components/badge.md)
 - `separator`: Stock separator drawn as one hand-drawn ink stroke (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/separator`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/separator --overwrite`
   Docs: https://www.mangacn.com/docs/components/separator (Markdown: https://www.mangacn.com/docs/components/separator.md)
 - `card`: Stock card drawn as a hand-inked panel on paper (needs ink-frame), with an optional solid or hatched ink shadow.
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/card`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/card --overwrite`
   Docs: https://www.mangacn.com/docs/components/card (Markdown: https://www.mangacn.com/docs/components/card.md)
 - `input`: Stock input inside a hand-drawn ink outline on paper (needs ink-frame); spot outline when invalid.
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/input`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/input --overwrite`
   Docs: https://www.mangacn.com/docs/components/input (Markdown: https://www.mangacn.com/docs/components/input.md)
 - `textarea`: Stock textarea inside a hand-drawn ink outline on paper (needs ink-frame); spot outline when invalid.
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/textarea`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/textarea --overwrite`
   Docs: https://www.mangacn.com/docs/components/textarea (Markdown: https://www.mangacn.com/docs/components/textarea.md)
 - `checkbox`: Stock checkbox drawn as a hand-inked box that fills with ink when checked (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/checkbox`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/checkbox --overwrite`
   Docs: https://www.mangacn.com/docs/components/checkbox (Markdown: https://www.mangacn.com/docs/components/checkbox.md)
 - `radio-group`: Stock radio group drawn as hand-inked circles that fill with ink when checked (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/radio-group`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/radio-group --overwrite`
   Docs: https://www.mangacn.com/docs/components/radio-group (Markdown: https://www.mangacn.com/docs/components/radio-group.md)
 - `switch`: Stock switch with a hand-drawn tone track that turns ink when on and a paper thumb (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/switch`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/switch --overwrite`
   Docs: https://www.mangacn.com/docs/components/switch (Markdown: https://www.mangacn.com/docs/components/switch.md)
 - `select`: Stock select with a hand-drawn ink trigger and a heavy-outlined popup, no shadow (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/select`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/select --overwrite`
   Docs: https://www.mangacn.com/docs/components/select (Markdown: https://www.mangacn.com/docs/components/select.md)
 - `tabs`: Stock tabs on a hand-drawn rule, the active tab outlined on three sides; line variant with an inked underline (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/tabs`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/tabs --overwrite`
   Docs: https://www.mangacn.com/docs/components/tabs (Markdown: https://www.mangacn.com/docs/components/tabs.md)
 - `dialog`: Stock dialog on an ink overlay, drawn with a heavy hand-inked outline and no shadow (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/dialog`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/dialog --overwrite`
   Docs: https://www.mangacn.com/docs/components/dialog (Markdown: https://www.mangacn.com/docs/components/dialog.md)
 - `sheet`: Stock sheet on an ink overlay; its open edge is one heavy hand-drawn stroke, no shadow (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/sheet`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/sheet --overwrite`
   Docs: https://www.mangacn.com/docs/components/sheet (Markdown: https://www.mangacn.com/docs/components/sheet.md)
 - `tooltip`: Stock tooltip as an ink-filled popup with a heavy hand-drawn outline (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/tooltip`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/tooltip --overwrite`
   Docs: https://www.mangacn.com/docs/components/tooltip (Markdown: https://www.mangacn.com/docs/components/tooltip.md)
 - `popover`: Stock popover with a heavy hand-inked outline on paper and no shadow (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/popover`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/popover --overwrite`
   Docs: https://www.mangacn.com/docs/components/popover (Markdown: https://www.mangacn.com/docs/components/popover.md)
 - `accordion`: Stock accordion with hand-drawn item rules and a + / − ink glyph in place of the chevrons (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/accordion`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/accordion --overwrite`
   Docs: https://www.mangacn.com/docs/components/accordion (Markdown: https://www.mangacn.com/docs/components/accordion.md)
 - `alert`: Stock alert in a hand-drawn ink outline (needs ink-frame); destructive inks the outline and title in spot.
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/alert`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/alert --overwrite`
   Docs: https://www.mangacn.com/docs/components/alert (Markdown: https://www.mangacn.com/docs/components/alert.md)
 - `avatar`: Stock avatar with a hand-drawn ink circle over the picture (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/avatar`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/avatar --overwrite`
   Docs: https://www.mangacn.com/docs/components/avatar (Markdown: https://www.mangacn.com/docs/components/avatar.md)
 - `progress`: Stock progress bar in a hand-drawn ink track (needs ink-frame), solid ink or a screentone fill.
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/progress`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/progress --overwrite`
   Docs: https://www.mangacn.com/docs/components/progress (Markdown: https://www.mangacn.com/docs/components/progress.md)
 - `skeleton`: Stock skeleton as a pencilled placeholder: a rough tone outline with hatched shading, pulsing (needs ink-frame); shape="ellipse" for round ones.
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/skeleton`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/skeleton --overwrite`
   Docs: https://www.mangacn.com/docs/components/skeleton (Markdown: https://www.mangacn.com/docs/components/skeleton.md)
 - `table`: Stock table with hand-drawn row rules and a heavy header rule (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/table`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/table --overwrite`
   Docs: https://www.mangacn.com/docs/components/table (Markdown: https://www.mangacn.com/docs/components/table.md)
 - `slider`: Stock slider on a hand-drawn rule, with an ink range and paper thumbs outlined in ink (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/slider`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/slider --overwrite`
   Docs: https://www.mangacn.com/docs/components/slider (Markdown: https://www.mangacn.com/docs/components/slider.md)
 - `toggle`: Stock toggle that fills with ink when pressed; the outline variant draws a hand-inked paper frame (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/toggle`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/toggle --overwrite`
   Docs: https://www.mangacn.com/docs/components/toggle (Markdown: https://www.mangacn.com/docs/components/toggle.md)
 - `toggle-group`: Stock toggle group in one hand-drawn outline, with inked rules between its items (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/toggle-group`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/toggle-group --overwrite`
   Docs: https://www.mangacn.com/docs/components/toggle-group (Markdown: https://www.mangacn.com/docs/components/toggle-group.md)
 - `kbd`: Stock keyboard key drawn as a hand-inked caption box in the display face, like badge (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/kbd`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/kbd --overwrite`
   Docs: https://www.mangacn.com/docs/components/kbd (Markdown: https://www.mangacn.com/docs/components/kbd.md)
 - `breadcrumb`: Stock breadcrumb with hand-inked chevron separators and the current page in the display face.
-  Install: `npx shadcn@latest add @mangacn/breadcrumb`
+  Install: `npx shadcn@latest add @mangacn/breadcrumb --overwrite`
   Docs: https://www.mangacn.com/docs/components/breadcrumb (Markdown: https://www.mangacn.com/docs/components/breadcrumb.md)
 - `pagination`: Stock pagination on outlined buttons, the current page in ink, with hand-inked previous and next chevrons.
-  Install: `npx shadcn@latest add @mangacn/pagination`
+  Install: `npx shadcn@latest add @mangacn/pagination --overwrite`
   Docs: https://www.mangacn.com/docs/components/pagination (Markdown: https://www.mangacn.com/docs/components/pagination.md)
 - `collapsible`: Stock collapsible; its trigger can carry accordion's + / − ink glyph, which flips when the panel opens.
-  Install: `npx shadcn@latest add @mangacn/collapsible`
+  Install: `npx shadcn@latest add @mangacn/collapsible --overwrite`
   Docs: https://www.mangacn.com/docs/components/collapsible (Markdown: https://www.mangacn.com/docs/components/collapsible.md)
 - `dropdown-menu`: Stock dropdown menu as a heavy-outlined paper cut-out: ink highlight, hand-drawn separators, no shadow (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/dropdown-menu`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/dropdown-menu --overwrite`
   Docs: https://www.mangacn.com/docs/components/dropdown-menu (Markdown: https://www.mangacn.com/docs/components/dropdown-menu.md)
 - `alert-dialog`: Stock alert dialog on an ink overlay with dialog's heavy hand-inked outline; a destructive action is the spot button (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/alert-dialog`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/alert-dialog --overwrite`
   Docs: https://www.mangacn.com/docs/components/alert-dialog (Markdown: https://www.mangacn.com/docs/components/alert-dialog.md)
 - `hover-card`: Stock hover card as a round-cornered paper panel with a heavy hand-drawn outline, no tail and no shadow (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/hover-card`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/hover-card --overwrite`
   Docs: https://www.mangacn.com/docs/components/hover-card (Markdown: https://www.mangacn.com/docs/components/hover-card.md)
 - `drawer`: Stock Base UI drawer on an ink overlay; its open edge is one heavy hand-drawn rule and the handle an ink stroke (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/drawer`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/drawer --overwrite`
   Docs: https://www.mangacn.com/docs/components/drawer (Markdown: https://www.mangacn.com/docs/components/drawer.md)
 - `sonner`: Stock sonner Toaster whose toasts are paper cards with a heavy hand-drawn outline and ink glyph icons (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/sonner`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/sonner --overwrite`
   Docs: https://www.mangacn.com/docs/components/sonner (Markdown: https://www.mangacn.com/docs/components/sonner.md)
 
 ## Layout
 
 - `panel`: One manga panel: heavy hand-drawn ink frame on paper, optional screentone, corner caption and hatched shadow (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/panel`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/panel --overwrite`
   Docs: https://www.mangacn.com/docs/components/panel (Markdown: https://www.mangacn.com/docs/components/panel.md)
 - `panel-grid`: Manga page layout: panels on a grid with paper gutters, column and row spans, one column on phones.
-  Install: `npx shadcn@latest add @mangacn/panel-grid`
+  Install: `npx shadcn@latest add @mangacn/panel-grid --overwrite`
   Docs: https://www.mangacn.com/docs/components/panel-grid (Markdown: https://www.mangacn.com/docs/components/panel-grid.md)
 
 ## Text
 
 - `speech-bubble`: Dialogue bubble with a hand-drawn tail: round, square, shout burst or dashed whisper, seven tail positions (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/speech-bubble`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/speech-bubble --overwrite`
   Docs: https://www.mangacn.com/docs/components/speech-bubble (Markdown: https://www.mangacn.com/docs/components/speech-bubble.md)
 - `thought-bubble`: Dashed hand-drawn thought bubble with a trail of one to three rough ink dots (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/thought-bubble`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/thought-bubble --overwrite`
   Docs: https://www.mangacn.com/docs/components/thought-bubble (Markdown: https://www.mangacn.com/docs/components/thought-bubble.md)
 - `sfx-text`: Onomatopoeia in the display face with ink stroke, hard shadow, tilt and a reduced-motion-safe pop or slam entrance.
-  Install: `npx shadcn@latest add @mangacn/sfx-text`
+  Install: `npx shadcn@latest add @mangacn/sfx-text --overwrite`
   Docs: https://www.mangacn.com/docs/components/sfx-text (Markdown: https://www.mangacn.com/docs/components/sfx-text.md)
 - `vertical-text`: Vertical writing (vertical-rl) with text-orientation control for mixing Japanese and Latin.
-  Install: `npx shadcn@latest add @mangacn/vertical-text`
+  Install: `npx shadcn@latest add @mangacn/vertical-text --overwrite`
   Docs: https://www.mangacn.com/docs/components/vertical-text (Markdown: https://www.mangacn.com/docs/components/vertical-text.md)
 - `ink-mark`: Hand-drawn underline, circle, box, strike, highlight or brackets around inline text, one per line, drawn on when shown.
-  Install: `npx shadcn@latest add @mangacn/ink-mark`
+  Install: `npx shadcn@latest add @mangacn/ink-mark --overwrite`
   Docs: https://www.mangacn.com/docs/components/ink-mark (Markdown: https://www.mangacn.com/docs/components/ink-mark.md)
 - `caption-box`: Narration box with square corners and a heavy hand-drawn outline, on paper or tone; pins to a panel corner (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/caption-box`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/caption-box --overwrite`
   Docs: https://www.mangacn.com/docs/components/caption-box (Markdown: https://www.mangacn.com/docs/components/caption-box.md)
 
 ## Background
 
 - `speed-lines`: Decorative radial or horizontal motion lines behind content, with density, colour and a movable centre.
-  Install: `npx shadcn@latest add @mangacn/speed-lines`
+  Install: `npx shadcn@latest add @mangacn/speed-lines --overwrite`
   Docs: https://www.mangacn.com/docs/components/speed-lines (Markdown: https://www.mangacn.com/docs/components/speed-lines.md)
 - `focus-lines`: Decorative concentration lines bursting in towards a point, as inline SVG at the speed-line width.
-  Install: `npx shadcn@latest add @mangacn/focus-lines`
+  Install: `npx shadcn@latest add @mangacn/focus-lines --overwrite`
   Docs: https://www.mangacn.com/docs/components/focus-lines (Markdown: https://www.mangacn.com/docs/components/focus-lines.md)
 - `halftone-background`: Decorative full-bleed halftone screen in three tones and dot sizes, with an optional top, bottom or radial fade.
-  Install: `npx shadcn@latest add @mangacn/halftone-background`
+  Install: `npx shadcn@latest add @mangacn/halftone-background --overwrite`
   Docs: https://www.mangacn.com/docs/components/halftone-background (Markdown: https://www.mangacn.com/docs/components/halftone-background.md)
 
 ## Decoration
 
 - `emanata`: Inline SVG emotion marks (sweat drop, anger mark, sparkle, surprise lines, puff), labelled unless decorative.
-  Install: `npx shadcn@latest add @mangacn/emanata`
+  Install: `npx shadcn@latest add @mangacn/emanata --overwrite`
   Docs: https://www.mangacn.com/docs/components/emanata (Markdown: https://www.mangacn.com/docs/components/emanata.md)
 - `ink-arrow`: Hand-drawn arrow, straight or bowed, in four directions and three lengths, with an optional label at its tail.
-  Install: `npx shadcn@latest add @mangacn/ink-arrow`
+  Install: `npx shadcn@latest add @mangacn/ink-arrow --overwrite`
   Docs: https://www.mangacn.com/docs/components/ink-arrow (Markdown: https://www.mangacn.com/docs/components/ink-arrow.md)
 - `stamp`: Hanko-style seal, round or square, with a rough outline, an inner ring and an inked grain around one or two words.
-  Install: `npx shadcn@latest add @mangacn/stamp`
+  Install: `npx shadcn@latest add @mangacn/stamp --overwrite`
   Docs: https://www.mangacn.com/docs/components/stamp (Markdown: https://www.mangacn.com/docs/components/stamp.md)
 - `ink-splatter`: Decorative ink splash, drips or dots, seeded so every instance differs; hidden from assistive tech.
-  Install: `npx shadcn@latest add @mangacn/ink-splatter`
+  Install: `npx shadcn@latest add @mangacn/ink-splatter --overwrite`
   Docs: https://www.mangacn.com/docs/components/ink-splatter (Markdown: https://www.mangacn.com/docs/components/ink-splatter.md)
 - `sfx-ticker`: Marquee band of sound effects in both scripts, paused on hover and still under reduced motion; ships its keyframes.
-  Install: `npx shadcn@latest add @mangacn/sfx-ticker`
+  Install: `npx shadcn@latest add @mangacn/sfx-ticker --overwrite`
   Docs: https://www.mangacn.com/docs/components/sfx-ticker (Markdown: https://www.mangacn.com/docs/components/sfx-ticker.md)
 
 ## Feedback
 
 - `ink-splash-loader`: Loading status: an ink blot that pulses and splashes droplets, still under reduced motion, with a hidden label.
-  Install: `npx shadcn@latest add @mangacn/ink-splash-loader`
+  Install: `npx shadcn@latest add @mangacn/ink-splash-loader --overwrite`
   Docs: https://www.mangacn.com/docs/components/ink-splash-loader (Markdown: https://www.mangacn.com/docs/components/ink-splash-loader.md)
 
 ## Animation
 
 - `page-turn`: Turns its children like a manga page when pageKey changes (right to left by default); cross-fades under reduced motion.
-  Install: `npx shadcn@latest add @mangacn/page-turn`
+  Install: `npx shadcn@latest add @mangacn/page-turn --overwrite`
   Docs: https://www.mangacn.com/docs/components/page-turn (Markdown: https://www.mangacn.com/docs/components/page-turn.md)
 
 ## Data
 
 - `manga-frame`: Image in a hand-drawn ink frame with aspect presets, a halftone mat and a caption; alt is required (needs ink-frame).
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/manga-frame`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/manga-frame --overwrite`
   Docs: https://www.mangacn.com/docs/components/manga-frame (Markdown: https://www.mangacn.com/docs/components/manga-frame.md)
 - `power-gauge`: Anime-style stat bar: a display-face label, a solid or segmented ink fill, a max tick and a MAX burst; a labelled meter.
-  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/power-gauge`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/power-gauge --overwrite`
   Docs: https://www.mangacn.com/docs/components/power-gauge (Markdown: https://www.mangacn.com/docs/components/power-gauge.md)
 - `page-number`: Page folio in the display face, with an optional page count and chapter mark; read as "Page 7 of 24".
-  Install: `npx shadcn@latest add @mangacn/page-number`
+  Install: `npx shadcn@latest add @mangacn/page-number --overwrite`
   Docs: https://www.mangacn.com/docs/components/page-number (Markdown: https://www.mangacn.com/docs/components/page-number.md)

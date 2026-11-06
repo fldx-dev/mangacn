@@ -12,7 +12,7 @@ const HEADERS = {
 interface RpcResult {
   protocolVersion?: string;
   serverInfo?: { name: string };
-  tools?: { name: string }[];
+  tools?: { name: string; annotations?: { readOnlyHint?: boolean } }[];
   content?: { type: string; text: string }[];
   isError?: boolean;
 }
@@ -74,8 +74,31 @@ test("the MCP route", async ({ request }, testInfo) => {
 
   expect(await callTool(request, "list_items")).toContain("- speech-bubble · registry:component");
 
+  // Every tool is read-only.
+  for (const tool of tools ?? []) {
+    expect(tool.annotations?.readOnlyHint, tool.name).toBe(true);
+  }
+
+  // search answers in Markdown, one hit per line ending in its absolute URL.
+  const hits = await callTool(request, "search", { query: "dark mode" });
+  expect(hits).toMatch(/^\d+ docs hit\(s\) for "dark mode"/);
+  expect(hits).toMatch(/\n- .+ · https:\/\/www\.mangacn\.com\/docs\/theming#/);
+  expect(hits).not.toContain('"breadcrumbs"');
+
+  // get_install_command: --yes with the theme in the set, so the line runs without a TTY.
+  const install = await callTool(request, "get_install_command", {
+    names: ["theme", "speech-bubble"],
+    manager: "pnpm",
+  });
+  expect(install.trimEnd().split("\n").at(-1)).toBe(
+    "pnpm dlx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite",
+  );
+
   const item = await callTool(request, "get_item", { name: "speech-bubble" });
-  expect(item).toContain("npx shadcn@latest add @mangacn/ink-frame @mangacn/speech-bubble");
+  expect(item).toContain(
+    "npx shadcn@latest add @mangacn/ink-frame @mangacn/speech-bubble --overwrite",
+  );
+  expect(item).toMatch(/\n(Client|Server) component: /);
   expect(item).toContain("## Props");
   // The table itself, not the fallback line: the route renders the page on its first call, at
   // runtime, so it must read lib/docs/props.generated.json rather than run the compiler.

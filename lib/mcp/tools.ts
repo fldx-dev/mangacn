@@ -5,10 +5,12 @@ import { z } from "zod";
 import { CATEGORIES, COMPONENTS_CATALOG } from "@/lib/docs/catalog";
 import {
   addCommand,
+  flagsNote,
   itemsToAdd,
   PACKAGE_MANAGERS,
   type PackageManager,
   SITE_URL,
+  setToAdd,
 } from "@/lib/docs/install-command";
 import {
   type LoadedRegistry,
@@ -17,6 +19,7 @@ import {
   REGISTRY_ITEM_URL,
   registryItemUrl,
 } from "@/lib/registry";
+import { clientNote, isClientItem } from "@/lib/registry/client";
 import { installTarget } from "@/lib/registry/install-target";
 
 // The four mangacn tools of the MCP server (SPEC-agent-tooling §4): list_items, get_item,
@@ -41,6 +44,11 @@ export interface CatalogEntry {
   dependencyFiles: string[];
   /** The items one add names for this item, as bare names (ink-frame first when it outlines). */
   adds: string[];
+  /**
+   * Whether the item's entry file starts with `"use client"`; null when it ships no script
+   * (the theme, the fonts).
+   */
+  client: boolean | null;
   /** The item's own docs page (`/docs/components/speech-bubble`), or null when it has none. */
   page: string | null;
   /** Absolute docs URL: the item's page, else the guide that covers it. */
@@ -112,6 +120,7 @@ export function readCatalog(registry: LoadedRegistry = loadRegistry()): CatalogE
       files: item.files.map(installTarget),
       dependencyFiles: dependencyFiles(item.name, registry),
       adds: itemsToAdd(item.name),
+      client: isClientItem(item),
       page,
       docs: `${SITE_URL}${page ?? THEMING_PAGE}`,
     };
@@ -163,6 +172,7 @@ export function listItemsText(catalog: readonly CatalogEntry[], category?: strin
     [
       `- ${entry.name} · ${entry.type} · ${entry.category}: ${entry.description}`,
       entry.dependencies.length > 0 ? `Needs: ${entry.dependencies.join(", ")}.` : undefined,
+      entry.client === null ? undefined : entry.client ? "Client component." : "Server component.",
       `Install: \`${addCommand(entry.adds, "pnpm")}\`.`,
       `Docs: ${entry.docs}`,
     ]
@@ -171,7 +181,7 @@ export function listItemsText(catalog: readonly CatalogEntry[], category?: strin
   );
   const scope = category ? ` in "${category}"` : "";
   return [
-    `mangacn catalog: ${entries.length} items${scope}, one per line as name · type · category: description, then the install command and the docs page. get_item returns an item's props and demos.`,
+    `mangacn catalog: ${entries.length} items${scope}, one per line as name · type · category: description, then whether it is a client component ("use client") or a server component, the install command and the docs page. get_item returns an item's props and demos.`,
     "",
     ...lines,
     "",
@@ -214,6 +224,8 @@ function summaryMarkdown(entry: CatalogEntry): string {
       ]),
       "```",
     ].join("\n"),
+    flagsNote(entry.adds),
+    entry.client === null ? undefined : clientNote(entry.client),
     entry.dependencies.length > 0 ? `Dependencies: ${entry.dependencies.join(", ")}.` : undefined,
   ]
     .filter((part) => part !== undefined)
@@ -225,28 +237,18 @@ export function itemText(entry: CatalogEntry, markdown: string | null): string {
   return `${(markdown ?? summaryMarkdown(entry)).trimEnd()}\n\n${filesLine(entry)}\n`;
 }
 
-function addOrder(name: string, catalog: readonly CatalogEntry[]): number {
-  const type = catalog.find((entry) => entry.name === name)?.type;
-  if (type === "registry:theme") return 0;
-  if (type === "registry:font") return 1;
-  return name === "ink-frame" ? 2 : 3;
-}
-
-/** get_install_command: the registries note, then one add for every item in `entries`. */
-export function installText(
-  entries: readonly CatalogEntry[],
-  catalog: readonly CatalogEntry[],
-  manager: PackageManager = "npm",
-): string {
-  const items = [...new Set(entries.flatMap((entry) => entry.adds))].sort(
-    (a, b) => addOrder(a, catalog) - addOrder(b, catalog),
-  );
+/**
+ * get_install_command: the registries note, then one add for every item in `names`, with the
+ * flags that let it run unattended (`--yes` too when the theme is in the set) and why.
+ */
+export function installText(names: readonly string[], manager: PackageManager = "npm"): string {
+  const items = setToAdd(names);
   return [
     'Name the registry in components.json once (skip this when it already has "@mangacn"):',
     `"registries": { "@mangacn": "${REGISTRY_ITEM_URL}" }`,
-    "Then one add for the set; --overwrite replaces the stock files shadcn init wrote (components/ui/button.tsx), which --yes alone stops at:",
+    `Then one add for the set. ${flagsNote(items)}`,
     "",
-    `${addCommand(items, manager)} --overwrite`,
+    addCommand(items, manager),
     "",
   ].join("\n");
 }
@@ -323,7 +325,7 @@ export function registerCatalogTools(mcp: McpServer, read: CatalogReaders): void
     {
       title: "Get Install Command",
       description:
-        "Get the one shadcn add command (with --overwrite) that installs the named mangacn items, after the components.json registries line it needs.",
+        "Get the one shadcn add command that installs the named mangacn items unattended (--overwrite, plus --yes when the theme is in the set), after the components.json registries line it needs.",
       inputSchema: z.object({
         names: z.array(z.string()).min(1).describe('Item names, such as ["speech-bubble"].'),
         manager: z.enum(MANAGERS).optional().describe("The package manager; npm when left out."),
@@ -337,8 +339,7 @@ export function registerCatalogTools(mcp: McpServer, read: CatalogReaders): void
       if (unknown.length > 0) {
         return text(unknown.map((name) => unknownItem(name, catalog)).join("\n"), true);
       }
-      const entries = wanted.flatMap((name) => catalog.filter((entry) => entry.name === name));
-      return text(installText(entries, catalog, manager));
+      return text(installText(wanted, manager));
     },
   );
 

@@ -41,7 +41,7 @@ describe("renderSkillCatalog", () => {
     );
     expect(catalog).toContain("  Docs: https://www.mangacn.com/docs/theming\n");
     expect(catalog).toContain(
-      "Install: `npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja`",
+      "Install: `npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja --yes --overwrite`",
     );
   });
 
