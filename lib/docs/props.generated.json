@@ -598,25 +598,34 @@
         "entries": [
           {
             "name": "src",
-            "description": "The picture's URL, passed to the `<img>`.",
-            "type": "string",
+            "description": "The picture's URL, passed to the `<img>`. Pass `src` and `alt`, or `children`.",
+            "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],
-            "required": true,
+            "required": false,
             "deprecated": false
           },
           {
             "name": "alt",
-            "description": "Required: describe the picture, or pass `\"\"` when it is purely decorative.",
-            "type": "string",
+            "description": "Required with `src`: describe the picture, or pass `\"\"` when it is purely decorative.",
+            "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],
-            "required": true,
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "children",
+            "description": "A drawn or lettered scene in place of a picture, in the theme's fonts and tokens. It fills a\n`relative isolate` box of the same aspect, clipped to the frame and centred on paper, so\n`speed-lines` or `focus-lines` go in as its first child. Real text stays readable as text.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
             "deprecated": false
           },
           {
             "name": "aspect",
-            "description": "The picture's aspect ratio; it is cropped to fill (`object-cover`).",
+            "description": "The picture's (or scene's) aspect ratio; a picture is cropped to fill (`object-cover`).",
             "type": "\"1/1\" | \"16/9\" | \"3/4\" | \"4/3\" | null | undefined",
             "simplifiedType": "\"1/1\" | \"16/9\" | \"3/4\" | \"4/3\"",
             "tags": [
@@ -653,7 +662,7 @@
           },
           {
             "name": "className",
-            "description": "Applied to the `<figure>`; other props go to the `<img>`.",
+            "description": "Applied to the `<figure>`; other props go to the `<img>` (or the scene's box).",
             "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],
