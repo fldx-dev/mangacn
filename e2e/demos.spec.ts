@@ -22,6 +22,38 @@ if (unknown.length > 0)
   throw new Error(`E2E_ITEMS names items without demos: ${unknown.join(", ")}`);
 const entries = only ? demoEntries.filter((entry) => only.includes(entry.item)) : demoEntries;
 
+// A panel does not clip, and focus lines start past their box: the layer clips them itself. The
+// dogfood run found a page 36 px too wide at 375 px. With the stage's padding gone the panel
+// meets both edges of a phone; its own ink frame reaches a few px past them, so the check is
+// that the layer adds nothing: the page is as wide with it as without it, and the layer stays
+// inside the panel.
+if (entries.some((entry) => entry.item === "focus-lines" && entry.demo === "in-a-panel")) {
+  test("focus-lines in a panel adds no horizontal overflow at 360 px", async ({ page }) => {
+    test.skip(test.info().project.name !== "w360", "one phone width is enough");
+    await page.goto("/demo/focus-lines/in-a-panel");
+    await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+    await waitForInk(page);
+    await page.locator('[data-slot="demo-stage"]').evaluate((stage) => {
+      (stage as HTMLElement).style.padding = "0";
+    });
+    const panel = page.locator('[data-slot="panel"]');
+    const layer = panel.locator(':scope > [data-slot="focus-lines"]');
+    await expect(layer).toHaveCSS("overflow", "hidden");
+    const [panelBox, layerBox] = await Promise.all([panel.boundingBox(), layer.boundingBox()]);
+    expect(panelBox?.width, "the panel spans the phone").toBe(360);
+    expect(layerBox && panelBox && layerBox.x >= panelBox.x).toBe(true);
+    expect(layerBox && panelBox && layerBox.x + layerBox.width <= panelBox.x + panelBox.width).toBe(
+      true,
+    );
+    const scrollWidth = () => page.evaluate(() => document.documentElement.scrollWidth);
+    const withLines = await scrollWidth();
+    await layer.evaluate((node) => {
+      (node as HTMLElement).style.display = "none";
+    });
+    expect(withLines, "the focus lines widen the page").toBe(await scrollWidth());
+  });
+}
+
 for (const { item, demo } of entries) {
   for (const mode of ["light", "dark"] as const) {
     test(`${item}/${demo} (${mode})`, async ({ page }) => {

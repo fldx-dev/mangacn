@@ -7,7 +7,9 @@ import type * as React from "react";
 const STRIPES =
   "[background-image:repeating-linear-gradient(to_bottom,var(--speed-color)_0_var(--speed-line-width),transparent_var(--speed-line-width)_var(--speed-gap)),repeating-linear-gradient(to_bottom,var(--speed-color)_0_calc(var(--speed-line-width)/2),transparent_calc(var(--speed-line-width)/2)_calc(var(--speed-gap)*1.618))]";
 
-const speedLinesVariants = cva("pointer-events-none absolute inset-0 -z-1", {
+// The lines are backgrounds, painted inside the layer; `overflow-hidden` keeps it that way for
+// anything a user adds, so a host that does not clip (a `panel`) stays inside the page.
+const speedLinesVariants = cva("pointer-events-none absolute inset-0 -z-1 overflow-hidden", {
   variants: {
     direction: {
       radial:
@@ -52,11 +54,18 @@ export interface SpeedLinesProps
    * @default [50, 50]
    */
   center?: readonly [number, number];
+  /**
+   * Classes for the layer. It fills its `relative isolate` parent (`absolute inset-0 -z-1`) and
+   * clips the lines to its own box, so the parent need not clip; an `inset-*` class moves its
+   * edges (`inset-(--outline-width-heavy)` keeps the lines inside a panel's stroke).
+   */
+  className?: string;
 }
 
 /**
- * Motion lines behind content. Decorative and `aria-hidden`; place it as the first child of a
- * `relative isolate` container.
+ * Motion lines behind content. Decorative and `aria-hidden`: the layer fills its
+ * `relative isolate` parent (place it as the first child) and clips to its own box, so the
+ * parent need not be `overflow-hidden`.
  */
 export function SpeedLines({
   className,

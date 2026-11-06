@@ -182,6 +182,15 @@
             ],
             "required": false,
             "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the layer. It fills its `relative isolate` parent (`absolute inset-0 -z-1`) and\nclips the lines to its own box, so the parent need not clip; an `inset-*` class moves its\nedges (`inset-(--outline-width-heavy)` keeps the lines inside a panel's stroke).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
           }
         ]
       }
@@ -1270,6 +1279,15 @@
                 "text": "[50, 50]"
               }
             ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the layer. It fills its `relative isolate` parent (`absolute inset-0 -z-1`) and\nclips the lines to its own box, so the parent need not clip; an `inset-*` class moves its\nedges (`inset-(--outline-width-heavy)` keeps the lines inside a panel's stroke).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
             "required": false,
             "deprecated": false
           }
