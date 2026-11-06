@@ -1,9 +1,10 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { expectNoA11yViolations } from "@/lib/test/axe";
 import StampDefaultDemo from "./demos/default";
 import StampJapaneseDemo from "./demos/japanese";
+import StampLongWordsDemo from "./demos/long-words";
 import StampOverACardDemo from "./demos/over-a-card";
 import StampShapesAndSizesDemo from "./demos/shapes-and-sizes";
 import { Stamp } from "./stamp";
@@ -195,8 +196,108 @@ describe("Stamp", () => {
     }
   });
 
+  describe("fitting the text inside the ring", () => {
+    // jsdom has no layout: give the seal and its text the sizes Chromium measures for these
+    // words in Dela Gothic One (registry/ui/stamp/demos/long-words.tsx).
+    const layout = (seal: number, width: number, height: number) => {
+      const size = (slot: string | undefined, sealSize: number, textSize: number) =>
+        slot === "stamp" ? sealSize : slot === "stamp-text" ? textSize : 0;
+      vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockImplementation(function (
+        this: HTMLElement,
+      ) {
+        return size(this.dataset.slot, seal, width);
+      });
+      vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(function (
+        this: HTMLElement,
+      ) {
+        return size(this.dataset.slot, seal, height);
+      });
+    };
+    const textOf = (root: ParentNode) =>
+      root.querySelector<HTMLElement>('[data-slot="stamp-text"]') as HTMLElement;
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("renders at full size on the server, so hydration matches", () => {
+      const html = renderToString(<Stamp size="lg">SUPER</Stamp>);
+      expect(html).not.toContain("data-fit");
+      expect(html).not.toContain("scale");
+    });
+
+    it("shrinks a word that overruns a round seal's ring to fit inside it", () => {
+      layout(112, 108, 24);
+      const { container } = render(<Stamp size="lg">SUPER</Stamp>);
+      // Ring: 112 - 2 × 3 pad - 2 × 11.2 inset - 1.5 stroke - 2 × 1 gap = 80.1 px across; the
+      // text box's diagonal (110.6 px) must fit in it.
+      expect(stampOf(container)?.dataset.fit).toBe("0.72");
+      expect(textOf(container).style.scale).toBe("0.72");
+      expect(Math.hypot(108, 24) * 0.72).toBeLessThanOrEqual(80.1);
+    });
+
+    it("shrinks to the inner square's side on a square seal", () => {
+      layout(112, 173, 24);
+      const { container } = render(
+        <Stamp size="lg" shape="square">
+          APPROVED
+        </Stamp>,
+      );
+      expect(stampOf(container)?.dataset.fit).toBe("0.46");
+      expect(173 * 0.46).toBeLessThanOrEqual(80.1);
+    });
+
+    it("leaves text that already fits alone", () => {
+      layout(80, 51, 18);
+      const { container } = render(<Stamp>NEW</Stamp>);
+      expect(stampOf(container)?.dataset.fit).toBeUndefined();
+      expect(textOf(container).getAttribute("style")).toBeNull();
+    });
+
+    it("never resizes the seal itself, and keeps an overflowing word centred", () => {
+      layout(112, 173, 24);
+      const { container } = render(<Stamp size="lg">APPROVED</Stamp>);
+      const stamp = stampOf(container) as HTMLElement;
+      expect(stamp.classList.contains("size-28")).toBe(true);
+      expect(stamp.style.width).toBe("");
+      // One track the seal's size; the text never narrower than its longest word, centred.
+      for (const name of ["grid-cols-1", "grid-rows-1"]) {
+        expect(stamp.classList.contains(name), name).toBe(true);
+      }
+      for (const name of ["min-w-min", "max-w-[72%]", "[place-self:unsafe_center]"]) {
+        expect(textOf(container).classList.contains(name), name).toBe(true);
+      }
+    });
+
+    it("refits when the text or the seal resizes (a web font swapping in)", () => {
+      const observed: Element[] = [];
+      let notify = () => {};
+      vi.stubGlobal(
+        "ResizeObserver",
+        class {
+          constructor(callback: () => void) {
+            notify = callback;
+          }
+          observe(element: Element) {
+            observed.push(element);
+          }
+          disconnect() {}
+        },
+      );
+      layout(112, 60, 24);
+      const { container } = render(<Stamp size="lg">SUPER</Stamp>);
+      expect(stampOf(container)?.dataset.fit).toBeUndefined();
+      expect(observed).toEqual([textOf(container), stampOf(container)]);
+      layout(112, 108, 24);
+      act(() => notify());
+      expect(stampOf(container)?.dataset.fit).toBe("0.72");
+      vi.unstubAllGlobals();
+    });
+  });
+
   it.each([
     ["default", StampDefaultDemo],
+    ["long-words", StampLongWordsDemo],
     ["shapes-and-sizes", StampShapesAndSizesDemo],
     ["over-a-card", StampOverACardDemo],
     ["japanese", StampJapaneseDemo],

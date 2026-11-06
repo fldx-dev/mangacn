@@ -1354,7 +1354,7 @@
           },
           {
             "name": "size",
-            "description": "Seal size: 56, 80 or 112 px square, with the text scaled to match.",
+            "description": "Seal size: 56, 80 or 112 px square, with the text scaled to match. Text that would overrun\nthe inner ring shrinks to fit inside it once the page has loaded; keep it to one or two\nshort words (at `lg`, about 8 Latin letters or 4 kanji stay readable).",
             "type": "StampSize | undefined",
             "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
             "tags": [
