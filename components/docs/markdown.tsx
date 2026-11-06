@@ -5,7 +5,12 @@ import type { ReactNode } from "react";
 import { agentsSnippet, MCP_CLIENTS } from "@/lib/docs/agents";
 import { CATEGORY_LABELS, docItems, groupByCategory } from "@/lib/docs/catalog";
 import { getDemoSource } from "@/lib/docs/demo-source";
-import { installCommand, PACKAGE_MANAGERS } from "@/lib/docs/install-command";
+import {
+  commandFor,
+  type InstallCommandProps,
+  itemClientNote,
+  PACKAGE_MANAGERS,
+} from "@/lib/docs/install-command";
 import { generatedProps, propsInterfaceName, typeTableToMarkdown } from "@/lib/docs/props";
 import { PROPS_DELTA, shadcnDocsUrl } from "@/lib/docs/props-delta";
 import { loadRegistry } from "@/lib/registry";
@@ -26,15 +31,15 @@ export function fence(code: string, lang = "", meta = ""): string {
   return `\n${ticks}${[lang, meta].filter(Boolean).join(" ")}\n${code}\n${ticks}\n\n`;
 }
 
-/** The four `add` lines in one shell block, pnpm first as on the page. */
-export function InstallCommandMarkdown({ item }: { item: string }) {
+/** The four `add` lines in one shell block, pnpm first as on the page, then the client line. */
+export function InstallCommandMarkdown(props: InstallCommandProps) {
   asMarkdown();
-  return fence(
-    PACKAGE_MANAGERS.map((manager) => `# ${manager}\n${installCommand(item, manager)}`).join(
-      "\n\n",
-    ),
+  const block = fence(
+    PACKAGE_MANAGERS.map((manager) => `# ${manager}\n${commandFor(props, manager)}`).join("\n\n"),
     "bash",
   );
+  const note = itemClientNote(props);
+  return note ? `${block}${note}\n\n` : block;
 }
 
 /** Each client under its name in bold, then its blocks, each fenced, the file named before it. */

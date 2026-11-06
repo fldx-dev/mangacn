@@ -5,8 +5,11 @@ is the same story with the parts an agent trips on.
 
 ## Prerequisites
 
-- A shadcn project (`components.json` exists). If not, run `npx shadcn@latest init` and pick
-  the `base-nova` style: the restyled primitives are built on Base UI.
+- A shadcn project (`components.json` exists) on the `base-nova` style: the restyled
+  primitives are built on Base UI. If there is none, initialise it with
+  `pnpm dlx shadcn@latest init -b base -p nova` (it writes `"style": "base-nova"`; at the
+  interactive prompt that is "Base UI", then "Nova"). `-p base-nova` fails with "Invalid
+  preset".
 - Tailwind CSS v4 (the theme ships `@utility` blocks and CSS variables).
 - The `cn` helper at `@/lib/utils`, which `shadcn init` writes.
 
@@ -28,8 +31,17 @@ entry, so it can search and install mangacn items once this line exists.
 ## 2. The theme, once
 
 ```bash
-npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja --overwrite
+npx shadcn@latest add @mangacn/theme --yes --overwrite
 ```
+
+Keep `--yes` on any add that names the theme: the CLI asks "You are about to install a new
+theme. Existing CSS variables and components will be overwritten. Continue? (y/N)", and
+`--overwrite` does not answer it. Without a terminal the run then exits 0 with nothing
+written.
+
+Name the theme alone: it brings its three font items by URL. Listing `@mangacn/font-*` in
+the same add gives the CLI a second copy of each, and every font's `.variable` lands in
+`layout.tsx` twice. A font added later in a command of its own is fine.
 
 The theme writes the tokens, utilities and keyframes into `globals.css`. The three font
 items add `next/font/google` loaders to the root `layout.tsx`: Dela Gothic One
@@ -53,14 +65,17 @@ redundant and harmless. Several items can go in one command:
 Use the project's runner: `npx`, `pnpm dlx`, `yarn dlx` or `bunx --bun`, followed by
 `shadcn@latest add …`.
 
-## The overwrite prompt and `--overwrite`
+## The two prompts, `--overwrite` and `--yes`
 
-A fresh `shadcn init` already wrote stock `components/ui/button.tsx`. Any add that brings
-mangacn's button (button itself, or an item that depends on it) asks to overwrite it.
+If a stock or edited file is already there (say `components/ui/button.tsx`, from an earlier
+`shadcn add button`), any add that brings mangacn's version (button itself, or an item that
+depends on it) asks to overwrite it. The theme asks a question of its own.
 
 - A human at the prompt answers yes.
-- An agent or script passes `--overwrite`. `--yes` alone does not answer that question: the
-  CLI stops there and exits 0 before the item is written, so nothing was installed.
+- An agent or script passes `--overwrite` for the file question and `--yes` for the theme's.
+  Neither answers the other: unanswered, the CLI exits 0 before anything is written.
+- Every line mangacn prints (the docs pages, `get_item`, `get_install_command`, the catalog)
+  already carries them: `--overwrite` always, `--yes --overwrite` when the theme is in the set.
 
 Restyled primitives are meant to replace the stock file: same exports, same props, so
 existing call sites keep working.
@@ -75,7 +90,7 @@ npx shadcn@latest add fldx-dev/mangacn/speech-bubble --overwrite
 
 Same items, by repository path `fldx-dev/mangacn/<item>`. Use it to try one item or when
 the hosted registry is out of reach. A plain URL works too:
-`npx shadcn@latest add https://www.mangacn.com/r/speech-bubble.json`.
+`npx shadcn@latest add https://www.mangacn.com/r/speech-bubble.json --overwrite`.
 
 ## Verify an install
 
@@ -95,6 +110,7 @@ before hydration and with it after is working as intended.
 
 - An error naming the `@mangacn` registry: the `registries` entry is missing or misspelled.
 - The command exits 0 after an overwrite question but the item file is missing: rerun it
-  with `--overwrite`.
+  with `--overwrite`. After the theme question ("You are about to install a new theme…"),
+  rerun it with `--yes --overwrite`.
 - A 404 for an item: check the name in [catalog.md](catalog.md); names are kebab-case with no
   `manga-` prefix (`speech-bubble`, not `manga-speech-bubble`).

@@ -98,6 +98,15 @@ palette is dim, not inverted: paper becomes a warm charcoal, ink an off-white, a
 red brightens a little. Use the tokens and it follows; a literal `bg-black` or `text-white`
 breaks it. Every token pair meets WCAG AA in both modes.
 
+The theme defines `.dark` only, with no `prefers-color-scheme` fallback, so a fresh install
+stays light until something sets the class. To follow the OS, add `next-themes`: a client
+`ThemeProvider` wrapper (`"use client"`, re-exporting `next-themes`' provider) around the
+body as `<ThemeProvider attribute="class" defaultTheme="system" enableSystem>`, and
+`suppressHydrationWarning` on `<html>`, since next-themes sets the class before hydration.
+Snippet: `https://www.mangacn.com/docs/theming#turn-it-on`. Do not add a media-query copy of
+the dark tokens instead: the items' `dark:` utilities follow the class
+(`@custom-variant dark (&:is(.dark *))`), so the page would come out half dark.
+
 ## Motion
 
 Motion is opt-in and safe under `prefers-reduced-motion`. The `animate-mangacn-*` utilities

@@ -129,6 +129,48 @@ WCAG AA, ink on paper AAA, in both modes.
 }
 ```
 
+### Turn it on
+
+The theme defines `.dark` and nothing else: no `prefers-color-scheme` query. A fresh install
+stays light on a dark OS until something sets the class. To follow the OS and offer a toggle,
+add [`next-themes`](https://github.com/pacocoursey/next-themes) (`pnpm add next-themes`), as
+shadcn does:
+
+```tsx title="components/theme-provider.tsx"
+"use client";
+
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import type { ComponentProps } from "react";
+
+export function ThemeProvider(props: ComponentProps<typeof NextThemesProvider>) {
+  return <NextThemesProvider {...props} />;
+}
+```
+
+```tsx title="app/layout.tsx"
+import { ThemeProvider } from "@/components/theme-provider";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    // next-themes sets the class before React hydrates, so <html> differs from the server's.
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+`useTheme()` from `next-themes` then reads and sets the mode for a toggle.
+
+Why no media-query fallback in the theme: the items' own `dark:` utilities follow the class
+(shadcn writes `@custom-variant dark (&:is(.dark *))`), so a fallback would turn the tokens
+dark while those utilities stayed light, and a project that is light on purpose would flip on
+a dark OS. One switch, the class, keeps every part of the page in the same mode.
+
 ## The pen
 
 Every outline in mangacn is drawn by the ink frame with rough.js, and the pen it draws with is

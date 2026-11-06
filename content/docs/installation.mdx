@@ -12,7 +12,14 @@ import { Step, Steps } from "fumadocs-ui/components/steps";
 - **Tailwind CSS v4.** The theme ships its tokens as CSS variables and its patterns as
   `@utility` blocks, which need v4.
 - **The `base-nova` style.** The restyled primitives are built on Base UI, so initialise with
-  that preset (`"style": "base-nova"` in `components.json`).
+  that style (`"style": "base-nova"` in `components.json`). At the interactive prompt pick
+  "Base UI", then "Nova"; unattended, the flags are `-b base -p nova` (`-p base-nova` is an
+  "Invalid preset"):
+
+  ```bash
+  pnpm dlx shadcn@latest init -b base -p nova
+  ```
+
 - **`cn`.** The `@/lib/utils` helper that `shadcn init` writes.
 
 ## Set up
@@ -44,16 +51,18 @@ and the Agent Skill on top of this entry.
 One command takes the theme, the three font items, the ink frame that every drawn component
 outlines itself with, and a first item:
 
-```bash
-npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja @mangacn/ink-frame @mangacn/speech-bubble
-```
+<InstallCommand setup />
 
 After that, any item is one `add` away. Keep the ink frame installed before the outlined
 items: they import it from `@/components/ink-frame`.
 
-A fresh shadcn project already has stock's `components/ui/button.tsx` (`shadcn init` writes
-it), so an add that brings mangacn's button asks to overwrite it: answer yes. Scripted
-installs pass `--overwrite`, since `--yes` alone stops at that question without an error.
+The flags let the line run without a prompt, as an agent or a script runs it. The theme asks
+"You are about to install a new theme… Continue?", which only `--yes` answers. And if a stock
+or edited file is already there (say `components/ui/button.tsx`, which mangacn's button and
+the items built on it replace), the CLI asks to overwrite it; `--overwrite` answers that. Left
+unanswered without a terminal, either question ends the run with exit 0 and nothing written.
+Every install line on this site carries `--overwrite`, and `--yes` too when the theme is in
+the set.
 
 </Step>
 <Step>
@@ -78,7 +87,7 @@ Everything is plain source in your project. Edit it as you would your own code.
 The shadcn CLI also installs straight from the GitHub repository, with no `registries` entry:
 
 ```bash
-npx shadcn@latest add fldx-dev/mangacn/button
+npx shadcn@latest add fldx-dev/mangacn/button --overwrite
 ```
 
 The same items, by their repository path (`fldx-dev/mangacn/<item>`). Use it to try one item

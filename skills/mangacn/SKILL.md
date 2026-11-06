@@ -37,7 +37,9 @@ the reference setup; any framework the shadcn CLI supports works the same way.
    ```
 
    Then install the theme, which brings its three fonts:
-   `npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja`.
+   `npx shadcn@latest add @mangacn/theme --yes --overwrite`.
+   Keep `--yes`: the theme asks "You are about to install a new theme… Continue?", which only
+   `--yes` answers, and unanswered the CLI exits 0 having written nothing.
    Skip this when `globals.css` already has `--ink` and `--paper`.
 
 2. **Find the item.** Use the MCP's `search` (free text) or `list_items` (optionally by
@@ -51,9 +53,11 @@ the reference setup; any framework the shadcn CLI supports works the same way.
 
 4. **Install with the one command.** `get_install_command` returns it, and so do the catalog
    and each docs page. One `shadcn add` per item (or one line for a set); dependencies such
-   as ink-frame come by URL. When you run it without a human answering prompts, add
-   `--overwrite`: `shadcn init` already wrote a stock `button.tsx`, and `--yes` alone stops
-   at the overwrite question without an error. Details: [references/install.md](references/install.md).
+   as ink-frame come by URL. Every printed line ends in `--overwrite` (`--yes --overwrite`
+   when the theme is in the set); keep the flags. If a stock or edited file is already there
+   (say `components/ui/button.tsx`), the CLI asks to overwrite it, and `--overwrite` answers;
+   without it an unattended add exits 0 at the question with nothing written. Details:
+   [references/install.md](references/install.md).
 
 5. **Compose with the rules.** Pick items by job with
    [references/composing-pages.md](references/composing-pages.md) and keep the three rules

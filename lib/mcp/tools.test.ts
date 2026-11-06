@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { createMcpHandler } from "@modelcontextprotocol/server";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { type SearchHit, searchText } from "./docs-tools";
 import { createMcpServer, type McpDeps } from "./server";
 import {
   type CatalogReaders,
@@ -14,9 +15,10 @@ import {
   SKILL_PLACEHOLDER,
 } from "./tools";
 
-// The four mangacn tools over the real catalog, called through the SDK's HTTP handler as the
-// route does. The docs source is not importable from Vitest, so the page reads are stubbed; the
-// e2e suite calls them for real against `next start`.
+// The seven tools, called through the SDK's HTTP handler as the route does: the four mangacn
+// tools over the real catalog, the docs tools over stubs. The docs source is not importable from
+// Vitest, so the page reads and search are stubbed; the e2e suite calls them for real against
+// `next start`.
 
 const catalog = readCatalog();
 
@@ -29,14 +31,17 @@ function stubPage(url: string): string | null {
 
 let skillDir: string;
 
-function deps(read: Partial<CatalogReaders> = {}): McpDeps {
+function deps(
+  read: Partial<CatalogReaders> = {},
+  searchServer: { search: () => Promise<SearchHit[]> } = { search: async () => [] },
+): McpDeps {
   return {
     source: { getPageByUrl: () => undefined } as unknown as McpDeps["source"],
     llms: {
       index: async () => "# mangacn",
       page: async () => "# page",
     } as unknown as McpDeps["llms"],
-    searchServer: { search: async () => [] } as unknown as McpDeps["searchServer"],
+    searchServer: searchServer as unknown as McpDeps["searchServer"],
     read: {
       catalog: async () => catalog,
       pageMarkdown: async (url) => stubPage(url),
@@ -48,7 +53,7 @@ function deps(read: Partial<CatalogReaders> = {}): McpDeps {
 
 interface RpcResponse {
   result?: {
-    tools?: { name: string }[];
+    tools?: { name: string; annotations?: { readOnlyHint?: boolean } }[];
     content?: { type: string; text: string }[];
     isError?: boolean;
   };
@@ -59,8 +64,9 @@ async function rpc(
   method: string,
   params: Record<string, unknown> = {},
   read?: Partial<CatalogReaders>,
+  searchServer?: Parameters<typeof deps>[1],
 ): Promise<RpcResponse> {
-  const handler = createMcpHandler(() => createMcpServer(deps(read)));
+  const handler = createMcpHandler(() => createMcpServer(deps(read, searchServer)));
   const response = await handler.fetch(
     new Request("http://localhost/api/mcp", {
       method: "POST",
@@ -84,8 +90,9 @@ async function call(
   name: string,
   args: Record<string, unknown> = {},
   read?: Partial<CatalogReaders>,
+  searchServer?: Parameters<typeof deps>[1],
 ) {
-  const { result, error } = await rpc("tools/call", { name, arguments: args }, read);
+  const { result, error } = await rpc("tools/call", { name, arguments: args }, read, searchServer);
   if (error) throw new Error(error.message);
   return { text: result?.content?.[0]?.text ?? "", isError: result?.isError ?? false };
 }
@@ -117,6 +124,43 @@ describe("the MCP server", () => {
       "get_install_command",
       "get_skill",
     ]);
+    for (const tool of result?.tools ?? []) {
+      expect(tool.annotations?.readOnlyHint, tool.name).toBe(true);
+    }
+  });
+});
+
+describe("search", () => {
+  const hits: SearchHit[] = [
+    { url: "/docs/theming", type: "page", content: "Theming", breadcrumbs: ["Guides"] },
+    {
+      url: "/docs/theming#dark-mode",
+      type: "text",
+      content: "Dark mode is the `.dark` class\non an ancestor.",
+      breadcrumbs: ["Guides", "Theming", "Dark mode"],
+    },
+  ];
+
+  it("answers in Markdown, one hit per line with its breadcrumb, text and URL", async () => {
+    const { text, isError } = await call("search", { query: "dark" }, undefined, {
+      search: async () => hits,
+    });
+    expect(isError).toBe(false);
+    expect(text.split("\n").filter((line) => line.startsWith("- "))).toEqual([
+      "- Guides · Theming · https://www.mangacn.com/docs/theming",
+      "- Guides › Theming › Dark mode · Dark mode is the `.dark` class on an ancestor. · https://www.mangacn.com/docs/theming#dark-mode",
+    ]);
+    expect(text).toMatch(/^2 docs hit\(s\) for "dark"/);
+  });
+
+  it("says so when nothing matches, and cuts a long text", () => {
+    expect(searchText("zzz", [])).toBe(
+      'No docs match "zzz". list_pages lists every page; list_items every item.\n',
+    );
+    const long = searchText("x", [{ url: "/docs", type: "text", content: "a ".repeat(300) }]);
+    const line = long.split("\n").find((entry) => entry.startsWith("- ")) ?? "";
+    expect(line).toContain("…");
+    expect(line.length).toBeLessThan(300);
   });
 });
 
@@ -131,9 +175,16 @@ describe("list_items", () => {
       "- speech-bubble · registry:component · text: Dialogue bubble with a hand-drawn tail",
     );
     expect(text).toContain(
-      "Install: `pnpm dlx shadcn@latest add @mangacn/ink-frame @mangacn/speech-bubble`. Docs: https://www.mangacn.com/docs/components/speech-bubble",
+      "Install: `pnpm dlx shadcn@latest add @mangacn/ink-frame @mangacn/speech-bubble --overwrite`. Docs: https://www.mangacn.com/docs/components/speech-bubble",
     );
     expect(text).toContain("Needs: cn, class-variance-authority.");
+    // Whether it is a client component, from its file's directive; nothing for the theme.
+    const line = (name: string) => text.split("\n").find((entry) => entry.startsWith(`- ${name} `));
+    const bubble = catalog.find((entry) => entry.name === "speech-bubble");
+    expect(line("speech-bubble")).toContain(
+      bubble?.client ? " Client component. Install:" : " Server component. Install:",
+    );
+    expect(line("theme")).not.toMatch(/(Client|Server) component/);
   });
 
   it("filters by category", async () => {
@@ -237,8 +288,15 @@ describe("get_install_command", () => {
   it("puts the theme and its fonts first", async () => {
     const { text } = await call("get_install_command", { names: ["speech-bubble", "theme"] });
     expect(text.trimEnd().split("\n").at(-1)).toBe(
-      "npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja @mangacn/ink-frame @mangacn/speech-bubble --overwrite",
+      "npx shadcn@latest add @mangacn/theme @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite",
     );
+    expect(text).toContain(`--yes answers the theme's "You are about to install a new theme`);
+  });
+
+  it("explains --overwrite alone for a set without the theme", async () => {
+    const { text } = await call("get_install_command", { names: ["button"] });
+    expect(text).toContain("Keep the flag: --overwrite answers");
+    expect(text).not.toContain("--yes");
   });
 
   it("is an error for an unknown name", async () => {
