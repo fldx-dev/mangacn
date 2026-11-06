@@ -39,12 +39,12 @@ instead of guessing them.
 
 | Tool | Returns |
 |---|---|
-| `search` | Docs search hits for a query: the matching page, heading or text, with its URL |
+| `search` | Docs search hits for a query as Markdown, one per line: the breadcrumb, the matched text and its URL |
 | `list_pages` | The `/llms.txt` index: every docs page as a Markdown link |
 | `get_page` | One docs page as Markdown, the same text as its `.md` twin |
 | `list_items` | Every registry item on one line: type, category, description, install command, docs URL |
 | `get_item` | An item's page as Markdown (install, demos, props) plus the files it writes |
-| `get_install_command` | One `shadcn add` line for a set of items, with `--overwrite` and the registry setup |
+| `get_install_command` | One `shadcn add` line for a set of items that runs without a prompt (`--overwrite`, plus `--yes` with the theme), and the registry setup |
 | `get_skill` | The Agent Skill's `SKILL.md`, or one of its references by name |
 
 Two prompts to try once it is connected:
@@ -64,12 +64,24 @@ Code, Cursor, Codex and the others the skills CLI supports):
 npx skills add fldx-dev/mangacn
 ```
 
-- The workflow: set up the registry, find the item, read its props, install with `--overwrite`.
+In a script or CI, name the skill and the agent and skip the questions:
+
+```bash
+npx skills add fldx-dev/mangacn --skill mangacn --agent claude-code -y
+```
+
+- The workflow: set up the registry, find the item, read its props, install with `--overwrite`
+  (and `--yes` when the theme is in the set).
 - The pen: ink on paper, outlines from `InkFrame`, no shadows or gradients, red once per surface.
 - Japanese text under `lang="ja"`, and which item fits which part of a manga page.
 
 For Claude Code it lands in `.claude/skills/mangacn/` (`-g` puts it in `~/.claude/skills/`).
 Agents without a local install read the same files through `get_skill`.
+
+The installer's audit panel shows Snyk at "Med Risk": its one finding, W011 "third-party
+content exposure", is the note any skill gets for telling the agent to read pages from the web
+(here the `.md` twins, `llms.txt` and this MCP), scored 0.10, not a problem in the skill's
+files.
 
 ## Markdown for agents
 
