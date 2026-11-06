@@ -124,6 +124,9 @@ describe("font items", () => {
       weight: ["400"],
       subsets: ["latin"],
     });
+    // The CLI prints an item's docs on install: the reader of `subsets: ['latin']` learns why.
+    expect((ja as { docs?: string } | undefined)?.docs).toMatch(/only latin and latin-ext/);
+    expect((ja as { docs?: string } | undefined)?.docs).toMatch(/unicode-range/);
   });
 });
 
@@ -213,5 +216,9 @@ describe("theme item", () => {
     expect(theme?.docs).toContain("npx shadcn@latest add @mangacn/theme installs the fonts too");
     expect(theme?.docs).toContain("or set --font-display");
     expect(theme?.docs).not.toContain("add @mangacn/font-display");
+    // shadcn keys a resolved item by its source: a font named in the same add as the theme
+    // (`@mangacn/font-display`) is a second copy of the one the theme pulls by URL, and each
+    // copy adds its `.variable` to <html> (Task 66). The install line names the theme alone.
+    expect(theme?.docs).toContain("Name only the theme");
   });
 });

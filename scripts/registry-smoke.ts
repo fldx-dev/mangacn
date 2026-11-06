@@ -190,6 +190,21 @@ function dialogueStackProblems(globalsCss: string, layout: string): string[] {
   return problems;
 }
 
+/**
+ * Every next/font loader's `.variable` is on `<html>` once. shadcn keys a resolved item by its
+ * source, so a font named in the same `add` as the theme (`@mangacn/font-display`) is a second
+ * copy of the one the theme pulls by URL, and each copy adds its `.variable` again.
+ */
+function fontVariableProblems(layout: string): string[] {
+  const counts = new Map<string, number>();
+  for (const [, loader] of layout.matchAll(/\b([A-Za-z_$][\w$]*)\.variable\b/g)) {
+    counts.set(loader, (counts.get(loader) ?? 0) + 1);
+  }
+  return [...counts]
+    .filter(([, count]) => count > 1)
+    .map(([loader, count]) => `app/layout.tsx adds ${loader}.variable ${count} times`);
+}
+
 /** True when `line` is the attribution comment and only imports or a directive precede it. */
 function hasAttributionHeader(content: string, line: string): boolean {
   const index = content.indexOf(line);
@@ -565,6 +580,11 @@ function contentProblems(project: string, names: string[]): string[] {
       read("app/layout.tsx") ?? "",
     )) {
       missing.push(`dialogue stack: ${problem}`);
+    }
+  }
+  if (names.some((name) => name.startsWith("font-"))) {
+    for (const problem of fontVariableProblems(read("app/layout.tsx") ?? "")) {
+      missing.push(`fonts: ${problem}`);
     }
   }
   return missing;
