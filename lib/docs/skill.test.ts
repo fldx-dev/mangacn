@@ -40,9 +40,7 @@ describe("renderSkillCatalog", () => {
       "  Docs: https://www.mangacn.com/docs/components/speech-bubble (Markdown: https://www.mangacn.com/docs/components/speech-bubble.md)",
     );
     expect(catalog).toContain("  Docs: https://www.mangacn.com/docs/theming\n");
-    expect(catalog).toContain(
-      "Install: `npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja`",
-    );
+    expect(catalog).toContain("Install: `npx shadcn@latest add @mangacn/theme --yes --overwrite`");
   });
 
   it("matches the committed references/catalog.md (run `pnpm gen:skill`)", () => {

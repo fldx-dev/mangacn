@@ -10,7 +10,9 @@
  *   --changed           the items whose folders differ from origin/main (plus the same);
  *                       exits 0 with a note when nothing under registry/ changed, and
  *                       falls back to every item when the catalog, the smoke script or
- *                       lib/registry changed
+ *                       lib/registry changed, and adds the Installation page's first
+ *                       install (theme, ink-frame, speech-bubble) when
+ *                       lib/docs/install-command.ts changed
  * The stock pre-install + overwrite check runs only when button, card and dialog are all
  * in the set. Each one-command check (a fresh project per command, ONE_COMMANDS) runs with
  * every item, or when the set names all of its items (`--only=pagination`).
@@ -30,6 +32,7 @@ import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { SETUP_ITEMS, setCommand } from "../lib/docs/install-command";
 import { mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
 
 const NEXT_VERSION = "16.4.3";
@@ -277,6 +280,10 @@ function changedItems(listed: string[]): string[] | undefined {
       posix === "registry.json"
     ) {
       return undefined;
+    }
+    // The printed install lines: rerun the documented first install.
+    if (posix === "lib/docs/install-command.ts") {
+      for (const name of SETUP_ITEMS) items.add(name);
     }
     const match = /^registry\/[^/]+\/([^/]+)\//.exec(posix);
     if (match && listed.includes(match[1])) items.add(match[1]);
@@ -601,14 +608,31 @@ interface OneCommand {
    * to "already exists. Would you like to overwrite?" (with stdin closed the prompt aborts).
    */
   overwrite?: boolean;
+  /**
+   * The command exactly as a docs page prints it, run in place of `items` and the flags above.
+   * Only the CLI version changes (`shadcn@latest` → the pinned SHADCN_VERSION).
+   */
+  line?: string;
+}
+
+/** The line's arguments after `pnpm`, with the CLI pinned; throws when it is not a pnpm `shadcn add`. */
+function documentedArgs(line: string): string[] {
+  const [runner, dlx, cli, verb, ...rest] = line.split(" ");
+  if (runner !== "pnpm" || dlx !== "dlx" || cli !== "shadcn@latest" || verb !== "add") {
+    throw new SmokeError(`Not a pnpm dlx shadcn@latest add line: ${line}`);
+  }
+  return [dlx, `shadcn@${SHADCN_VERSION}`, verb, ...rest];
 }
 
 const ONE_COMMANDS: OneCommand[] = [
-  // The theme and one outlined piece: the theme's three fonts and the bubble's ink-frame come
-  // by URL.
+  // The Installation page's first install, run as printed (from the same function) with stdin
+  // closed: the theme, its three fonts by URL, ink-frame and speech-bubble. The theme's own
+  // question ("You are about to install a new theme… Continue? (y/N)") is answered only by
+  // --yes; without it the CLI exits 0 having written nothing, which the content check catches.
   {
     project: "one-command",
-    items: ["theme", "speech-bubble"],
+    items: [...SETUP_ITEMS],
+    line: setCommand(SETUP_ITEMS, "pnpm"),
     installs: [
       "theme",
       "font-display",
@@ -620,8 +644,9 @@ const ONE_COMMANDS: OneCommand[] = [
   },
   // An item on a restyled primitive: pagination declares mangacn's button by URL in place of
   // stock's bare `button` (SPEC-components §4.1), so the installed button is mangacn's
-  // (attribution header, InkFrame import), and it brings ink-frame. `shadcn init` (4.23)
-  // writes stock's components/ui/button.tsx, so the add asks to overwrite it. With a bare
+  // (attribution header, InkFrame import), and it brings ink-frame. `shadcn init -d` (4.23)
+  // writes stock's components/ui/button.tsx (`init -b base -p nova`, the documented form, does
+  // not), so the add asks to overwrite it. With a bare
   // `button` the overwrite would write stock's again and fail this check.
   {
     project: "one-command-button",
@@ -648,10 +673,17 @@ async function oneCommandCheck(workDir: string, port: number, command: OneComman
   projectDir = project;
   const items = command.items.map((name) => `@mangacn/${name}`);
   const flags = command.overwrite ? ["--yes", "--overwrite"] : ["--yes"];
-  console.log(`→ shadcn add ${[...items, ...flags].join(" ")} (one command)`);
+  const args = command.line
+    ? documentedArgs(command.line)
+    : ["dlx", `shadcn@${SHADCN_VERSION}`, "add", ...items, ...flags];
+  console.log(
+    command.line
+      ? `→ pnpm ${args.join(" ")} (the documented line, no TTY)`
+      : `→ shadcn add ${[...items, ...flags].join(" ")} (one command)`,
+  );
   served.length = 0;
   try {
-    await run("pnpm", ["dlx", `shadcn@${SHADCN_VERSION}`, "add", ...items, ...flags], project);
+    await run("pnpm", args, project);
   } catch (error) {
     const output = error instanceof SmokeError ? error.output : "";
     throw new SmokeError(`One-command install of ${items.join(" ")} failed`, output);

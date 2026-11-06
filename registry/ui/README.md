@@ -6,8 +6,11 @@ or a **manga-native piece** (`registry:component`, installs to `@/components/<na
 Users install them with:
 
 ```bash
-npx shadcn@latest add @mangacn/<name>
+npx shadcn@latest add @mangacn/<name> --overwrite
 ```
+
+(`--yes --overwrite` when `@mangacn/theme` is in the set; `lib/docs/install-command.ts` prints
+every install line on the site, in the skill and in the MCP with those flags.)
 
 This file is the contributor guide. You should not need the specs to add an item; if
 something here is unclear or wrong, fix this file in the same PR.

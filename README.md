@@ -16,7 +16,8 @@ shadcn's exports and props, so `@mangacn/button` replaces `button` with no call-
 
 You need a shadcn project on the `base-nova` style (Base UI), Tailwind CSS v4 and the `cn`
 helper that `shadcn init` writes. Next.js is the reference setup; any framework the shadcn CLI
-supports works, with your own font loading in place of `next/font`.
+supports works, with your own font loading in place of `next/font`. A new project gets that
+style with `pnpm dlx shadcn@latest init -b base -p nova` ("Base UI", then "Nova" at the prompt).
 
 1. Name the registry in `components.json`:
 
@@ -31,12 +32,13 @@ supports works, with your own font loading in place of `next/font`.
 2. Install the theme, its three fonts, the ink frame and a first item in one command:
 
    ```bash
-   npx shadcn@latest add @mangacn/theme @mangacn/font-display @mangacn/font-dialogue @mangacn/font-dialogue-ja @mangacn/ink-frame @mangacn/speech-bubble
+   npx shadcn@latest add @mangacn/theme @mangacn/ink-frame @mangacn/speech-bubble --yes --overwrite
    ```
 
-   A fresh shadcn project already has stock's `components/ui/button.tsx`, so an add that
-   brings mangacn's button asks to overwrite it: answer yes. Scripts and agents pass
-   `--overwrite`, because `--yes` alone stops at that question and exits 0 with nothing written.
+   The flags let it run without a prompt: `--yes` answers the theme's "You are about to
+   install a new theme… Continue?", and `--overwrite` answers the CLI's question when a stock
+   or edited file (say `components/ui/button.tsx`) is already there. Unanswered without a
+   terminal, either question ends the run with exit 0 and nothing written.
 
 3. Use it:
 

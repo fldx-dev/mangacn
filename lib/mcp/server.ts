@@ -1,8 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/server";
-import { registerSearchTool, registerSourceTools } from "fumadocs-core/mcp";
 import type { SearchServer } from "fumadocs-core/search/server";
 import type { LLMsWithPages, LoaderConfig, LoaderOutput } from "fumadocs-core/source";
 import packageJson from "@/package.json";
+import { registerDocsTools } from "./docs-tools";
 import { type CatalogReaders, registerCatalogTools } from "./tools";
 
 /** What the server reads; the route passes the docs source and cached readers, tests stubs. */
@@ -26,8 +26,7 @@ export function createMcpServer<C extends LoaderConfig>(deps: McpDeps<C>): McpSe
     { name: "mangacn", title: "mangacn docs", version: packageJson.version },
     { instructions: INSTRUCTIONS },
   );
-  registerSearchTool(mcp, deps.searchServer);
-  registerSourceTools(mcp, deps.source, deps.llms);
+  registerDocsTools(mcp, deps.searchServer, deps.source, deps.llms);
   registerCatalogTools(mcp, deps.read);
   return mcp;
 }

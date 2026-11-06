@@ -1,6 +1,11 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { installCommand } from "@/lib/docs/install-command";
+import {
+  installCommand,
+  itemClientNote,
+  SETUP_ITEMS,
+  setCommand,
+} from "@/lib/docs/install-command";
 import { expectNoA11yViolations } from "@/lib/test/axe";
 import { InstallCommand } from "./install-command";
 
@@ -43,7 +48,21 @@ describe("InstallCommand", () => {
       fireEvent.click(panel.querySelector("button") as HTMLButtonElement);
     });
     expect(writeText).toHaveBeenCalledWith(
-      "npx shadcn@latest add @mangacn/ink-frame @mangacn/button",
+      "npx shadcn@latest add @mangacn/ink-frame @mangacn/button --overwrite",
+    );
+  });
+
+  it("prints the Installation page's first install for `setup`, with no client line", () => {
+    const { container } = render(<InstallCommand setup />);
+    expect(visibleCode()).toBe(setCommand(SETUP_ITEMS, "pnpm"));
+    expect(visibleCode()).toMatch(/ --yes --overwrite$/);
+    expect(container.querySelector('[data-slot="install-client-note"]')).toBeNull();
+  });
+
+  it("says under an item's block whether it is a client component", () => {
+    const { container } = render(<InstallCommand item="speech-bubble" />);
+    expect(container.querySelector('[data-slot="install-client-note"]')?.textContent).toBe(
+      itemClientNote({ item: "speech-bubble" }),
     );
   });
 
