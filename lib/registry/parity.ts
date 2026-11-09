@@ -43,6 +43,8 @@ export const PARITY_PRIMITIVES = [
   "spinner",
   "empty",
   "label",
+  "aspect-ratio",
+  "native-select",
   "input-group",
   "button-group",
   "context-menu",
