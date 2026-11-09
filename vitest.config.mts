@@ -49,6 +49,11 @@ export default defineConfig({
         find: /^@\/components\/stamp$/,
         replacement: fileURLToPath(new URL("./registry/ui/stamp/stamp.tsx", import.meta.url)),
       },
+      // empty → emanata (the default media mark).
+      {
+        find: /^@\/components\/emanata$/,
+        replacement: fileURLToPath(new URL("./registry/ui/emanata/emanata.tsx", import.meta.url)),
+      },
       { find: "@", replacement: fileURLToPath(new URL("./", import.meta.url)) },
     ],
   },

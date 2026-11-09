@@ -998,6 +998,23 @@
           "target": "@ui/spinner.tsx"
         }
       ]
+    },
+    {
+      "name": "empty",
+      "type": "registry:ui",
+      "title": "Empty",
+      "description": "Stock empty state with an emanata mark as its default media and the title in the display face (needs emanata).",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["class-variance-authority", "cn"],
+      "registryDependencies": ["https://www.mangacn.com/r/emanata.json"],
+      "files": [
+        {
+          "path": "empty/empty.tsx",
+          "type": "registry:ui",
+          "target": "@ui/empty.tsx"
+        }
+      ]
     }
   ]
 }
