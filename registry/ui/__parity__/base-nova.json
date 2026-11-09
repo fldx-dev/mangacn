@@ -800,6 +800,20 @@
       ],
       "registryDependencies": [],
       "sha1": "bb89d2e60032ede5536e8dc4da1c19017a0166fd"
+    },
+    "spinner": {
+      "exports": [
+        "Spinner"
+      ],
+      "dataSlots": [
+        "spinner"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "sha1": "c650a1a60a6b63f941badafe0874302fbb4c1dbc"
     }
   }
 }

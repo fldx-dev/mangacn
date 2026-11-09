@@ -982,6 +982,22 @@
           "target": "@ui/scroll-area.tsx"
         }
       ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "Spinner",
+      "description": "Stock loading spinner drawn as an ink blot with its droplets, at icon size; still under reduced motion.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn"],
+      "files": [
+        {
+          "path": "spinner/spinner.tsx",
+          "type": "registry:ui",
+          "target": "@ui/spinner.tsx"
+        }
+      ]
     }
   ]
 }
