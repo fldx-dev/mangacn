@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 61 items in the registry. Each line gives the item's name, what it is, the one
+All 62 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -136,6 +136,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `sonner`: Stock sonner Toaster whose toasts are paper cards with a heavy hand-drawn outline and ink glyph icons (needs ink-frame).
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/sonner --overwrite`
   Docs: https://www.mangacn.com/docs/components/sonner (Markdown: https://www.mangacn.com/docs/components/sonner.md)
+- `scroll-area`: Stock scroll area with a hand-drawn ink thumb on a thin ruled track; the viewport is a named region (needs ink-frame).
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/scroll-area --overwrite`
+  Docs: https://www.mangacn.com/docs/components/scroll-area (Markdown: https://www.mangacn.com/docs/components/scroll-area.md)
 
 ## Layout
 

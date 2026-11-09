@@ -61,6 +61,14 @@ export const PROPS_DELTA: Readonly<Record<string, Readonly<Record<string, PropDe
         "Names the scroll region around the table, which takes focus so a keyboard can scroll it. Give each table on a page its own.",
     },
   },
+  "scroll-area": {
+    label: {
+      type: "string",
+      default: '"Scrollable content"',
+      description:
+        "On `ScrollArea`: names the scroll region (the viewport), which takes focus whenever it scrolls. Give each scroll area on a page its own.",
+    },
+  },
 };
 
 /** shadcn's page for a stock primitive (the Base UI docs, which mangacn's base-nova follows). */
