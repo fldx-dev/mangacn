@@ -36,6 +36,9 @@ function TooltipContent({
         alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
+        // The drawing reaches 8 px past the popup; keep that much room from the viewport edge
+        // so a popup near it does not scroll the page sideways.
+        collisionPadding={8}
         className="isolate z-50"
       >
         <TooltipPrimitive.Popup
