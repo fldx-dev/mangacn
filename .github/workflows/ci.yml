@@ -127,9 +127,16 @@ jobs:
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       - if: steps.filter.outputs.items != 'none'
         run: pnpm exec playwright install chromium
-      # System libraries and fonts come from apt; only a cache miss pays for the mirror.
+      # System libraries come from apt; only a cache miss pays for the mirror.
       - if: steps.filter.outputs.items != 'none' && steps.browsers.outputs.cache-hit != 'true'
         run: pnpm exec playwright install-deps chromium
+      # The fonts install-deps would bring (CJK, emoji, Unifont) are needed on every run: without
+      # them Japanese set in a Latin face (Geist) renders blank, and baselines written on a
+      # cache hit differ from those written on a miss (Task 68 found 18 such shots).
+      - if: steps.filter.outputs.items != 'none'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends fonts-ipafont-gothic fonts-wqy-zenhei fonts-freefont-ttf fonts-liberation fonts-noto-color-emoji fonts-unifont fonts-tlwg-loma-otf
       - if: steps.filter.outputs.items != 'none'
         run: pnpm build
       - if: ${{ steps.filter.outputs.items != 'none' && !inputs.update-snapshots }}
