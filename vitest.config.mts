@@ -58,6 +58,11 @@ export default defineConfig({
         find: /^@\/components\/stamp$/,
         replacement: fileURLToPath(new URL("./registry/ui/stamp/stamp.tsx", import.meta.url)),
       },
+      // field → label.
+      {
+        find: /^@\/components\/ui\/label$/,
+        replacement: fileURLToPath(new URL("./registry/ui/label/label.tsx", import.meta.url)),
+      },
       // empty → emanata (the default media mark).
       {
         find: /^@\/components\/emanata$/,

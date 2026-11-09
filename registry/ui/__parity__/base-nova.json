@@ -929,6 +929,49 @@
         "separator"
       ],
       "sha1": "bbac114e903b7ac8d67ad273166920af8cf9bdc4"
+    },
+    "field": {
+      "exports": [
+        "Field",
+        "FieldContent",
+        "FieldDescription",
+        "FieldError",
+        "FieldGroup",
+        "FieldLabel",
+        "FieldLegend",
+        "FieldSeparator",
+        "FieldSet",
+        "FieldTitle"
+      ],
+      "dataSlots": [
+        "field",
+        "field-content",
+        "field-description",
+        "field-error",
+        "field-group",
+        "field-label",
+        "field-legend",
+        "field-separator",
+        "field-separator-content",
+        "field-set"
+      ],
+      "variants": {
+        "fieldVariants": {
+          "orientation": [
+            "vertical",
+            "horizontal",
+            "responsive"
+          ]
+        }
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "label",
+        "separator"
+      ],
+      "sha1": "f7882008d12907f07a4689a68dbdca02c793ff35"
     }
   }
 }

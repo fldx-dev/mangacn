@@ -1155,6 +1155,28 @@
           "target": "@ui/button-group.tsx"
         }
       ]
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field",
+      "description": "Stock form field parts: a display-face legend, hand-drawn separators and errors in spot with an ink underline under the control.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/ink-mark.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "field/field.tsx",
+          "type": "registry:ui",
+          "target": "@ui/field.tsx"
+        }
+      ]
     }
   ]
 }

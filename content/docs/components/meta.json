@@ -42,6 +42,7 @@
     "label",
     "input-group",
     "button-group",
+    "field",
     "---Layout---",
     "panel",
     "panel-grid",
