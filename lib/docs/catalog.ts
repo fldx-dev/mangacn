@@ -176,10 +176,22 @@ export function renderComponentsMeta(items: readonly DocItem[]): string {
   return `${JSON.stringify({ title: "Components", defaultOpen: true, pages }, null, 2)}\n`;
 }
 
-/** `content/docs/blocks/meta.json`: the block pages in catalog order, no separators. */
+/** Biome's line width (biome.json): a JSON array that fits on one line is written on one. */
+const JSON_LINE_WIDTH = 100;
+
+/**
+ * `content/docs/blocks/meta.json`: the block pages in catalog order, no separators, laid out as
+ * Biome formats it (the page list on one line while it fits), so `gen:docs --check` and
+ * `biome check` agree.
+ */
 export function renderBlocksMeta(items: readonly DocItem[]): string {
-  const pages = items.map((item) => item.name);
-  return `${JSON.stringify({ title: "Blocks", defaultOpen: true, pages }, null, 2)}\n`;
+  const pages = items.map((item) => JSON.stringify(item.name));
+  const inline = `  "pages": [${pages.join(", ")}]`;
+  const list =
+    inline.length <= JSON_LINE_WIDTH
+      ? inline
+      : `  "pages": [\n${pages.map((page) => `    ${page}`).join(",\n")}\n  ]`;
+  return `{\n  "title": "Blocks",\n  "defaultOpen": true,\n${list}\n}\n`;
 }
 
 /** The meta.json `gen:docs` writes into a section's folder. */

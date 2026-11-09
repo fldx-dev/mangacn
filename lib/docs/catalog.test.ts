@@ -104,6 +104,14 @@ describe("block pages", () => {
   it("sit in the Blocks section, in catalog order", () => {
     const meta = { title: "Blocks", defaultOpen: true, pages: ["shelf", "reader"] };
     expect(JSON.parse(renderBlocksMeta(blocks))).toEqual(meta);
+    // Biome's layout: the list on one line while it fits in 100 columns, else one per line.
+    expect(renderBlocksMeta(blocks)).toBe(
+      '{\n  "title": "Blocks",\n  "defaultOpen": true,\n  "pages": ["shelf", "reader"]\n}\n',
+    );
+    const many = Array.from({ length: 9 }, (_, i) => ({ ...blocks[0], name: `block-${i}` }));
+    expect(renderBlocksMeta(many)).toContain('  "pages": [\n    "block-0",\n    "block-1",');
+    expect(JSON.parse(renderBlocksMeta(many)).pages).toHaveLength(9);
+    expect(JSON.parse(renderBlocksMeta([])).pages).toEqual([]);
     expect(JSON.parse(renderSectionMeta(DOCS_SECTIONS[1], blocks))).toEqual(meta);
     expect(renderSectionMeta(DOCS_SECTIONS[0], docItems(registry, demos))).toBe(
       renderComponentsMeta(docItems(registry, demos)),
