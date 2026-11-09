@@ -181,6 +181,30 @@ async function expectDemosFitStages(page: Page) {
   expect(overflowing, "demos taller than their stage").toEqual([]);
 }
 
+/**
+ * Fumadocs scrolls the sidebar to the active item only when that item is out of view at the
+ * moment it checks, so an item page's shot drifted with the sidebar's scroll (Task 68). Pin it:
+ * the active item at the top of the sidebar (below its padding), its scrollbar faded out again.
+ * Below 768 px the sidebar is a closed drawer and nothing is pinned.
+ */
+async function pinSidebar(page: Page) {
+  const sidebar = page.locator("#nd-sidebar");
+  if (!(await sidebar.isVisible())) return;
+  await sidebar.evaluate((aside) => {
+    const viewport = aside.querySelector<HTMLElement>("[data-radix-scroll-area-viewport]");
+    const active = aside.querySelector('a[data-active="true"]');
+    if (!viewport || !active) throw new Error("No sidebar viewport or active item");
+    const padding = Number.parseFloat(getComputedStyle(viewport).paddingTop);
+    viewport.scrollTop +=
+      active.getBoundingClientRect().top - viewport.getBoundingClientRect().top - padding;
+  });
+  // The scroll shows the scrollbar for a moment (Radix `type="scroll"`); wait until it is gone.
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  await expect(sidebar.locator('[data-orientation="vertical"]')).toHaveCount(0);
+}
+
 for (const path of pages) {
   for (const mode of ["light", "dark"] as const) {
     test(`${path} (${mode})`, async ({ page }) => {
@@ -208,6 +232,7 @@ for (const path of pages) {
         await waitForInk(page);
       }
       await waitForStages(page, mode);
+      if (path.startsWith("/docs/components/")) await pinSidebar(page);
 
       if (comparePixels) {
         // The whole page first, in the state its baseline was always taken in.
