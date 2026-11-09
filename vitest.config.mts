@@ -32,6 +32,9 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    // Each test file still gets its own context (stubbed globals stay per file), but the worker
+    // keeps one jsdom per thread instead of building it for every file: measured on CI in Task 67.
+    pool: "vmThreads",
     // Locally, parallel sessions can saturate the CPU and workers then time out on start-up;
     // CI runners are quiet, so they keep the default.
     ...(process.env.CI ? {} : { maxWorkers: "50%" }),
