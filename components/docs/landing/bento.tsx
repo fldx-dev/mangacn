@@ -37,10 +37,7 @@ export function Bento() {
 
         <PanelGrid columns={{ base: 1, sm: 2, md: 4 }} gutter="md">
           <PanelGridItem colSpan={2} rowSpan={2}>
-            <Panel
-              caption="Dialogue"
-              className="flex h-full flex-col items-start gap-5 px-5 pt-8 pb-6"
-            >
+            <Panel caption="Dialogue" className="flex h-full flex-col items-start gap-5 px-5 pb-6">
               <SpeechBubble lang="ja" aria-label="Kenji">
                 遅いぞ。もう始まってる！
               </SpeechBubble>
@@ -63,7 +60,7 @@ export function Bento() {
           </PanelGridItem>
 
           <PanelGridItem colSpan={2}>
-            <Panel caption="Sound" className="h-full px-5 pt-8 pb-6">
+            <Panel caption="Sound" className="h-full px-5 pb-6">
               <div className="flex flex-1 flex-wrap items-center justify-center gap-x-10 gap-y-6">
                 <SfxText lang="ja" size="sm" rotate={-6}>
                   ドン！
@@ -79,7 +76,7 @@ export function Bento() {
           </PanelGridItem>
 
           <PanelGridItem>
-            <Panel caption="Labels" className="h-full px-5 pt-8 pb-6">
+            <Panel caption="Labels" className="h-full px-5 pb-6">
               <div className="flex flex-wrap content-start gap-2">
                 <Badge>New</Badge>
                 <Badge variant="secondary">Ch. 12</Badge>
@@ -93,7 +90,7 @@ export function Bento() {
           </PanelGridItem>
 
           <PanelGridItem>
-            <Panel caption="Controls" className="h-full gap-4 px-5 pt-8 pb-6 text-sm">
+            <Panel caption="Controls" className="h-full gap-4 px-5 pb-6 text-sm">
               <div className="flex items-center gap-2">
                 <Switch id="bento-switch" defaultChecked />
                 <label htmlFor="bento-switch">Show furigana</label>
@@ -110,7 +107,7 @@ export function Bento() {
           </PanelGridItem>
 
           <PanelGridItem colSpan={2}>
-            <Panel caption="Tone" className="h-full min-h-56 px-5 pt-8 pb-6">
+            <Panel caption="Tone" className="h-full min-h-56 px-5 pb-6">
               <HalftoneBackground tone="light" size="md" fade="radial" />
               <div className="flex flex-1 items-center justify-center gap-10">
                 <VerticalText lang="ja" className="font-display text-2xl">
@@ -124,7 +121,7 @@ export function Bento() {
           </PanelGridItem>
 
           <PanelGridItem>
-            <Panel caption="Marks" className="h-full px-5 pt-8 pb-6">
+            <Panel caption="Marks" className="h-full px-5 pb-6">
               <div className="flex flex-1 flex-wrap items-center justify-center gap-5">
                 <Emanata kind="sweat" size="md" />
                 <Emanata kind="anger" size="md" color="spot" />
@@ -136,7 +133,7 @@ export function Bento() {
           </PanelGridItem>
 
           <PanelGridItem>
-            <Panel caption="Loading" className="h-full px-5 pt-8 pb-6">
+            <Panel caption="Loading" className="h-full px-5 pb-6">
               <div className="flex flex-1 items-center justify-center">
                 <InkSplashLoader label="Inking page 7" size="lg" />
               </div>

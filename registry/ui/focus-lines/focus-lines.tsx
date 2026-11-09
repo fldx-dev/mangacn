@@ -2,7 +2,9 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import type * as React from "react";
 
-const focusLinesVariants = cva("pointer-events-none absolute inset-0 -z-1 size-full", {
+// The layer is a plain box, so `inset-*` overrides size it as they would any box, and it clips
+// the lines that run off it: a host that does not clip (a `panel`) stays inside the page.
+const focusLinesVariants = cva("pointer-events-none absolute inset-0 -z-1 block overflow-hidden", {
   variants: {
     color: {
       ink: "text-ink",
@@ -22,7 +24,7 @@ function jitter(index: number): number {
 }
 
 export interface FocusLinesProps
-  extends Omit<React.SVGAttributes<SVGSVGElement>, "color" | "children">,
+  extends Omit<React.HTMLAttributes<HTMLSpanElement>, "color" | "children">,
     VariantProps<typeof focusLinesVariants> {
   /**
    * Line colour: ink, or the mid tone for a quieter background.
@@ -44,12 +46,19 @@ export interface FocusLinesProps
    * @default "short"
    */
   length?: "short" | "long";
+  /**
+   * Classes for the layer. It fills its `relative isolate` parent (`absolute inset-0 -z-1`) and
+   * clips the lines to its own box, so the parent need not clip; an `inset-*` class moves its
+   * edges (`inset-(--outline-width-heavy)` keeps the lines inside a panel's stroke).
+   */
+  className?: string;
 }
 
 /**
  * Concentration lines bursting in towards a point, drawn as inline SVG at
- * `--speed-line-width`. Decorative and `aria-hidden`; place it as the first child of a
- * `relative isolate` container.
+ * `--speed-line-width`. Decorative and `aria-hidden`: the layer fills its `relative isolate`
+ * parent (place it as the first child) and clips the lines to its own box, so the parent need
+ * not be `overflow-hidden`.
  */
 export function FocusLines({
   className,
@@ -80,33 +89,39 @@ export function FocusLines({
     };
   });
   return (
-    <svg
+    <span
       aria-hidden="true"
-      focusable="false"
       data-slot="focus-lines"
       data-length={length}
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
       className={cn(focusLinesVariants({ color }), className)}
       {...props}
     >
-      <g
-        stroke="currentColor"
-        strokeLinecap="round"
-        style={{ strokeWidth: "var(--speed-line-width)" }}
+      <svg
+        data-slot="focus-lines-svg"
+        aria-hidden="true"
+        focusable="false"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        className="block size-full overflow-hidden"
       >
-        {lines.map((line, index) => (
-          <line
-            // biome-ignore lint/suspicious/noArrayIndexKey: lines are positional and never reorder.
-            key={index}
-            x1={line.x1.toFixed(2)}
-            y1={line.y1.toFixed(2)}
-            x2={line.x2.toFixed(2)}
-            y2={line.y2.toFixed(2)}
-            vectorEffect="non-scaling-stroke"
-          />
-        ))}
-      </g>
-    </svg>
+        <g
+          stroke="currentColor"
+          strokeLinecap="round"
+          style={{ strokeWidth: "var(--speed-line-width)" }}
+        >
+          {lines.map((line, index) => (
+            <line
+              // biome-ignore lint/suspicious/noArrayIndexKey: lines are positional and never reorder.
+              key={index}
+              x1={line.x1.toFixed(2)}
+              y1={line.y1.toFixed(2)}
+              x2={line.x2.toFixed(2)}
+              y2={line.y2.toFixed(2)}
+              vectorEffect="non-scaling-stroke"
+            />
+          ))}
+        </g>
+      </svg>
+    </span>
   );
 }

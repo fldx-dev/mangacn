@@ -8,12 +8,13 @@ item: manga-frame
 
 <CopyPrompt item="manga-frame" />
 
-An image in a hand-drawn ink frame, with aspect presets, a halftone mat and a caption, for cover art and illustrations. `alt` is required; for frames that hold words rather than a picture, use Panel.
+An image in a hand-drawn ink frame, with aspect presets, a halftone mat and a caption, for cover art and illustrations. `alt` is required with `src`. For a title card or a lettered scene, pass children instead of `src`: they sit on paper in a box of the same aspect, in the theme's fonts and tokens, so they follow dark mode and stay real text. For a panel of story with captions and bubbles, use Panel.
 
 ## Examples
 
 <DemoFrame item="manga-frame" demo="default" />
 <DemoFrame item="manga-frame" demo="variants" />
+<DemoFrame item="manga-frame" demo="lettered" />
 
 ## Props
 

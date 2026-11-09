@@ -35,7 +35,7 @@
           },
           {
             "name": "corner",
-            "description": "`none` keeps the box in the flow. A corner places it absolutely on that corner of its\nnearest positioned parent (a `panel`), its outline overlapping the parent's frame.",
+            "description": "`none` keeps the box in the flow. A corner places it absolutely on that corner of its\nnearest positioned parent (a `panel`), its outline overlapping the parent's frame, so the\nparent's content needs room on that side: one line of the box is\n`calc(var(--text-sm)*var(--leading-snug)+--spacing(3))` tall (about 2 rem), and with a\npanel's gap that is `pt-[calc(var(--text-sm)*var(--leading-snug)+--spacing(6))]` (about\n2.75 rem, `pt-11`) for a top corner, `pb-…` for a bottom one; add a line for each line it\nwraps to. `<Panel caption>` draws this same box and keeps that room for you.",
             "type": "\"bottom-left\" | \"bottom-right\" | \"none\" | \"top-left\" | \"top-right\" | null | undefined",
             "simplifiedType": "\"bottom-left\" | \"bottom-right\" | \"none\" | \"top-left\" | \"top-right\"",
             "tags": [
@@ -180,6 +180,15 @@
                 "text": "\"short\""
               }
             ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the layer. It fills its `relative isolate` parent (`absolute inset-0 -z-1`) and\nclips the lines to its own box, so the parent need not clip; an `inset-*` class moves its\nedges (`inset-(--outline-width-heavy)` keeps the lines inside a panel's stroke).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
             "required": false,
             "deprecated": false
           }
@@ -589,25 +598,34 @@
         "entries": [
           {
             "name": "src",
-            "description": "The picture's URL, passed to the `<img>`.",
-            "type": "string",
+            "description": "The picture's URL, passed to the `<img>`. Pass `src` and `alt`, or `children`.",
+            "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],
-            "required": true,
+            "required": false,
             "deprecated": false
           },
           {
             "name": "alt",
-            "description": "Required: describe the picture, or pass `\"\"` when it is purely decorative.",
-            "type": "string",
+            "description": "Required with `src`: describe the picture, or pass `\"\"` when it is purely decorative.",
+            "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],
-            "required": true,
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "children",
+            "description": "A drawn or lettered scene in place of a picture, in the theme's fonts and tokens. It fills a\n`relative isolate` box of the same aspect, clipped to the frame and centred on paper, so\n`speed-lines` or `focus-lines` go in as its first child. Real text stays readable as text.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
             "deprecated": false
           },
           {
             "name": "aspect",
-            "description": "The picture's aspect ratio; it is cropped to fill (`object-cover`).",
+            "description": "The picture's (or scene's) aspect ratio; a picture is cropped to fill (`object-cover`).",
             "type": "\"1/1\" | \"16/9\" | \"3/4\" | \"4/3\" | null | undefined",
             "simplifiedType": "\"1/1\" | \"16/9\" | \"3/4\" | \"4/3\"",
             "tags": [
@@ -644,7 +662,7 @@
           },
           {
             "name": "className",
-            "description": "Applied to the `<figure>`; other props go to the `<img>`.",
+            "description": "Applied to the `<figure>`; other props go to the `<img>` (or the scene's box).",
             "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],
@@ -789,7 +807,7 @@
           },
           {
             "name": "caption",
-            "description": "Narration box in one corner, rendered as text.",
+            "description": "Narration box on one corner, rendered as text: the same box as caption-box's `corner`. The\npanel keeps one line of room for it on that side; for a caption that wraps, add padding\non that side (`pt-16`), or the content runs under it.",
             "type": "React.ReactNode",
             "simplifiedType": "React.ReactNode",
             "tags": [],
@@ -805,6 +823,20 @@
               {
                 "name": "default",
                 "text": "\"top-left\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "captionFont",
+            "description": "The caption's face: `dialogue` (the lettering face, as caption-box) or `body`.",
+            "type": "\"body\" | \"dialogue\" | null | undefined",
+            "simplifiedType": "\"body\" | \"dialogue\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"dialogue\""
               }
             ],
             "required": false,
@@ -1272,6 +1304,15 @@
             ],
             "required": false,
             "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the layer. It fills its `relative isolate` parent (`absolute inset-0 -z-1`) and\nclips the lines to its own box, so the parent need not clip; an `inset-*` class moves its\nedges (`inset-(--outline-width-heavy)` keeps the lines inside a panel's stroke).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
           }
         ]
       }
@@ -1327,7 +1368,7 @@
           },
           {
             "name": "size",
-            "description": "Seal size: 56, 80 or 112 px square, with the text scaled to match.",
+            "description": "Seal size: 56, 80 or 112 px square, with the text scaled to match. Text that would overrun\nthe inner ring shrinks to fit inside it once the page has loaded; keep it to one or two\nshort words (at `lg`, about 8 Latin letters or 4 kanji stay readable).",
             "type": "StampSize | undefined",
             "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
             "tags": [

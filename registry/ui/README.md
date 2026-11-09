@@ -349,7 +349,13 @@ merged into `main` with a merge commit and deleted afterwards.
    Outlines go through `InkFrame` (recipe 1), including custom shapes via its `outline` prop.
    Decorative backgrounds (`speed-lines`, `focus-lines`, `halftone-background`) render one
    `aria-hidden` layer with `pointer-events-none absolute inset-0 -z-1`; the user places it as
-   the first child of a `relative isolate` container.
+   the first child of a `relative isolate` container. **Nothing paints past the layer**: hosts
+   such as `panel` do not clip, and a drawing past the layer bleeds over the frame or widens a
+   phone page. A layer that draws past its box puts `overflow-hidden` on itself (`focus-lines`;
+   `speed-lines` too, though its gradients stay inside). It is a plain box, never a `size-full`
+   SVG, so a user's `inset-*` class moves its edges instead of pushing it out of the host;
+   inline SVG goes inside it. Say so in the props table: a `className` prop whose JSDoc names
+   the parent it fills and that it clips.
 2. **Catalog entry:** `"type": "registry:component"`, file type `registry:component`,
    `dependencies` listing every package the file imports (`["class-variance-authority"]` for
    the example above; `@/lib/utils` is always available and is not a dependency), and

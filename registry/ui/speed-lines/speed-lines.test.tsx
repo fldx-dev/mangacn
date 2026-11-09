@@ -19,6 +19,14 @@ describe("SpeedLines", () => {
     expect(lines.childElementCount).toBe(0);
   });
 
+  // A panel host does not clip, so the layer does (Task 66).
+  it("clips to its own box", () => {
+    const lines = linesOf(render(<SpeedLines className="inset-2" />).container);
+    expect(lines.classList.contains("overflow-hidden")).toBe(true);
+    expect(lines.classList.contains("inset-2")).toBe(true);
+    expect(lines.classList.contains("inset-0")).toBe(false);
+  });
+
   it("draws radial lines around the centre, 50 % by default", () => {
     const lines = linesOf(render(<SpeedLines />).container);
     expect(lines.dataset.direction).toBe("radial");

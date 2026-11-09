@@ -1,7 +1,11 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
+import type * as React from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { expectNoA11yViolations } from "@/lib/test/axe";
 import MangaFrameDefaultDemo from "./demos/default";
+import MangaFrameLetteredDemo from "./demos/lettered";
 import { MangaFrame } from "./manga-frame";
 
 afterEach(cleanup);
@@ -63,7 +67,58 @@ describe("MangaFrame", () => {
     expect(caption.dataset.slot).toBe("manga-frame-caption");
   });
 
+  it("renders children as a lettered scene in place of a picture", () => {
+    const { container } = render(
+      <MangaFrame aspect="16/9" caption="Title page" id="scene-1">
+        <p className="font-display">Rooftop</p>
+      </MangaFrame>,
+    );
+    const figure = container.firstElementChild as HTMLElement;
+    expect(figure.dataset.content).toBe("scene");
+    expect(container.querySelector("img")).toBeNull();
+    const scene = container.querySelector<HTMLElement>('[data-slot="manga-frame-scene"]');
+    expect(scene).not.toBeNull();
+    expect(scene?.id).toBe("scene-1");
+    expect(screen.getByText("Rooftop").parentElement).toBe(scene);
+    // A box of the same aspect for backgrounds such as speed-lines, clipped to the frame.
+    for (const name of ["aspect-video", "relative", "isolate", "overflow-hidden", "bg-paper"]) {
+      expect(scene?.classList.contains(name), name).toBe(true);
+    }
+  });
+
+  it("frames a scene exactly as it frames a picture", () => {
+    const frames = (node: React.ReactElement) => {
+      const { container } = render(node);
+      const result = [...container.querySelectorAll<HTMLElement>('[data-slot="ink-frame"]')].map(
+        (frame) => frame.className,
+      );
+      cleanup();
+      return result;
+    };
+    expect(frames(<MangaFrame matte>Scene</MangaFrame>)).toEqual(
+      frames(<MangaFrame matte src={src} alt="x" />),
+    );
+  });
+
+  it("takes a picture or a scene, not both, at the type level", () => {
+    // @ts-expect-error a scene takes no src
+    render(<MangaFrame src={src}>Scene</MangaFrame>);
+    // @ts-expect-error a frame needs a picture or a scene
+    render(<MangaFrame />);
+    expect(true).toBe(true);
+  });
+
+  it("silences Next's no-img-element lint on the plain <img>, with the reason", () => {
+    const source = readFileSync(path.join(__dirname, "manga-frame.tsx"), "utf8");
+    const line = source.split("\n").find((text) => text.trimStart().startsWith("<img"));
+    expect(line).toMatch(/eslint-disable-line @next\/next\/no-img-element -- \S/);
+  });
+
   it("has no axe violations in its default demo", async () => {
     await expectNoA11yViolations(<MangaFrameDefaultDemo />);
+  });
+
+  it("has no axe violations in its lettered demo", async () => {
+    await expectNoA11yViolations(<MangaFrameLetteredDemo />);
   });
 });

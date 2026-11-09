@@ -26,7 +26,9 @@ export interface StampProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 
    */
   rotate?: number;
   /**
-   * Seal size: 56, 80 or 112 px square, with the text scaled to match.
+   * Seal size: 56, 80 or 112 px square, with the text scaled to match. Text that would overrun
+   * the inner ring shrinks to fit inside it once the page has loaded; keep it to one or two
+   * short words (at `lg`, about 8 Latin letters or 4 kanji stay readable).
    * @default "md"
    */
   size?: StampSize;
@@ -50,6 +52,8 @@ const SIZES: Record<StampSize, { box: number; className: string }> = {
 const PAD = 3;
 /** The inner ring sits this far inside the outer one, as a share of the box. */
 const RING_INSET = 0.1;
+/** Clear space between the text's box and the inner ring's stroke, in px. */
+const RING_GAP = 1;
 
 interface Pen {
   roughness: number;
@@ -74,6 +78,27 @@ function hashSeed(id: string): number {
 function readNumber(style: CSSStyleDeclaration, name: string, fallback: number): number {
   const value = Number.parseFloat(style.getPropertyValue(name));
   return Number.isFinite(value) ? value : fallback;
+}
+
+/**
+ * The scale (at most 1) that keeps a `width` × `height` text box, centred, inside the inner
+ * ring of a seal drawn `box` px square and laid out `side` px square: inside the circle for a
+ * round seal (the box's corners on it), inside the square for a square one.
+ */
+function fitScale(
+  shape: StampShape,
+  box: number,
+  side: number,
+  width: number,
+  height: number,
+  ring: number,
+): number {
+  if (width <= 0 || height <= 0 || side <= 0) return 1;
+  const inner = (box - PAD * 2 - box * RING_INSET * 2) * (side / box) - ring - RING_GAP * 2;
+  const fit =
+    shape === "round" ? inner / Math.hypot(width, height) : Math.min(inner / width, inner / height);
+  // Two decimals: a sub-pixel change of the text box does not re-render.
+  return Math.min(1, Math.floor(fit * 100) / 100);
 }
 
 const generator = rough.generator();
@@ -138,21 +163,47 @@ export function Stamp({
   const id = useId();
   const resolvedSeed = seed ?? hashSeed(id);
   const hostRef = useRef<HTMLSpanElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
   const [pen, setPen] = useState<Pen | null>(null);
+  // The text's scale. The server and the first client render use 1, so hydration matches; the
+  // seal's box never changes, only the text inside it (`scale` takes no layout room).
+  const [fit, setFit] = useState(1);
+  const { box, className: sizeClassName } = SIZES[size];
 
-  // The theme can retune the pen (`--ink-roughness` …); read it once the styles apply.
+  // The theme can retune the pen (`--ink-roughness` …); read it once the styles apply. The
+  // text is measured then, and again whenever it or the seal resizes (a web font swapping in),
+  // so it always sits inside the ring. `data-inked` waits for the web fonts' first measure.
   useEffect(() => {
     const host = hostRef.current;
-    if (!host) return;
+    const text = textRef.current;
+    if (!host || !text) return;
     const style = getComputedStyle(host);
-    setPen({
-      roughness: readNumber(style, "--ink-roughness", DEFAULT_PEN.roughness),
-      bowing: readNumber(style, "--ink-bowing", DEFAULT_PEN.bowing),
-      maxRandomnessOffset: readNumber(style, "--ink-offset", DEFAULT_PEN.maxRandomnessOffset),
-    });
-  }, []);
+    const ring = readNumber(style, "--outline-width", 1.5);
+    const measure = () =>
+      setFit(fitScale(shape, box, host.offsetWidth, text.offsetWidth, text.offsetHeight, ring));
+    let active = true;
+    const settle = () => {
+      if (!active) return;
+      measure();
+      setPen({
+        roughness: readNumber(style, "--ink-roughness", DEFAULT_PEN.roughness),
+        bowing: readNumber(style, "--ink-bowing", DEFAULT_PEN.bowing),
+        maxRandomnessOffset: readNumber(style, "--ink-offset", DEFAULT_PEN.maxRandomnessOffset),
+      });
+    };
+    const fonts = typeof document === "undefined" ? undefined : document.fonts;
+    if (!fonts || fonts.status === "loaded") settle();
+    else fonts.ready.then(settle, settle);
+    const observer =
+      typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(measure);
+    observer?.observe(text);
+    observer?.observe(host);
+    return () => {
+      active = false;
+      observer?.disconnect();
+    };
+  }, [shape, box]);
 
-  const { box, className: sizeClassName } = SIZES[size];
   const { outline, ring } = drawSeal(shape, box, resolvedSeed, pen ?? DEFAULT_PEN);
   const rounding = shape === "round" ? "rounded-full" : "rounded-[2px]";
   const a11y = label ? { role: "img", "aria-label": label } : {};
@@ -163,9 +214,11 @@ export function Stamp({
       data-color={color}
       data-size={size}
       data-inked={pen ? "true" : undefined}
+      data-fit={fit < 1 ? fit : undefined}
       className={cn(
         // Slightly uneven ink: the whole seal at 90 %.
-        "relative inline-grid shrink-0 place-items-center align-middle font-display opacity-90",
+        // One track the seal's size, so a word wider than the seal overflows it from the centre.
+        "relative inline-grid shrink-0 grid-cols-1 grid-rows-1 place-items-center align-middle font-display opacity-90",
         color === "spot" ? "text-spot" : "text-ink",
         sizeClassName,
         className,
@@ -216,9 +269,14 @@ export function Stamp({
           rounding,
         )}
       />
+      {/* As wide as its text up to 72 % of the seal, where two words wrap, but never narrower
+          than its longest word; centred even when that word is wider than the seal (`unsafe`),
+          so the fit scales it about the seal's centre. */}
       <span
+        ref={textRef}
         data-slot="stamp-text"
-        className="relative max-w-[72%] text-center leading-none text-balance break-keep"
+        className="relative max-w-[72%] min-w-min [place-self:unsafe_center] text-center leading-none text-balance break-keep"
+        style={fit < 1 ? { scale: String(fit) } : undefined}
       >
         {children}
       </span>

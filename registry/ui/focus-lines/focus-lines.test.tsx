@@ -7,17 +7,35 @@ import { FocusLines } from "./focus-lines";
 
 afterEach(cleanup);
 
+const layerOf = (container: HTMLElement) =>
+  container.querySelector<HTMLElement>('[data-slot="focus-lines"]') as HTMLElement;
 const svgOf = (container: HTMLElement) =>
-  container.querySelector<SVGSVGElement>('[data-slot="focus-lines"]') as SVGSVGElement;
+  container.querySelector<SVGSVGElement>('[data-slot="focus-lines-svg"]') as SVGSVGElement;
 
 describe("FocusLines", () => {
-  it("renders an aria-hidden inline SVG behind content with a forwarded className", () => {
-    const svg = svgOf(render(<FocusLines className="custom-class" />).container);
-    expect(svg.tagName.toLowerCase()).toBe("svg");
-    expect(svg.getAttribute("aria-hidden")).toBe("true");
+  it("renders an aria-hidden layer behind content with a forwarded className", () => {
+    const { container } = render(<FocusLines className="custom-class" />);
+    const layer = layerOf(container);
+    expect(layer.tagName).toBe("SPAN");
+    expect(layer.getAttribute("aria-hidden")).toBe("true");
     for (const name of ["absolute", "inset-0", "-z-1", "custom-class", "text-ink"]) {
-      expect(svg.classList.contains(name), name).toBe(true);
+      expect(layer.classList.contains(name), name).toBe(true);
     }
+    const svg = svgOf(container);
+    expect(svg.parentElement).toBe(layer);
+    expect(svg.classList.contains("size-full")).toBe(true);
+  });
+
+  // Lines start past the box edge; a panel host does not clip, so the layer must (Task 66).
+  it("clips the lines to its own box, whatever inset it is given", () => {
+    const { container } = render(<FocusLines className="inset-(--outline-width-heavy)" />);
+    const layer = layerOf(container);
+    expect(layer.classList.contains("overflow-hidden")).toBe(true);
+    expect(layer.classList.contains("inset-(--outline-width-heavy)")).toBe(true);
+    expect(layer.classList.contains("inset-0")).toBe(false);
+    // The layer is a plain box (no `size-full`), so an inset sizes it instead of shifting it.
+    expect(layer.classList.contains("size-full")).toBe(false);
+    expect(svgOf(container).classList.contains("overflow-hidden")).toBe(true);
   });
 
   it("draws count lines in currentColor at --speed-line-width", () => {
@@ -61,8 +79,8 @@ describe("FocusLines", () => {
   });
 
   it("colours the lines with tone", () => {
-    const svg = svgOf(render(<FocusLines color="tone" />).container);
-    expect(svg.classList.contains("text-tone-3")).toBe(true);
+    const layer = layerOf(render(<FocusLines color="tone" />).container);
+    expect(layer.classList.contains("text-tone-3")).toBe(true);
   });
 
   it("has no axe violations in its default demo", async () => {
