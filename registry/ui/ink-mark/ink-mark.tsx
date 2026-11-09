@@ -61,6 +61,8 @@ interface Layout {
   top: number;
   width: number;
   height: number;
+  /** The client rects' bounds, `<width>x<height>` in viewport pixels. */
+  clientSize: string;
   lines: LineBox[];
   vertical: boolean;
   rtl: boolean;
@@ -112,32 +114,115 @@ function sameLayout(a: Layout | null, b: Layout | null): boolean {
   );
 }
 
+/** A rectangle in the drawing's containing block. */
+interface Box {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+/**
+ * The matrix from the drawing's own pixels to the viewport, when an ancestor transforms it
+ * (a rotated or scaled panel); null when it only translates, the common case.
+ */
+function ancestorTransform(svg: SVGSVGElement): DOMMatrix | null {
+  const ctm = typeof svg.getScreenCTM === "function" ? svg.getScreenCTM() : null;
+  if (!ctm) return null;
+  const near = (x: number, y: number) => Math.abs(x - y) < 1e-6;
+  return near(ctm.a, 1) && near(ctm.b, 0) && near(ctm.c, 0) && near(ctm.d, 1) ? null : ctm;
+}
+
+/**
+ * Maps a client rect (viewport space: the transformed line box's bounding box) back into the
+ * drawing's space. The centre maps through the inverse matrix; the size solves the bounding
+ * box of the transformed box (`W = |a|w + |c|h`, `H = |b|w + |d|h`), so a tilted line box keeps
+ * its own width and height instead of the larger, rotated bounds. Near 45° that system has no
+ * answer and the bounds of the mapped corners stand in.
+ */
+function toLocal(rect: DOMRect, m: DOMMatrix, offsetX: number, offsetY: number): Box {
+  const { a, b, c, d, e, f } = m;
+  const det = a * d - b * c;
+  const map = (x: number, y: number): [number, number] => [
+    (d * (x - e) - c * (y - f)) / det + offsetX,
+    (-b * (x - e) + a * (y - f)) / det + offsetY,
+  ];
+  const [cx, cy] = map(rect.left + rect.width / 2, rect.top + rect.height / 2);
+  const [A, B, C, D] = [Math.abs(a), Math.abs(b), Math.abs(c), Math.abs(d)];
+  const sizeDet = A * D - B * C;
+  if (Math.abs(sizeDet) > 0.1 * A * D) {
+    const width = Math.max(0, (D * rect.width - C * rect.height) / sizeDet);
+    const height = Math.max(0, (A * rect.height - B * rect.width) / sizeDet);
+    return {
+      left: cx - width / 2,
+      top: cy - height / 2,
+      right: cx + width / 2,
+      bottom: cy + height / 2,
+    };
+  }
+  const corners = [
+    map(rect.left, rect.top),
+    map(rect.right, rect.top),
+    map(rect.left, rect.bottom),
+    map(rect.right, rect.bottom),
+  ];
+  return {
+    left: Math.min(...corners.map(([x]) => x)),
+    top: Math.min(...corners.map(([, y]) => y)),
+    right: Math.max(...corners.map(([x]) => x)),
+    bottom: Math.max(...corners.map(([, y]) => y)),
+  };
+}
+
 /**
  * Measures the span's line boxes against the drawing's own origin. An absolutely positioned
  * child of a wrapped inline has an odd containing block, so the SVG reads where it actually
- * landed rather than assuming one.
+ * landed rather than assuming one. Client rects are in viewport space while the drawing sits in
+ * its ancestors' local space, so under a transformed ancestor (a tilted panel) they are mapped
+ * back through the inverse of that transform before the drawing is placed.
  */
 function measure(host: HTMLElement, svg: SVGSVGElement): Layout | null {
   const rects = [...host.getClientRects()].filter((rect) => rect.width > 0 && rect.height > 0);
   if (rects.length === 0) return null;
-  const placed = svg.getBoundingClientRect();
-  const originX = placed.left - (Number.parseFloat(svg.style.left) || 0);
-  const originY = placed.top - (Number.parseFloat(svg.style.top) || 0);
-  const minX = Math.min(...rects.map((rect) => rect.left));
-  const minY = Math.min(...rects.map((rect) => rect.top));
-  const maxX = Math.max(...rects.map((rect) => rect.right));
-  const maxY = Math.max(...rects.map((rect) => rect.bottom));
+  const left = Number.parseFloat(svg.style.left) || 0;
+  const top = Number.parseFloat(svg.style.top) || 0;
+  const transform = ancestorTransform(svg);
+  let boxes: Box[];
+  if (transform) {
+    boxes = rects.map((rect) => toLocal(rect, transform, left, top));
+  } else {
+    const placed = svg.getBoundingClientRect();
+    const originX = placed.left - left;
+    const originY = placed.top - top;
+    boxes = rects.map((rect) => ({
+      left: rect.left - originX,
+      top: rect.top - originY,
+      right: rect.right - originX,
+      bottom: rect.bottom - originY,
+    }));
+  }
+  const minX = Math.min(...boxes.map((box) => box.left));
+  const minY = Math.min(...boxes.map((box) => box.top));
+  const maxX = Math.max(...boxes.map((box) => box.right));
+  const maxY = Math.max(...boxes.map((box) => box.bottom));
+  // The rects' own bounds, in viewport pixels: what a test compares the text with to know the
+  // drawing is current (`data-ink-size`).
+  const clientWidth =
+    Math.max(...rects.map((rect) => rect.right)) - Math.min(...rects.map((rect) => rect.left));
+  const clientHeight =
+    Math.max(...rects.map((rect) => rect.bottom)) - Math.min(...rects.map((rect) => rect.top));
   const style = getComputedStyle(host);
   return {
-    left: round(minX - originX),
-    top: round(minY - originY),
+    left: round(minX),
+    top: round(minY),
     width: round(maxX - minX),
     height: round(maxY - minY),
-    lines: rects.map((rect) => ({
-      x: round(rect.left - minX),
-      y: round(rect.top - minY),
-      width: round(rect.width),
-      height: round(rect.height),
+    clientSize: `${Math.round(clientWidth)}x${Math.round(clientHeight)}`,
+    lines: boxes.map((box) => ({
+      x: round(box.left - minX),
+      y: round(box.top - minY),
+      width: round(box.right - box.left),
+      height: round(box.bottom - box.top),
     })),
     vertical: style.writingMode.startsWith("vertical") || style.writingMode.startsWith("sideways"),
     rtl: style.direction === "rtl",
@@ -347,9 +432,9 @@ export function InkMark({
       data-show={show}
       data-inked={layout ? "true" : undefined}
       // What the drawing was measured against, so a test can wait until it matches the text.
-      data-ink-size={
-        layout ? `${Math.round(layout.width)}x${Math.round(layout.height)}` : undefined
-      }
+      // The bounds of the client rects (viewport pixels, the same as the drawing's size unless
+      // an ancestor transforms it).
+      data-ink-size={layout?.clientSize}
       data-ink-lines={layout ? lines.length : undefined}
       // `relative` anchors the drawing, `isolate` keeps a highlight behind these glyphs but above
       // whatever the text sits on; neither changes the text's layout.
