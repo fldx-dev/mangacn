@@ -59,14 +59,6 @@
   --fd-layout-width: 100%;
 }
 
-/* Docs chrome muted text one tone darker: the theme's tone-3 is about 4:1 on tone-1 (inactive
-   tabs, the search button), under WCAG AA's 4.5:1. Only fd-* utilities read this, never items.
-   `html:root` outranks Fumadocs' `:root, .dark` (a rule with that same selector was merged
-   away by the minifier); tone-4 itself switches with `.dark`. */
-html:root {
-  --color-fd-muted-foreground: var(--tone-4);
-}
-
 /* Inline code in prose is a bordered chip (Fumadocs typography). A chip must not break across
    lines, where its box would be sliced at the wrap; tokens like `--outline-width` stay whole. */
 .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *, pre *)) {

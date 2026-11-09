@@ -37,19 +37,39 @@ const PAIRS: [string, string, string, number, ("light" | "dark")[]][] = [
   ["ink on paper", "ink", "paper", 7, ["light", "dark"]],
   ["spot on paper (text)", "spot", "paper", 4.5, ["light"]],
   ["spot-foreground on spot", "spot-foreground", "spot", 4.5, ["light", "dark"]],
-  ["tone-3 on paper (muted text)", "tone-3", "paper", 4.5, ["light", "dark"]],
+  ["tone-3 on paper (secondary text)", "tone-3", "paper", 4.5, ["light", "dark"]],
   ["spot focus ring next to paper", "spot", "paper", 3, ["light", "dark"]],
+  // Task 68 (SPEC-components-3 §13 Q3): muted text sits on the muted fill (inactive tabs,
+  // skeleton rows) as well as on paper; tone-3 was about 4:1 on tone-1.
+  ["muted-foreground on muted", "muted-foreground", "muted", 4.5, ["light", "dark"]],
+  ["muted-foreground on paper", "muted-foreground", "paper", 4.5, ["light", "dark"]],
 ];
 
 const cases = PAIRS.flatMap(([label, fg, bg, min, modes]) =>
   modes.map((mode) => ({ label, mode, fg, bg, min })),
 );
 
+/** A token's oklch value, following `var(--name)` references within the same mode. */
+function resolve(vars: Record<string, string>, name: string): Oklch {
+  let value = vars[name];
+  for (let hops = 0; value?.startsWith("var(--"); hops++) {
+    if (hops > 4) throw new Error(`--${name} does not resolve to a colour`);
+    value = vars[value.slice("var(--".length, -")".length)];
+  }
+  if (value === undefined) throw new Error(`No --${name}`);
+  return parseOklch(value);
+}
+
 describe("§9 contrast targets", () => {
   it.each(cases)("$label ($mode) ≥ $min:1", ({ mode, fg, bg, min }) => {
     const vars = theme.cssVars?.[mode] ?? {};
-    const ratio = contrast(parseOklch(vars[fg]), parseOklch(vars[bg]));
+    const ratio = contrast(resolve(vars, fg), resolve(vars, bg));
     expect(ratio).toBeGreaterThanOrEqual(min);
+  });
+
+  it("resolves token references and rejects a dangling one", () => {
+    expect(resolve({ a: "var(--b)", b: "oklch(1 0 0)" }, "a")).toEqual([1, 0, 0]);
+    expect(() => resolve({ a: "var(--missing)" }, "a")).toThrow("No --a");
   });
 
   it("matches the preview's maths on a known pair", () => {
