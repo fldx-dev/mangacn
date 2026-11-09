@@ -44,6 +44,7 @@ export const PARITY_PRIMITIVES = [
   "empty",
   "label",
   "aspect-ratio",
+  "native-select",
   "input-group",
   "button-group",
 ] as const;

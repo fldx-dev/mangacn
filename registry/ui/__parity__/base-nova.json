@@ -874,6 +874,26 @@
       "registryDependencies": [],
       "sha1": "522b576ca8591c1bb072081ea5a444935a1192bc"
     },
+    "native-select": {
+      "exports": [
+        "NativeSelect",
+        "NativeSelectOptGroup",
+        "NativeSelectOption"
+      ],
+      "dataSlots": [
+        "native-select",
+        "native-select-icon",
+        "native-select-optgroup",
+        "native-select-option",
+        "native-select-wrapper"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "sha1": "2d9f800300270b81ff7def15b9b4c71fafd37ca6"
+    },
     "input-group": {
       "exports": [
         "InputGroup",

@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 68 items in the registry. Each line gives the item's name, what it is, the one
+All 69 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -151,6 +151,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `aspect-ratio`: Stock aspect-ratio box: sizes its content to a ratio and draws nothing.
   Install: `npx shadcn@latest add @mangacn/aspect-ratio --overwrite`
   Docs: https://www.mangacn.com/docs/components/aspect-ratio (Markdown: https://www.mangacn.com/docs/components/aspect-ratio.md)
+- `native-select`: A native <select> drawn as select's trigger: paper box, hand-drawn outline and chevron; the options are the browser's (needs ink-frame).
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/native-select --overwrite`
+  Docs: https://www.mangacn.com/docs/components/native-select (Markdown: https://www.mangacn.com/docs/components/native-select.md)
 - `input-group`: Stock input group in one hand-drawn outline: addons sit behind inked rules and the input, textarea and buttons draw no frame.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/input-group --overwrite`
   Docs: https://www.mangacn.com/docs/components/input-group (Markdown: https://www.mangacn.com/docs/components/input-group.md)
