@@ -14,15 +14,10 @@ export default function EmptyDefaultDemo() {
       <EmptyHeader>
         <EmptyMedia />
         <EmptyTitle>No chapters yet</EmptyTitle>
-        <EmptyDescription>
-          This series has no pages. Start the first chapter or import pages you have inked.
-        </EmptyDescription>
+        <EmptyDescription>This series has no pages yet.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <div className="flex flex-wrap justify-center gap-2">
-          <Button>Start a chapter</Button>
-          <Button variant="outline">Import pages</Button>
-        </div>
+        <Button size="sm">New chapter</Button>
       </EmptyContent>
     </Empty>
   );
