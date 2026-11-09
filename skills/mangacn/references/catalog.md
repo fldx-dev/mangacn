@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 64 items in the registry. Each line gives the item's name, what it is, the one
+All 65 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -145,6 +145,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `empty`: Stock empty state with an emanata mark as its default media and the title in the display face (needs emanata).
   Install: `npx shadcn@latest add @mangacn/empty --overwrite`
   Docs: https://www.mangacn.com/docs/components/empty (Markdown: https://www.mangacn.com/docs/components/empty.md)
+- `label`: Stock form label in the body face, with an optional spot asterisk for required fields.
+  Install: `npx shadcn@latest add @mangacn/label --overwrite`
+  Docs: https://www.mangacn.com/docs/components/label (Markdown: https://www.mangacn.com/docs/components/label.md)
 
 ## Layout
 

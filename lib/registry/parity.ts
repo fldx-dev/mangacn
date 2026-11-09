@@ -42,6 +42,7 @@ export const PARITY_PRIMITIVES = [
   "scroll-area",
   "spinner",
   "empty",
+  "label",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";

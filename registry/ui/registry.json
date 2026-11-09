@@ -1015,6 +1015,22 @@
           "target": "@ui/empty.tsx"
         }
       ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "description": "Stock form label in the body face, with an optional spot asterisk for required fields.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn"],
+      "files": [
+        {
+          "path": "label/label.tsx",
+          "type": "registry:ui",
+          "target": "@ui/label.tsx"
+        }
+      ]
     }
   ]
 }

@@ -845,6 +845,20 @@
       ],
       "registryDependencies": [],
       "sha1": "5f30e8e53c60189e77670bee854eb7859cec059f"
+    },
+    "label": {
+      "exports": [
+        "Label"
+      ],
+      "dataSlots": [
+        "label"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "sha1": "7850232914ad0560976df0a395cc2160b56c2e19"
     }
   }
 }

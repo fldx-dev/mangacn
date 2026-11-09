@@ -69,6 +69,14 @@ export const PROPS_DELTA: Readonly<Record<string, Readonly<Record<string, PropDe
         "On `ScrollArea`: names the scroll region (the viewport), which takes focus whenever it scrolls. Give each scroll area on a page its own.",
     },
   },
+  label: {
+    required: {
+      type: "boolean",
+      default: "false",
+      description:
+        "A spot asterisk after the text, hidden from assistive tech; also set `required` on the control, which is what gets announced.",
+    },
+  },
 };
 
 /** shadcn's page for a stock primitive (the Base UI docs, which mangacn's base-nova follows). */

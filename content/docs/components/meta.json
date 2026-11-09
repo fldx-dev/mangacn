@@ -39,6 +39,7 @@
     "scroll-area",
     "spinner",
     "empty",
+    "label",
     "---Layout---",
     "panel",
     "panel-grid",
