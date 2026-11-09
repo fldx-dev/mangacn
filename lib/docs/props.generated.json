@@ -1294,6 +1294,20 @@
             "deprecated": false
           },
           {
+            "name": "size",
+            "description": "The words' size, as `sfx-text`'s: `sm` for a quiet strip, `lg` for a loud one. Each\ngroup stays at least as wide as the viewport at every size.",
+            "type": "\"lg\" | \"md\" | \"sm\" | undefined",
+            "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"md\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
             "name": "label",
             "description": "Names the band for assistive tech, followed by the words once, in a visually hidden\nparagraph. Without it the band is decoration and wholly hidden.",
             "type": "string | undefined",
