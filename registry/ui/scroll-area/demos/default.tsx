@@ -10,7 +10,7 @@ export default function ScrollAreaDefaultDemo() {
     <InkFrame className="w-48 rounded-md p-1">
       <ScrollArea label="Chapters" className="h-64 rounded-md">
         <div className="p-4">
-          <h4 className="mb-4 text-sm leading-none font-medium">Chapters</h4>
+          <p className="mb-4 text-sm leading-none font-medium">Chapters</p>
           {chapters.map((chapter) => (
             <Fragment key={chapter}>
               <div className="text-sm">{chapter}</div>
