@@ -1131,7 +1131,7 @@
           },
           {
             "name": "burst",
-            "description": "Shows a tilted \"MAX\" beside the bar once the value reaches `max`. Its room is kept while\nthe bar is short of full, so gauges stacked in a column stay the same length.",
+            "description": "Shows a tilted \"MAX\" beside the bar once the value reaches `max`. Its room is kept while\nthe bar is short of full, so gauges stacked in a column stay the same length. A gauge that\nrenders full shows it at once; one that fills (or turns `burst` on) later pops it in with\nsfx-text's `enter=\"pop\"`, at once under reduced motion.",
             "type": "boolean | undefined",
             "simplifiedType": "boolean",
             "tags": [

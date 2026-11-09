@@ -1015,6 +1015,11 @@
           "path": "power-gauge/power-gauge.tsx",
           "type": "registry:component",
           "target": "@components/power-gauge.tsx"
+        },
+        {
+          "path": "power-gauge/power-gauge-burst.tsx",
+          "type": "registry:component",
+          "target": "@components/power-gauge-burst.tsx"
         }
       ]
     },
