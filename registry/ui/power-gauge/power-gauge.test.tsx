@@ -158,6 +158,44 @@ describe("PowerGauge", () => {
     expect(burst?.dataset.color).toBe("spot");
   });
 
+  it("shows the burst at rest when the gauge first renders full, on the server too", () => {
+    const { container } = render(<PowerGauge label="Power" value={100} burst />);
+    const burst = container.querySelector<HTMLElement>('[data-slot="power-gauge-burst"]');
+    expect(burst?.dataset.enter).toBe("none");
+    expect(burst?.firstElementChild).toBeNull();
+    const html = renderToString(<PowerGauge label="Power" value={100} burst />);
+    expect(html).toContain('data-enter="none"');
+    expect(html).not.toContain("opacity");
+  });
+
+  it("pops the burst in with sfx-text's pop when the gauge fills after mount", () => {
+    const { container, rerender } = render(<PowerGauge label="Power" value={60} burst />);
+    const burstOf = () =>
+      container.querySelector<HTMLElement>('[data-slot="power-gauge-burst"]') as HTMLElement;
+    expect(burstOf().dataset.enter).toBe("none");
+    rerender(<PowerGauge label="Power" value={100} burst />);
+    expect(burstOf().dataset.enter).toBe("pop");
+    expect(burstOf().classList.contains("invisible")).toBe(false);
+    // The entrance's first frame: sfx-text's pop starts small and transparent.
+    const word = burstOf().firstElementChild as HTMLElement;
+    expect(word.textContent).toBe("MAX");
+    expect(word.style.opacity).toBe("0");
+    // Falling short and filling again pops it again, on a fresh word.
+    rerender(<PowerGauge label="Power" value={90} burst />);
+    expect(burstOf().classList.contains("invisible")).toBe(true);
+    rerender(<PowerGauge label="Power" value={100} burst />);
+    expect(burstOf().dataset.enter).toBe("pop");
+    expect(burstOf().firstElementChild).not.toBe(word);
+  });
+
+  it("pops the burst in when burst turns on after mount at max", () => {
+    const { container, rerender } = render(<PowerGauge label="Power" value={100} />);
+    expect(container.querySelector('[data-slot="power-gauge-burst"]')).toBeNull();
+    rerender(<PowerGauge label="Power" value={100} burst />);
+    const burst = container.querySelector<HTMLElement>('[data-slot="power-gauge-burst"]');
+    expect(burst?.dataset.enter).toBe("pop");
+  });
+
   it("renders on the server with the same label id it hydrates with", () => {
     const html = renderToString(<PowerGauge label="Power" value={70} />);
     const labelledBy = /aria-labelledby="([^"]+)"/.exec(html)?.[1];

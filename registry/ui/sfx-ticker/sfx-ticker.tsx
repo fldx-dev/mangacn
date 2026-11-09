@@ -62,6 +62,12 @@ export interface SfxTickerProps
    */
   color?: SfxColor;
   /**
+   * The words' size, as `sfx-text`'s: `sm` for a quiet strip, `lg` for a loud one. Each
+   * group stays at least as wide as the viewport at every size.
+   * @default "md"
+   */
+  size?: "sm" | "md" | "lg";
+  /**
    * Names the band for assistive tech, followed by the words once, in a visually hidden
    * paragraph. Without it the band is decoration and wholly hidden.
    */
@@ -86,7 +92,15 @@ function usePrefersReducedMotion() {
   );
 }
 
-function Group({ words, color }: { words: SfxTickerWord[]; color: SfxColor }) {
+function Group({
+  words,
+  color,
+  size,
+}: {
+  words: SfxTickerWord[];
+  color: SfxColor;
+  size: NonNullable<SfxTickerProps["size"]>;
+}) {
   return (
     <div
       data-slot="sfx-ticker-group"
@@ -98,7 +112,7 @@ function Group({ words, color }: { words: SfxTickerWord[]; color: SfxColor }) {
           // biome-ignore lint/suspicious/noArrayIndexKey: a static list, never reordered
           key={index}
           lang={word.lang}
-          size="md"
+          size={size}
           color={word.color ?? color}
           rotate={index % 2 ? 5 : -5}
           className="mx-6 sm:mx-10"
@@ -121,6 +135,7 @@ export function SfxTicker({
   speed,
   direction = "left",
   color = "ink",
+  size = "md",
   label,
   ...props
 }: SfxTickerProps) {
@@ -131,6 +146,7 @@ export function SfxTicker({
       data-slot="sfx-ticker"
       data-speed={speed ?? "normal"}
       data-direction={direction}
+      data-size={size}
       data-animated={!reduce}
       aria-hidden={label ? undefined : true}
       className={cn("relative overflow-hidden py-5", className)}
@@ -153,8 +169,8 @@ export function SfxTicker({
         aria-hidden="true"
         className={cn(trackVariants({ speed }), !reduce && ANIMATIONS[direction])}
       >
-        <Group words={items} color={color} />
-        <Group words={items} color={color} />
+        <Group words={items} color={color} size={size} />
+        <Group words={items} color={color} size={size} />
       </div>
     </div>
   );

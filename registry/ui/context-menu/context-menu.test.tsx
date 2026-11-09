@@ -1,5 +1,5 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { expectDemosAccessible } from "@/lib/test/axe";
 import {
   ContextMenu,
@@ -17,6 +17,10 @@ import {
 import ContextMenuSubmenuDemo from "./demos/submenu";
 
 afterEach(cleanup);
+
+// Each demo opens a portalled menu and axe walks all of it; under a loaded full run the first
+// case took 6 s against the 5 s default (it passes alone in well under that).
+vi.setConfig({ testTimeout: 30_000 });
 
 function Page() {
   return (

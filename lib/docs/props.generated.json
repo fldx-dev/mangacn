@@ -1131,7 +1131,7 @@
           },
           {
             "name": "burst",
-            "description": "Shows a tilted \"MAX\" beside the bar once the value reaches `max`. Its room is kept while\nthe bar is short of full, so gauges stacked in a column stay the same length.",
+            "description": "Shows a tilted \"MAX\" beside the bar once the value reaches `max`. Its room is kept while\nthe bar is short of full, so gauges stacked in a column stay the same length. A gauge that\nrenders full shows it at once; one that fills (or turns `burst` on) later pops it in with\nsfx-text's `enter=\"pop\"`, at once under reduced motion.",
             "type": "boolean | undefined",
             "simplifiedType": "boolean",
             "tags": [
@@ -1288,6 +1288,20 @@
               {
                 "name": "default",
                 "text": "\"ink\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "The words' size, as `sfx-text`'s: `sm` for a quiet strip, `lg` for a loud one. Each\ngroup stays at least as wide as the viewport at every size.",
+            "type": "\"lg\" | \"md\" | \"sm\" | undefined",
+            "simplifiedType": "\"lg\" | \"md\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"md\""
               }
             ],
             "required": false,

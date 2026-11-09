@@ -2,7 +2,7 @@ import { cn } from "cn";
 import type * as React from "react";
 import { useId } from "react";
 import { InkFrame } from "@/components/ink-frame";
-import { SfxText } from "@/components/sfx-text";
+import { PowerGaugeBurst } from "./power-gauge-burst";
 
 export interface PowerGaugeProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "color"> {
   /** The stat's name, set in the display face above the bar; it also names the meter. */
@@ -27,7 +27,9 @@ export interface PowerGaugeProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   color?: "ink" | "spot";
   /**
    * Shows a tilted "MAX" beside the bar once the value reaches `max`. Its room is kept while
-   * the bar is short of full, so gauges stacked in a column stay the same length.
+   * the bar is short of full, so gauges stacked in a column stay the same length. A gauge that
+   * renders full shows it at once; one that fills (or turns `burst` on) later pops it in with
+   * sfx-text's `enter="pop"`, at once under reduced motion.
    * @default false
    */
   burst?: boolean;
@@ -135,17 +137,7 @@ export function PowerGauge({
             />
           </span>
         </div>
-        {burst && (
-          <SfxText
-            data-slot="power-gauge-burst"
-            size="sm"
-            color={color === "spot" ? "spot" : "paper"}
-            rotate={-8}
-            className={cn("shrink-0 text-lg", !maxed && "invisible")}
-          >
-            MAX
-          </SfxText>
-        )}
+        <PowerGaugeBurst burst={burst} maxed={maxed} color={color} />
       </div>
     </div>
   );

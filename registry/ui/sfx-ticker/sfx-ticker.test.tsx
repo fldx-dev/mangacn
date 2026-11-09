@@ -97,6 +97,31 @@ describe("SfxTicker", () => {
     expect(trackOf(container).classList.contains(`[--sfx-ticker-duration:${duration}]`)).toBe(true);
   });
 
+  it("sets the words at the md size by default", () => {
+    stubReducedMotion(false);
+    const { container } = render(<SfxTicker words={["DON!", "BAM!"]} />);
+    expect(tickerOf(container).dataset.size).toBe("md");
+    const words = [...container.querySelectorAll<HTMLElement>('[data-slot="sfx-text"]')];
+    expect(words.map((word) => word.dataset.size)).toEqual(["md", "md", "md", "md"]);
+  });
+
+  it.each([
+    ["sm", "text-2xl"],
+    ["md", "text-4xl"],
+    ["lg", "text-5xl"],
+  ] as const)("maps size %s to sfx-text's size, each group still a viewport wide", (size, text) => {
+    stubReducedMotion(false);
+    const { container } = render(<SfxTicker words={["DON!"]} size={size} />);
+    expect(tickerOf(container).dataset.size).toBe(size);
+    for (const word of container.querySelectorAll<HTMLElement>('[data-slot="sfx-text"]')) {
+      expect(word.dataset.size).toBe(size);
+      expect(word.classList.contains(text)).toBe(true);
+    }
+    const groups = container.querySelectorAll('[data-slot="sfx-ticker-group"]');
+    expect(groups).toHaveLength(2);
+    for (const group of groups) expect(group.classList.contains("min-w-screen")).toBe(true);
+  });
+
   it("reverses the animation for direction right", () => {
     stubReducedMotion(false);
     const { container } = render(<SfxTicker words={["DON!"]} direction="right" />);

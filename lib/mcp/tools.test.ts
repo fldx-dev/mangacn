@@ -228,7 +228,7 @@ describe("get_item", () => {
   it("names the files its registry dependencies add, transitively and once each", async () => {
     const { text } = await call("get_item", { name: "power-gauge" });
     expect(text).toContain(
-      "Files: components/power-gauge.tsx; also adds components/ink-frame.tsx, components/sfx-text.tsx through its registry dependencies (where `shadcn add` writes them with the default components.json aliases).",
+      "Files: components/power-gauge.tsx, components/power-gauge-burst.tsx; also adds components/ink-frame.tsx, components/sfx-text.tsx through its registry dependencies (where `shadcn add` writes them with the default components.json aliases).",
     );
     const dialog = catalog.find((entry) => entry.name === "dialog");
     expect(dialog?.dependencyFiles).toEqual([

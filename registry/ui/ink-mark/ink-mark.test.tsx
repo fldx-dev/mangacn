@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { expectDemosAccessible } from "@/lib/test/axe";
 import InkMarkJapaneseDemo from "./demos/japanese";
 import InkMarkRevealDemo from "./demos/reveal";
@@ -169,6 +169,77 @@ describe("InkMark", () => {
     const lines = container.querySelectorAll('[data-slot="ink-mark-line"]');
     expect(lines[0].querySelectorAll("path").length).toBeGreaterThan(0);
     expect(lines[1].querySelectorAll("path").length).toBeGreaterThan(0);
+  });
+
+  it("draws on the text inside a rotated ancestor, not on its rotated bounds", () => {
+    // A tilted panel: everything in it turns 3° about the viewport point (100, 50). The line
+    // box sits at (10, 20), 200 × 24, in the containing block; the browser reports the
+    // bounding box of the turned box, and the drawing's matrix includes where it is placed.
+    const angle = (3 * Math.PI) / 180;
+    const [cos, sin] = [Math.cos(angle), Math.sin(angle)];
+    const turn = (x: number, y: number) => [100 + cos * x - sin * y, 50 + sin * x + cos * y];
+    const corners = [turn(10, 20), turn(210, 20), turn(10, 44), turn(210, 44)];
+    const xs = corners.map(([x]) => x);
+    const ys = corners.map(([, y]) => y);
+    const bounds = {
+      left: Math.min(...xs),
+      top: Math.min(...ys),
+      right: Math.max(...xs),
+      bottom: Math.max(...ys),
+    };
+    layOut([
+      {
+        ...bounds,
+        width: bounds.right - bounds.left,
+        height: bounds.bottom - bounds.top,
+      },
+    ]);
+    // jsdom has no getScreenCTM; a browser's includes the CSS transforms of the ancestors.
+    Object.defineProperty(SVGSVGElement.prototype, "getScreenCTM", {
+      configurable: true,
+      value(this: SVGSVGElement) {
+        const [e, f] = turn(
+          Number.parseFloat(this.style.left) || 0,
+          Number.parseFloat(this.style.top) || 0,
+        );
+        return { a: cos, b: sin, c: -sin, d: cos, e, f } as DOMMatrix;
+      },
+    });
+    onTestFinished(() => {
+      Reflect.deleteProperty(SVGSVGElement.prototype, "getScreenCTM");
+    });
+    const { container } = render(<InkMark>tilted</InkMark>);
+    const svg = container.querySelector<SVGSVGElement>('[data-slot="ink-mark-drawing"]');
+    const px = (value: string | undefined) => Number.parseFloat(value ?? "");
+    expect(px(svg?.style.left)).toBeCloseTo(10, 1);
+    expect(px(svg?.style.top)).toBeCloseTo(20, 1);
+    expect(px(svg?.style.width)).toBeCloseTo(200, 1);
+    expect(px(svg?.style.height)).toBeCloseTo(24, 1);
+    // The bounds the browser reported, so the e2e wait still compares like with like.
+    expect(markOf(container)?.dataset.inkSize).toBe(
+      `${Math.round(bounds.right - bounds.left)}x${Math.round(bounds.bottom - bounds.top)}`,
+    );
+  });
+
+  it("follows right-to-left text: the underline draws from the right, the bracket opens there", () => {
+    const one = TWO_LINES.slice(0, 1);
+    const firstX = (kind: "underline" | "bracket", direction: "ltr" | "rtl") => {
+      layOut(one);
+      const { container, unmount } = render(
+        <InkMark kind={kind} seed={3} style={{ direction }}>
+          حكاية
+        </InkMark>,
+      );
+      const d = container.querySelector("path")?.getAttribute("d") ?? "";
+      unmount();
+      vi.restoreAllMocks();
+      return Number.parseFloat(d.replace(/^M\s*/, ""));
+    };
+    // The line box is 260 px wide: the first stroke starts at its start edge.
+    expect(firstX("underline", "ltr")).toBeLessThan(20);
+    expect(firstX("underline", "rtl")).toBeGreaterThan(240);
+    expect(firstX("bracket", "ltr")).toBeLessThan(20);
+    expect(firstX("bracket", "rtl")).toBeGreaterThan(240);
   });
 
   it("hands rough.js the seed, the clean pen and the theme's pen numbers", () => {
