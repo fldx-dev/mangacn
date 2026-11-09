@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 61 items in the registry. Each line gives the item's name, what it is, the one
+All 62 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -136,6 +136,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `sonner`: Stock sonner Toaster whose toasts are paper cards with a heavy hand-drawn outline and ink glyph icons (needs ink-frame).
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/sonner --overwrite`
   Docs: https://www.mangacn.com/docs/components/sonner (Markdown: https://www.mangacn.com/docs/components/sonner.md)
+- `input-group`: Stock input group in one hand-drawn outline: addons sit behind inked rules and the input, textarea and buttons draw no frame.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/input-group --overwrite`
+  Docs: https://www.mangacn.com/docs/components/input-group (Markdown: https://www.mangacn.com/docs/components/input-group.md)
 
 ## Layout
 

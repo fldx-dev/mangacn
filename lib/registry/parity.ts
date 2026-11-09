@@ -39,6 +39,7 @@ export const PARITY_PRIMITIVES = [
   "hover-card",
   "drawer",
   "sonner",
+  "input-group",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";
