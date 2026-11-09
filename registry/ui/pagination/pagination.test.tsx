@@ -84,7 +84,7 @@ describe("Pagination", () => {
     expect(screen.getAllByText("More pages")).toHaveLength(2);
   });
 
-  it("keeps previous and next with their stock names and a hand-inked chevron", () => {
+  it("keeps previous and next with their stock names, the visible text in them, and a hand-inked chevron", () => {
     render(
       <>
         <PaginationPrevious href="#prev" />
@@ -92,7 +92,8 @@ describe("Pagination", () => {
       </>,
     );
     const previous = screen.getByRole("link", { name: "Go to previous page" });
-    const next = screen.getByRole("link", { name: "Go to next page" });
+    // A custom text joins the name, so the visible label is part of it (WCAG 2.5.3).
+    const next = screen.getByRole("link", { name: "Go to next page: Chapter 13" });
     expect(previous.textContent).toBe("Previous");
     expect(next.textContent).toBe("Chapter 13");
     expect(previous.classList.contains("pl-1.5!")).toBe(true);
@@ -123,6 +124,11 @@ describe("Pagination", () => {
     const frames = document.querySelectorAll<HTMLElement>('[data-slot="ink-frame"]');
     expect(frames).toHaveLength(7);
     for (const frame of frames) expect(frame.dataset.inked).toBe("true");
+  });
+
+  it("lets a caller's aria-label win over the generated name", () => {
+    render(<PaginationNext href="#next" text="Chapter 13" aria-label="Next chapter: Chapter 13" />);
+    expect(screen.getByRole("link", { name: "Next chapter: Chapter 13" })).toBeTruthy();
   });
 
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));

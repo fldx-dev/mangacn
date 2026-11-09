@@ -101,6 +101,15 @@ function PaginationLink({
   );
 }
 
+/**
+ * The link's accessible name: stock's "Go to previous page", plus the visible text when `text`
+ * replaces stock's word, so the name contains the label sighted users see (WCAG 2.5.3, axe's
+ * `label-content-name-mismatch`). A caller's own `aria-label` still wins.
+ */
+function labelInName(name: string, text: string, stockText: string): string {
+  return text === stockText ? name : `${name}: ${text}`;
+}
+
 function PaginationPrevious({
   className,
   text = "Previous",
@@ -108,7 +117,7 @@ function PaginationPrevious({
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
     <PaginationLink
-      aria-label="Go to previous page"
+      aria-label={labelInName("Go to previous page", text, "Previous")}
       size="default"
       className={cn("pl-1.5!", className)}
       {...props}
@@ -126,7 +135,7 @@ function PaginationNext({
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
     <PaginationLink
-      aria-label="Go to next page"
+      aria-label={labelInName("Go to next page", text, "Next")}
       size="default"
       className={cn("pr-1.5!", className)}
       {...props}
