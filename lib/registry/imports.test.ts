@@ -1,6 +1,10 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 import {
+  blockImportPaths,
+  blockImportViolation,
   extractImports,
   findImportViolations,
   findRegistryDependencyProblems,
@@ -123,6 +127,111 @@ describe("importViolation", () => {
     expect(importViolation("@/components/ink-frame", undeclared, file)).toContain("alias");
     const other = { ...item, registryDependencies: ["https://example.com/r/ink-frame.json"] };
     expect(importViolation("@/components/ink-frame", other, file)).toContain("alias");
+  });
+});
+
+describe("blocks", () => {
+  // A block's files may import only the install paths of the items it declares by URL.
+  const root = mkdtempSync(path.join(tmpdir(), "mangacn-block-imports-"));
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+  const write = (file: string, content: string) => {
+    mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    writeFileSync(path.join(root, file), content);
+  };
+  const url = (name: string) => `https://www.mangacn.com/r/${name}.json`;
+  write(
+    "registry.json",
+    JSON.stringify({
+      items: [
+        {
+          name: "separator",
+          type: "registry:ui",
+          files: [{ path: "separator.tsx", type: "registry:ui", target: "@ui/separator.tsx" }],
+        },
+        {
+          name: "stamp",
+          type: "registry:component",
+          files: [
+            { path: "stamp.tsx", type: "registry:component", target: "@components/stamp.tsx" },
+          ],
+        },
+        { name: "manga-motion", type: "registry:lib", files: [] },
+        {
+          name: "shelf",
+          type: "registry:block",
+          dependencies: ["cn"],
+          registryDependencies: [url("separator"), url("stamp")],
+          files: [
+            {
+              path: "registry/blocks/shelf/shelf.tsx",
+              type: "registry:block",
+              target: "@components/blocks/shelf/shelf.tsx",
+            },
+            {
+              path: "registry/blocks/shelf/shelf-row.tsx",
+              type: "registry:block",
+              target: "@components/blocks/shelf/shelf-row.tsx",
+            },
+          ],
+        },
+      ],
+    }),
+  );
+  write("separator.tsx", "export const Separator = 1;\n");
+  write("stamp.tsx", "export const Stamp = 1;\n");
+  write(
+    "registry/blocks/shelf/shelf.tsx",
+    [
+      'import * as React from "react";',
+      'import { cn } from "cn";',
+      'import { x } from "@/lib/utils";',
+      'import { Separator } from "@/components/ui/separator";',
+      'import { Stamp } from "@/components/stamp";',
+      'import { Row } from "./shelf-row";',
+      'import { InkFrame } from "@/components/ink-frame";',
+      'import { popIn } from "@/lib/manga-motion";',
+      'import { Row as Again } from "@/components/blocks/shelf/shelf-row";',
+      'import { Other } from "../other/other";',
+      'import { Wrong } from "@/components/ui/stamp";',
+      'import { Star } from "lucide-react";',
+    ].join("\n"),
+  );
+  write("registry/blocks/shelf/shelf-row.tsx", "export const Row = 1;\n");
+  const registry = loadRegistry(path.join(root, "registry.json"));
+  const catalog = new Map(registry.items.map((item) => [item.name, item]));
+
+  it("may import the install paths of the items declared by URL, nothing else of @/", () => {
+    const shelf = catalog.get("shelf");
+    expect(shelf && [...blockImportPaths(shelf, catalog)]).toEqual([
+      "@/components/ui/separator",
+      "@/components/stamp",
+    ]);
+  });
+
+  it("reports every forbidden import of a block's files and nothing allowed", () => {
+    expect(
+      findImportViolations(registry, root).map((v) => [v.specifier, v.line, v.reason]),
+    ).toEqual([
+      [
+        "@/components/ink-frame",
+        7,
+        "alias import that is not @/lib/utils or the install path of an item this block declares by mangacn URL",
+      ],
+      ["@/lib/manga-motion", 8, expect.stringContaining("alias import")],
+      ["@/components/blocks/shelf/shelf-row", 9, expect.stringContaining("alias import")],
+      ["../other/other", 10, "relative import outside this block (import its own part files only)"],
+      ["@/components/ui/stamp", 11, expect.stringContaining("alias import")],
+      ["lucide-react", 12, 'package "lucide-react" is not in this item\'s dependencies'],
+    ]);
+  });
+
+  it("does not take a bare stock name as a declaration", () => {
+    const item = { dependencies: [], files: [] };
+    const allowed = blockImportPaths({ registryDependencies: ["separator"] }, catalog);
+    expect(allowed.size).toBe(0);
+    expect(
+      blockImportViolation("@/components/ui/separator", item, "registry/blocks/x/x.tsx", allowed),
+    ).toContain("alias import");
   });
 });
 

@@ -27,6 +27,28 @@ export default defineConfig({
         find: /^@\/components\/sfx-text$/,
         replacement: fileURLToPath(new URL("./registry/ui/sfx-text/sfx-text.tsx", import.meta.url)),
       },
+      // Blocks import the items they declare from the install paths (chapter-list → separator,
+      // caption-box, ink-mark, stamp).
+      {
+        find: /^@\/components\/ui\/separator$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/separator/separator.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/caption-box$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/caption-box/caption-box.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ink-mark$/,
+        replacement: fileURLToPath(new URL("./registry/ui/ink-mark/ink-mark.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/stamp$/,
+        replacement: fileURLToPath(new URL("./registry/ui/stamp/stamp.tsx", import.meta.url)),
+      },
       { find: "@", replacement: fileURLToPath(new URL("./", import.meta.url)) },
     ],
   },
