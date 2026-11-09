@@ -182,27 +182,18 @@ async function expectDemosFitStages(page: Page) {
 }
 
 /**
- * Fumadocs scrolls the sidebar to the active item only when that item is out of view at the
- * moment it checks, so an item page's shot drifted with the sidebar's scroll (Task 68). Pin it:
- * the active item at the top of the sidebar (below its padding), its scrollbar faded out again.
- * Below 768 px the sidebar is a closed drawer and nothing is pinned.
+ * What a whole-page shot masks (Task 68): an item page's sidebar. Its scroll is not the test's
+ * to set: Fumadocs scrolls the active item into view when it is out of view at the moment it
+ * checks, and the full-page capture itself moves it again (locally a sidebar set to 0 or to
+ * 420 px was captured at 135), so its position in the shot depended on the run. The mask is
+ * painted in the page's own background, and the other docs pages' shots still show the sidebar.
+ * Below 768 px the sidebar is a closed drawer (`#nd-sidebar` is not rendered) and nothing is
+ * masked.
  */
-async function pinSidebar(page: Page) {
-  const sidebar = page.locator("#nd-sidebar");
-  if (!(await sidebar.isVisible())) return;
-  await sidebar.evaluate((aside) => {
-    const viewport = aside.querySelector<HTMLElement>("[data-radix-scroll-area-viewport]");
-    const active = aside.querySelector('a[data-active="true"]');
-    if (!viewport || !active) throw new Error("No sidebar viewport or active item");
-    const padding = Number.parseFloat(getComputedStyle(viewport).paddingTop);
-    viewport.scrollTop +=
-      active.getBoundingClientRect().top - viewport.getBoundingClientRect().top - padding;
-  });
-  // The scroll shows the scrollbar for a moment (Radix `type="scroll"`); wait until it is gone.
-  await page.evaluate(
-    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
-  );
-  await expect(sidebar.locator('[data-orientation="vertical"]')).toHaveCount(0);
+async function shotOptions(page: Page, path: string) {
+  if (!path.startsWith("/docs/components/")) return {};
+  const maskColor = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  return { mask: [page.locator("#nd-sidebar")], maskColor };
 }
 
 for (const path of pages) {
@@ -232,12 +223,14 @@ for (const path of pages) {
         await waitForInk(page);
       }
       await waitForStages(page, mode);
-      if (path.startsWith("/docs/components/")) await pinSidebar(page);
 
       if (comparePixels) {
         // The whole page first, in the state its baseline was always taken in.
         if (fullShot(path)) {
-          await expect(page).toHaveScreenshot(`site-${slug(path)}-${mode}.png`, { fullPage: true });
+          await expect(page).toHaveScreenshot(`site-${slug(path)}-${mode}.png`, {
+            fullPage: true,
+            ...(await shotOptions(page, path)),
+          });
         }
         if (VIEWPORT_SHOT.has(path)) {
           // The first viewport is the top of the page, whichever demo took focus (on the index the
