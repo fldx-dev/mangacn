@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 61 items in the registry. Each line gives the item's name, what it is, the one
+All 65 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -136,6 +136,18 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `sonner`: Stock sonner Toaster whose toasts are paper cards with a heavy hand-drawn outline and ink glyph icons (needs ink-frame).
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/sonner --overwrite`
   Docs: https://www.mangacn.com/docs/components/sonner (Markdown: https://www.mangacn.com/docs/components/sonner.md)
+- `scroll-area`: Stock scroll area with a hand-drawn ink thumb on a thin ruled track; the viewport is a named region (needs ink-frame).
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/scroll-area --overwrite`
+  Docs: https://www.mangacn.com/docs/components/scroll-area (Markdown: https://www.mangacn.com/docs/components/scroll-area.md)
+- `spinner`: Stock loading spinner drawn as an ink blot with its droplets, at icon size; still under reduced motion.
+  Install: `npx shadcn@latest add @mangacn/spinner --overwrite`
+  Docs: https://www.mangacn.com/docs/components/spinner (Markdown: https://www.mangacn.com/docs/components/spinner.md)
+- `empty`: Stock empty state with an emanata mark as its default media and the title in the display face (needs emanata).
+  Install: `npx shadcn@latest add @mangacn/empty --overwrite`
+  Docs: https://www.mangacn.com/docs/components/empty (Markdown: https://www.mangacn.com/docs/components/empty.md)
+- `label`: Stock form label in the body face, with an optional spot asterisk for required fields.
+  Install: `npx shadcn@latest add @mangacn/label --overwrite`
+  Docs: https://www.mangacn.com/docs/components/label (Markdown: https://www.mangacn.com/docs/components/label.md)
 
 ## Layout
 
