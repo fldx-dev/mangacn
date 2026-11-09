@@ -86,6 +86,9 @@ function SelectContent({
         align={align}
         alignOffset={alignOffset}
         alignItemWithTrigger={alignItemWithTrigger}
+        // The drawing reaches 8 px past the popup; keep that much room from the viewport edge
+        // so a popup near it does not scroll the page sideways.
+        collisionPadding={8}
         className="isolate z-50"
       >
         <InkFrame

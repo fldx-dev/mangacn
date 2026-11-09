@@ -205,10 +205,10 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 
 ## Background
 
-- `speed-lines`: Decorative radial or horizontal motion lines behind content, with density, colour and a movable centre.
+- `speed-lines`: Decorative radial or horizontal motion lines with density, colour and a movable centre; a parent's first child, clipped to its box.
   Install: `npx shadcn@latest add @mangacn/speed-lines --overwrite`
   Docs: https://www.mangacn.com/docs/components/speed-lines (Markdown: https://www.mangacn.com/docs/components/speed-lines.md)
-- `focus-lines`: Decorative concentration lines bursting in towards a point, as inline SVG at the speed-line width.
+- `focus-lines`: Decorative concentration lines bursting in towards a point: the first child of a relative parent, clipped to its own box.
   Install: `npx shadcn@latest add @mangacn/focus-lines --overwrite`
   Docs: https://www.mangacn.com/docs/components/focus-lines (Markdown: https://www.mangacn.com/docs/components/focus-lines.md)
 - `halftone-background`: Decorative full-bleed halftone screen in three tones and dot sizes, with an optional top, bottom or radial fade.
@@ -247,7 +247,7 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 
 ## Data
 
-- `manga-frame`: Image in a hand-drawn ink frame with aspect presets, a halftone mat and a caption; alt is required (needs ink-frame).
+- `manga-frame`: Image, or a lettered scene as children, in a hand-drawn ink frame that clips them; aspect presets, halftone mat, caption (needs ink-frame).
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/manga-frame --overwrite`
   Docs: https://www.mangacn.com/docs/components/manga-frame (Markdown: https://www.mangacn.com/docs/components/manga-frame.md)
 - `power-gauge`: Anime-style stat bar: a display-face label, a solid or segmented ink fill, a max tick and a MAX burst; a labelled meter.

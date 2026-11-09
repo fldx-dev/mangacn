@@ -56,6 +56,48 @@ if (entries.some((entry) => entry.item === "focus-lines" && entry.demo === "in-a
   });
 }
 
+// Popups pass `collisionPadding={8}` to their positioner: a popup's ink frame reaches past its
+// box, so near the viewport's edge the popup keeps 8 px of room instead of meeting it. Each
+// trigger is pushed to one edge of a phone (the stage's centring and padding dropped before the
+// page runs), and the open popup must stay 8 px inside both edges.
+const EDGE_POPUPS = [
+  { item: "popover", demo: "default", popup: "popover-content" },
+  { item: "select", demo: "open", popup: "select-content" },
+  { item: "tooltip", demo: "default", popup: "tooltip-content" },
+].filter(({ item, demo }) => entries.some((entry) => entry.item === item && entry.demo === demo));
+for (const { item, demo, popup } of EDGE_POPUPS) {
+  for (const edge of ["flex-start", "flex-end"] as const) {
+    test(`${item}/${demo} keeps 8 px from the viewport edge at 360 px (${edge})`, async ({
+      page,
+    }) => {
+      test.skip(test.info().project.name !== "w360", "one phone width is enough");
+      await page.addInitScript((justify) => {
+        document.addEventListener("DOMContentLoaded", () => {
+          const style = document.createElement("style");
+          style.textContent = `[data-slot="demo-stage"] { justify-content: ${justify} !important; padding: 0 !important; }`;
+          document.head.append(style);
+        });
+      }, edge);
+      await page.goto(`/demo/${item}/${demo}`);
+      await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+      await waitForInk(page);
+      const width = page.viewportSize()?.width ?? 0;
+      const box = page.locator(`[data-slot="${popup}"]`);
+      await expect(box).toBeVisible();
+      // The room on the nearer side; positioning settles a frame or two after the fonts, so poll.
+      await expect
+        .poll(
+          async () => {
+            const rect = await box.boundingBox();
+            return rect ? Math.min(rect.x, width - (rect.x + rect.width)) : -1;
+          },
+          { message: "room between the popup and the viewport's nearer edge" },
+        )
+        .toBeGreaterThanOrEqual(7.5);
+    });
+  }
+}
+
 for (const { item, demo } of entries) {
   for (const mode of ["light", "dark"] as const) {
     test(`${item}/${demo} (${mode})`, async ({ page }) => {

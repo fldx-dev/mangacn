@@ -1034,8 +1034,8 @@
           {
             "name": "columns",
             "description": "1–4 columns from `sm` up (one on phones), or a count per breakpoint (`base`, `sm`, `md`,\n`lg`): `{ base: 1, sm: 2, lg: 3 }`.",
-            "type": "Partial<Record<Breakpoint, Columns>> | Columns | undefined",
-            "simplifiedType": "Partial<Record<Breakpoint, Columns>> | Columns",
+            "type": "PanelGridColumns | undefined",
+            "simplifiedType": "1 | 2 | 3 | 4 | { base?: 1 | 2 | 3 | 4; sm?: 1 | 2 | 3 | 4; md?: 1 | 2 | 3 | 4; lg?: 1 | 2 | 3 | 4; }",
             "tags": [
               {
                 "name": "default",
