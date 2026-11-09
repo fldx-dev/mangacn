@@ -40,7 +40,8 @@ Theme utilities you may use on your own markup: `halftone`, `halftone-light`,
 `halftone-dark`, `screentone-lines`, `screentone-cross`, `speed-lines`, `paper-grain`,
 `ink-border`, `ink-border-heavy`, and the one-shot animations `animate-mangacn-shake`,
 `-pop`, `-slam`, `-flash`, `-speed-in`. Screentone is texture: never let a pattern be the
-only thing that carries meaning.
+only thing that carries meaning, and never press a `stamp` over it: the seal's grain and
+inner ring vanish into the dots, so set it on plain paper beside the toned area.
 
 ## InkFrame on every outline
 
