@@ -29,8 +29,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
+  # `pnpm run ci` (the full local gate) is `ci:checks` then the smoke; CI runs the two halves as
+  # parallel jobs, so a run takes the longer of them, not their sum.
+  checks:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # `pnpm skill:validate` runs the Agent Skills validator (Python) through uvx.
+      - uses: astral-sh/setup-uv@v10.3.3
+      # Lint, every generator's check, skill validate, typecheck, tests with coverage, registry
+      # validate and build.
+      - run: pnpm run ci:checks
+
+  smoke:
+    runs-on: ubuntu-latest
+    # The full smoke (every item, main and `full`) takes about 4 minutes on a runner.
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -44,22 +64,23 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # `pnpm skill:validate` runs the Agent Skills validator (Python) through uvx.
-      - uses: astral-sh/setup-uv@v10.3.3
-      # `pnpm ci` is a reserved (unimplemented) pnpm command, so call the script with `run`.
       # A branch dispatch smokes only the items its diff touches: pnpm appends `--changed` to the
       # script's last command, `pnpm registry:smoke`. Push, pull requests, main and `full` smoke
       # every item.
-      - name: pnpm run ci
+      - name: pnpm run ci:smoke
         env:
           SMOKE_ARGS: ${{ github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main' && !inputs.full && '--changed' || '' }}
-        run: pnpm run ci $SMOKE_ARGS
+        run: pnpm run ci:smoke $SMOKE_ARGS
 
   visual:
     runs-on: ubuntu-latest
     # `playwright install --with-deps` waits on the Ubuntu apt mirror, which took 11 minutes on
     # 2026-11-05 (15 MB at 23 kB/s); the full suite needs about 7. A browser cache hit skips apt.
     timeout-minutes: 30
+    env:
+      # The landing is shot whole (as well as its first viewport) only on main (its push run,
+      # or a dispatch there) and `full` dispatches; e2e/site.spec.ts has the rule.
+      SITE_FULL: ${{ (github.ref == 'refs/heads/main' || inputs.full) && '1' || '' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -92,7 +113,8 @@ jobs:
           echo "E2E_ITEMS=$items ($why)"
           echo "E2E_ITEMS=$items" >> "$GITHUB_ENV"
           echo "items=$items" >> "$GITHUB_OUTPUT"
-          echo "Visual set: \`E2E_ITEMS=$items\` ($why)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Visual set: \`E2E_ITEMS=$items\` ($why); \`SITE_FULL=${SITE_FULL:-}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "SITE_FULL=${SITE_FULL:-} (1: the landing is also shot whole)"
       - name: Playwright version
         id: playwright
         if: steps.filter.outputs.items != 'none'

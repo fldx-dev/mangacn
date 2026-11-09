@@ -45,7 +45,9 @@
     "test:e2e": "playwright test -c e2e/playwright.config.ts",
     "test:e2e:changed": "tsx scripts/changed-e2e.ts --run",
     "test:e2e:update": "playwright test -c e2e/playwright.config.ts --update-snapshots=all",
-    "ci": "pnpm lint && pnpm gen:demos && pnpm gen:docs --check && pnpm gen:props --check && pnpm gen:skill --check && pnpm skill:validate && pnpm typecheck && pnpm gen:theme && pnpm test:coverage && pnpm registry:validate && pnpm registry:build && pnpm registry:smoke"
+    "ci": "pnpm run ci:checks && pnpm registry:smoke",
+    "ci:checks": "pnpm lint && pnpm gen:demos && pnpm gen:docs --check && pnpm gen:props --check && pnpm gen:skill --check && pnpm skill:validate && pnpm typecheck && pnpm gen:theme && pnpm test:coverage && pnpm registry:validate && pnpm registry:build",
+    "ci:smoke": "pnpm registry:build && pnpm registry:smoke"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",
