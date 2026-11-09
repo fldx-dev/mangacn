@@ -1,8 +1,12 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { docItems } from "@/lib/docs/catalog";
+import { loadRegistry } from "@/lib/registry";
+import { listDemos } from "@/lib/registry/demos";
 import { axe } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { ComponentIndex } from "./component-index";
+import { OVERLAY_ITEMS } from "./demo-frame";
 
 beforeEach(() => {
   stubResizeObserver();
@@ -13,7 +17,11 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-// Every test renders all 54 demos in jsdom; the first import of them is slow on a busy machine.
+// One card per catalog item with demos; overlay items show their stage in an iframe. Counted,
+// not written down, so parallel branches that add items do not conflict here.
+const CARDS = docItems(loadRegistry(), listDemos()).length;
+
+// Every test renders every default demo; the first import of them is slow on a busy machine.
 vi.setConfig({ testTimeout: 30_000 });
 
 describe("ComponentIndex", () => {
@@ -33,7 +41,7 @@ describe("ComponentIndex", () => {
         "Data",
       ]
     `);
-    expect(document.querySelectorAll("[data-item]")).toHaveLength(54);
+    expect(document.querySelectorAll("[data-item]")).toHaveLength(CARDS);
   });
 
   it("links each card's title to the item page and renders its default demo", async () => {
@@ -50,13 +58,13 @@ describe("ComponentIndex", () => {
   it("shows overlay items through their stage iframe", async () => {
     render(await ComponentIndex());
     expect(screen.getByTitle("dialog / default").getAttribute("src")).toBe("/demo/dialog/default");
-    expect(document.querySelectorAll("iframe")).toHaveLength(9);
+    expect(document.querySelectorAll("iframe")).toHaveLength(OVERLAY_ITEMS.size);
   });
 
   it("puts every demo on a fixed stage that mounts lazily (mounted at once in jsdom)", async () => {
     const { container } = render(await ComponentIndex());
     const stages = [...container.querySelectorAll<HTMLElement>('[data-slot="lazy-demo"]')];
-    expect(stages).toHaveLength(54);
+    expect(stages).toHaveLength(CARDS);
     // jsdom has no IntersectionObserver, so every demo mounts at once.
     expect(stages.every((stage) => stage.dataset.mounted === "true")).toBe(true);
     const height = (item: string) =>

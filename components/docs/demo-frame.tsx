@@ -19,6 +19,7 @@ export const OVERLAY_ITEMS: ReadonlySet<string> = new Set([
   "hover-card",
   "drawer",
   "sonner",
+  "context-menu",
 ]);
 
 export interface DemoFrameProps {
