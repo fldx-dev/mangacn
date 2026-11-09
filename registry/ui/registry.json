@@ -521,7 +521,7 @@
       "name": "speed-lines",
       "type": "registry:component",
       "title": "Speed Lines",
-      "description": "Decorative radial or horizontal motion lines behind content, with density, colour and a movable centre.",
+      "description": "Decorative radial or horizontal motion lines with density, colour and a movable centre; a parent's first child, clipped to its box.",
       "categories": ["background"],
       "meta": {
         "since": "0.1.0"
@@ -539,7 +539,7 @@
       "name": "focus-lines",
       "type": "registry:component",
       "title": "Focus Lines",
-      "description": "Decorative concentration lines bursting in towards a point, as inline SVG at the speed-line width.",
+      "description": "Decorative concentration lines bursting in towards a point: the first child of a relative parent, clipped to its own box.",
       "categories": ["background"],
       "meta": {
         "since": "0.1.0"
@@ -629,7 +629,7 @@
       "name": "manga-frame",
       "type": "registry:component",
       "title": "Manga Frame",
-      "description": "Image in a hand-drawn ink frame with aspect presets, a halftone mat and a caption; alt is required (needs ink-frame).",
+      "description": "Image, or a lettered scene as children, in a hand-drawn ink frame that clips them; aspect presets, halftone mat, caption (needs ink-frame).",
       "categories": ["data"],
       "meta": {
         "since": "0.1.0"
