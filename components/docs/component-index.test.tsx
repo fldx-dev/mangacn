@@ -7,6 +7,7 @@ import { stubGetAnimations } from "@/lib/test/animations";
 import { axe } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { ComponentIndex } from "./component-index";
+import { OVERLAY_ITEMS } from "./demo-frame";
 
 // The scroll-area card's viewport asks for running animations after it mounts; jsdom has none.
 let restoreAnimations = () => {};
@@ -66,7 +67,7 @@ describe("ComponentIndex", () => {
   it("shows overlay items through their stage iframe", async () => {
     render(await ComponentIndex());
     expect(screen.getByTitle("dialog / default").getAttribute("src")).toBe("/demo/dialog/default");
-    expect(document.querySelectorAll("iframe")).toHaveLength(9);
+    expect(document.querySelectorAll("iframe")).toHaveLength(OVERLAY_ITEMS.size);
   });
 
   it("puts every demo on a fixed stage that mounts lazily (mounted at once in jsdom)", async () => {

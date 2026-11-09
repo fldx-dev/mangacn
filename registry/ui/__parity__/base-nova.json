@@ -929,6 +929,94 @@
         "separator"
       ],
       "sha1": "bbac114e903b7ac8d67ad273166920af8cf9bdc4"
+    },
+    "context-menu": {
+      "exports": [
+        "ContextMenu",
+        "ContextMenuCheckboxItem",
+        "ContextMenuContent",
+        "ContextMenuGroup",
+        "ContextMenuItem",
+        "ContextMenuLabel",
+        "ContextMenuPortal",
+        "ContextMenuRadioGroup",
+        "ContextMenuRadioItem",
+        "ContextMenuSeparator",
+        "ContextMenuShortcut",
+        "ContextMenuSub",
+        "ContextMenuSubContent",
+        "ContextMenuSubTrigger",
+        "ContextMenuTrigger"
+      ],
+      "dataSlots": [
+        "context-menu",
+        "context-menu-checkbox-item",
+        "context-menu-content",
+        "context-menu-group",
+        "context-menu-item",
+        "context-menu-label",
+        "context-menu-portal",
+        "context-menu-radio-group",
+        "context-menu-radio-item",
+        "context-menu-separator",
+        "context-menu-shortcut",
+        "context-menu-sub",
+        "context-menu-sub-content",
+        "context-menu-sub-trigger",
+        "context-menu-trigger"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "sha1": "d161a9b68d55fe045057bb073d75b848631327aa"
+    },
+    "menubar": {
+      "exports": [
+        "Menubar",
+        "MenubarCheckboxItem",
+        "MenubarContent",
+        "MenubarGroup",
+        "MenubarItem",
+        "MenubarLabel",
+        "MenubarMenu",
+        "MenubarPortal",
+        "MenubarRadioGroup",
+        "MenubarRadioItem",
+        "MenubarSeparator",
+        "MenubarShortcut",
+        "MenubarSub",
+        "MenubarSubContent",
+        "MenubarSubTrigger",
+        "MenubarTrigger"
+      ],
+      "dataSlots": [
+        "menubar",
+        "menubar-checkbox-item",
+        "menubar-content",
+        "menubar-group",
+        "menubar-item",
+        "menubar-label",
+        "menubar-menu",
+        "menubar-portal",
+        "menubar-radio-group",
+        "menubar-radio-item",
+        "menubar-separator",
+        "menubar-shortcut",
+        "menubar-sub",
+        "menubar-sub-content",
+        "menubar-sub-trigger",
+        "menubar-trigger"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "dropdown-menu"
+      ],
+      "sha1": "3a27725b57575dd94a03d89f016e682e7931ebab"
     }
   }
 }

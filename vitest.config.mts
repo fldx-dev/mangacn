@@ -14,7 +14,7 @@ export default defineConfig({
         ),
       },
       // Items import their registryDependencies from the install path too (dialog → button,
-      // toggle-group → toggle, sfx-ticker → sfx-text).
+      // toggle-group → toggle, sfx-ticker → sfx-text, menubar → dropdown-menu).
       {
         find: /^@\/components\/ui\/button$/,
         replacement: fileURLToPath(new URL("./registry/ui/button/button.tsx", import.meta.url)),
@@ -31,6 +31,12 @@ export default defineConfig({
       {
         find: /^@\/components\/ui\/textarea$/,
         replacement: fileURLToPath(new URL("./registry/ui/textarea/textarea.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/dropdown-menu$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/dropdown-menu/dropdown-menu.tsx", import.meta.url),
+        ),
       },
       {
         find: /^@\/components\/sfx-text$/,

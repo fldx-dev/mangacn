@@ -42,6 +42,8 @@
     "label",
     "input-group",
     "button-group",
+    "context-menu",
+    "menubar",
     "---Layout---",
     "panel",
     "panel-grid",

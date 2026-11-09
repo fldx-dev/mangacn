@@ -45,6 +45,8 @@ export const PARITY_PRIMITIVES = [
   "label",
   "input-group",
   "button-group",
+  "context-menu",
+  "menubar",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";
