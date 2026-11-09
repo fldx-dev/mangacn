@@ -1,10 +1,8 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import { stubResizeObserver } from "@/lib/test/resize-observer";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { ChapterList } from "./chapter-list";
 import { chapterLabel, latestChapter, orderChapters } from "./chapter-numeral";
-import ChapterListDefaultDemo from "./demos/default";
 
 afterEach(() => {
   cleanup();
@@ -137,8 +135,5 @@ describe("ChapterList", () => {
     expect(screen.getByRole("navigation")?.classList.contains("mx-auto")).toBe(true);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    stubResizeObserver();
-    await expectNoA11yViolations(<ChapterListDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });
