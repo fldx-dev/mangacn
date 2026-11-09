@@ -6,14 +6,15 @@ import { InkFrame } from "@/components/ink-frame";
 // Based on shadcn/ui Input (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-10-31.
 // Restyled for mangacn: an <input> cannot hold children, so the InkFrame wraps it and draws
 // the outline and paper fill; no CSS border. Size the field from its parent (`w-*` on the
-// input itself leaves the frame full width).
+// input itself leaves the frame full width). Inside an input or button group (`data-grouped`)
+// the group draws the one outline, so this frame hides its drawing and border.
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <InkFrame
       as="span"
       fill="paper"
-      className="flex w-full min-w-0 rounded-lg has-[>[aria-invalid=true]]:[--ink:var(--destructive)]"
+      className="flex w-full min-w-0 rounded-lg has-[>[aria-invalid=true]]:[--ink:var(--destructive)] in-data-grouped:border-0 in-data-grouped:bg-transparent in-data-grouped:[&>svg]:hidden"
     >
       <InputPrimitive
         type={type}

@@ -45,5 +45,22 @@ describe("Textarea", () => {
     expect(screen.getByRole("textbox").parentElement?.dataset.inked).toBe("true");
   });
 
+  it("turns its frame off inside a group that sets data-grouped", () => {
+    render(
+      <div data-grouped="">
+        <Textarea aria-label="Notes" />
+      </div>,
+    );
+    const frame = screen.getByRole("textbox").parentElement;
+    // The frame stays (it holds the textarea); its drawing and fallback border hide in a group.
+    for (const name of [
+      "in-data-grouped:border-0",
+      "in-data-grouped:bg-transparent",
+      "in-data-grouped:[&>svg]:hidden",
+    ]) {
+      expect(frame?.classList.contains(name), name).toBe(true);
+    }
+  });
+
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });
