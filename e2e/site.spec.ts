@@ -10,12 +10,21 @@ import { waitForInk } from "./ready";
 // Linux only (CI), and everywhere no overflow, no axe violations and no errors.
 const comparePixels = process.platform === "linux";
 
-// The landing and the component index are the pages every item or landing change moves, so a
-// branch shoots their first viewport only (`site-<page>-viewport-<mode>.png`) and checks the
-// index's cards structurally below. `SITE_FULL=1` (main's push run, `full` dispatches) also
-// shoots them whole under their old names (SPEC-components-3 §8.1).
-const VIEWPORT_ONLY = new Set(["/", "/docs/components"]);
+// The landing and the component index are shot at their first viewport
+// (`site-<page>-viewport-<mode>.png`), not whole (SPEC-components-3 §8.1). The index is never
+// shot whole: every new item moved that picture, so its cards are checked structurally below
+// and each demo has its own baseline. The landing is also shot whole (`site-home-<mode>.png`)
+// under `SITE_FULL=1` (main, `full` dispatches); a task that changes the landing regenerates
+// that shot with a `full=true` update run.
+const VIEWPORT_SHOT = new Set(["/", "/docs/components"]);
+const FULL_SHOT_UNDER_FLAG = new Set(["/"]);
 const siteFull = process.env.SITE_FULL === "1";
+
+/** Whether a page is shot whole in this run. */
+function fullShot(path: string): boolean {
+  if (!VIEWPORT_SHOT.has(path)) return true;
+  return siteFull && FULL_SHOT_UNDER_FLAG.has(path);
+}
 
 /** What the index must show: one card per documented item (the catalog items with demos). */
 const indexItems = docItems(loadRegistry(resolve(__dirname, "../registry.json")), demoEntries);
@@ -124,13 +133,13 @@ for (const path of pages) {
       await waitForStages(page, mode);
 
       if (comparePixels) {
-        // The whole page first, in the state its baseline was always taken in: on the index the
-        // popover demo's focused field (in its iframe) scrolls the page down to it.
-        if (!VIEWPORT_ONLY.has(path) || siteFull) {
+        // The whole page first, in the state its baseline was always taken in.
+        if (fullShot(path)) {
           await expect(page).toHaveScreenshot(`site-${slug(path)}-${mode}.png`, { fullPage: true });
         }
-        if (VIEWPORT_ONLY.has(path)) {
-          // The first viewport is the top of the page, whichever demo took focus.
+        if (VIEWPORT_SHOT.has(path)) {
+          // The first viewport is the top of the page, whichever demo took focus (on the index the
+          // popover demo's focused field, in its iframe, scrolls the page down to it).
           await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
           await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
           await expect(page).toHaveScreenshot(`site-${slug(path)}-viewport-${mode}.png`);

@@ -78,9 +78,8 @@ jobs:
     # 2026-11-05 (15 MB at 23 kB/s); the full suite needs about 7. A browser cache hit skips apt.
     timeout-minutes: 30
     env:
-      # The landing and the component index are shot whole (as well as their first viewport)
-      # only on main (its push run, or a dispatch there) and `full` dispatches;
-      # e2e/site.spec.ts has the rule.
+      # The landing is shot whole (as well as its first viewport) only on main (its push run,
+      # or a dispatch there) and `full` dispatches; e2e/site.spec.ts has the rule.
       SITE_FULL: ${{ (github.ref == 'refs/heads/main' || inputs.full) && '1' || '' }}
     steps:
       - uses: actions/checkout@v7
@@ -115,7 +114,7 @@ jobs:
           echo "E2E_ITEMS=$items" >> "$GITHUB_ENV"
           echo "items=$items" >> "$GITHUB_OUTPUT"
           echo "Visual set: \`E2E_ITEMS=$items\` ($why); \`SITE_FULL=${SITE_FULL:-}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "SITE_FULL=${SITE_FULL:-} (1: the landing and the index are also shot whole)"
+          echo "SITE_FULL=${SITE_FULL:-} (1: the landing is also shot whole)"
       - name: Playwright version
         id: playwright
         if: steps.filter.outputs.items != 'none'
