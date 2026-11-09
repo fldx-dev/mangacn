@@ -43,6 +43,7 @@
     "input-group",
     "button-group",
     "field",
+    "item",
     "---Layout---",
     "panel",
     "panel-grid",

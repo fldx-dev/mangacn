@@ -46,6 +46,7 @@ export const PARITY_PRIMITIVES = [
   "input-group",
   "button-group",
   "field",
+  "item",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";

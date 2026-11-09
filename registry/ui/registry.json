@@ -1177,6 +1177,26 @@
           "target": "@ui/field.tsx"
         }
       ]
+    },
+    {
+      "name": "item",
+      "type": "registry:ui",
+      "title": "Item",
+      "description": "Stock item row: a heavy-outlined paper card when outlined, tone-1 when muted, display-face titles and hand-drawn separators.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "item/item.tsx",
+          "type": "registry:ui",
+          "target": "@ui/item.tsx"
+        }
+      ]
     }
   ]
 }
