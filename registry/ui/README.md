@@ -488,6 +488,15 @@ page renders that one demo centred on paper and nothing else.
 `pnpm gen:demos` fails with the item name if `demos/default.tsx` is missing, and
 `pnpm test` fails if the generated map is stale; rerun `pnpm gen:demos`.
 
+`pnpm registry:list` (`shadcn list` against `pnpm dev` on `http://localhost:3000`) exits 0.
+Listing the live registry (`shadcn list https://www.mangacn.com/r/registry.json`) on Windows
+with Node 26.3.1 prints all items and then exits 127 with libuv's `Assertion failed:
+!(handle->flags & UV_HANDLE_CLOSING)` (`src/win/async.c`, line 94): libuv aborting at Node's teardown after
+the https fetch. Plain `node node_modules/shadcn/dist/index.js list <url>` does the same, so it
+is the CLI process under that Node, not pnpm's script wrapper; the listing is complete, read
+the output and ignore the code (checked 2026-11-09, shadcn 4.23.0; CI runs Node 22 from
+`.nvmrc`).
+
 ### Stock parity
 
 `registry/ui/parity.test.ts` compares every restyled primitive (a `registry:ui` item whose
