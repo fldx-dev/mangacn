@@ -495,6 +495,17 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   horizontal overflow, and on Linux compares against
   `e2e/__screenshots__/linux/w<width>/<item>-<demo>-<mode>.png` (`maxDiffPixelRatio` 0.01).
   On Windows and macOS it skips the pixel comparison, because font rendering differs.
+- `e2e/site.spec.ts` shoots each site page whole, except the landing and the component index,
+  which every item or landing change moves: a branch shoots their first viewport only
+  (`site-home-viewport-<mode>.png`, `site-docs-components-viewport-<mode>.png`) and checks the
+  index structurally at every width (one card per catalog item with demos, each with its
+  title linking to its page and its description, no card past the viewport's edges).
+  `SITE_FULL=1` also shoots both whole under their old names (`site-home-<mode>.png`,
+  `site-docs-components-<mode>.png`); CI sets it on main (push or dispatch) and on `full`
+  dispatches. So a branch that adds a card leaves the two full-page index shots stale and
+  main's push run after the merge fails on them alone; refresh them on main with one
+  `full=true`, `update-snapshots=true` dispatch (after a batch of merges, not per branch) and
+  commit its PNGs.
 - A new demo has no baseline, so the `visual` CI job fails until you add one. Baselines are
   only made on CI: dispatch with `update-snapshots` checked (step 3 of the loop above), which
   uploads only the missing and changed PNGs, copy them in and commit them with the item.
