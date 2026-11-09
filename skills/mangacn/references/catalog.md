@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 62 items in the registry. Each line gives the item's name, what it is, the one
+All 63 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -139,6 +139,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `context-menu`: Stock right-click and long-press menu as dropdown-menu's heavy-outlined paper: ink highlight, hand-drawn separators (needs ink-frame).
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/context-menu --overwrite`
   Docs: https://www.mangacn.com/docs/components/context-menu (Markdown: https://www.mangacn.com/docs/components/context-menu.md)
+- `menubar`: Stock menubar as one outlined strip with hand-drawn rules and display-face triggers; its menus are mangacn's dropdown-menu popup.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/menubar --overwrite`
+  Docs: https://www.mangacn.com/docs/components/menubar (Markdown: https://www.mangacn.com/docs/components/menubar.md)
 
 ## Layout
 

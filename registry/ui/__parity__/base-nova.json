@@ -824,6 +824,52 @@
       ],
       "registryDependencies": [],
       "sha1": "d161a9b68d55fe045057bb073d75b848631327aa"
+    },
+    "menubar": {
+      "exports": [
+        "Menubar",
+        "MenubarCheckboxItem",
+        "MenubarContent",
+        "MenubarGroup",
+        "MenubarItem",
+        "MenubarLabel",
+        "MenubarMenu",
+        "MenubarPortal",
+        "MenubarRadioGroup",
+        "MenubarRadioItem",
+        "MenubarSeparator",
+        "MenubarShortcut",
+        "MenubarSub",
+        "MenubarSubContent",
+        "MenubarSubTrigger",
+        "MenubarTrigger"
+      ],
+      "dataSlots": [
+        "menubar",
+        "menubar-checkbox-item",
+        "menubar-content",
+        "menubar-group",
+        "menubar-item",
+        "menubar-label",
+        "menubar-menu",
+        "menubar-portal",
+        "menubar-radio-group",
+        "menubar-radio-item",
+        "menubar-separator",
+        "menubar-shortcut",
+        "menubar-sub",
+        "menubar-sub-content",
+        "menubar-sub-trigger",
+        "menubar-trigger"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "dropdown-menu"
+      ],
+      "sha1": "3a27725b57575dd94a03d89f016e682e7931ebab"
     }
   }
 }

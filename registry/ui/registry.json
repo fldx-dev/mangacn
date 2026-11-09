@@ -982,6 +982,26 @@
           "target": "@ui/context-menu.tsx"
         }
       ]
+    },
+    {
+      "name": "menubar",
+      "type": "registry:ui",
+      "title": "Menubar",
+      "description": "Stock menubar as one outlined strip with hand-drawn rules and display-face triggers; its menus are mangacn's dropdown-menu popup.",
+      "categories": ["primitive"],
+      "meta": { "since": "0.1.0" },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "menubar/menubar.tsx",
+          "type": "registry:ui",
+          "target": "@ui/menubar.tsx"
+        }
+      ]
     }
   ]
 }
