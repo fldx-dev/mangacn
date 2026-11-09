@@ -53,6 +53,20 @@ describe("ComponentIndex", () => {
     expect(document.querySelectorAll("iframe")).toHaveLength(9);
   });
 
+  it("puts every demo on a fixed stage that mounts lazily (mounted at once in jsdom)", async () => {
+    const { container } = render(await ComponentIndex());
+    const stages = [...container.querySelectorAll<HTMLElement>('[data-slot="lazy-demo"]')];
+    expect(stages).toHaveLength(54);
+    // jsdom has no IntersectionObserver, so every demo mounts at once.
+    expect(stages.every((stage) => stage.dataset.mounted === "true")).toBe(true);
+    const height = (item: string) =>
+      container.querySelector<HTMLElement>(`[data-item="${item}"] [data-slot="lazy-demo"]`)?.style
+        .height;
+    expect(height("button")).toBe("20rem");
+    expect(height("dialog")).toBe("20rem");
+    expect(height("panel-grid")).toBe("35rem");
+  });
+
   it("has no axe violations", async () => {
     const { container } = render(await ComponentIndex());
     // axe cannot enter a jsdom iframe; the stages have their own suite.

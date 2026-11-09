@@ -46,7 +46,7 @@ exports[`renderThemeCssFile > prefixes the generated-file header and matches the
   --secondary: var(--tone-1);
   --secondary-foreground: var(--ink);
   --muted: var(--tone-1);
-  --muted-foreground: var(--tone-3);
+  --muted-foreground: var(--tone-4);
   --accent: var(--tone-1);
   --accent-foreground: var(--ink);
   --destructive: var(--spot);
@@ -89,7 +89,7 @@ exports[`renderThemeCssFile > prefixes the generated-file header and matches the
   --secondary: var(--tone-1);
   --secondary-foreground: var(--ink);
   --muted: var(--tone-1);
-  --muted-foreground: var(--tone-3);
+  --muted-foreground: var(--tone-4);
   --accent: var(--tone-1);
   --accent-foreground: var(--ink);
   --destructive: var(--spot);

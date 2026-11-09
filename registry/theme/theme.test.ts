@@ -160,6 +160,16 @@ describe("theme item", () => {
     }
   });
 
+  it("maps muted text to tone-4, the darkest tone that reads at 4.5:1 on muted (Task 68)", () => {
+    // tone-3 measured about 4:1 on tone-1 in both modes; tone-4 is one step further from the
+    // muted fill in each (darker in light, lighter in dark). contrast.test.ts holds the ratios.
+    for (const mode of ["light", "dark"] as const) {
+      const vars = theme?.cssVars?.[mode] ?? {};
+      expect(vars.muted).toBe("var(--tone-1)");
+      expect(vars["muted-foreground"]).toBe("var(--tone-4)");
+    }
+  });
+
   it("holds geometry and both font stacks in cssVars.theme", () => {
     const vars = theme?.cssVars?.theme ?? {};
     for (const name of THEME_VARIABLES) expect(Object.keys(vars)).toContain(name);
