@@ -1,5 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import nextConfig from "../../next.config";
+
+// next.config.ts wraps the config in fumadocs-mdx's createMDX(), which starts its file
+// generator on import (esbuild, then writes under .source/). Under jsdom on the threads pool
+// esbuild's TextEncoder invariant failed across realms and printed "[MDX] failed to generate
+// files"; the headers need none of it, so the wrapper is the identity here.
+vi.mock("fumadocs-mdx/next", () => ({
+  createMDX: () => (config: unknown) => config,
+}));
 
 // The rule as configured; the served response (content type included) is checked with
 // `next build` + `next start` + `curl -I` (see the task notes).
