@@ -2,15 +2,10 @@ import { act, cleanup, render } from "@testing-library/react";
 import { type ComponentType, createElement, type ReactElement } from "react";
 import { expect, it } from "vitest";
 import { configureAxe } from "vitest-axe";
+import { AXE_DISABLED_RULES } from "./axe-rules";
 import { stubResizeObserver } from "./resize-observer";
 
-/**
- * Rules off in every axe run, unit and stage page: `color-contrast` needs real layout and
- * paint in jsdom (the theme's contrast is asserted in registry/theme/contrast.test.ts), and
- * `region` expects a full page with landmarks, which a single component demo never has.
- */
-export const AXE_DISABLED_RULES = ["color-contrast", "region"];
-
+/** axe-core for jsdom, with the shared rule set (./axe-rules.ts). */
 export const axe = configureAxe({
   rules: Object.fromEntries(AXE_DISABLED_RULES.map((rule) => [rule, { enabled: false }])),
 });

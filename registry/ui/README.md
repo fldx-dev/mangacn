@@ -503,12 +503,26 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
 
 ### Accessibility and visual snapshots
 
-- `expectNoA11yViolations(<Demo />)` (`lib/test/axe.ts`) renders the demo and runs axe on
-  `document.body`, so portalled popups are checked too. `color-contrast` and `region` are
-  off in jsdom (no layout, no page landmarks); theme contrast has its own test.
+- Every item test calls `expectDemosAccessible(import.meta.glob("./demos/*.tsx"))`
+  (`lib/test/axe.ts`) inside its `describe`: one case per demo, rendered with ResizeObserver
+  stubbed and every ink frame drawn, axe on `document.body` so portalled popups are checked
+  too. Options: `setup` (stubs the demos need before rendering: layout, matchMedia) and
+  `ready` (per demo, what to wait for before axe: an open drawer, a toast). The glob, not the
+  generated map, keeps each item test related to its own demos only under `--changed`;
+  `lib/registry/demo-axe.test.ts` fails when an item with demos has no such call, so a new
+  item cannot ship demos without axe. `expectNoA11yViolations(<ui />)` remains for one-off
+  states. The rules off everywhere are in `lib/test/axe-rules.ts`: `color-contrast` (no
+  layout in jsdom; theme contrast has its own test), `region` and `page-has-heading-one`
+  (page-level; a demo is a fragment, shown in an iframe). jsdom cannot evaluate
+  `label-content-name-mismatch` (it measures glyphs on a canvas: the "HTMLCanvasElement's
+  getContext()" lines in the unit run), so the stage-page pass is where that rule bites.
 - `e2e/demos.spec.ts` opens `/demo/<item>/<demo>` and `?mode=dark` for every demo in the
-  generated map at 360, 768 and 1280 px, fails on console errors, non-200 responses and
-  horizontal overflow, and on Linux compares against
+  generated map at 360, 768 and 1280 px, fails on console errors, non-200 responses,
+  horizontal overflow and (light mode, every width) axe violations on the drawn stage page,
+  with the same rule set and Base UI's focus guards excluded (`[data-base-ui-focus-guard]`:
+  visually hidden `tabindex="0"` spans with `aria-hidden` that an open select or menu
+  portals and that hand focus on at once; Base UI has no option to drop them, as in
+  `e2e/site.spec.ts`), and on Linux compares against
   `e2e/__screenshots__/linux/w<width>/<item>-<demo>-<mode>.png` (`maxDiffPixelRatio` 0.01).
   On Windows and macOS it skips the pixel comparison, because font rendering differs.
 - `e2e/site.spec.ts` shoots each site page whole, except the landing and the component index:
