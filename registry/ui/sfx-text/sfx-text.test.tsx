@@ -1,7 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import SfxTextDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { SfxText } from "./sfx-text";
 
 // motion reads `prefers-reduced-motion` through matchMedia (missing in jsdom) once, on first
@@ -93,7 +92,5 @@ describe("SfxText", () => {
     expect(sfx.textContent).toBe("Don!");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<SfxTextDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

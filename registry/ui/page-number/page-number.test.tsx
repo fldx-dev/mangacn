@@ -1,7 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import PageNumberDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import PageNumberInAPageDemo from "./demos/in-a-page";
 import PageNumberWithChapterDemo from "./demos/with-chapter";
 import { PageNumber } from "./page-number";
@@ -92,11 +91,5 @@ describe("PageNumber", () => {
     expect(sides).toEqual(["left", "right"]);
   });
 
-  it.each([
-    ["default", PageNumberDefaultDemo],
-    ["with-chapter", PageNumberWithChapterDemo],
-    ["in-a-page", PageNumberInAPageDemo],
-  ])("has no axe violations in its %s demo", async (_name, Demo) => {
-    await expectNoA11yViolations(<Demo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

@@ -1,8 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import TabsDefaultDemo from "./demos/default";
 import { Tabs, TabsContent, TabsList, TabsTrigger, tabsListVariants } from "./tabs";
 
 afterEach(() => {
@@ -96,7 +95,5 @@ describe("Tabs", () => {
     expect(framesOf(screen.getByRole("tab", { name: "Story" }))[0]?.dataset.inked).toBe("true");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<TabsDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

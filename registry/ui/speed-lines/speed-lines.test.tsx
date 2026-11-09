@@ -1,7 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import SpeedLinesDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { SpeedLines } from "./speed-lines";
 
 afterEach(cleanup);
@@ -69,7 +68,5 @@ describe("SpeedLines", () => {
     expect(lines.classList.contains(name)).toBe(true);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<SpeedLinesDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

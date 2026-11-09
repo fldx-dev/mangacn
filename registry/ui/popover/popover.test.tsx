@@ -1,7 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import PopoverDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import {
   Popover,
   PopoverContent,
@@ -68,7 +67,5 @@ describe("Popover", () => {
     expect(document.activeElement).toBe(trigger);
   });
 
-  it("has no axe violations in its default demo (open)", async () => {
-    await expectNoA11yViolations(<PopoverDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

@@ -1,7 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import SheetDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import {
   Sheet,
   SheetContent,
@@ -78,7 +77,5 @@ describe("Sheet", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("has no axe violations in its default demo (open)", async () => {
-    await expectNoA11yViolations(<SheetDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

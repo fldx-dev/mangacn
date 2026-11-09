@@ -1,10 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import ToggleDefaultDemo from "./demos/default";
-import ToggleOutlineDemo from "./demos/outline";
-import ToggleSizesDemo from "./demos/sizes";
 import { Toggle, toggleVariants } from "./toggle";
 
 afterEach(() => {
@@ -86,9 +83,5 @@ describe("Toggle", () => {
     }
   });
 
-  it("has no axe violations in its demos", async () => {
-    await expectNoA11yViolations(<ToggleDefaultDemo />);
-    await expectNoA11yViolations(<ToggleOutlineDemo />);
-    await expectNoA11yViolations(<ToggleSizesDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

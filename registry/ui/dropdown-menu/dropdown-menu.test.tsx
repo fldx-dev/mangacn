@@ -1,8 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import DropdownMenuCheckboxesAndRadioDemo from "./demos/checkboxes-and-radio";
-import DropdownMenuDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import DropdownMenuSubmenuDemo from "./demos/submenu";
 import {
   DropdownMenu,
@@ -136,15 +134,7 @@ describe("DropdownMenu", () => {
     expect(checkbox.getAttribute("aria-checked")).toBe("false");
   });
 
-  it("has no axe violations in its default demo (open)", async () => {
-    await expectNoA11yViolations(<DropdownMenuDefaultDemo />);
-  });
-
-  it("has no axe violations in its checkboxes-and-radio demo (open)", async () => {
-    await expectNoA11yViolations(<DropdownMenuCheckboxesAndRadioDemo />);
-  });
-
-  it("opens the submenu in its submenu demo, with no axe violations", async () => {
+  it("opens the submenu in its submenu demo", async () => {
     render(<DropdownMenuSubmenuDemo />);
     await act(async () => {});
     expect(screen.getAllByRole("menu")).toHaveLength(2);
@@ -154,7 +144,7 @@ describe("DropdownMenu", () => {
     const sub = screen.getByRole("menuitem", { name: "Plan to read" }).closest('[role="menu"]');
     expect(sub?.getAttribute("data-slot")).toBe("dropdown-menu-sub-content");
     expect(frameOf(sub?.parentElement)?.getAttribute("data-fill")).toBe("paper");
-    cleanup();
-    await expectNoA11yViolations(<DropdownMenuSubmenuDemo />);
   });
+
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

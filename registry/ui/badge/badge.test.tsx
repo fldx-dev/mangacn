@@ -1,8 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { Badge, badgeVariants } from "./badge";
-import BadgeDefaultDemo from "./demos/default";
 import BadgeVariantsDemo from "./demos/variants";
 
 afterEach(cleanup);
@@ -98,16 +97,10 @@ describe("Badge", () => {
     expect(frameOf(link)).not.toBeNull();
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<BadgeDefaultDemo />);
-  });
-
-  it("has no axe violations in its variants demo", async () => {
-    await expectNoA11yViolations(<BadgeVariantsDemo />);
-  });
-
   it("marks Japanese labels with lang", () => {
     render(<BadgeVariantsDemo />);
     expect(screen.getByText("完結").getAttribute("lang")).toBe("ja");
   });
+
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

@@ -1,10 +1,8 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import SfxTickerDefaultDemo from "./demos/default";
-import SfxTickerRightToLeftDemo from "./demos/right-to-left";
-import SfxTickerSpotAndSpeedDemo from "./demos/spot-and-speed";
 import { SfxTicker } from "./sfx-ticker";
 
 afterEach(() => {
@@ -134,15 +132,6 @@ describe("SfxTicker", () => {
     expect(html).toContain('data-animated="true"');
   });
 
-  it.each([
-    ["default", SfxTickerDefaultDemo],
-    ["spot-and-speed", SfxTickerSpotAndSpeedDemo],
-    ["right-to-left", SfxTickerRightToLeftDemo],
-  ])("has no axe violations in its %s demo", async (_name, Demo) => {
-    stubReducedMotion(false);
-    await expectNoA11yViolations(<Demo />);
-  });
-
   it("marks every Japanese word in the default demo", () => {
     stubReducedMotion(false);
     const { container } = render(<SfxTickerDefaultDemo />);
@@ -151,6 +140,10 @@ describe("SfxTicker", () => {
     for (const word of words) {
       if (/[぀-ヿ]/.test(word.textContent ?? "")) expect(word.getAttribute("lang")).toBe("ja");
     }
+  });
+
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), {
+    setup: () => stubReducedMotion(false),
   });
 });
 

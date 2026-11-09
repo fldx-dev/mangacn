@@ -1,9 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import SelectDefaultDemo from "./demos/default";
-import SelectOpenDemo from "./demos/open";
 import {
   Select,
   SelectContent,
@@ -97,11 +95,5 @@ describe("Select", () => {
     expect(frameOf(screen.getByRole("combobox"))?.dataset.inked).toBe("true");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<SelectDefaultDemo />);
-  });
-
-  it("has no axe violations when open", async () => {
-    await expectNoA11yViolations(<SelectOpenDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

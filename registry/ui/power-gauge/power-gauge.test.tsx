@@ -1,11 +1,8 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import PowerGaugeDefaultDemo from "./demos/default";
-import PowerGaugeFullDemo from "./demos/full";
-import PowerGaugeSegmentsDemo from "./demos/segments";
 import PowerGaugeStatCardDemo from "./demos/stat-card";
 import { PowerGauge } from "./power-gauge";
 
@@ -178,12 +175,5 @@ describe("PowerGauge", () => {
     expect(screen.getByRole("meter", { name: "Ink" }).dataset.maxed).toBe("true");
   });
 
-  it.each([
-    ["default", PowerGaugeDefaultDemo],
-    ["segments", PowerGaugeSegmentsDemo],
-    ["stat-card", PowerGaugeStatCardDemo],
-    ["full", PowerGaugeFullDemo],
-  ])("has no axe violations in its %s demo", async (_name, Demo) => {
-    await expectNoA11yViolations(<Demo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

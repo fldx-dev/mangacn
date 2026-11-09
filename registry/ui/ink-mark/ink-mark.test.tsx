@@ -1,12 +1,9 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import InkMarkDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import InkMarkJapaneseDemo from "./demos/japanese";
-import InkMarkKindsDemo from "./demos/kinds";
 import InkMarkRevealDemo from "./demos/reveal";
-import InkMarkWrappedDemo from "./demos/wrapped";
 import { InkMark } from "./ink-mark";
 
 // Records the options handed to rough.js, with the real generator still doing the drawing.
@@ -304,19 +301,10 @@ describe("InkMark", () => {
     expect(drawn).toBeLessThan(1);
   });
 
-  it.each([
-    ["default", InkMarkDefaultDemo],
-    ["kinds", InkMarkKindsDemo],
-    ["wrapped", InkMarkWrappedDemo],
-    ["reveal", InkMarkRevealDemo],
-    ["japanese", InkMarkJapaneseDemo],
-  ])("has no axe violations in its %s demo", async (_name, Demo) => {
-    layOut(TWO_LINES);
-    await expectNoA11yViolations(<Demo />);
-  });
-
   it("sets the Japanese demo under lang=ja", () => {
     const { container } = render(<InkMarkJapaneseDemo />);
     expect(container.querySelector('[lang="ja"] [data-slot="ink-mark"]')).not.toBeNull();
   });
+
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), { setup: () => layOut(TWO_LINES) });
 });

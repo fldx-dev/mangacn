@@ -1,10 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import DrawerDefaultDemo from "./demos/default";
-import DrawerDirectionsDemo from "./demos/directions";
-import DrawerWithFormDemo from "./demos/with-form";
 import {
   Drawer,
   DrawerContent,
@@ -117,22 +114,15 @@ describe("Drawer", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("has no axe violations in its default demo (open)", async () => {
-    await expectNoA11yViolations(<DrawerDefaultDemo />, async () => {
-      expect(await screen.findByRole("dialog")).toBeTruthy();
-    });
-  });
-
-  it("has no axe violations in its directions demo (right open)", async () => {
-    await expectNoA11yViolations(<DrawerDirectionsDemo />, async () => {
-      const popup = await screen.findByRole("dialog");
-      expect(popup.getAttribute("data-swipe-direction")).toBe("right");
-    });
-  });
-
-  it("has no axe violations in its with-form demo (open)", async () => {
-    await expectNoA11yViolations(<DrawerWithFormDemo />, async () => {
-      expect(await screen.findByLabelText("Name")).toBeTruthy();
-    });
+  // Every demo opens on mount; axe runs on the open drawer.
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), {
+    ready: {
+      default: async () => expect(await screen.findByRole("dialog")).toBeTruthy(),
+      directions: async () => {
+        const popup = await screen.findByRole("dialog");
+        expect(popup.getAttribute("data-swipe-direction")).toBe("right");
+      },
+      "with-form": async () => expect(await screen.findByLabelText("Name")).toBeTruthy(),
+    },
   });
 });

@@ -1,6 +1,8 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
 import { demoEntries } from "../lib/registry/demos.generated";
+import { AXE_DISABLED_RULES } from "../lib/test/axe-rules";
 import { waitForInk } from "./ready";
 
 // Every demo in the generated map, light and dark, at each project's width. Baselines are
@@ -95,6 +97,24 @@ for (const { item, demo } of entries) {
       );
       for (const { scroll, fits } of tables) {
         expect(scroll, "table container overflow").toBeLessThanOrEqual(fits);
+      }
+
+      // The stage page as the gallery iframes it, drawn, with the unit tests' rule set
+      // (lib/test/axe-rules.ts). Light only: with color-contrast off both modes are one DOM.
+      // Base UI's focus guards are excluded, as in site.spec.ts: an open select or menu
+      // (select/open, the dropdown-menu demos) portals visually hidden spans with tabindex 0 and
+      // aria-hidden that hand focus on at once, which aria-hidden-focus flags; Base UI 1.9 has no
+      // option to drop them and its Tab order needs them. Every other node is checked.
+      if (mode === "light") {
+        const { violations } = await new AxeBuilder({ page })
+          .disableRules(AXE_DISABLED_RULES)
+          .exclude("[data-base-ui-focus-guard]")
+          .analyze();
+        const found = violations.map(({ id, nodes }) => ({
+          id,
+          targets: nodes.map((node) => node.target),
+        }));
+        expect(found, "axe violations").toEqual([]);
       }
       expect(errors).toEqual([]);
     });

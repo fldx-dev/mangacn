@@ -1,8 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "./alert";
-import AlertDefaultDemo from "./demos/default";
 
 afterEach(cleanup);
 
@@ -49,7 +48,5 @@ describe("Alert", () => {
     expect(screen.getByRole("alert").className).not.toContain("--ink:");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<AlertDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

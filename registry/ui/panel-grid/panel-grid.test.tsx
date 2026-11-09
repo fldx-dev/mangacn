@@ -1,7 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import PanelGridDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { PanelGrid, PanelGridItem } from "./panel-grid";
 
 afterEach(cleanup);
@@ -59,7 +58,5 @@ describe("PanelGrid", () => {
     expect(item?.classList.contains("col-span-full")).toBe(true);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<PanelGridDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

@@ -1,8 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount } from "./avatar";
-import AvatarDefaultDemo from "./demos/default";
 
 afterEach(cleanup);
 
@@ -45,7 +44,5 @@ describe("Avatar", () => {
     expect(avatar?.lastElementChild).toBe(frame);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<AvatarDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

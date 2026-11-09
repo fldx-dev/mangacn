@@ -1,8 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import SpeechBubbleDefaultDemo from "./demos/default";
 import { SpeechBubble } from "./speech-bubble";
 
 let observers: ReturnType<typeof stubResizeObserver>;
@@ -123,7 +122,5 @@ describe("SpeechBubble", () => {
     expect(bubble.classList.contains("font-dialogue")).toBe(false);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<SpeechBubbleDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

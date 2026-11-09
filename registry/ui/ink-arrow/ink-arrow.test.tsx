@@ -1,10 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import InkArrowCurvedDemo from "./demos/curved";
-import InkArrowDefaultDemo from "./demos/default";
-import InkArrowDirectionsDemo from "./demos/directions";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { InkArrow } from "./ink-arrow";
 
 // Records the options handed to rough.js, with the real generator still doing the drawing.
@@ -162,11 +159,5 @@ describe("InkArrow", () => {
     expect(other).not.toEqual(first);
   });
 
-  it.each([
-    ["default", InkArrowDefaultDemo],
-    ["directions", InkArrowDirectionsDemo],
-    ["curved", InkArrowCurvedDemo],
-  ])("has no axe violations in its %s demo", async (_name, Demo) => {
-    await expectNoA11yViolations(<Demo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

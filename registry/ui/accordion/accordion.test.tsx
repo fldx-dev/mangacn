@@ -1,8 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion";
-import AccordionDefaultDemo from "./demos/default";
 
 afterEach(cleanup);
 
@@ -72,7 +71,5 @@ describe("Accordion", () => {
     expect(second.getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<AccordionDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

@@ -1,8 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import SwitchDefaultDemo from "./demos/default";
 import { Switch } from "./switch";
 
 afterEach(() => {
@@ -65,7 +64,5 @@ describe("Switch", () => {
     expect(frameOf(thumbOf(control))?.dataset.inked).toBe("true");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<SwitchDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

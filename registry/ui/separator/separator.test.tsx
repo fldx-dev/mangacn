@@ -1,8 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import SeparatorDefaultDemo from "./demos/default";
 import { Separator } from "./separator";
 
 afterEach(() => {
@@ -45,7 +44,5 @@ describe("Separator", () => {
     expect(separator.querySelector<HTMLElement>("[data-inked]")?.dataset.inked).toBe("true");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<SeparatorDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

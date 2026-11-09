@@ -1,7 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import EmanataDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { Emanata } from "./emanata";
 
 afterEach(cleanup);
@@ -51,7 +50,5 @@ describe("Emanata", () => {
     expect(mark.getAttribute("class")).toContain("[&_*]:[vector-effect:non-scaling-stroke]");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<EmanataDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

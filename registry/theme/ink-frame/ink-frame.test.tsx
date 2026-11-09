@@ -1,9 +1,8 @@
 import { cleanup, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import InkFrameDefaultDemo from "./demos/default";
 import { InkFrame } from "./ink-frame";
 
 // Records the options handed to rough.js, with the real renderer still doing the drawing.
@@ -232,9 +231,7 @@ describe("InkFrame in the browser", () => {
     expect(frame?.id).toBe("p1");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<InkFrameDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });
 
 describe("InkFrame without ResizeObserver", () => {
