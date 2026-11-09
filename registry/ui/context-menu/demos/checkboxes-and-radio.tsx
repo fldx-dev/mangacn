@@ -16,19 +16,20 @@ import { Panel } from "@/registry/ui/panel/panel";
 
 export default function ContextMenuCheckboxesAndRadioDemo() {
   const panel = React.useRef<HTMLDivElement>(null);
-  // Opens the menu where a reader would right-click, so this page shows it open. In an app,
-  // drop the effect: a right-click or a long-press on the panel opens it.
+  // Opens the menu where a reader would right-click (near the panel's corner, clear of the
+  // hint), so this page shows it open. In an app, drop the effect: a right-click or a
+  // long-press on the panel opens it.
   React.useEffect(() => {
     const open = () => {
       const target = panel.current;
       if (!target) return;
-      const { left, top, width, height } = target.getBoundingClientRect();
+      const { left, top } = target.getBoundingClientRect();
       target.dispatchEvent(
         new MouseEvent("contextmenu", {
           bubbles: true,
           cancelable: true,
-          clientX: left + width / 4,
-          clientY: top + height / 8,
+          clientX: left + 16,
+          clientY: top + 16,
         }),
       );
     };
@@ -40,7 +41,7 @@ export default function ContextMenuCheckboxesAndRadioDemo() {
   return (
     <ContextMenu>
       <ContextMenuTrigger ref={panel} className="w-full max-w-sm">
-        <Panel tone="halftone" className="min-h-72 items-center justify-center">
+        <Panel tone="halftone" className="min-h-72 items-center justify-end">
           <p className="bg-paper px-2 text-center text-sm">Right-click or long-press the panel</p>
         </Panel>
       </ContextMenuTrigger>
