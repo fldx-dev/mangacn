@@ -403,8 +403,8 @@ Windows for the 60-item smoke); main's push run does both after the merge.
 2. **`registry:smoke --only=<items>`** installs your items into a fresh Next app (3–5 min),
    once, when the item is ready; `registry:smoke:changed` picks them from the diff instead.
 3. **Push and dispatch once.** With `update-snapshots=true` the run is the verification: its
-   `ci` job runs the checks (lint, docs, skill, typecheck, tests with coverage, validate,
-   smoke of the changed items) and its `visual` job runs every non-pixel assertion (status,
+   `checks` job (lint, docs, skill, typecheck, tests with coverage, validate, build) and its
+   `smoke` job (the changed items) run in parallel, and its `visual` job runs every non-pixel assertion (status,
    console errors, overflow, axe) and rewrites only the baselines that are missing or fail the
    comparison (`--update-snapshots=changed`), uploading exactly those, so the artifact is a
    straight copy, no comparison or sifting. Playwright's `changed` mode turns only a failed
@@ -455,14 +455,15 @@ diff against origin/main (`pnpm exec tsx scripts/changed-e2e.ts` prints it and w
 - nothing: unit tests, Markdown, `scripts/` (but the demo, theme and docs generators), CI.
 
 CI (`.github/workflows/ci.yml`): a `workflow_dispatch` on a branch runs the `items` input, or
-the computed set when it is empty, and its `ci` job smokes only the changed items
-(`registry:smoke --changed`); `full=true` runs what main runs. Push to main and pull requests
+the computed set when it is empty, and its `smoke` job installs only the changed items
+(`registry:smoke --changed`) while `checks` runs beside it; `full=true` runs what main runs. Push to main and pull requests
 always run every shot and the full smoke. Playwright's browser is cached per version, so apt
 (`install-deps`) runs only on a cache miss.
 
 Coverage and its 90 % threshold are enforced in CI (`pnpm test:coverage`), not in `pnpm test`.
 `pnpm run ci` is the whole CI gate locally (25–40 min on Windows for the 60-item smoke); leave
-it to CI.
+it to CI. It is `pnpm run ci:checks` followed by the smoke; CI runs `ci:checks` and `ci:smoke`
+(`registry:build` then `registry:smoke`) as the parallel `checks` and `smoke` jobs.
 
 Preview a demo in isolation with `pnpm dev` and open
 `http://localhost:3000/demo/<name>/<demo>` (add `?mode=dark` for the night theme). The

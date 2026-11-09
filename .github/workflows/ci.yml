@@ -29,8 +29,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
+  # `pnpm run ci` (the full local gate) is `ci:checks` then the smoke; CI runs the two halves as
+  # parallel jobs, so a run takes the longer of them, not their sum.
+  checks:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # `pnpm skill:validate` runs the Agent Skills validator (Python) through uvx.
+      - uses: astral-sh/setup-uv@v10.3.3
+      # Lint, every generator's check, skill validate, typecheck, tests with coverage, registry
+      # validate and build.
+      - run: pnpm run ci:checks
+
+  smoke:
+    runs-on: ubuntu-latest
+    # The full smoke (every item, main and `full`) takes about 4 minutes on a runner.
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -44,16 +64,13 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # `pnpm skill:validate` runs the Agent Skills validator (Python) through uvx.
-      - uses: astral-sh/setup-uv@v10.3.3
-      # `pnpm ci` is a reserved (unimplemented) pnpm command, so call the script with `run`.
       # A branch dispatch smokes only the items its diff touches: pnpm appends `--changed` to the
       # script's last command, `pnpm registry:smoke`. Push, pull requests, main and `full` smoke
       # every item.
-      - name: pnpm run ci
+      - name: pnpm run ci:smoke
         env:
           SMOKE_ARGS: ${{ github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main' && !inputs.full && '--changed' || '' }}
-        run: pnpm run ci $SMOKE_ARGS
+        run: pnpm run ci:smoke $SMOKE_ARGS
 
   visual:
     runs-on: ubuntu-latest
