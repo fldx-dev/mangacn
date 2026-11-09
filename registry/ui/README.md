@@ -423,6 +423,20 @@ Optional, when a demo misbehaves and you want the non-pixel checks before pushin
 Windows; then the visual set your diff needs, without pixels: errors, overflow, axe). The
 dispatch runs the same checks on Linux, with pixels.
 
+What a dispatch costs (GitHub runner, from the dispatch to the last job done):
+
+| Branch run                                                                  | checks                              | smoke                   | visual                      | wall time                                  |
+| --------------------------------------------------------------------------- | ----------------------------------- | ----------------------- | --------------------------- | ------------------------------------------ |
+| batch 2, before Task 64: every shot, every item                             | `ci` ≈ 8 min, serial with the smoke | (in `ci`)               | ≈ 8 min (every shot)        | ≈ 8 min, two dispatches a task             |
+| Task 64: filtered visual, `--changed` smoke (`items=slider`)                | `ci` 1m57s, serial with the smoke   | (in `ci`)               | 1m08s (no `site`)           | ≈ 2 min, two dispatches a task in practice |
+| Task 67: one demo changed (`slider,site`, `update-snapshots`), 42614884824  | 1m29s                               | 43s (2 items)           | 2m49s (79 tests, build 36s) | **2m52s, one dispatch**                    |
+| Task 67: `full=true` (main's path, `SITE_FULL=1`), 42615415543, 42616777121 | 1m45s, 1m33s                        | 3m26s, 2m54s (60 items) | 8m02s, 6m27s (876 tests)    | 8m06s, 6m30s                               |
+
+`checks`, `smoke` and `visual` start together, so a branch waits for the longest of them
+(usually `visual`), not their sum. Vitest runs on the `vmThreads` pool: the unit run fell from
+75 s to about 40 s on CI (jsdom set-up from 39 % of the tracked time to 4 %) and from 72 s to
+28 s on Windows.
+
 What each change may skip:
 
 | Change                                                     | `check:changed` | smoke                            | the one dispatch                        | its visual set             |
