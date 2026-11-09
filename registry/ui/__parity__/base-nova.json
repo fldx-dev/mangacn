@@ -860,6 +860,20 @@
       "registryDependencies": [],
       "sha1": "7850232914ad0560976df0a395cc2160b56c2e19"
     },
+    "aspect-ratio": {
+      "exports": [
+        "AspectRatio"
+      ],
+      "dataSlots": [
+        "aspect-ratio"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "sha1": "522b576ca8591c1bb072081ea5a444935a1192bc"
+    },
     "input-group": {
       "exports": [
         "InputGroup",
