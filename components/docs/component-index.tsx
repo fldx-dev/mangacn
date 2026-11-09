@@ -5,6 +5,24 @@ import { loadRegistry } from "@/lib/registry";
 import { listDemos } from "@/lib/registry/demos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/registry/ui/card/card";
 import { DemoPreview } from "./demo-frame";
+import { LazyDemo } from "./lazy-demo";
+
+/**
+ * A card's demo stage (the inline box or the stage iframe) is a fixed height, and so is the
+ * placeholder it shows until the demo mounts, so nothing moves when a demo arrives.
+ */
+const STAGE_HEIGHT = "20rem";
+
+/**
+ * Default demos taller than the stage at some width (panel-grid stacks to one column at 360 px,
+ * card and panel wrap in the two-column grid at 768 px). `e2e/site.spec.ts` fails, naming the
+ * item, when a demo overflows its stage.
+ */
+const TALL_STAGES: Readonly<Record<string, string>> = {
+  card: "30rem",
+  panel: "24rem",
+  "panel-grid": "35rem",
+};
 
 /**
  * Every documented item as a card with its default demo, grouped by category in sidebar
@@ -21,8 +39,8 @@ export async function ComponentIndex() {
             await DemoPreview({
               item: item.name,
               demo: "default",
-              height: "20rem",
-              className: "min-h-48 p-4 sm:p-4",
+              height: "100%",
+              className: "h-full p-4 sm:p-4",
             }),
           ] as const,
       ),
@@ -71,7 +89,9 @@ function IndexCard({ item, preview }: { item: DocItem; preview: ReactNode }) {
         </CardTitle>
         <CardDescription>{item.description}</CardDescription>
       </CardHeader>
-      <CardContent className="mt-auto">{preview}</CardContent>
+      <CardContent className="mt-auto">
+        <LazyDemo height={TALL_STAGES[item.name] ?? STAGE_HEIGHT}>{preview}</LazyDemo>
+      </CardContent>
     </Card>
   );
 }
