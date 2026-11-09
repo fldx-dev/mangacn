@@ -1,11 +1,8 @@
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import SonnerDefaultDemo from "./demos/default";
-import SonnerKindsDemo from "./demos/kinds";
-import SonnerWithActionDemo from "./demos/with-action";
 import { Toaster } from "./sonner";
 
 // jsdom has no matchMedia; sonner reads it for `theme="system"` (no next-themes provider here).
@@ -156,18 +153,15 @@ describe("Sonner", () => {
     expect(frameOf(close)?.getAttribute("data-shape")).toBe("ellipse");
   });
 
-  it("has no axe violations in its default demo (toast visible)", async () => {
-    await expectNoA11yViolations(<SonnerDefaultDemo />, () => framedToasts(1));
-  });
-
-  it("has no axe violations in its kinds demo (four toasts visible)", async () => {
-    await expectNoA11yViolations(<SonnerKindsDemo />, () => framedToasts(4));
-  });
-
-  it("has no axe violations in its with-action demo (toast visible)", async () => {
-    await expectNoA11yViolations(<SonnerWithActionDemo />, async () => {
-      await framedToasts(1);
-      expect(screen.getByRole("button", { name: "Undo" })).toBeTruthy();
-    });
+  // Every demo fires its toasts on mount; axe runs once they are on the page.
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), {
+    ready: {
+      default: () => framedToasts(1),
+      kinds: () => framedToasts(4),
+      "with-action": async () => {
+        await framedToasts(1);
+        expect(screen.getByRole("button", { name: "Undo" })).toBeTruthy();
+      },
+    },
   });
 });

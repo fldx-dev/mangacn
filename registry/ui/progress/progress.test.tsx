@@ -1,8 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import ProgressDefaultDemo from "./demos/default";
 import { Progress, ProgressLabel, ProgressValue } from "./progress";
 
 afterEach(() => {
@@ -58,7 +57,5 @@ describe("Progress", () => {
     expect(indicator?.classList.contains("bg-primary")).toBe(false);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<ProgressDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

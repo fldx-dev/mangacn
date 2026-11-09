@@ -1,8 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import InputDefaultDemo from "./demos/default";
 import { Input } from "./input";
 
 afterEach(() => {
@@ -59,7 +58,5 @@ describe("Input", () => {
     expect(frame?.querySelectorAll("path").length).toBeGreaterThan(0);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<InputDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

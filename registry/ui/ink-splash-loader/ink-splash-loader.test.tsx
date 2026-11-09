@@ -1,8 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import InkSplashLoaderDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { InkSplashLoader } from "./ink-splash-loader";
 
 // motion reads `prefers-reduced-motion` through matchMedia (missing in jsdom) once, on first
@@ -66,7 +65,5 @@ describe("InkSplashLoader", () => {
     expect(blot.style.transform, blot.getAttribute("style") ?? "").toMatch(/^(none)?$/);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<InkSplashLoaderDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

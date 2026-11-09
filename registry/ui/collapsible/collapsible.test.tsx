@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./collapsible";
 import CollapsibleCardDemo from "./demos/card";
 import CollapsibleDefaultDemo from "./demos/default";
@@ -86,9 +86,5 @@ describe("Collapsible", () => {
     expect(screen.getByText("Page 11: tone the night sky.")).toBeTruthy();
   });
 
-  it("has no axe violations in its demos", async () => {
-    await expectNoA11yViolations(<CollapsibleDefaultDemo />);
-    await expectNoA11yViolations(<CollapsibleGlyphDemo />);
-    await expectNoA11yViolations(<CollapsibleCardDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

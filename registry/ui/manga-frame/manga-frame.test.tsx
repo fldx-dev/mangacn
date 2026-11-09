@@ -3,9 +3,7 @@ import path from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
 import type * as React from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import MangaFrameDefaultDemo from "./demos/default";
-import MangaFrameLetteredDemo from "./demos/lettered";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { MangaFrame } from "./manga-frame";
 
 afterEach(cleanup);
@@ -114,11 +112,5 @@ describe("MangaFrame", () => {
     expect(line).toMatch(/eslint-disable-line @next\/next\/no-img-element -- \S/);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<MangaFrameDefaultDemo />);
-  });
-
-  it("has no axe violations in its lettered demo", async () => {
-    await expectNoA11yViolations(<MangaFrameLetteredDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

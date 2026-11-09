@@ -1,10 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import InkSplatterBehindSfxDemo from "./demos/behind-sfx";
-import InkSplatterDefaultDemo from "./demos/default";
-import InkSplatterKindsDemo from "./demos/kinds";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { InkSplatter } from "./ink-splatter";
 
 // Records the options handed to rough.js, with the real generator still doing the drawing.
@@ -183,11 +180,5 @@ describe("InkSplatter", () => {
     expect(a).not.toEqual(b);
   });
 
-  it.each([
-    ["default", InkSplatterDefaultDemo],
-    ["kinds", InkSplatterKindsDemo],
-    ["behind-sfx", InkSplatterBehindSfxDemo],
-  ])("has no axe violations in its %s demo", async (_name, Demo) => {
-    await expectNoA11yViolations(<Demo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

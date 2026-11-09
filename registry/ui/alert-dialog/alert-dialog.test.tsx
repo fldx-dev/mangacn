@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,7 +12,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./alert-dialog";
-import AlertDialogDefaultDemo from "./demos/default";
 import AlertDialogLongDemo from "./demos/long";
 
 afterEach(cleanup);
@@ -103,16 +102,12 @@ describe("AlertDialog", () => {
     expect(screen.queryByRole("alertdialog")).toBeNull();
   });
 
-  it("has no axe violations in its default demo (open)", async () => {
-    await expectNoA11yViolations(<AlertDialogDefaultDemo />);
-  });
-
-  it("gives the long demo a named, focusable scroll region, with no axe violations", async () => {
+  it("gives the long demo a named, focusable scroll region", () => {
     render(<AlertDialogLongDemo />);
     const region = screen.getByRole("region", { name: "What publishing does" });
     expect(region.tabIndex).toBe(0);
     expect(region.className).toContain("overflow-y-auto");
-    cleanup();
-    await expectNoA11yViolations(<AlertDialogLongDemo />);
   });
+
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

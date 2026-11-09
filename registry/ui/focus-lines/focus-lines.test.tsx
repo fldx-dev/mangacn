@@ -1,8 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import FocusLinesDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { FocusLines } from "./focus-lines";
 
 afterEach(cleanup);
@@ -83,7 +82,5 @@ describe("FocusLines", () => {
     expect(layer.classList.contains("text-tone-3")).toBe(true);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<FocusLinesDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

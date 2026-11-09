@@ -1,9 +1,8 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { CaptionBox } from "@/registry/ui/caption-box/caption-box";
-import PanelDefaultDemo from "./demos/default";
 import { Panel } from "./panel";
 
 afterEach(() => {
@@ -145,7 +144,5 @@ describe("Panel", () => {
     },
   );
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<PanelDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

@@ -1,9 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import PaginationCompactDemo from "./demos/compact";
-import PaginationCountDemo from "./demos/count";
 import PaginationDefaultDemo from "./demos/default";
 import {
   Pagination,
@@ -127,9 +125,5 @@ describe("Pagination", () => {
     for (const frame of frames) expect(frame.dataset.inked).toBe("true");
   });
 
-  it("has no axe violations in its demos", async () => {
-    await expectNoA11yViolations(<PaginationDefaultDemo />);
-    await expectNoA11yViolations(<PaginationCompactDemo />);
-    await expectNoA11yViolations(<PaginationCountDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

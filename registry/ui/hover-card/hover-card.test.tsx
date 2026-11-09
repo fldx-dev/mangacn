@@ -1,9 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import HoverCardDefaultDemo from "./demos/default";
-import HoverCardProfileDemo from "./demos/profile";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card";
 
 afterEach(() => {
@@ -69,11 +67,5 @@ describe("HoverCard", () => {
     expect(frame?.querySelector("svg > g")?.getAttribute("transform")).toBe("translate(8 8)");
   });
 
-  it("has no axe violations in its default demo (open)", async () => {
-    await expectNoA11yViolations(<HoverCardDefaultDemo />);
-  });
-
-  it("has no axe violations in its profile demo (open)", async () => {
-    await expectNoA11yViolations(<HoverCardProfileDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

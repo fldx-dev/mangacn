@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import SliderDefaultDemo from "./demos/default";
 import SliderDisabledDemo from "./demos/disabled";
@@ -117,10 +117,5 @@ describe("Slider", () => {
     for (const id of names) expect(document.getElementById(id ?? "")?.textContent).toBeTruthy();
   });
 
-  it("has no axe violations in its demos", async () => {
-    await expectNoA11yViolations(<SliderDefaultDemo />);
-    await expectNoA11yViolations(<SliderRangeDemo />);
-    await expectNoA11yViolations(<SliderVerticalDemo />);
-    await expectNoA11yViolations(<SliderDisabledDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

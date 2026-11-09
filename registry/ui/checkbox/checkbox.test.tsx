@@ -1,9 +1,8 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { Checkbox } from "./checkbox";
-import CheckboxDefaultDemo from "./demos/default";
 
 afterEach(() => {
   cleanup();
@@ -78,7 +77,5 @@ describe("Checkbox", () => {
     ).toBe(true);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<CheckboxDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

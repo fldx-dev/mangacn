@@ -1,7 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import DialogDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import {
   Dialog,
   DialogContent,
@@ -93,7 +92,5 @@ describe("Dialog", () => {
     expect(close.getAttribute("data-slot")).toBe("dialog-close");
   });
 
-  it("has no axe violations in its default demo (open)", async () => {
-    await expectNoA11yViolations(<DialogDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

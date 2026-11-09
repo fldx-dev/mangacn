@@ -1,10 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import KbdDefaultDemo from "./demos/default";
-import KbdGroupDemo from "./demos/group";
-import KbdSentenceDemo from "./demos/sentence";
 import { Kbd, KbdGroup } from "./kbd";
 
 afterEach(() => {
@@ -69,9 +66,5 @@ describe("Kbd", () => {
     expect(group?.classList.contains("custom-class")).toBe(true);
   });
 
-  it("has no axe violations in its demos", async () => {
-    await expectNoA11yViolations(<KbdDefaultDemo />);
-    await expectNoA11yViolations(<KbdGroupDemo />);
-    await expectNoA11yViolations(<KbdSentenceDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

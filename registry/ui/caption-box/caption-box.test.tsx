@@ -1,11 +1,10 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { CaptionBox } from "./caption-box";
 import CaptionBoxDefaultDemo from "./demos/default";
 import CaptionBoxInAPanelDemo from "./demos/in-a-panel";
-import CaptionBoxTonesAndFontsDemo from "./demos/tones-and-fonts";
 
 afterEach(() => {
   cleanup();
@@ -115,11 +114,5 @@ describe("CaptionBox", () => {
     expect(ja?.textContent).toBe("その頃、街の反対側では……");
   });
 
-  it.each([
-    ["default", CaptionBoxDefaultDemo],
-    ["in-a-panel", CaptionBoxInAPanelDemo],
-    ["tones-and-fonts", CaptionBoxTonesAndFontsDemo],
-  ])("has no axe violations in its %s demo", async (_name, Demo) => {
-    await expectNoA11yViolations(<Demo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

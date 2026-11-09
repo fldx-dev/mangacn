@@ -1,7 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import SkeletonDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { Skeleton } from "./skeleton";
 
 afterEach(cleanup);
@@ -33,7 +32,5 @@ describe("Skeleton", () => {
     );
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<SkeletonDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

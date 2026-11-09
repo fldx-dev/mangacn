@@ -1,7 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import VerticalTextDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { VerticalText } from "./vertical-text";
 
 afterEach(cleanup);
@@ -31,7 +30,5 @@ describe("VerticalText", () => {
     expect(text.getAttribute("lang")).toBe("ja");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<VerticalTextDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

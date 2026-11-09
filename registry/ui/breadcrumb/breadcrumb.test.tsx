@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -10,8 +10,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "./breadcrumb";
-import BreadcrumbDefaultDemo from "./demos/default";
-import BreadcrumbEllipsisDemo from "./demos/ellipsis";
 import BreadcrumbLongDemo from "./demos/long";
 
 afterEach(cleanup);
@@ -123,9 +121,5 @@ describe("Breadcrumb", () => {
     expect(screen.getByText("夜の街").getAttribute("lang")).toBe("ja");
   });
 
-  it("has no axe violations in its demos", async () => {
-    await expectNoA11yViolations(<BreadcrumbDefaultDemo />);
-    await expectNoA11yViolations(<BreadcrumbLongDemo />);
-    await expectNoA11yViolations(<BreadcrumbEllipsisDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

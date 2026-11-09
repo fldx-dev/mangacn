@@ -1,9 +1,8 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import RadioGroupDefaultDemo from "./demos/default";
 import { RadioGroup, RadioGroupItem } from "./radio-group";
 
 afterEach(() => {
@@ -84,7 +83,5 @@ describe("RadioGroup", () => {
     expect(fillsOf(item)).toEqual(["none"]);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<RadioGroupDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

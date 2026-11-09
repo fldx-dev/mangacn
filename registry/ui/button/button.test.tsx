@@ -1,9 +1,8 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { Button, buttonVariants } from "./button";
-import ButtonDefaultDemo from "./demos/default";
 import ButtonLinkDemo from "./demos/link";
 
 afterEach(() => {
@@ -111,7 +110,7 @@ describe("Button", () => {
     expect(frameOf(link)?.getAttribute("data-fill")).toBe("ink");
   });
 
-  it("renders the link demo as anchors announced as links", async () => {
+  it("renders the link demo as anchors announced as links", () => {
     render(<ButtonLinkDemo />);
     const read = screen.getByRole("link", { name: "Read chapter 12" });
     expect(read.tagName).toBe("A");
@@ -121,11 +120,7 @@ describe("Button", () => {
       frameOf(screen.getByRole("link", { name: "All chapters" }))?.getAttribute("data-fill"),
     ).toBe("paper");
     expect(screen.queryByRole("button")).toBeNull();
-    cleanup();
-    await expectNoA11yViolations(<ButtonLinkDemo />);
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<ButtonDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

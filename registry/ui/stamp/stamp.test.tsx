@@ -1,12 +1,8 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import StampDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import StampJapaneseDemo from "./demos/japanese";
-import StampLongWordsDemo from "./demos/long-words";
-import StampOverACardDemo from "./demos/over-a-card";
-import StampShapesAndSizesDemo from "./demos/shapes-and-sizes";
 import { Stamp } from "./stamp";
 
 // Records the options handed to rough.js, with the real generator still doing the drawing.
@@ -295,13 +291,5 @@ describe("Stamp", () => {
     });
   });
 
-  it.each([
-    ["default", StampDefaultDemo],
-    ["long-words", StampLongWordsDemo],
-    ["shapes-and-sizes", StampShapesAndSizesDemo],
-    ["over-a-card", StampOverACardDemo],
-    ["japanese", StampJapaneseDemo],
-  ])("has no axe violations in its %s demo", async (_name, Demo) => {
-    await expectNoA11yViolations(<Demo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

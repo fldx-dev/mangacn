@@ -1,7 +1,6 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import PageTurnDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { PageTurn } from "./page-turn";
 
 // motion reads `prefers-reduced-motion` through matchMedia (missing in jsdom) once, on first
@@ -88,7 +87,5 @@ describe("PageTurn", () => {
     expect(before.textContent).toBe("Page 1, edited");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<PageTurnDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

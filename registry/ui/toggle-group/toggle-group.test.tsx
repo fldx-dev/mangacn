@@ -1,11 +1,8 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import ToggleGroupDefaultDemo from "./demos/default";
-import ToggleGroupMultipleDemo from "./demos/multiple";
-import ToggleGroupSingleDemo from "./demos/single";
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 
 afterEach(() => {
@@ -93,9 +90,5 @@ describe("ToggleGroup", () => {
     expect(framesOf(screen.getByRole("group"))[0]?.dataset.inked).toBe("true");
   });
 
-  it("has no axe violations in its demos", async () => {
-    await expectNoA11yViolations(<ToggleGroupDefaultDemo />);
-    await expectNoA11yViolations(<ToggleGroupSingleDemo />);
-    await expectNoA11yViolations(<ToggleGroupMultipleDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

@@ -1,8 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import TextareaDefaultDemo from "./demos/default";
 import { Textarea } from "./textarea";
 
 afterEach(() => {
@@ -46,7 +45,5 @@ describe("Textarea", () => {
     expect(screen.getByRole("textbox").parentElement?.dataset.inked).toBe("true");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<TextareaDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

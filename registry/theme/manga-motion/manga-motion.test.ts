@@ -1,6 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import MangaMotionDefaultDemo from "./demos/default";
 import * as mangaMotion from "./manga-motion";
 
@@ -49,4 +50,6 @@ describe("manga-motion", () => {
     const { getByText } = render(createElement(MangaMotionDefaultDemo));
     expect(getByText("Dokan!")).toBeDefined();
   });
+
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

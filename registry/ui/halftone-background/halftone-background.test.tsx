@@ -1,7 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectNoA11yViolations } from "@/lib/test/axe";
-import HalftoneBackgroundDefaultDemo from "./demos/default";
+import { expectDemosAccessible } from "@/lib/test/axe";
 import { HalftoneBackground } from "./halftone-background";
 
 afterEach(cleanup);
@@ -54,7 +53,5 @@ describe("HalftoneBackground", () => {
     expect(dots.className).toContain("[--halftone-size:var(--halftone-bg-size)]");
   });
 
-  it("has no axe violations in its default demo", async () => {
-    await expectNoA11yViolations(<HalftoneBackgroundDefaultDemo />);
-  });
+  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });
