@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 62 items in the registry. Each line gives the item's name, what it is, the one
+All 63 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -139,6 +139,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `input-group`: Stock input group in one hand-drawn outline: addons sit behind inked rules and the input, textarea and buttons draw no frame.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/input-group --overwrite`
   Docs: https://www.mangacn.com/docs/components/input-group (Markdown: https://www.mangacn.com/docs/components/input-group.md)
+- `button-group`: Stock button group as one hand-drawn strip with inked rules between its buttons, which draw no frame of their own.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/button-group --overwrite`
+  Docs: https://www.mangacn.com/docs/components/button-group (Markdown: https://www.mangacn.com/docs/components/button-group.md)
 
 ## Layout
 

@@ -824,6 +824,34 @@
         "textarea"
       ],
       "sha1": "3b563523d042af1d546f47b2636dde65728d5aa2"
+    },
+    "button-group": {
+      "exports": [
+        "ButtonGroup",
+        "ButtonGroupSeparator",
+        "ButtonGroupText",
+        "buttonGroupVariants"
+      ],
+      "dataSlots": [
+        "button-group",
+        "button-group-separator",
+        "button-group-text"
+      ],
+      "variants": {
+        "buttonGroupVariants": {
+          "orientation": [
+            "horizontal",
+            "vertical"
+          ]
+        }
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "separator"
+      ],
+      "sha1": "bbac114e903b7ac8d67ad273166920af8cf9bdc4"
     }
   }
 }

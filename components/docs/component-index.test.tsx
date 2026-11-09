@@ -13,7 +13,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-// Every test renders all 55 demos in jsdom; the first import of them is slow on a busy machine.
+// Every test renders all 56 demos in jsdom; the first import of them is slow on a busy machine.
 vi.setConfig({ testTimeout: 30_000 });
 
 describe("ComponentIndex", () => {
@@ -33,7 +33,7 @@ describe("ComponentIndex", () => {
         "Data",
       ]
     `);
-    expect(document.querySelectorAll("[data-item]")).toHaveLength(55);
+    expect(document.querySelectorAll("[data-item]")).toHaveLength(56);
   });
 
   it("links each card's title to the item page and renders its default demo", async () => {
@@ -56,7 +56,7 @@ describe("ComponentIndex", () => {
   it("puts every demo on a fixed stage that mounts lazily (mounted at once in jsdom)", async () => {
     const { container } = render(await ComponentIndex());
     const stages = [...container.querySelectorAll<HTMLElement>('[data-slot="lazy-demo"]')];
-    expect(stages).toHaveLength(55);
+    expect(stages).toHaveLength(56);
     // jsdom has no IntersectionObserver, so every demo mounts at once.
     expect(stages.every((stage) => stage.dataset.mounted === "true")).toBe(true);
     const height = (item: string) =>
