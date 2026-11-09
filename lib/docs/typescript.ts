@@ -1,8 +1,8 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type { GeneratedDoc, Generator } from "fumadocs-typescript";
 import { type LoadedRegistry, loadRegistry } from "@/lib/registry";
-import { COMPONENT_PAGES_DIR } from "./catalog";
+import { DOCS_SECTIONS } from "./catalog";
 import { type GeneratedProps, propsInterfaceName } from "./props";
 
 // Build time only: fumadocs-typescript runs the TypeScript compiler (a native process) and reads
@@ -107,13 +107,14 @@ export interface PropsTarget {
 const PROPS_TABLE_TAG = /<PropsTable\s+item="([^"]+)"(?:\s+name="([^"]+)")?\s*\/>/g;
 
 /**
- * Every manga-native table the docs print: `<Pascal>Props` of each `registry:component` item,
- * plus any other interface a page names (`<PropsTable item="panel-grid" name="PanelGridItemProps" />`).
- * Primitives (`registry:ui`) are left out; their table is the static PROPS_DELTA.
+ * Every manga-native table the docs print: `<Pascal>Props` of each `registry:component` and
+ * `registry:block` item (a block's from its entry file), plus any other interface a page names
+ * (`<PropsTable item="panel-grid" name="PanelGridItemProps" />`). Primitives (`registry:ui`) are
+ * left out; their table is the static PROPS_DELTA.
  */
 export function propsTargets(
   registry: LoadedRegistry = loadRegistry(),
-  pagesDir: string = path.resolve(COMPONENT_PAGES_DIR),
+  pagesDirs: readonly string[] = DOCS_SECTIONS.map((section) => path.resolve(section.dir)),
 ): PropsTarget[] {
   const targets = new Map<string, PropsTarget>();
   const add = (item: string, name: string) => {
@@ -123,11 +124,16 @@ export function propsTargets(
     if (file) targets.set(`${item}/${name}`, { item, file, name });
   };
   for (const entry of registry.items) {
-    if (entry.type === "registry:component") add(entry.name, propsInterfaceName(entry.name));
+    if (entry.type === "registry:component" || entry.type === "registry:block") {
+      add(entry.name, propsInterfaceName(entry.name));
+    }
   }
-  for (const page of readdirSync(pagesDir).filter((file) => file.endsWith(".mdx"))) {
-    for (const match of readFileSync(path.join(pagesDir, page), "utf8").matchAll(PROPS_TABLE_TAG)) {
-      add(match[1], match[2] ?? propsInterfaceName(match[1]));
+  for (const pagesDir of pagesDirs.filter((dir) => existsSync(dir))) {
+    for (const page of readdirSync(pagesDir).filter((file) => file.endsWith(".mdx"))) {
+      const source = readFileSync(path.join(pagesDir, page), "utf8");
+      for (const match of source.matchAll(PROPS_TABLE_TAG)) {
+        add(match[1], match[2] ?? propsInterfaceName(match[1]));
+      }
     }
   }
   return [...targets.values()].sort(

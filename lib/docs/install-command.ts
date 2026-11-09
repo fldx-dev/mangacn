@@ -1,8 +1,10 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { type LoadedRegistryItem, loadRegistry } from "@/lib/registry";
+import { type LoadedRegistry, type LoadedRegistryItem, loadRegistry } from "@/lib/registry";
 import { clientNote, isClientItem } from "@/lib/registry/client";
 import { extractImports } from "@/lib/registry/imports";
+import { dependencyFiles, installTarget } from "@/lib/registry/install-target";
+import { itemPagePath } from "./catalog";
 
 export type PackageManager = "pnpm" | "npm" | "yarn" | "bun";
 
@@ -26,11 +28,13 @@ const RUNNERS: Record<PackageManager, string> = {
 const INK_FRAME = "ink-frame";
 const INK_FRAME_IMPORT = "@/components/ink-frame";
 
+let registry: LoadedRegistry | undefined;
 let catalog: Map<string, LoadedRegistryItem> | undefined;
 
 /** The catalog entry for `name`, read once from disk (server only). */
 function catalogItem(name: string): LoadedRegistryItem {
-  catalog ??= new Map(loadRegistry().items.map((item) => [item.name, item]));
+  registry ??= loadRegistry();
+  catalog ??= new Map(registry.items.map((item) => [item.name, item]));
   const item = catalog.get(name);
   if (!item) throw new Error(`Unknown registry item "${name}"`);
   return item;
@@ -135,6 +139,19 @@ export function commandFor(props: InstallCommandProps, manager: PackageManager):
   return props.setup ? setCommand(SETUP_ITEMS, manager) : installCommand(props.item, manager);
 }
 
+/**
+ * What one add of `name` writes, at the default `components.json` aliases: the item's own files
+ * (`components/blocks/chapter-list/chapter-list.tsx`, …), then what its mangacn registry
+ * dependencies add, transitively. A block's page prints it under the install block.
+ */
+export function itemFiles(name: string): { files: string[]; dependencyFiles: string[] } {
+  const item = catalogItem(name);
+  return {
+    files: item.files.map(installTarget),
+    dependencyFiles: registry ? dependencyFiles(name, registry) : [],
+  };
+}
+
 /** The client-component line under an item's install block; null for the setup block and the theme. */
 export function itemClientNote(props: InstallCommandProps): string | null {
   if (props.setup) return null;
@@ -147,12 +164,14 @@ export function initCommand(manager: PackageManager): string {
   return `${RUNNERS[manager]} shadcn@latest init -b base -p nova`;
 }
 
-/** The docs page for an item; the theme is documented on the theming guide. */
+/**
+ * The docs page for an item: a component's or a block's own page (`/docs/blocks/<name>`); the
+ * theme is documented on the theming guide.
+ */
 export function docsUrl(name: string): string {
   const item = catalogItem(name);
-  return item.type === "registry:theme"
-    ? `${SITE_URL}/docs/theming`
-    : `${SITE_URL}/docs/components/${name}`;
+  if (item.type === "registry:theme") return `${SITE_URL}/docs/theming`;
+  return `${SITE_URL}${itemPagePath(item) ?? `/docs/components/${name}`}`;
 }
 
 /** A short prompt an agent can act on: what the item is, how to install it, where its docs are. */

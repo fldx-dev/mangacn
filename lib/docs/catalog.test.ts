@@ -1,12 +1,17 @@
 import { describe, expect, it } from "vitest";
 import type { LoadedRegistry, LoadedRegistryItem } from "@/lib/registry";
 import {
+  BLOCKS_CATALOG,
   COMPONENTS_CATALOG,
+  DOCS_SECTIONS,
   docItems,
+  itemPagePath,
   PROSE_PLACEHOLDER,
   parseFrontmatter,
+  renderBlocksMeta,
   renderComponentsMeta,
   renderItemPage,
+  renderSectionMeta,
 } from "./catalog";
 
 function item(name: string, category: string, source = COMPONENTS_CATALOG): LoadedRegistryItem {
@@ -29,6 +34,8 @@ const registry: LoadedRegistry = {
     item("button", "primitive"),
     item("frame", "decoration", "registry/theme/registry.json"),
     item("lonely", "layout"),
+    item("shelf", "block", BLOCKS_CATALOG),
+    item("reader", "block", BLOCKS_CATALOG),
   ],
 };
 
@@ -37,6 +44,8 @@ const demos = [
   { item: "bubble", demo: "default" },
   { item: "button", demo: "default" },
   { item: "frame", demo: "default" },
+  { item: "shelf", demo: "default" },
+  { item: "reader", demo: "default" },
 ];
 
 describe("docItems", () => {
@@ -44,6 +53,13 @@ describe("docItems", () => {
     expect(docItems(registry, demos)).toEqual([
       expect.objectContaining({ name: "button", category: "primitive", demos: ["default"] }),
       expect.objectContaining({ name: "bubble", category: "text", demos: ["default", "tails"] }),
+    ]);
+  });
+
+  it("keeps the block catalog's items, in catalog order, when asked for it", () => {
+    expect(docItems(registry, demos, BLOCKS_CATALOG).map((entry) => entry.name)).toEqual([
+      "shelf",
+      "reader",
     ]);
   });
 
@@ -72,6 +88,34 @@ describe("renderItemPage", () => {
     );
     expect(page).toContain('<PropsTable item="bubble" />');
     expect(page).toContain(PROSE_PLACEHOLDER);
+  });
+});
+
+describe("block pages", () => {
+  const blocks = docItems(registry, demos, BLOCKS_CATALOG);
+
+  it("list the block's files under the install block", () => {
+    expect(renderItemPage(blocks[0])).toContain(
+      '<InstallCommand item="shelf" />\n\n<ItemFiles item="shelf" />\n\n<CopyPrompt item="shelf" />',
+    );
+    expect(renderItemPage(docItems(registry, demos)[0])).not.toContain("ItemFiles");
+  });
+
+  it("sit in the Blocks section, in catalog order", () => {
+    const meta = { title: "Blocks", defaultOpen: true, pages: ["shelf", "reader"] };
+    expect(JSON.parse(renderBlocksMeta(blocks))).toEqual(meta);
+    expect(JSON.parse(renderSectionMeta(DOCS_SECTIONS[1], blocks))).toEqual(meta);
+    expect(renderSectionMeta(DOCS_SECTIONS[0], docItems(registry, demos))).toBe(
+      renderComponentsMeta(docItems(registry, demos)),
+    );
+  });
+
+  it("have their own URL; theme-catalog items have none", () => {
+    expect(itemPagePath({ name: "shelf", source: BLOCKS_CATALOG })).toBe("/docs/blocks/shelf");
+    expect(itemPagePath({ name: "bubble", source: COMPONENTS_CATALOG })).toBe(
+      "/docs/components/bubble",
+    );
+    expect(itemPagePath({ name: "frame", source: "registry/theme/registry.json" })).toBeNull();
   });
 });
 

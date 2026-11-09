@@ -7,6 +7,7 @@ import { ComponentIndex } from "./component-index";
 import { CopyPrompt } from "./copy-prompt";
 import { DemoFrame } from "./demo-frame";
 import { InstallCommand } from "./install-command";
+import { ItemFiles } from "./item-files";
 import { McpConfig } from "./mcp-config";
 import { PropsTable } from "./props-table";
 import { ThemePlayground } from "./theme-playground";
@@ -43,6 +44,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     CopyPrompt,
     DemoFrame,
     InstallCommand,
+    ItemFiles,
     McpConfig,
     PropsTable,
     ThemePlayground,

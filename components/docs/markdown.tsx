@@ -16,6 +16,7 @@ import { PROPS_DELTA, shadcnDocsUrl } from "@/lib/docs/props-delta";
 import { loadRegistry } from "@/lib/registry";
 import { listDemos } from "@/lib/registry/demos";
 import type { DemoFrameProps } from "./demo-frame";
+import { itemFilesMarkdown } from "./item-files";
 import type { PropsTableProps } from "./props-table";
 import { TOKENS, tokenValues } from "./token-swatches";
 
@@ -139,6 +140,12 @@ export function TokenSwatchesMarkdown() {
   return `\n| Token | Light | Dark |\n|---|---|---|\n${rows.join("\n")}\n\n`;
 }
 
+/** A block's Files line, the paths as code. */
+export function ItemFilesMarkdown({ item }: { item: string }) {
+  asMarkdown();
+  return itemFilesMarkdown(item);
+}
+
 /** A Fumadocs callout as a blockquote, its title in bold. */
 export function CalloutMarkdown({ title, children }: { title?: ReactNode; children?: ReactNode }) {
   asMarkdown();
@@ -167,6 +174,7 @@ export function getMarkdownComponents(): MDXComponents {
     AgentsSnippet: AgentsSnippetMarkdown,
     CopyPrompt: CopyPromptMarkdown,
     DemoFrame: DemoFrameMarkdown,
+    ItemFiles: ItemFilesMarkdown,
     PropsTable: PropsTableMarkdown,
     ComponentIndex: ComponentIndexMarkdown,
     ThemePlayground: ThemePlaygroundMarkdown,
