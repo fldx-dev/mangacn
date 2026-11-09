@@ -124,11 +124,16 @@ for (const path of pages) {
       await waitForStages(page, mode);
 
       if (comparePixels) {
-        if (VIEWPORT_ONLY.has(path)) {
-          await expect(page).toHaveScreenshot(`site-${slug(path)}-viewport-${mode}.png`);
-        }
+        // The whole page first, in the state its baseline was always taken in: on the index the
+        // popover demo's focused field (in its iframe) scrolls the page down to it.
         if (!VIEWPORT_ONLY.has(path) || siteFull) {
           await expect(page).toHaveScreenshot(`site-${slug(path)}-${mode}.png`, { fullPage: true });
+        }
+        if (VIEWPORT_ONLY.has(path)) {
+          // The first viewport is the top of the page, whichever demo took focus.
+          await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+          await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+          await expect(page).toHaveScreenshot(`site-${slug(path)}-viewport-${mode}.png`);
         }
       }
 
