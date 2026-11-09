@@ -1051,6 +1051,103 @@
         "dropdown-menu"
       ],
       "sha1": "3a27725b57575dd94a03d89f016e682e7931ebab"
+    },
+    "field": {
+      "exports": [
+        "Field",
+        "FieldContent",
+        "FieldDescription",
+        "FieldError",
+        "FieldGroup",
+        "FieldLabel",
+        "FieldLegend",
+        "FieldSeparator",
+        "FieldSet",
+        "FieldTitle"
+      ],
+      "dataSlots": [
+        "field",
+        "field-content",
+        "field-description",
+        "field-error",
+        "field-group",
+        "field-label",
+        "field-legend",
+        "field-separator",
+        "field-separator-content",
+        "field-set"
+      ],
+      "variants": {
+        "fieldVariants": {
+          "orientation": [
+            "vertical",
+            "horizontal",
+            "responsive"
+          ]
+        }
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "label",
+        "separator"
+      ],
+      "sha1": "f7882008d12907f07a4689a68dbdca02c793ff35"
+    },
+    "item": {
+      "exports": [
+        "Item",
+        "ItemActions",
+        "ItemContent",
+        "ItemDescription",
+        "ItemFooter",
+        "ItemGroup",
+        "ItemHeader",
+        "ItemMedia",
+        "ItemSeparator",
+        "ItemTitle"
+      ],
+      "dataSlots": [
+        "item",
+        "item-actions",
+        "item-content",
+        "item-description",
+        "item-footer",
+        "item-group",
+        "item-header",
+        "item-media",
+        "item-separator",
+        "item-title"
+      ],
+      "variants": {
+        "itemVariants": {
+          "variant": [
+            "default",
+            "outline",
+            "muted"
+          ],
+          "size": [
+            "default",
+            "sm",
+            "xs"
+          ]
+        },
+        "itemMediaVariants": {
+          "variant": [
+            "default",
+            "icon",
+            "image"
+          ]
+        }
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "separator"
+      ],
+      "sha1": "e3449d524d8d6e5222e77ea5517d42a646df6357"
     }
   }
 }

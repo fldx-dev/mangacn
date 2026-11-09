@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 71 items in the registry. Each line gives the item's name, what it is, the one
+All 73 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -166,6 +166,12 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `menubar`: Stock menubar as one outlined strip with hand-drawn rules and display-face triggers; its menus are mangacn's dropdown-menu popup.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/menubar --overwrite`
   Docs: https://www.mangacn.com/docs/components/menubar (Markdown: https://www.mangacn.com/docs/components/menubar.md)
+- `field`: Stock form field parts: a display-face legend, hand-drawn separators and errors in spot with an ink underline under the control.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/field --overwrite`
+  Docs: https://www.mangacn.com/docs/components/field (Markdown: https://www.mangacn.com/docs/components/field.md)
+- `item`: Stock item row: a heavy-outlined paper card when outlined, tone-1 when muted, display-face titles and hand-drawn separators.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/item --overwrite`
+  Docs: https://www.mangacn.com/docs/components/item (Markdown: https://www.mangacn.com/docs/components/item.md)
 
 ## Layout
 

@@ -1,0 +1,20 @@
+---
+title: Field
+description: "Stock form field parts: a display-face legend, hand-drawn separators and errors in spot with an ink underline under the control."
+item: field
+---
+
+<InstallCommand item="field" />
+
+<CopyPrompt item="field" />
+
+The parts of a form field around any control: label, description, error, and fieldsets with a display-face legend, so forms read alike whatever the control. A field is not a group: the input, select or checkbox inside keeps its own frame; set `data-invalid` on the field and `aria-invalid` on the control, and `FieldError` announces the message and inks a spot underline under the control.
+
+## Examples
+
+<DemoFrame item="field" demo="default" />
+<DemoFrame item="field" demo="fieldset" />
+
+## Props
+
+<PropsTable item="field" />

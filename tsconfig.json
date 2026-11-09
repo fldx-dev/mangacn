@@ -27,6 +27,7 @@
       "@/components/ui/dropdown-menu": ["./registry/ui/dropdown-menu/dropdown-menu.tsx"],
       "@/components/sfx-text": ["./registry/ui/sfx-text/sfx-text.tsx"],
       "@/components/ui/separator": ["./registry/ui/separator/separator.tsx"],
+      "@/components/ui/label": ["./registry/ui/label/label.tsx"],
       "@/components/caption-box": ["./registry/ui/caption-box/caption-box.tsx"],
       "@/components/ink-mark": ["./registry/ui/ink-mark/ink-mark.tsx"],
       "@/components/stamp": ["./registry/ui/stamp/stamp.tsx"],

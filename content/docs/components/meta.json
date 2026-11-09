@@ -46,6 +46,8 @@
     "button-group",
     "context-menu",
     "menubar",
+    "field",
+    "item",
     "---Layout---",
     "panel",
     "panel-grid",

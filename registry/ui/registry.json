@@ -1121,7 +1121,9 @@
       "title": "Aspect Ratio",
       "description": "Stock aspect-ratio box: sizes its content to a ratio and draws nothing.",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn"],
       "files": [
         {
@@ -1137,7 +1139,9 @@
       "title": "Native Select",
       "description": "A native <select> drawn as select's trigger: paper box, hand-drawn outline and chevron; the options are the browser's (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["lucide-react", "cn"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -1232,6 +1236,52 @@
           "path": "menubar/menubar.tsx",
           "type": "registry:ui",
           "target": "@ui/menubar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field",
+      "description": "Stock form field parts: a display-face legend, hand-drawn separators and errors in spot with an ink underline under the control.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/ink-mark.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "field/field.tsx",
+          "type": "registry:ui",
+          "target": "@ui/field.tsx"
+        }
+      ]
+    },
+    {
+      "name": "item",
+      "type": "registry:ui",
+      "title": "Item",
+      "description": "Stock item row: a heavy-outlined paper card when outlined, tone-1 when muted, display-face titles and hand-drawn separators.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "item/item.tsx",
+          "type": "registry:ui",
+          "target": "@ui/item.tsx"
         }
       ]
     }
