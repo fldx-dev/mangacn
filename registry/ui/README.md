@@ -110,6 +110,9 @@ Blocks follow a stricter version of this table (recipe 3).
    `InkFrame` (recipe 1): one wobbly `--outline-width` stroke, corners that meet, solid ink
    fills. No CSS borders or shadows on outlined surfaces; `ink-shadow*` and `InkFrame
    shadow` only behind an explicit prop. Stock `rounded-*` classes stay.
+   **Composition primitives draw one outline:** a wrapper (`input-group`, `button-group`) draws
+   the frame and sets `data-grouped`, and the items inside read it (`in-data-grouped:`) to
+   draw none of their own, so an input in a group shows one ink frame, not two.
 3. **Spot colour is rare.** Only where stock uses `destructive` or `ring`, plus at most one
    deliberate emphasis element in a manga-native piece. Never as a surface background.
 4. **Primitives inherit the user's font.** Only manga-native pieces set `font-display` or

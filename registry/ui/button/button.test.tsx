@@ -122,5 +122,15 @@ describe("Button", () => {
     expect(screen.queryByRole("button")).toBeNull();
   });
 
+  it("hides its frame inside a group that sets data-grouped", () => {
+    render(
+      <div data-grouped="">
+        <Button variant="outline">Next</Button>
+      </div>,
+    );
+    const frame = screen.getByRole("button").querySelector(':scope > [data-slot="ink-frame"]');
+    expect(frame?.classList.contains("in-data-grouped:hidden")).toBe(true);
+  });
+
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
 });

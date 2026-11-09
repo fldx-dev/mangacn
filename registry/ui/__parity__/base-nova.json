@@ -859,6 +859,76 @@
       ],
       "registryDependencies": [],
       "sha1": "7850232914ad0560976df0a395cc2160b56c2e19"
+    },
+    "input-group": {
+      "exports": [
+        "InputGroup",
+        "InputGroupAddon",
+        "InputGroupButton",
+        "InputGroupInput",
+        "InputGroupText",
+        "InputGroupTextarea"
+      ],
+      "dataSlots": [
+        "input-group",
+        "input-group-addon",
+        "input-group-control"
+      ],
+      "variants": {
+        "inputGroupAddonVariants": {
+          "align": [
+            "inline-start",
+            "inline-end",
+            "block-start",
+            "block-end"
+          ]
+        },
+        "inputGroupButtonVariants": {
+          "size": [
+            "xs",
+            "sm",
+            "icon-xs",
+            "icon-sm"
+          ]
+        }
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "textarea"
+      ],
+      "sha1": "3b563523d042af1d546f47b2636dde65728d5aa2"
+    },
+    "button-group": {
+      "exports": [
+        "ButtonGroup",
+        "ButtonGroupSeparator",
+        "ButtonGroupText",
+        "buttonGroupVariants"
+      ],
+      "dataSlots": [
+        "button-group",
+        "button-group-separator",
+        "button-group-text"
+      ],
+      "variants": {
+        "buttonGroupVariants": {
+          "orientation": [
+            "horizontal",
+            "vertical"
+          ]
+        }
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "separator"
+      ],
+      "sha1": "bbac114e903b7ac8d67ad273166920af8cf9bdc4"
     }
   }
 }

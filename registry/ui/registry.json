@@ -412,7 +412,9 @@
       "title": "Panel",
       "description": "One manga panel: heavy hand-drawn ink frame on paper, optional screentone, corner caption and hatched shadow (needs ink-frame).",
       "categories": ["layout"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -429,7 +431,9 @@
       "title": "Panel Grid",
       "description": "Manga page layout: panels on a grid with paper gutters, column and row spans, one column on phones.",
       "categories": ["layout"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "files": [
         {
@@ -445,7 +449,9 @@
       "title": "Speech Bubble",
       "description": "Dialogue bubble with a hand-drawn tail: round, square, shout burst or dashed whisper, seven tail positions (needs ink-frame).",
       "categories": ["text"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -462,7 +468,9 @@
       "title": "Thought Bubble",
       "description": "Dashed hand-drawn thought bubble with a trail of one to three rough ink dots (needs ink-frame).",
       "categories": ["text"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -479,7 +487,9 @@
       "title": "SFX Text",
       "description": "Onomatopoeia in the display face with ink stroke, hard shadow, tilt and a reduced-motion-safe pop or slam entrance.",
       "categories": ["text"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority", "motion"],
       "files": [
         {
@@ -495,7 +505,9 @@
       "title": "Vertical Text",
       "description": "Vertical writing (vertical-rl) with text-orientation control for mixing Japanese and Latin.",
       "categories": ["text"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "files": [
         {
@@ -511,7 +523,9 @@
       "title": "Speed Lines",
       "description": "Decorative radial or horizontal motion lines behind content, with density, colour and a movable centre.",
       "categories": ["background"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "files": [
         {
@@ -527,7 +541,9 @@
       "title": "Focus Lines",
       "description": "Decorative concentration lines bursting in towards a point, as inline SVG at the speed-line width.",
       "categories": ["background"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "files": [
         {
@@ -543,7 +559,9 @@
       "title": "Halftone Background",
       "description": "Decorative full-bleed halftone screen in three tones and dot sizes, with an optional top, bottom or radial fade.",
       "categories": ["background"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "files": [
         {
@@ -559,7 +577,9 @@
       "title": "Emanata",
       "description": "Inline SVG emotion marks (sweat drop, anger mark, sparkle, surprise lines, puff), labelled unless decorative.",
       "categories": ["decoration"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "files": [
         {
@@ -575,7 +595,9 @@
       "title": "Ink Splash Loader",
       "description": "Loading status: an ink blot that pulses and splashes droplets, still under reduced motion, with a hidden label.",
       "categories": ["feedback"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority", "motion"],
       "files": [
         {
@@ -591,7 +613,9 @@
       "title": "Page Turn",
       "description": "Turns its children like a manga page when pageKey changes (right to left by default); cross-fades under reduced motion.",
       "categories": ["animation"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "motion"],
       "files": [
         {
@@ -607,7 +631,9 @@
       "title": "Manga Frame",
       "description": "Image in a hand-drawn ink frame with aspect presets, a halftone mat and a caption; alt is required (needs ink-frame).",
       "categories": ["data"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -624,7 +650,9 @@
       "title": "Slider",
       "description": "Stock slider on a hand-drawn rule, with an ink range and paper thumbs outlined in ink (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -641,7 +669,9 @@
       "title": "Toggle",
       "description": "Stock toggle that fills with ink when pressed; the outline variant draws a hand-inked paper frame (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -658,7 +688,9 @@
       "title": "Toggle Group",
       "description": "Stock toggle group in one hand-drawn outline, with inked rules between its items (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
       "registryDependencies": [
         "https://www.mangacn.com/r/toggle.json",
@@ -678,7 +710,9 @@
       "title": "Kbd",
       "description": "Stock keyboard key drawn as a hand-inked caption box in the display face, like badge (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -695,7 +729,9 @@
       "title": "Breadcrumb",
       "description": "Stock breadcrumb with hand-inked chevron separators and the current page in the display face.",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react", "lucide-react"],
       "files": [
         {
@@ -711,7 +747,9 @@
       "title": "Pagination",
       "description": "Stock pagination on outlined buttons, the current page in ink, with hand-inked previous and next chevrons.",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "lucide-react"],
       "registryDependencies": ["https://www.mangacn.com/r/button.json"],
       "files": [
@@ -728,7 +766,9 @@
       "title": "Collapsible",
       "description": "Stock collapsible; its trigger can carry accordion's + / − ink glyph, which flips when the panel opens.",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react", "lucide-react"],
       "files": [
         {
@@ -744,7 +784,9 @@
       "title": "Ink Mark",
       "description": "Hand-drawn underline, circle, box, strike, highlight or brackets around inline text, one per line, drawn on when shown.",
       "categories": ["text"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "motion", "roughjs@4.6.6"],
       "files": [
         {
@@ -760,7 +802,9 @@
       "title": "Ink Arrow",
       "description": "Hand-drawn arrow, straight or bowed, in four directions and three lengths, with an optional label at its tail.",
       "categories": ["decoration"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "roughjs@4.6.6"],
       "files": [
         {
@@ -776,7 +820,9 @@
       "title": "Dropdown Menu",
       "description": "Stock dropdown menu as a heavy-outlined paper cut-out: ink highlight, hand-drawn separators, no shadow (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react", "lucide-react"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -793,7 +839,9 @@
       "title": "Alert Dialog",
       "description": "Stock alert dialog on an ink overlay with dialog's heavy hand-inked outline; a destructive action is the spot button (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react"],
       "registryDependencies": [
         "https://www.mangacn.com/r/button.json",
@@ -813,7 +861,9 @@
       "title": "Hover Card",
       "description": "Stock hover card as a round-cornered paper panel with a heavy hand-drawn outline, no tail and no shadow (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -830,7 +880,9 @@
       "title": "Stamp",
       "description": "Hanko-style seal, round or square, with a rough outline, an inner ring and an inked grain around one or two words.",
       "categories": ["decoration"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "roughjs@4.6.6"],
       "files": [
         {
@@ -846,7 +898,9 @@
       "title": "Ink Splatter",
       "description": "Decorative ink splash, drips or dots, seeded so every instance differs; hidden from assistive tech.",
       "categories": ["decoration"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "roughjs@4.6.6"],
       "files": [
         {
@@ -862,7 +916,9 @@
       "title": "Caption Box",
       "description": "Narration box with square corners and a heavy hand-drawn outline, on paper or tone; pins to a panel corner (needs ink-frame).",
       "categories": ["text"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -879,7 +935,9 @@
       "title": "SFX Ticker",
       "description": "Marquee band of sound effects in both scripts, paused on hover and still under reduced motion; ships its keyframes.",
       "categories": ["decoration"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "class-variance-authority"],
       "registryDependencies": ["https://www.mangacn.com/r/sfx-text.json"],
       "files": [
@@ -891,8 +949,12 @@
       ],
       "css": {
         "@keyframes mangacn-marquee": {
-          "from": { "transform": "translateX(0)" },
-          "to": { "transform": "translateX(-50%)" }
+          "from": {
+            "transform": "translateX(0)"
+          },
+          "to": {
+            "transform": "translateX(-50%)"
+          }
         }
       }
     },
@@ -902,7 +964,9 @@
       "title": "Drawer",
       "description": "Stock Base UI drawer on an ink overlay; its open edge is one heavy hand-drawn rule and the handle an ink stroke (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn", "@base-ui/react"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -919,7 +983,9 @@
       "title": "Sonner",
       "description": "Stock sonner Toaster whose toasts are paper cards with a heavy hand-drawn outline and ink glyph icons (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["sonner", "next-themes", "lucide-react"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -936,7 +1002,9 @@
       "title": "Power Gauge",
       "description": "Anime-style stat bar: a display-face label, a solid or segmented ink fill, a max tick and a MAX burst; a labelled meter.",
       "categories": ["data"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn"],
       "registryDependencies": [
         "https://www.mangacn.com/r/ink-frame.json",
@@ -956,7 +1024,9 @@
       "title": "Page Number",
       "description": "Page folio in the display face, with an optional page count and chapter mark; read as \"Page 7 of 24\".",
       "categories": ["data"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn"],
       "files": [
         {
@@ -972,7 +1042,9 @@
       "title": "Scroll Area",
       "description": "Stock scroll area with a hand-drawn ink thumb on a thin ruled track; the viewport is a named region (needs ink-frame).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["@base-ui/react", "cn"],
       "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
       "files": [
@@ -989,7 +1061,9 @@
       "title": "Spinner",
       "description": "Stock loading spinner drawn as an ink blot with its droplets, at icon size; still under reduced motion.",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn"],
       "files": [
         {
@@ -1005,7 +1079,9 @@
       "title": "Empty",
       "description": "Stock empty state with an emanata mark as its default media and the title in the display face (needs emanata).",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["class-variance-authority", "cn"],
       "registryDependencies": ["https://www.mangacn.com/r/emanata.json"],
       "files": [
@@ -1022,13 +1098,61 @@
       "title": "Label",
       "description": "Stock form label in the body face, with an optional spot asterisk for required fields.",
       "categories": ["primitive"],
-      "meta": { "since": "0.1.0" },
+      "meta": {
+        "since": "0.1.0"
+      },
       "dependencies": ["cn"],
       "files": [
         {
           "path": "label/label.tsx",
           "type": "registry:ui",
           "target": "@ui/label.tsx"
+        }
+      ]
+    },
+    {
+      "name": "input-group",
+      "type": "registry:ui",
+      "title": "Input Group",
+      "description": "Stock input group in one hand-drawn outline: addons sit behind inked rules and the input, textarea and buttons draw no frame.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "class-variance-authority"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/textarea.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "input-group/input-group.tsx",
+          "type": "registry:ui",
+          "target": "@ui/input-group.tsx"
+        }
+      ]
+    },
+    {
+      "name": "button-group",
+      "type": "registry:ui",
+      "title": "Button Group",
+      "description": "Stock button group as one hand-drawn strip with inked rules between its buttons, which draw no frame of their own.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "button-group/button-group.tsx",
+          "type": "registry:ui",
+          "target": "@ui/button-group.tsx"
         }
       ]
     }

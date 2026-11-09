@@ -22,6 +22,8 @@
       "@/components/ink-frame": ["./registry/theme/ink-frame/ink-frame.tsx"],
       "@/components/ui/button": ["./registry/ui/button/button.tsx"],
       "@/components/ui/toggle": ["./registry/ui/toggle/toggle.tsx"],
+      "@/components/ui/input": ["./registry/ui/input/input.tsx"],
+      "@/components/ui/textarea": ["./registry/ui/textarea/textarea.tsx"],
       "@/components/sfx-text": ["./registry/ui/sfx-text/sfx-text.tsx"],
       "@/components/ui/separator": ["./registry/ui/separator/separator.tsx"],
       "@/components/caption-box": ["./registry/ui/caption-box/caption-box.tsx"],

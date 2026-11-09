@@ -4,7 +4,8 @@ import { cn } from "cn";
 import { InkFrame, type InkFrameProps } from "@/components/ink-frame";
 
 // Based on shadcn/ui Button (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-10-30.
-// Restyled for mangacn: InkFrame draws the outline and fill; no CSS border, no shadow.
+// Restyled for mangacn: InkFrame draws the outline and fill; no CSS border, no shadow. Inside an
+// input or button group (`data-grouped`) the group draws the one outline and this frame hides.
 
 const buttonVariants = cva(
   "group/button relative isolate inline-flex shrink-0 items-center justify-center rounded-lg border-0 bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-[1px_1px] disabled:pointer-events-none disabled:opacity-100 disabled:bg-background disabled:text-muted-foreground disabled:halftone-light has-[>[data-inked=true]]:bg-transparent! aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -73,7 +74,7 @@ function Button({
           as="span"
           // A disabled button shows its halftone through an unfilled outline.
           fill={props.disabled ? "none" : fill}
-          className="pointer-events-none absolute inset-0 -z-1"
+          className="pointer-events-none absolute inset-0 -z-1 in-data-grouped:hidden"
         />
       )}
       {children}

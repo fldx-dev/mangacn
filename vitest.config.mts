@@ -23,6 +23,15 @@ export default defineConfig({
         find: /^@\/components\/ui\/toggle$/,
         replacement: fileURLToPath(new URL("./registry/ui/toggle/toggle.tsx", import.meta.url)),
       },
+      // input-group → input, textarea.
+      {
+        find: /^@\/components\/ui\/input$/,
+        replacement: fileURLToPath(new URL("./registry/ui/input/input.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/textarea$/,
+        replacement: fileURLToPath(new URL("./registry/ui/textarea/textarea.tsx", import.meta.url)),
+      },
       {
         find: /^@\/components\/sfx-text$/,
         replacement: fileURLToPath(new URL("./registry/ui/sfx-text/sfx-text.tsx", import.meta.url)),

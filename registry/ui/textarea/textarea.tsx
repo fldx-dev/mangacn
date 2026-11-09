@@ -4,14 +4,15 @@ import { InkFrame } from "@/components/ink-frame";
 
 // Based on shadcn/ui Textarea (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-10-31.
 // Restyled for mangacn: a <textarea> cannot hold the frame, so the InkFrame wraps it and draws
-// the outline and paper fill; no CSS border.
+// the outline and paper fill; no CSS border. Inside an input or button group (`data-grouped`)
+// the group draws the one outline, so this frame hides its drawing and border.
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <InkFrame
       as="span"
       fill="paper"
-      className="flex w-full min-w-0 rounded-lg has-[>[aria-invalid=true]]:[--ink:var(--destructive)]"
+      className="flex w-full min-w-0 rounded-lg has-[>[aria-invalid=true]]:[--ink:var(--destructive)] in-data-grouped:border-0 in-data-grouped:bg-transparent in-data-grouped:[&>svg]:hidden"
     >
       <textarea
         data-slot="textarea"

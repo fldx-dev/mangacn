@@ -40,6 +40,8 @@
     "spinner",
     "empty",
     "label",
+    "input-group",
+    "button-group",
     "---Layout---",
     "panel",
     "panel-grid",
