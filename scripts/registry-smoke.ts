@@ -13,6 +13,7 @@
  *                       lib/registry changed, and adds the Installation page's first
  *                       install (theme, ink-frame, speech-bubble) when
  *                       lib/docs/install-command.ts changed
+ * Blocks (`registry:block`) must leave every file of their `files[]` at its target.
  * The stock pre-install + overwrite check runs only when button, card and dialog are all
  * in the set. Each one-command check (a fresh project per command, ONE_COMMANDS) runs with
  * every item, or when the set names all of its items (`--only=pagination`).
@@ -34,6 +35,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { SETUP_ITEMS, setCommand } from "../lib/docs/install-command";
 import { mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
+import { installTarget } from "../lib/registry/install-target";
 
 const NEXT_VERSION = "16.4.3";
 const SHADCN_VERSION = "4.23.0";
@@ -51,6 +53,30 @@ const outputDir = path.resolve("public", "r");
  */
 const ATTRIBUTION = "// Based on shadcn/ui ";
 const attribution = (name: string) => `${ATTRIBUTION}${name} (MIT, https://ui.shadcn.com)`;
+
+/** A built catalog entry as the smoke reads it from public/r/registry.json. */
+interface CatalogItem {
+  name: string;
+  type?: string;
+  registryDependencies?: string[];
+  files?: { path: string; type: string; target?: string }[];
+}
+
+/**
+ * Every file a block lists in `files[]` must land at its target (`@components/blocks/<name>/<file>`
+ * → `components/blocks/<name>/<file>`): a block ships several files, and a missing target makes
+ * the CLI flatten them into `components/` (SPEC-components-3 §3, §7).
+ */
+function blockFileProblems(project: string, items: CatalogItem[]): string[] {
+  return items
+    .filter((item) => item.type === "registry:block")
+    .flatMap((item) =>
+      (item.files ?? [])
+        .map(installTarget)
+        .filter((file) => !existsSync(path.join(project, file)))
+        .map((file) => `${item.name}: ${file} was not installed`),
+    );
+}
 
 /** What an installed item must leave in the temp project, keyed by item name. */
 const EXPECTED_CONTENT: Record<
@@ -712,9 +738,7 @@ async function main() {
   if (!existsSync(catalogPath)) {
     throw new SmokeError("public/r/registry.json not found. Run `pnpm registry:build` first.");
   }
-  const catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as {
-    items: { name: string; registryDependencies?: string[] }[];
-  };
+  const catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as { items: CatalogItem[] };
   const listed = catalog.items.map((item) => item.name);
   for (const name of INSTALL_FIRST) {
     if (!listed.includes(name)) throw new SmokeError(`"${name}" is missing from the catalog`);
@@ -792,7 +816,7 @@ async function main() {
     }
 
     console.log("→ installed content");
-    const missing = contentProblems(project, names);
+    const missing = [...contentProblems(project, names), ...blockFileProblems(project, items)];
     if (missing.length > 0) {
       throw new SmokeError(`Installed content check failed:\n  ${missing.join("\n  ")}`);
     }

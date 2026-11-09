@@ -1,4 +1,34 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "items": []
+  "items": [
+    {
+      "name": "chapter-list",
+      "type": "registry:block",
+      "title": "Chapter List",
+      "description": "Chapter index for a series: numbered links, read titles struck through, the latest stamped; Latin or Japanese numerals.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/caption-box.json",
+        "https://www.mangacn.com/r/ink-mark.json",
+        "https://www.mangacn.com/r/stamp.json",
+        "https://www.mangacn.com/r/separator.json"
+      ],
+      "files": [
+        {
+          "path": "chapter-list/chapter-list.tsx",
+          "type": "registry:block",
+          "target": "@components/blocks/chapter-list/chapter-list.tsx"
+        },
+        {
+          "path": "chapter-list/chapter-numeral.ts",
+          "type": "registry:block",
+          "target": "@components/blocks/chapter-list/chapter-numeral.ts"
+        }
+      ]
+    }
+  ]
 }

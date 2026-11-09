@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 60 items in the registry. Each line gives the item's name, what it is, the one
+All 61 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -220,3 +220,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `page-number`: Page folio in the display face, with an optional page count and chapter mark; read as "Page 7 of 24".
   Install: `npx shadcn@latest add @mangacn/page-number --overwrite`
   Docs: https://www.mangacn.com/docs/components/page-number (Markdown: https://www.mangacn.com/docs/components/page-number.md)
+
+## Blocks
+
+- `chapter-list`: Chapter index for a series: numbered links, read titles struck through, the latest stamped; Latin or Japanese numerals.
+  Install: `npx shadcn@latest add @mangacn/chapter-list --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/chapter-list (Markdown: https://www.mangacn.com/docs/blocks/chapter-list.md)

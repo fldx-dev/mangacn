@@ -60,6 +60,135 @@
       }
     ]
   },
+  "chapter-list": {
+    "Chapter": [
+      {
+        "id": "chapter-list.tsx-Chapter",
+        "name": "Chapter",
+        "description": "One chapter of the series, as `ChapterList` takes it.",
+        "entries": [
+          {
+            "name": "number",
+            "description": "The chapter's number: `12`, or a string for one that is not a whole number (`\"12.5\"`).",
+            "type": "string | number",
+            "simplifiedType": "string | number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "title",
+            "description": "The chapter's title.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "href",
+            "description": "Where the row links: the chapter's reader page.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "date",
+            "description": "When it came out, as it should read (\"2026-11-02\", \"Nov 2\"); shown as written.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "read",
+            "description": "Whether the reader has read it: the title is struck through and the state announced.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "ChapterListProps": [
+      {
+        "id": "chapter-list.tsx-ChapterListProps",
+        "name": "ChapterListProps",
+        "entries": [
+          {
+            "name": "chapters",
+            "description": "The series' chapters, in any order; each row links to its `href`.",
+            "type": "Chapter[]",
+            "simplifiedType": "Chapter[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "order",
+            "description": "`desc` lists the newest chapter first; `asc` in reading order. Rows are ordered by number,\nwith numbers that are not numbers (\"Extra\") after the numbered ones.",
+            "type": "ChapterOrder | undefined",
+            "simplifiedType": "\"asc\" | \"desc\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"desc\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "latest",
+            "description": "Stamps the highest-numbered chapter (NEW, or 最新 with `numerals=\"ja\"`), the first row of a\n`desc` list.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "numerals",
+            "description": "`latin` writes \"Chapter 12\"; `ja` writes 第12話 under `lang=\"ja\"`, with the stamp and the\nannounced read state in Japanese too.",
+            "type": "ChapterNumerals | undefined",
+            "simplifiedType": "\"ja\" | \"latin\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"latin\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "label",
+            "description": "The navigation landmark's name, which tells it apart from the page's other navs.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Chapters\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "emanata": {
     "EmanataProps": [
       {

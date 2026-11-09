@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
-import { CATEGORIES, COMPONENTS_CATALOG } from "@/lib/docs/catalog";
+import { CATEGORIES, itemPagePath } from "@/lib/docs/catalog";
 import {
   addCommand,
   flagsNote,
@@ -15,12 +15,11 @@ import {
 import {
   type LoadedRegistry,
   loadRegistry,
-  mangacnItemName,
   REGISTRY_ITEM_URL,
   registryItemUrl,
 } from "@/lib/registry";
 import { clientNote, isClientItem } from "@/lib/registry/client";
-import { installTarget } from "@/lib/registry/install-target";
+import { dependencyFiles, installTarget } from "@/lib/registry/install-target";
 
 // The four mangacn tools of the MCP server (SPEC-agent-tooling §4): list_items, get_item,
 // get_install_command and get_skill. Everything here is plain functions over the catalog and the
@@ -49,7 +48,10 @@ export interface CatalogEntry {
    * (the theme, the fonts).
    */
   client: boolean | null;
-  /** The item's own docs page (`/docs/components/speech-bubble`), or null when it has none. */
+  /**
+   * The item's own docs page (`/docs/components/speech-bubble`, `/docs/blocks/chapter-list`), or
+   * null when it has none.
+   */
   page: string | null;
   /** Absolute docs URL: the item's page, else the guide that covers it. */
   docs: string;
@@ -67,7 +69,7 @@ export interface CatalogReaders {
 /** The skill folder Task 60 writes, repo-relative. */
 export const SKILL_DIR = "skills/mangacn";
 
-export { installTarget };
+export { dependencyFiles, installTarget };
 
 const THEMING_PAGE = "/docs/theming";
 
@@ -76,40 +78,10 @@ function categoryRank(category: string): number {
   return index === -1 ? CATEGORIES.length : index;
 }
 
-/**
- * The install targets of every mangacn item `name` depends on, depth first in declaration order,
- * each once: power-gauge → ink-frame's and sfx-text's files. Dependencies outside mangacn
- * (shadcn's own items) are not followed.
- */
-export function dependencyFiles(name: string, registry: LoadedRegistry): string[] {
-  const byName = new Map(registry.items.map((item) => [item.name, item]));
-  const seen = new Set([name]);
-  const files: string[] = [];
-  const visit = (itemName: string) => {
-    for (const dependency of byName.get(itemName)?.registryDependencies ?? []) {
-      const depName = mangacnItemName(dependency);
-      if (!depName || seen.has(depName)) continue;
-      seen.add(depName);
-      const depItem = byName.get(depName);
-      if (!depItem) continue;
-      files.push(...depItem.files.map(installTarget));
-      visit(depName);
-    }
-  };
-  visit(name);
-  const own = new Set(byName.get(name)?.files.map(installTarget) ?? []);
-  return [...new Set(files)].filter((file) => !own.has(file));
-}
-
 /** Every registry item in `CATEGORIES` order, catalog order within a category. */
 export function readCatalog(registry: LoadedRegistry = loadRegistry()): CatalogEntry[] {
   const entries = registry.items.map((item): CatalogEntry => {
-    const page =
-      item.source === COMPONENTS_CATALOG
-        ? `/docs/components/${item.name}`
-        : item.type === "registry:theme"
-          ? THEMING_PAGE
-          : null;
+    const page = itemPagePath(item) ?? (item.type === "registry:theme" ? THEMING_PAGE : null);
     return {
       name: item.name,
       title: item.title ?? item.name,

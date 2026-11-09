@@ -1,11 +1,13 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { isBlock } from "./blocks";
 import {
   type LoadedRegistry,
   type LoadedRegistryItem,
   mangacnItemName,
   registryItemUrl,
 } from "./index";
+import { importSpecifier, installTarget } from "./install-target";
 import { PARITY_PRIMITIVES } from "./parity";
 
 export interface ImportSpecifier {
@@ -136,17 +138,68 @@ export function importViolation(
   return `package "${pkg}" is not in this item's dependencies`;
 }
 
-/** Checks every file in every item's `files[]` against the allow-list. */
+/**
+ * The `@/` specifiers a block may import: the install path of every file of every item it
+ * declares by mangacn URL (`@/components/ui/separator`, `@/components/stamp`,
+ * `@/components/ink-frame`), as `shadcn add` writes them at the default aliases.
+ */
+export function blockImportPaths(
+  item: Pick<LoadedRegistryItem, "registryDependencies">,
+  catalog: ReadonlyMap<string, Pick<LoadedRegistryItem, "files">>,
+): Set<string> {
+  const paths = new Set<string>();
+  for (const dependency of item.registryDependencies ?? []) {
+    const name = mangacnItemName(dependency);
+    for (const file of (name && catalog.get(name)?.files) || []) {
+      paths.add(importSpecifier(installTarget(file)));
+    }
+  }
+  return paths;
+}
+
+/**
+ * Why `specifier` may not appear in a file shipped by a block (SPEC-components-3 §3, §10), or
+ * `null`: a block composes items, so beyond React, its declared packages, `@/lib/utils` and its
+ * own part files (relatively), it imports only the install paths of the items it declares by
+ * mangacn URL (`blockImportPaths`). No bare stock names, no `@/lib/<x>` or `@/hooks/<x>` it did
+ * not declare, no other block's files, no `@/components/blocks/…` path to its own parts.
+ */
+export function blockImportViolation(
+  specifier: string,
+  item: Pick<LoadedRegistryItem, "dependencies" | "files">,
+  file: string,
+  allowed: ReadonlySet<string>,
+): string | null {
+  if (specifier.startsWith(".")) {
+    return importViolation(specifier, { ...item, registryDependencies: [] }, file)
+      ? "relative import outside this block (import its own part files only)"
+      : null;
+  }
+  if (specifier.startsWith("@/")) {
+    if (specifier === "@/lib/utils" || allowed.has(specifier)) return null;
+    return "alias import that is not @/lib/utils or the install path of an item this block declares by mangacn URL";
+  }
+  return importViolation(specifier, { ...item, registryDependencies: [] }, file);
+}
+
+/**
+ * Checks every file in every item's `files[]` against the allow-list: `importViolation` for
+ * items, `blockImportViolation` (stricter) for blocks.
+ */
 export function findImportViolations(
   registry: LoadedRegistry,
   rootDir = process.cwd(),
 ): ImportViolation[] {
+  const catalog = new Map(registry.items.map((item) => [item.name, item]));
   const violations: ImportViolation[] = [];
   for (const item of registry.items) {
+    const allowed = isBlock(item) ? blockImportPaths(item, catalog) : undefined;
     for (const entry of item.files) {
       const source = readFileSync(path.resolve(rootDir, entry.path), "utf8");
       for (const { specifier, line } of extractImports(source)) {
-        const reason = importViolation(specifier, item, entry.path);
+        const reason = allowed
+          ? blockImportViolation(specifier, item, entry.path, allowed)
+          : importViolation(specifier, item, entry.path);
         if (reason) violations.push({ item: item.name, file: entry.path, specifier, line, reason });
       }
     }

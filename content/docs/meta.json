@@ -1,3 +1,11 @@
 {
-  "pages": ["---Getting started---", "index", "installation", "theming", "agents", "components"]
+  "pages": [
+    "---Getting started---",
+    "index",
+    "installation",
+    "theming",
+    "agents",
+    "components",
+    "blocks"
+  ]
 }

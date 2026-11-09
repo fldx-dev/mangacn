@@ -1,0 +1,27 @@
+---
+title: Chapter List
+description: "Chapter index for a series: numbered links, read titles struck through, the latest stamped; Latin or Japanese numerals."
+item: chapter-list
+---
+
+<InstallCommand item="chapter-list" />
+
+<ItemFiles item="chapter-list" />
+
+<CopyPrompt item="chapter-list" />
+
+A series page's chapter index: pass the chapters in any order and it lists them newest first, each row one link named by its number and title, read chapters struck through in tone and announced, the latest stamped NEW. `numerals="ja"` writes <span lang="ja">第12話</span> and stamps <span lang="ja">最新</span>. It is a server component that composes caption-box, stamp, ink-mark and separator and draws nothing of its own, so it takes the theme and the pen like the items do.
+
+## Examples
+
+<DemoFrame item="chapter-list" demo="default" />
+
+## Props
+
+<PropsTable item="chapter-list" />
+
+### Chapter
+
+One entry of `chapters`.
+
+<PropsTable item="chapter-list" name="Chapter" />

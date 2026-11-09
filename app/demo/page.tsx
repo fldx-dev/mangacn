@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CATEGORIES } from "@/lib/docs/catalog";
 import { loadRegistry } from "@/lib/registry";
 import { listDemos } from "@/lib/registry/demos";
 
@@ -8,16 +9,8 @@ import { listDemos } from "@/lib/registry/demos";
 
 export const metadata: Metadata = { title: "mangacn gallery", robots: { index: false } };
 
-const CATEGORY_ORDER = [
-  "primitive",
-  "layout",
-  "text",
-  "background",
-  "decoration",
-  "feedback",
-  "animation",
-  "data",
-];
+// The docs' category order, blocks last.
+const CATEGORY_ORDER: readonly string[] = CATEGORIES;
 
 interface GalleryItem {
   name: string;

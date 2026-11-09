@@ -1,6 +1,13 @@
 import type { LoadedRegistry, LoadedRegistryItem } from "@/lib/registry";
 import { registryItemUrl } from "@/lib/registry";
-import { CATEGORY_LABELS, COMPONENTS_CATALOG, docItems, groupByCategory } from "./catalog";
+import {
+  BLOCKS_CATALOG,
+  CATEGORY_LABELS,
+  COMPONENTS_CATALOG,
+  DOCS_SECTIONS,
+  docItems,
+  groupByCategory,
+} from "./catalog";
 import { docsUrl, installCommand, SITE_URL } from "./install-command";
 
 /** Repo-relative folder of the Agent Skill (SPEC-agent-tooling §5); the MCP's `get_skill` reads it. */
@@ -34,7 +41,8 @@ function foundationDocs(item: LoadedRegistryItem): string {
 }
 
 function entry(name: string, description: string, docs: string): string[] {
-  const markdown = docs.startsWith(`${SITE_URL}/docs/components/`) ? ` (Markdown: ${docs}.md)` : "";
+  const ownPage = DOCS_SECTIONS.some((section) => docs.startsWith(`${SITE_URL}${section.url}/`));
+  const markdown = ownPage ? ` (Markdown: ${docs}.md)` : "";
   return [
     `- \`${name}\`: ${description}`,
     `  Install: \`${installCommand(name, "npm")}\``,
@@ -44,17 +52,23 @@ function entry(name: string, description: string, docs: string): string[] {
 
 /**
  * `skills/mangacn/references/catalog.md`: every registry item, the theme catalog first, then
- * the component catalog under `CATEGORIES` headings, each with its one-line description, the
- * npm install command and its docs URL.
+ * the component catalog under `CATEGORIES` headings, then the blocks under "Blocks", each with
+ * its one-line description, the npm install command and its docs URL.
  */
 export function renderSkillCatalog(
   registry: LoadedRegistry,
   demos: readonly { item: string; demo: string }[],
 ): string {
   const foundation = registry.items
-    .filter((item) => item.source !== COMPONENTS_CATALOG && FOUNDATION_ORDER.includes(item.name))
+    .filter(
+      (item) =>
+        item.source !== COMPONENTS_CATALOG &&
+        item.source !== BLOCKS_CATALOG &&
+        FOUNDATION_ORDER.includes(item.name),
+    )
     .sort((a, b) => FOUNDATION_ORDER.indexOf(a.name) - FOUNDATION_ORDER.indexOf(b.name));
-  const components = docItems(registry, demos);
+  // Blocks carry the one category `block`, so they group under "Blocks" after the components.
+  const components = [...docItems(registry, demos), ...docItems(registry, demos, BLOCKS_CATALOG)];
   const count = foundation.length + components.length;
 
   const lines = [

@@ -197,6 +197,17 @@ describe("list_items", () => {
     expect(text).toContain('3 items in "background"');
   });
 
+  it("lists the blocks last, under the category block", async () => {
+    const { text } = await call("list_items", { category: "block" });
+    expect(text).toContain(
+      "- chapter-list · registry:block · block: Chapter index for a series: numbered links",
+    );
+    expect(text).toContain(
+      "Server component. Install: `pnpm dlx shadcn@latest add @mangacn/chapter-list --overwrite`. Docs: https://www.mangacn.com/docs/blocks/chapter-list",
+    );
+    expect(catalog.at(-1)?.category).toBe("block");
+  });
+
   it("rejects a category outside the catalog", async () => {
     const { isError } = await call("list_items", { category: "widgets" });
     expect(isError).toBe(true);
@@ -226,6 +237,17 @@ describe("get_item", () => {
     ]);
     const inkFrame = catalog.find((entry) => entry.name === "ink-frame");
     expect(inkFrame?.dependencyFiles).toEqual([]);
+  });
+
+  it("returns a block's page with a Files line naming every block file", async () => {
+    const entry = catalog.find((item) => item.name === "chapter-list");
+    expect(entry?.page).toBe("/docs/blocks/chapter-list");
+    const { text, isError } = await call("get_item", { name: "chapter-list" });
+    expect(isError).toBe(false);
+    expect(text).toContain("npx shadcn@latest add @mangacn/chapter-list");
+    expect(text).toContain(
+      "Files: components/blocks/chapter-list/chapter-list.tsx, components/blocks/chapter-list/chapter-numeral.ts; also adds components/caption-box.tsx, components/ink-frame.tsx, components/ink-mark.tsx, components/stamp.tsx, components/ui/separator.tsx through its registry dependencies",
+    );
   });
 
   it("places primitives under components/ui and accepts the @mangacn/ form", async () => {

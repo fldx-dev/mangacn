@@ -6,7 +6,9 @@ import {
   formatImportViolations,
 } from "@/lib/registry/imports";
 
-// SPEC-registry-core §6.5 over every file every catalog ships (theme, ui, blocks).
+// SPEC-registry-core §6.5 over every file every catalog ships (theme, ui, blocks). Blocks are
+// stricter (SPEC-components-3 §3, §10): beyond React, their packages and @/lib/utils they import
+// only the install paths of the items they declare by mangacn URL, and their own part files.
 const registry = loadRegistry();
 
 describe("shipped files", () => {

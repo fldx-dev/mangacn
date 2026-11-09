@@ -1,14 +1,47 @@
 import type { LoadedRegistry } from "@/lib/registry";
+import { BLOCKS_CATALOG } from "@/lib/registry/blocks";
 
-// The docs document the component catalog (registry/ui/registry.json): one page per item that
-// has demos. The theme catalog (theme, fonts, ink-frame, manga-motion) is covered by the
-// installation and theming guides instead.
+// The docs document the component catalog (registry/ui/registry.json) and the block catalog
+// (registry/blocks/registry.json): one page per item that has demos, under "Components" and
+// "Blocks" in the sidebar. The theme catalog (theme, fonts, ink-frame, manga-motion) is covered
+// by the installation and theming guides instead.
 export const COMPONENTS_CATALOG = "registry/ui/registry.json";
+
+export { BLOCKS_CATALOG };
 
 /** Repo-relative folder of the item pages. */
 export const COMPONENT_PAGES_DIR = "content/docs/components";
 
-/** Catalog categories in sidebar and index order (SPEC-docs-site §4). */
+/** Repo-relative folder of the block pages (SPEC-components-3 §5). */
+export const BLOCK_PAGES_DIR = "content/docs/blocks";
+
+/** A sidebar section `gen:docs` writes from one catalog: its pages' folder and URL. */
+export interface DocsSection {
+  catalog: string;
+  dir: string;
+  /** The pages' URL prefix, `/docs/components`. */
+  url: string;
+}
+
+/** The generated sections in sidebar order: Components, then Blocks. */
+export const DOCS_SECTIONS: readonly DocsSection[] = [
+  { catalog: COMPONENTS_CATALOG, dir: COMPONENT_PAGES_DIR, url: "/docs/components" },
+  { catalog: BLOCKS_CATALOG, dir: BLOCK_PAGES_DIR, url: "/docs/blocks" },
+];
+
+/**
+ * The docs page of a component or block (`/docs/components/button`, `/docs/blocks/chapter-list`),
+ * or null for an item of another catalog (the theme's guide is not its own page).
+ */
+export function itemPagePath(item: { name: string; source: string }): string | null {
+  const section = DOCS_SECTIONS.find((candidate) => candidate.catalog === item.source);
+  return section ? `${section.url}/${item.name}` : null;
+}
+
+/**
+ * Catalog categories in sidebar and index order (SPEC-docs-site §4); `block` is the block
+ * catalog's one category and comes last.
+ */
 export const CATEGORIES = [
   "primitive",
   "layout",
@@ -18,6 +51,7 @@ export const CATEGORIES = [
   "feedback",
   "animation",
   "data",
+  "block",
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
@@ -31,6 +65,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   feedback: "Feedback",
   animation: "Animation",
   data: "Data",
+  block: "Blocks",
 };
 
 /** The line `gen:docs` writes where the item's prose goes; the page test rejects it. */
@@ -52,15 +87,17 @@ function isCategory(value: string | undefined): value is Category {
 
 /**
  * Every component-catalog item that has demos, in category order and catalog order within a
- * category. Throws naming an item whose first category is not one of `CATEGORIES`.
+ * category. Throws naming an item whose first category is not one of `CATEGORIES`. `catalog`
+ * picks the section: the components (the default, which the component index lists) or the blocks.
  */
 export function docItems(
   registry: LoadedRegistry,
   demos: readonly { item: string; demo: string }[],
+  catalog: string = COMPONENTS_CATALOG,
 ): DocItem[] {
   const items: DocItem[] = [];
   for (const entry of registry.items) {
-    if (entry.source !== COMPONENTS_CATALOG) continue;
+    if (entry.source !== catalog) continue;
     const names = demos.filter((demo) => demo.item === entry.name).map((demo) => demo.demo);
     if (names.length === 0) continue;
     const category = entry.categories?.[0];
@@ -96,7 +133,10 @@ function yamlScalar(value: string): string {
   return /^[A-Za-z0-9][A-Za-z0-9 .,()-]*$/.test(value) ? value : JSON.stringify(value);
 }
 
-/** The scaffold of one item page (SPEC-docs-site §6); the author replaces the placeholder. */
+/**
+ * The scaffold of one item page (SPEC-docs-site §6); the author replaces the placeholder. A
+ * block's page (SPEC-components-3 §5) also lists the files it installs, under the install block.
+ */
 export function renderItemPage(item: DocItem): string {
   const attr = `item="${item.name}"`;
   return [
@@ -108,6 +148,7 @@ export function renderItemPage(item: DocItem): string {
     "",
     `<InstallCommand ${attr} />`,
     "",
+    ...(item.category === "block" ? [`<ItemFiles ${attr} />`, ""] : []),
     `<CopyPrompt ${attr} />`,
     "",
     PROSE_PLACEHOLDER,
@@ -133,6 +174,29 @@ export function renderComponentsMeta(items: readonly DocItem[]): string {
     ...group.map((item) => item.name),
   ]);
   return `${JSON.stringify({ title: "Components", defaultOpen: true, pages }, null, 2)}\n`;
+}
+
+/** Biome's line width (biome.json): a JSON array that fits on one line is written on one. */
+const JSON_LINE_WIDTH = 100;
+
+/**
+ * `content/docs/blocks/meta.json`: the block pages in catalog order, no separators, laid out as
+ * Biome formats it (the page list on one line while it fits), so `gen:docs --check` and
+ * `biome check` agree.
+ */
+export function renderBlocksMeta(items: readonly DocItem[]): string {
+  const pages = items.map((item) => JSON.stringify(item.name));
+  const inline = `  "pages": [${pages.join(", ")}]`;
+  const list =
+    inline.length <= JSON_LINE_WIDTH
+      ? inline
+      : `  "pages": [\n${pages.map((page) => `    ${page}`).join(",\n")}\n  ]`;
+  return `{\n  "title": "Blocks",\n  "defaultOpen": true,\n${list}\n}\n`;
+}
+
+/** The meta.json `gen:docs` writes into a section's folder. */
+export function renderSectionMeta(section: DocsSection, items: readonly DocItem[]): string {
+  return section.catalog === BLOCKS_CATALOG ? renderBlocksMeta(items) : renderComponentsMeta(items);
 }
 
 export interface Frontmatter {
