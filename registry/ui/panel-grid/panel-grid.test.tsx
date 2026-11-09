@@ -1,5 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import props from "@/lib/docs/props.generated.json";
 import { expectDemosAccessible } from "@/lib/test/axe";
 import { PanelGrid, PanelGridItem } from "./panel-grid";
 
@@ -56,6 +57,14 @@ describe("PanelGrid", () => {
   it("spans a full row at every width", () => {
     const item = render(<PanelGridItem colSpan="full" />).container.firstElementChild;
     expect(item?.classList.contains("col-span-full")).toBe(true);
+  });
+
+  it("prints columns in its props table as the union a reader writes", () => {
+    const [table] = props["panel-grid"].PanelGridProps;
+    const columns = table.entries.find((entry) => entry.name === "columns");
+    expect(columns?.simplifiedType).toBe(
+      "1 | 2 | 3 | 4 | { base?: 1 | 2 | 3 | 4; sm?: 1 | 2 | 3 | 4; md?: 1 | 2 | 3 | 4; lg?: 1 | 2 | 3 | 4; }",
+    );
   });
 
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));

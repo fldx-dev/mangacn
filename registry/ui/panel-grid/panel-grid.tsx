@@ -5,6 +5,17 @@ import type * as React from "react";
 type Columns = 1 | 2 | 3 | 4;
 type Breakpoint = "base" | "sm" | "md" | "lg";
 
+/**
+ * A column count from `sm` up, or one per breakpoint. Written out, not built from the aliases
+ * above, so the props table prints the union a reader can type.
+ */
+export type PanelGridColumns =
+  | 1
+  | 2
+  | 3
+  | 4
+  | { base?: 1 | 2 | 3 | 4; sm?: 1 | 2 | 3 | 4; md?: 1 | 2 | 3 | 4; lg?: 1 | 2 | 3 | 4 };
+
 /** Full class names, so Tailwind sees every one of them in this file. */
 const COLUMN_CLASSES: Record<Breakpoint, Record<Columns, string>> = {
   base: { 1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4" },
@@ -14,7 +25,7 @@ const COLUMN_CLASSES: Record<Breakpoint, Record<Columns, string>> = {
 };
 
 /** A number means one column on phones and that many from `sm` up. */
-function columnClasses(columns: Columns | Partial<Record<Breakpoint, Columns>>): string {
+function columnClasses(columns: PanelGridColumns): string {
   const byBreakpoint = typeof columns === "number" ? { base: 1 as const, sm: columns } : columns;
   return cn(
     COLUMN_CLASSES.base[byBreakpoint.base ?? 1],
@@ -45,7 +56,7 @@ export interface PanelGridProps
    * `lg`): `{ base: 1, sm: 2, lg: 3 }`.
    * @default 2
    */
-  columns?: Columns | Partial<Record<Breakpoint, Columns>>;
+  columns?: PanelGridColumns;
   /**
    * The paper gap between panels: 8, 16 or 24 px.
    * @default "md"
