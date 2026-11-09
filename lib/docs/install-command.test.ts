@@ -10,6 +10,7 @@ import {
   initCommand,
   installCommand,
   itemClientNote,
+  itemFiles,
   PACKAGE_MANAGERS,
   promptFor,
   SETUP_ITEMS,
@@ -110,6 +111,29 @@ describe("itemClientNote", () => {
     expect(itemClientNote({ item: "speech-bubble" })).toMatch(/^(Client|Server) component: /);
     expect(itemClientNote({ item: "theme" })).toBeNull();
     expect(itemClientNote({ setup: true })).toBeNull();
+  });
+});
+
+describe("blocks", () => {
+  it("point at their page under /docs/blocks", () => {
+    expect(docsUrl("chapter-list")).toBe("https://www.mangacn.com/docs/blocks/chapter-list");
+    expect(promptFor("chapter-list")).toContain(
+      "Markdown for agents (props and examples): https://www.mangacn.com/docs/blocks/chapter-list.md",
+    );
+  });
+
+  it("install every file under components/blocks/<name>/, and their items' files", () => {
+    const { files, dependencyFiles } = itemFiles("chapter-list");
+    expect(files).toEqual([
+      "components/blocks/chapter-list/chapter-list.tsx",
+      "components/blocks/chapter-list/chapter-numeral.ts",
+    ]);
+    expect(dependencyFiles).toContain("components/ui/separator.tsx");
+    expect(dependencyFiles).toContain("components/ink-frame.tsx");
+  });
+
+  it("say they are server components", () => {
+    expect(itemClientNote({ item: "chapter-list" })).toMatch(/^Server component/);
   });
 });
 

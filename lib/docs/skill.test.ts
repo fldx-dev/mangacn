@@ -23,6 +23,12 @@ describe("renderSkillCatalog", () => {
     }
   });
 
+  it("ends with the blocks under their own heading", () => {
+    const blocks = catalog.slice(catalog.indexOf("\n## Blocks\n"));
+    expect(blocks).toContain("- `chapter-list`: ");
+    expect(blocks.match(/^## /gm)).toHaveLength(1);
+  });
+
   it("starts with the generated header and the foundation, then categories in order", () => {
     expect(catalog.startsWith(`${SKILL_CATALOG_HEADER}\n`)).toBe(true);
     const headings = catalog
@@ -40,6 +46,9 @@ describe("renderSkillCatalog", () => {
       "  Docs: https://www.mangacn.com/docs/components/speech-bubble (Markdown: https://www.mangacn.com/docs/components/speech-bubble.md)",
     );
     expect(catalog).toContain("  Docs: https://www.mangacn.com/docs/theming\n");
+    expect(catalog).toContain(
+      "  Docs: https://www.mangacn.com/docs/blocks/chapter-list (Markdown: https://www.mangacn.com/docs/blocks/chapter-list.md)",
+    );
     expect(catalog).toContain("Install: `npx shadcn@latest add @mangacn/theme --yes --overwrite`");
   });
 
