@@ -20,6 +20,16 @@ import { Step, Steps } from "fumadocs-ui/components/steps";
   pnpm dlx shadcn@latest init -b base -p nova
   ```
 
+  If your body text renders in a serif after init, `font-sans` points at a variable nothing
+  sets: init writes `--font-sans: var(--font-sans);` into `app/globals.css`, while a fresh
+  create-next-app layout loads Geist as `--font-geist-sans`. This comes from shadcn's init, not
+  from mangacn; rename the variable in `app/layout.tsx` and the body, buttons and labels take
+  Geist:
+
+  ```tsx title="app/layout.tsx"
+  const geistSans = Geist({ variable: "--font-sans", subsets: ["latin"] });
+  ```
+
 - **`cn`.** The `@/lib/utils` helper that `shadcn init` writes.
 
 ## Set up
@@ -73,6 +83,7 @@ the set.
 |---|---|
 | Restyled primitives (`button`, `dialog`, …) | `components/ui/<item>.tsx` |
 | Manga-native pieces (`speech-bubble`, `panel`, …) | `components/<item>.tsx` |
+| Blocks (`chapter-list`, `spread-viewer`) | `components/blocks/<block>/` |
 | The ink frame | `components/ink-frame.tsx` |
 | Tokens, utilities and keyframes | your `globals.css` |
 | Font loaders (`next/font/google`) | your root `layout.tsx` |

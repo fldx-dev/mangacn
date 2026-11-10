@@ -463,11 +463,18 @@ or changes items:
 ```bash
 pnpm check:changed                                   # Biome on changed files, demo map, typecheck, related tests
 pnpm registry:build && pnpm registry:smoke --only=<items>   # once: install just these (+ ink-frame, deps)
+pnpm exec vitest run lib/mcp lib/docs lib/registry components --coverage.enabled=false   # catalog suites
+pnpm build && E2E_ITEMS=site pnpm exec playwright test -c e2e/playwright.config.ts -g "docs/components"
 git push -u origin HEAD:refs/heads/<type>/<slug>
 gh workflow run ci.yml --ref <type>/<slug> -f update-snapshots=true   # the one dispatch; no -f when no shot may move
 gh run watch <id> --exit-status
 gh run download <id> -n playwright-baselines -D e2e/__screenshots__   # review, commit, push, stop
 ```
+
+The last two lines before the push are what batch 3 learned: the catalog suites (MCP, docs,
+registry, the component index) count items and pages, so a new item breaks them even when
+`check:changed` does not select them, and only the index checks a default demo against its
+20rem stage and its h2 outline; each would have kept a red run of this batch from dispatching.
 
 Never run a full local `pnpm run ci` or a full `pnpm registry:smoke` on a branch (25–40 min on
 Windows for the 60-item smoke); main's push run does both after the merge.
@@ -505,15 +512,26 @@ dispatch runs the same checks on Linux, with pixels.
 
 What a dispatch costs (GitHub runner, from the dispatch to the last job done):
 
-| Branch run                                                                  | checks                              | smoke                   | visual                      | wall time                                  |
-| --------------------------------------------------------------------------- | ----------------------------------- | ----------------------- | --------------------------- | ------------------------------------------ |
-| batch 2, before Task 64: every shot, every item                             | `ci` ≈ 8 min, serial with the smoke | (in `ci`)               | ≈ 8 min (every shot)        | ≈ 8 min, two dispatches a task             |
-| Task 64: filtered visual, `--changed` smoke (`items=slider`)                | `ci` 1m57s, serial with the smoke   | (in `ci`)               | 1m08s (no `site`)           | ≈ 2 min, two dispatches a task in practice |
-| Task 67: one demo changed (`slider,site`, `update-snapshots`), 42614884824  | 1m29s                               | 43s (2 items)           | 2m49s (79 tests, build 36s) | **2m52s, one dispatch**                    |
-| Task 67: `full=true` (main's path, `SITE_FULL=1`), 42615415543, 42616777121 | 1m45s, 1m33s                        | 3m26s, 2m54s (60 items) | 8m02s, 6m27s (876 tests)    | 8m06s, 6m30s                               |
+| Branch run                                                                                                 | checks                              | smoke                   | visual                      | wall time                                  |
+| ---------------------------------------------------------------------------------------------------------- | ----------------------------------- | ----------------------- | --------------------------- | ------------------------------------------ |
+| batch 2, before Task 64: every shot, every item                                                            | `ci` ≈ 8 min, serial with the smoke | (in `ci`)               | ≈ 8 min (every shot)        | ≈ 8 min, two dispatches a task             |
+| Task 64: filtered visual, `--changed` smoke (`items=slider`)                                               | `ci` 1m57s, serial with the smoke   | (in `ci`)               | 1m08s (no `site`)           | ≈ 2 min, two dispatches a task in practice |
+| Task 67: one demo changed (`slider,site`, `update-snapshots`), 42614884824                                 | 1m29s                               | 43s (2 items)           | 2m49s (79 tests, build 36s) | **2m52s, one dispatch**                    |
+| Task 67: `full=true` (main's path, `SITE_FULL=1`), 42615415543, 42616777121                                | 1m45s, 1m33s                        | 3m26s, 2m54s (60 items) | 8m02s, 6m27s (876 tests)    | 8m06s, 6m30s                               |
+| Task 71: four items, three dispatches (index-only checks red twice), 42645878070, 42646789254, 42648472658 | 1m43s, 1m46s, 1m57s                 | 3m39s, 4m36s, 3m40s     | 4m33s red, 3m27s red, 3m59s | 4m36s, 4m41s, 4m05s                        |
+| Task 72: two items, 42651712997                                                                            | 1m51s                               | 3m15s                   | 6m57s                       | **7m01s, one dispatch**                    |
+| Task 73: two items and three changed, 42646213492                                                          | 1m17s                               | 4m45s                   | 9m06s                       | **9m09s, one dispatch**                    |
+| Task 74: two items, 42655586126                                                                            | 1m32s                               | 4m50s                   | 8m56s                       | **9m00s, one dispatch**                    |
+| Task 75: two items, two dispatches (a wrong PNG), 42646112383, 42648427631                                 | 1m21s, 1m18s                        | 3m35s, 3m41s            | 11m09s, 11m04s (every shot) | 11m14s, 11m07s                             |
+| Task 76: polish, two dispatches (a red checks job), 42654365452, 42655764651                               | 1m28s red, 1m47s                    | 4m43s, 3m37s            | 3m57s, 6m35s                | 4m47s, 6m40s                               |
+| Task 77: polish, every shot (demo spec changed), 42658994671                                               | 1m34s                               | 3m25s                   | 12m38s                      | **12m42s, one dispatch**                   |
+| Task 78: block, two dispatches (a wrong PNG), 42796685117, 42798714923                                     | 1m58s, 1m18s                        | 4m56s, 5m06s            | 8m28s, 11m39s (every shot)  | 8m34s, 11m43s                              |
+| Task 79: block, two dispatches (a wrong PNG), 42802694011, 42804784957                                     | 2m03s, 1m20s                        | 3m53s, 4m05s            | 8m55s, 12m45s (every shot)  | 8m58s, 12m50s                              |
 
 `checks`, `smoke` and `visual` start together, so a branch waits for the longest of them
-(usually `visual`), not their sum. Vitest runs on the `vmThreads` pool: the unit run fell from
+(usually `visual`), not their sum. In batch 3 `visual` ran every shot (9–13 min) whenever a task
+touched `tsconfig.json`, the demo spec or `lib/registry`, against 4–7 min for a filtered set;
+four of nine tasks took one dispatch, and every second run had one of the reasons in the rows. Vitest runs on the `vmThreads` pool: the unit run fell from
 75 s to about 40 s on CI (jsdom set-up from 39 % of the tracked time to 4 %) and from 72 s to
 28 s on Windows.
 

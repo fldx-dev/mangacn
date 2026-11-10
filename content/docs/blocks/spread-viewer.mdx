@@ -10,13 +10,15 @@ item: spread-viewer
 
 <CopyPrompt item="spread-viewer" />
 
-A reader for a chapter: two facing pages at a time, right to left as a manga reads, turned with the buttons, the arrow keys or a swipe. Pair it with [Chapter List](/docs/blocks/chapter-list) on the series page that links to it. It composes manga-frame, page-number, page-turn, button and kbd and draws nothing of its own.
+A reader for a chapter: two facing pages at a time, right to left as a manga reads, turned with the buttons, the arrow keys or a swipe. Put it on a chapter page and link to it from [Chapter List](/docs/blocks/chapter-list) on the series page.
 
-The spread is laid out as a printed book. Each page is a manga-frame with a plain `<img>` at 3:4; the two frames meet at the spine with no gutter, and their outer edges run to the viewer's edges, so the pages bleed to the reader's width (set it with `className`, `max-w-3xl` by default). A folio sits under each page at its outer corner. The first page opens alone, facing the inside of the cover, then the pages pair from an even number (pages 2–3, 4–5, …), and an even last page closes alone; a side with no page stays blank paper. In `rtl` the earlier page of a pair is on the right. Between spreads each half swings away around the spine with page-turn, instantly under reduced motion.
+It composes manga-frame, page-number, page-turn, button and kbd, draws nothing of its own, and lays the spread out as a printed book. Each page is a manga-frame with a plain `<img>` at 3:4; the two frames meet at the spine with no gutter, and their outer edges run to the viewer's edges, so the pages bleed to the reader's width (set it with `className`, `max-w-3xl` by default). A folio sits under each page at its outer corner. The first page opens alone, facing the inside of the cover, then the pages pair from an even number (pages 2–3, 4–5, …), and an even last page closes alone; a side with no page stays blank paper. In `rtl` the earlier page of a pair is on the right. Between spreads each half swings away around the spine with page-turn, instantly under reduced motion.
 
 The viewer is a `role="region"` with `aria-roledescription="spread"`, named by `label`; it takes focus so the keys work. The arrow that points the way the book reads turns to the next spread (Left in `rtl`, Right in `ltr`), the other one back, and Home and End go to the first and last. A sideways swipe of 40 px or more turns the same way: a finger moving right brings in the left-hand page, as the Left arrow does. A polite live region says where the reader is ("Pages 4–5 of 24"), each page's `img` carries its own `alt`, and the buttons are disabled at the ends. The current pages load with `fetchpriority="high"` and the next spread is preloaded; pages further on are not rendered at all until the reader gets there.
 
 ## Examples
+
+A 24-page chapter opened at pages 4 and 5, right to left: page 4 on the right, and the Left arrow or the left-hand button reads on.
 
 <DemoFrame item="spread-viewer" demo="default" />
 
