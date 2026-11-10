@@ -1461,6 +1461,117 @@
       }
     ]
   },
+  "spread-viewer": {
+    "SpreadPage": [
+      {
+        "id": "spread-viewer.tsx-SpreadPage",
+        "name": "SpreadPage",
+        "description": "One page of the book.",
+        "entries": [
+          {
+            "name": "src",
+            "description": "The page image's URL, passed to a plain `<img>`.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "alt",
+            "description": "What the page shows, for readers who cannot see it.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SpreadViewerProps": [
+      {
+        "id": "spread-viewer.tsx-SpreadViewerProps",
+        "name": "SpreadViewerProps",
+        "entries": [
+          {
+            "name": "pages",
+            "description": "The pages in reading order. Portrait images read best (each frame is 3:4).",
+            "type": "SpreadPage[]",
+            "simplifiedType": "SpreadPage[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "direction",
+            "description": "`rtl` reads like a manga: the earlier page on the right, Left arrow for the next spread;\n`ltr` like a western book.",
+            "type": "SpreadDirection | undefined",
+            "simplifiedType": "\"ltr\" | \"rtl\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"rtl\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "start",
+            "description": "The page to open at, as an index into `pages` (0 is the first); the viewer opens the spread\nthat holds it.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "0"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onChange",
+            "description": "Called with the index of the new spread's first page whenever the reader turns.",
+            "type": "((first: number) => void) | undefined",
+            "simplifiedType": "(first: number) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "single",
+            "description": "One page at a time, for phones; pass it from a media query.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "label",
+            "description": "The region's name, which says what is being read (\"Chapter 12\").",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Pages\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "stamp": {
     "StampProps": [
       {
