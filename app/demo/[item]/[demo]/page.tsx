@@ -27,18 +27,20 @@ export default function DemoStage({ params }: StageProps) {
       aria-labelledby="demo-stage-label"
       className="flex flex-1 items-center justify-center bg-paper p-4 text-ink sm:p-8"
     >
-      {/*
-        Embedded in a docs page, a stage does not take the reader's focus until they go there
-        (lib/docs/stage-focus.ts). Inline and first, so it runs while the document is parsed,
-        before the demo's markup below arrives and long before it hydrates and opens anything.
-      */}
-      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: a constant script of our own */}
-      <script dangerouslySetInnerHTML={{ __html: STAGE_FOCUS_SCRIPT }} />
       {/* The URL-dependent part renders inside the boundary; the stage itself is the shell. */}
       <Suspense fallback={null}>
         <Demo params={params} />
         {/* After the demo, so `data-demo-ready` means the demo is on the page too. */}
         <DemoMode />
+        {/*
+          Embedded in a docs page, a stage does not take the reader's focus until they go there
+          (lib/docs/stage-focus.ts). Inline, so it runs as the document is parsed, before the
+          demo hydrates and opens anything. Last of the three on purpose: a child anywhere else,
+          or a fourth one, would shift the demo's `useId` values, which seed every rough.js
+          drawing (run 42834768374: every outline moved).
+        */}
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: a constant script of our own */}
+        <script dangerouslySetInnerHTML={{ __html: STAGE_FOCUS_SCRIPT }} />
       </Suspense>
     </main>
   );
