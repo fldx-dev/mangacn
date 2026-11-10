@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { STAGE_FOCUS_SCRIPT } from "@/lib/docs/stage-focus";
 import { getDemoLoader, listDemos } from "@/lib/registry/demos";
 import { DemoMode } from "./demo-mode";
 
@@ -31,6 +32,15 @@ export default function DemoStage({ params }: StageProps) {
         <Demo params={params} />
         {/* After the demo, so `data-demo-ready` means the demo is on the page too. */}
         <DemoMode />
+        {/*
+          Embedded in a docs page, a stage does not take the reader's focus until they go there
+          (lib/docs/stage-focus.ts). Inline, so it runs as the document is parsed, before the
+          demo hydrates and opens anything. Last of the three on purpose: a child anywhere else,
+          or a fourth one, would shift the demo's `useId` values, which seed every rough.js
+          drawing (run 42834768374: every outline moved).
+        */}
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: a constant script of our own */}
+        <script dangerouslySetInnerHTML={{ __html: STAGE_FOCUS_SCRIPT }} />
       </Suspense>
     </main>
   );

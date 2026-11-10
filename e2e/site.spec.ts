@@ -301,6 +301,79 @@ for (const path of pages) {
   }
 }
 
+// Overlay item pages and the gallery embed live stages whose popup opens on load. A stage holds
+// its script-driven focus while embedded (lib/docs/stage-focus.ts), so the page keeps the
+// reader's focus and scroll position, and the stage still works once they go there.
+const OVERLAY_PAGES = [
+  "/docs/components/dialog",
+  "/docs/components/popover",
+  "/docs/components/context-menu",
+  "/docs/components/menubar",
+  "/demo/dialog",
+];
+
+for (const path of OVERLAY_PAGES) {
+  test(`${path} keeps the reader's focus and scroll while its stages open`, async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
+    const response = await page.goto(path);
+    expect(response?.status()).toBe(200);
+    await waitForInk(page);
+    await waitForStages(page, "light");
+    expect(await page.locator("iframe").count(), "the page embeds stages").toBeGreaterThan(0);
+    // Every stage has had its chance to open: none took the focus or moved the page.
+    await expectFocusAndScrollKept(page, 0);
+    for (const iframe of await page.locator("iframe").all()) {
+      const frame = await (await iframe.elementHandle())?.contentFrame();
+      await expect(frame?.locator("html") ?? iframe).toHaveAttribute("data-focus-held", "true");
+    }
+  });
+}
+
+test("an embedded dialog stage takes focus once the reader goes there", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("theme", "light"));
+  await page.goto("/docs/components/dialog");
+  await waitForInk(page);
+  await waitForStages(page, "light");
+  const iframe = page.locator("iframe").first();
+  const stage = page.frameLocator("iframe").first();
+  const dialog = stage.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expectFocusAndScrollKept(page, 0);
+
+  // The keyboard reaches the stage in the page's own Tab order, and the open dialog takes the
+  // focus then, as it would on its own page.
+  const inFrame = () => page.evaluate(() => document.activeElement?.tagName === "IFRAME");
+  for (let press = 0; press < 300 && !(await inFrame()); press++) await page.keyboard.press("Tab");
+  expect(await inFrame(), "Tab reaches the stage").toBe(true);
+  await expect(iframe).toBeFocused();
+  await expect(stage.locator("html")).not.toHaveAttribute("data-focus-held", "true");
+  await expect
+    .poll(() => dialog.evaluate((element) => element.contains(document.activeElement)))
+    .toBe(true);
+
+  // Escape closes the dialog, and Tab then leaves the frame: the reader is never kept there.
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  for (let press = 0; press < 20 && (await inFrame()); press++) await page.keyboard.press("Tab");
+  expect(await inFrame(), "Tab leaves the stage").toBe(false);
+});
+
+test("an embedded dialog stage works with the pointer from the start", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("theme", "light"));
+  await page.goto("/docs/components/dialog");
+  await waitForInk(page);
+  await waitForStages(page, "light");
+  const stage = page.frameLocator("iframe").first();
+  const field = stage.getByRole("dialog").getByRole("textbox").first();
+  // The dialog is fixed inside its frame, so bring the frame itself into view for the press.
+  await page.locator("iframe").first().scrollIntoViewIfNeeded();
+  await field.click();
+  await expect(field).toBeFocused();
+  await expect(stage.locator("html")).not.toHaveAttribute("data-focus-held", "true");
+  await field.fill("Ink");
+  await expect(field).toHaveValue("Ink");
+});
+
 // The Markdown and registry routes (Tasks 43, 44): status, type and headers, once.
 test("markdown and registry routes", async ({ request }, testInfo) => {
   test.skip(testInfo.project.name !== "w1280", "plain requests; one project is enough");
