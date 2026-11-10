@@ -1,0 +1,12 @@
+{
+  "light": {
+    "ink": "#0f0d0b",
+    "paper": "#fdfaf4",
+    "spot": "#db1c22"
+  },
+  "dark": {
+    "ink": "#e9e8e5",
+    "paper": "#211f1d",
+    "spot": "#f84c45"
+  }
+}
