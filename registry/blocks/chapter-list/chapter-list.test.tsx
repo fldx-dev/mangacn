@@ -111,6 +111,9 @@ describe("ChapterList", () => {
       const item = row.querySelector("[data-slot=item]");
       expect(item?.getAttribute("data-variant")).toBe(row.dataset.read ? "muted" : "outline");
       expect(item?.getAttribute("data-size")).toBe("sm");
+      // Every row takes the list's columns, so the titles line up past the widest number.
+      expect(row.classList.contains("grid-cols-subgrid")).toBe(true);
+      expect(item?.classList.contains("grid-cols-subgrid")).toBe(true);
       // The number sits in a caption box, outside the link but in its name.
       const number = item?.querySelector("[data-slot=caption-box] span[id]");
       const link = within(row).getByRole("link");
