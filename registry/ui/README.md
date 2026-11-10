@@ -474,7 +474,7 @@ gh run download <id> -n playwright-baselines -D e2e/__screenshots__   # review, 
 The last two lines before the push are what batch 3 learned: the catalog suites (MCP, docs,
 registry, the component index) count items and pages, so a new item breaks them even when
 `check:changed` does not select them, and only the index checks a default demo against its
-20rem stage and its h2 outline; each caught a red run before it was dispatched.
+20rem stage and its h2 outline; each would have kept a red run of this batch from dispatching.
 
 Never run a full local `pnpm run ci` or a full `pnpm registry:smoke` on a branch (25–40 min on
 Windows for the 60-item smoke); main's push run does both after the merge.
