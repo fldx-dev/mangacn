@@ -38,6 +38,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "check": "pnpm lint && pnpm gen:demos && pnpm typecheck && pnpm test",
     "check:changed": "tsx scripts/lint-changed.ts && pnpm gen:demos && pnpm typecheck && pnpm test:changed",
+    "check:catalog": "tsx scripts/check-catalog.ts",
     "test": "vitest run --coverage.enabled=false",
     "test:changed": "vitest run --coverage.enabled=false --changed origin/main",
     "test:coverage": "vitest run",

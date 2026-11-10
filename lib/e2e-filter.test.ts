@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   dependencyItems,
@@ -9,6 +10,7 @@ import {
   selectE2e,
   selectedDemoItems,
 } from "./e2e-filter";
+import { PARITY_PRIMITIVES } from "./registry/parity";
 
 const ITEMS: E2eItem[] = [
   { name: "theme", hasDemos: false, uses: ["font-display"] },
@@ -21,6 +23,23 @@ const ITEMS: E2eItem[] = [
   { name: "toggle", folder: "registry/ui/toggle", hasDemos: true, uses: [] },
   { name: "toggle-group", folder: "registry/ui/toggle-group", hasDemos: true, uses: ["toggle"] },
   { name: "ink-mark", folder: "registry/ui/ink-mark", hasDemos: true, uses: [] },
+  { name: "input", folder: "registry/ui/input", hasDemos: true, uses: ["ink-frame"] },
+  { name: "textarea", folder: "registry/ui/textarea", hasDemos: true, uses: ["ink-frame"] },
+  {
+    name: "input-group",
+    folder: "registry/ui/input-group",
+    hasDemos: true,
+    uses: ["input", "textarea"],
+  },
+  { name: "button-group", folder: "registry/ui/button-group", hasDemos: true, uses: [] },
+  { name: "scroll-area", folder: "registry/ui/scroll-area", hasDemos: true, uses: [] },
+  { name: "spinner", folder: "registry/ui/spinner", hasDemos: true, uses: [] },
+  { name: "emanata", folder: "registry/ui/emanata", hasDemos: true, uses: [] },
+  { name: "empty", folder: "registry/ui/empty", hasDemos: true, uses: ["emanata"] },
+  { name: "label", folder: "registry/ui/label", hasDemos: true, uses: [] },
+  { name: "progress", folder: "registry/ui/progress", hasDemos: true, uses: [] },
+  { name: "chapter-list", folder: "registry/blocks/chapter-list", hasDemos: true, uses: [] },
+  { name: "spread-viewer", folder: "registry/blocks/spread-viewer", hasDemos: true, uses: [] },
 ];
 
 function sources(files: Record<string, [string | undefined, string | undefined]> = {}): E2eSources {
@@ -153,6 +172,172 @@ describe("selectE2e", () => {
       "lib/mcp/tools.ts → mcp",
       "registry/ui/button/button.tsx → button + users alert-dialog, dialog + site",
     ]);
+  });
+});
+
+/** tsconfig.json as it was before Task 73 (9626830^1), with `aliases` inserted before sfx-text. */
+function tsconfig(aliases: string[] = [], edit: (text: string) => string = (text) => text) {
+  const lines = [
+    "{",
+    '  "compilerOptions": {',
+    '    "target": "ES2017",',
+    '    "lib": ["dom", "dom.iterable", "esnext"],',
+    '    "allowJs": true,',
+    '    "skipLibCheck": true,',
+    '    "strict": true,',
+    '    "noEmit": true,',
+    '    "esModuleInterop": true,',
+    '    "module": "esnext",',
+    '    "moduleResolution": "bundler",',
+    '    "resolveJsonModule": true,',
+    '    "isolatedModules": true,',
+    '    "jsx": "react-jsx",',
+    '    "incremental": true,',
+    '    "plugins": [',
+    "      {",
+    '        "name": "next"',
+    "      }",
+    "    ],",
+    '    "paths": {',
+    '      "@/components/ink-frame": ["./registry/theme/ink-frame/ink-frame.tsx"],',
+    '      "@/components/ui/button": ["./registry/ui/button/button.tsx"],',
+    '      "@/components/ui/toggle": ["./registry/ui/toggle/toggle.tsx"],',
+    ...aliases,
+    '      "@/components/sfx-text": ["./registry/ui/sfx-text/sfx-text.tsx"],',
+    '      "@/components/ui/separator": ["./registry/ui/separator/separator.tsx"],',
+    '      "@/components/caption-box": ["./registry/ui/caption-box/caption-box.tsx"],',
+    '      "@/components/ink-mark": ["./registry/ui/ink-mark/ink-mark.tsx"],',
+    '      "@/components/stamp": ["./registry/ui/stamp/stamp.tsx"],',
+    '      "@/*": ["./*"]',
+    "    }",
+    "  },",
+    '  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "**/*.mts"],',
+    '  "exclude": ["node_modules"]',
+    "}",
+  ];
+  return edit(`${lines.join("\n")}\n`);
+}
+
+const INPUT_ALIAS = '      "@/components/ui/input": ["./registry/ui/input/input.tsx"],';
+const TEXTAREA_ALIAS = '      "@/components/ui/textarea": ["./registry/ui/textarea/textarea.tsx"],';
+
+/**
+ * lib/registry/parity.ts as it is, with PARITY_PRIMITIVES cut after `last` (the list as it was
+ * when `last` was appended), then `appended` added and `edit` applied.
+ */
+const PARITY_SOURCE = readFileSync("lib/registry/parity.ts", "utf8");
+function parity(
+  last: string,
+  appended: string[] = [],
+  edit: (names: string[]) => string[] = (names) => names,
+) {
+  const all: readonly string[] = PARITY_PRIMITIVES;
+  const names = edit([...all.slice(0, all.indexOf(last) + 1), ...appended]);
+  const body = names.map((name) => `  "${name}",\n`).join("");
+  return PARITY_SOURCE.replace(
+    /(export const PARITY_PRIMITIVES = \[)[^\]]*(\] as const;)/,
+    `$1\n${body}$2`,
+  );
+}
+
+describe("selectE2e on alias and parity diffs", () => {
+  const TS = "tsconfig.json";
+  const VITEST = "vitest.config.mts";
+  const PARITY = "lib/registry/parity.ts";
+
+  it("Task 73: two aliases in both configs and two parity names select those items", () => {
+    const src = sources({
+      [TS]: [tsconfig(), tsconfig([INPUT_ALIAS, TEXTAREA_ALIAS])],
+      [VITEST]: ["before", "after"],
+      [PARITY]: [parity("label"), parity("label", ["input-group", "button-group"])],
+    });
+    expect(pick([TS, VITEST, PARITY], src)).toBe("button-group,input,input-group,textarea");
+    expect(selectE2e([TS, VITEST, PARITY], src).reasons).toEqual([
+      "lib/registry/parity.ts → button-group, input-group (parity names)",
+      "tsconfig.json alias → input + users input-group",
+      "tsconfig.json alias → textarea + users input-group",
+    ]);
+  });
+
+  it("Task 71: four parity names, and its emanata alias, select those items", () => {
+    const emanata = '      "@/components/emanata": ["./registry/ui/emanata/emanata.tsx"],';
+    const task71 = ["scroll-area", "spinner", "empty", "label"];
+    expect(
+      pick([PARITY], sources({ [PARITY]: [parity("sonner"), parity("sonner", task71)] })),
+    ).toBe("empty,label,scroll-area,spinner");
+    expect(pick([TS], sources({ [TS]: [tsconfig(), tsconfig([emanata])] }))).toBe("emanata,empty");
+  });
+
+  it("names blocks, an item at the components root, and a hook by its target's folder", () => {
+    const aliases = [
+      '      "@/components/blocks/chapter-list/chapter-list": ["./registry/blocks/chapter-list/chapter-list.tsx"],',
+      '      "@/hooks/use-spread": ["./registry/blocks/spread-viewer/use-spread.ts"],',
+      '      "@/components/progress": ["./registry/ui/progress/progress.tsx"],',
+    ];
+    expect(pick([TS], sources({ [TS]: [tsconfig(), tsconfig(aliases)] }))).toBe(
+      "chapter-list,progress,spread-viewer",
+    );
+  });
+
+  it("still selects everything when the filter itself changes beside an alias", () => {
+    const src = sources({ [TS]: [tsconfig(), tsconfig([INPUT_ALIAS])] });
+    const { selection, reasons } = selectE2e([TS, "lib/e2e-filter.ts"], src);
+    expect(selection).toBeUndefined();
+    expect(reasons.at(-1)).toBe("lib/e2e-filter.ts → everything (every snapshot depends on it)");
+  });
+
+  it("selects everything for any other tsconfig.json change", () => {
+    const cases: Record<string, [string | undefined, string | undefined]> = {
+      "a compilerOptions edit": [tsconfig(), tsconfig([], (t) => t.replace("ES2017", "ES2022"))],
+      "one alias plus one other line": [
+        tsconfig(),
+        tsconfig([INPUT_ALIAS], (t) => t.replace('"strict": true', '"strict": false')),
+      ],
+      "a removed alias": [tsconfig([INPUT_ALIAS]), tsconfig()],
+      "an edited alias": [
+        tsconfig([INPUT_ALIAS]),
+        tsconfig([INPUT_ALIAS.replace("input.tsx", "index.tsx")]),
+      ],
+      "reordered aliases": [
+        tsconfig([INPUT_ALIAS, TEXTAREA_ALIAS]),
+        tsconfig([TEXTAREA_ALIAS, INPUT_ALIAS]),
+      ],
+      "an alias that names no item": [
+        tsconfig(),
+        tsconfig(['      "@/components/ui/nope": ["./registry/ui/nope/nope.tsx"],']),
+      ],
+      "an alias outside components": [
+        tsconfig(),
+        tsconfig(['      "@/lib/manga-motion": ["./registry/lib/manga-motion.ts"],']),
+      ],
+      "a comment (not plain JSON)": [tsconfig(), tsconfig(["      // input", INPUT_ALIAS])],
+      "no content": [undefined, undefined],
+    };
+    for (const [name, files] of Object.entries(cases)) {
+      expect(pick([TS], sources({ [TS]: files })), name).toBe("all");
+    }
+  });
+
+  it("selects everything for any other parity.ts change", () => {
+    const cases: Record<string, [string, string]> = {
+      "a removed name": [
+        parity("label"),
+        parity("label", [], (n) => n.filter((x) => x !== "card")),
+      ],
+      "a name inserted mid-list": [
+        parity("sonner"),
+        parity("sonner", [], (n) => [...n.slice(0, 2), "spinner", ...n.slice(2)]),
+      ],
+      "a reordering": [parity("label"), parity("label", [], (n) => [...n].reverse())],
+      "an append plus another line": [
+        parity("sonner"),
+        parity("sonner", ["spinner"]).replace("base-nova.json", "base-nova-2.json"),
+      ],
+      "a name that is no item": [parity("label"), parity("label", ["nope"])],
+    };
+    for (const [name, files] of Object.entries(cases)) {
+      expect(pick([PARITY], sources({ [PARITY]: files })), name).toBe("all");
+    }
   });
 });
 

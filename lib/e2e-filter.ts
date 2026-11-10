@@ -204,6 +204,86 @@ function changedCatalogEntries(path: string, sources: E2eSources): string[] | un
   return changed;
 }
 
+/**
+ * The item a path alias names: `@/components/ui/<x>` and `@/components/<x>` name `<x>`,
+ * `@/components/blocks/<x>/...` names block `<x>`, `@/hooks/<x>` names the item whose folder
+ * holds its target (a hook has no demo of its own). `undefined` for any other alias.
+ */
+function aliasItem(key: string, target: unknown): string | undefined {
+  const named =
+    /^@\/components\/ui\/([a-z0-9-]+)$/.exec(key) ??
+    /^@\/components\/blocks\/([a-z0-9-]+)(?:\/[^*]+)?$/.exec(key) ??
+    /^@\/components\/(?!ui$|blocks$)([a-z0-9-]+)$/.exec(key);
+  if (named) return named[1];
+  if (/^@\/hooks\/[a-z0-9-]+$/.test(key) && Array.isArray(target) && target.length === 1) {
+    return /^\.\/registry\/[^/]+\/([^/]+)\//.exec(String(target[0]))?.[1];
+  }
+  return undefined;
+}
+
+/**
+ * The items named by a `tsconfig.json` diff that only adds path aliases, or `undefined` when the
+ * diff is anything else: a `compilerOptions` change, a removed, edited or reordered alias, a file
+ * that is not plain JSON, an alias that names no catalog item.
+ */
+function addedAliasItems(sources: E2eSources, names: ReadonlySet<string>): string[] | undefined {
+  type Config = { compilerOptions?: { paths?: Record<string, unknown> } };
+  const before = parseJson(sources.before("tsconfig.json")) as Config | undefined;
+  const after = parseJson(sources.after("tsconfig.json")) as Config | undefined;
+  const pathsBefore = before?.compilerOptions?.paths;
+  const pathsAfter = after?.compilerOptions?.paths;
+  if (!pathsBefore || !pathsAfter) return undefined;
+  const without = (config: Config) =>
+    JSON.stringify({ ...config, compilerOptions: { ...config.compilerOptions, paths: null } });
+  if (without(before) !== without(after)) return undefined;
+
+  // Every alias that was there keeps its value and its order; the rest are new.
+  const kept = Object.keys(pathsAfter).filter((key) => key in pathsBefore);
+  if (kept.join("\n") !== Object.keys(pathsBefore).join("\n")) return undefined;
+  if (kept.some((key) => JSON.stringify(pathsBefore[key]) !== JSON.stringify(pathsAfter[key]))) {
+    return undefined;
+  }
+  const added = Object.keys(pathsAfter).filter((key) => !(key in pathsBefore));
+  if (added.length === 0) return undefined;
+  const items = added.map((key) => aliasItem(key, pathsAfter[key]));
+  if (items.some((name) => name === undefined || !names.has(name))) return undefined;
+  return [...new Set(items as string[])];
+}
+
+const PARITY_PATH = "lib/registry/parity.ts";
+const PARITY_LIST = /(export const PARITY_PRIMITIVES = \[)([^\]]*)(\] as const;)/;
+
+/**
+ * The names a `lib/registry/parity.ts` diff appends to `PARITY_PRIMITIVES`, or `undefined` when
+ * the diff is anything else (another line of the file, a removed or reordered name).
+ */
+function appendedParityNames(sources: E2eSources): string[] | undefined {
+  const before = sources.before(PARITY_PATH);
+  const after = sources.after(PARITY_PATH);
+  const listBefore = before && PARITY_LIST.exec(before);
+  const listAfter = after && PARITY_LIST.exec(after);
+  if (!before || !after || !listBefore || !listAfter) return undefined;
+  if (before.replace(PARITY_LIST, "$1$3") !== after.replace(PARITY_LIST, "$1$3")) return undefined;
+  const entries = (body: string) =>
+    body
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+  const namesBefore = entries(listBefore[2]);
+  const namesAfter = entries(listAfter[2]);
+  // The old entries, untouched and first (only the last may gain the comma it was missing).
+  const last = namesBefore.length - 1;
+  for (const [index, line] of namesBefore.entries()) {
+    const now = namesAfter[index];
+    if (now !== line && !(index === last && now === `${line},`)) return undefined;
+  }
+  const appended = namesAfter.slice(namesBefore.length);
+  if (appended.length === 0) return undefined;
+  const names = appended.map((line) => /^"([a-z0-9-]+)",?$/.exec(line)?.[1]);
+  if (names.some((name) => name === undefined)) return undefined;
+  return names as string[];
+}
+
 /** The longest item name that `file` (`toggle-group-default-dark`) starts with, plus a dash. */
 function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
   return items
@@ -221,8 +301,11 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  * - `lib/mcp/`, `app/api/mcp/`, `skills/`, the MCP spec → `mcp`; `content/`, `lib/docs/` and the
  *   props generator → `mcp` and `site` (the MCP serves pages and props tables)
  * - other `app/`, `components/`, the site spec → `site`
+ * - `tsconfig.json` that only adds path aliases → the items they name and the items that use
+ *   them (no `site`); `lib/registry/parity.ts` that only appends names → those items
  * - the suite's config, demo spec or readiness wait, the demo stage, root layout and CSS,
- *   `ink-frame`, `lib/registry/`, the theme catalog or any item's CSS, a dependency → everything
+ *   `ink-frame`, any other `tsconfig.json` or `lib/registry/` change, the theme catalog or any
+ *   item's CSS, a dependency → everything
  * - tests, Markdown, scripts, CI → nothing; any other path → everything
  */
 export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
@@ -240,7 +323,7 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
     selection: undefined,
     reasons: [...reasons, `${path} → everything (${why})`],
   });
-  const addItem = (path: string, name: string) => {
+  const addItem = (path: string, name: string, site = true) => {
     const reached = new Set<string>();
     const visit = (current: string) => {
       if (reached.has(current)) return;
@@ -250,11 +333,11 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
     visit(name);
     const withDemos = [...reached].filter((item) => byName.get(item)?.hasDemos).sort();
     for (const item of withDemos) selected.add(item);
-    selected.add("site");
+    if (site) selected.add("site");
     if (reached.has("ink-mark") || reached.has("ink-arrow")) selected.add("annotations");
     const users = withDemos.filter((item) => item !== name);
     reasons.push(
-      `${path} → ${name}${users.length > 0 ? ` + users ${users.join(", ")}` : ""} + site`,
+      `${path} → ${name}${users.length > 0 ? ` + users ${users.join(", ")}` : ""}${site ? " + site" : ""}`,
     );
   };
 
@@ -284,6 +367,26 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
       for (const name of names) {
         if (byName.has(name)) addItem(path, name);
       }
+      continue;
+    }
+
+    // An alias or a parity name reaches only what it names; any other edit falls through to
+    // everything below.
+    if (path === "tsconfig.json") {
+      const named = addedAliasItems(sources, new Set(byName.keys()));
+      if (!named) return everything(path, "not only added path aliases");
+      for (const name of named) addItem(`${path} alias`, name, false);
+      continue;
+    }
+
+    if (path === PARITY_PATH) {
+      const named = appendedParityNames(sources);
+      if (!named || named.some((name) => !byName.has(name))) {
+        return everything(path, "not only names appended to PARITY_PRIMITIVES");
+      }
+      const withDemos = named.filter((name) => byName.get(name)?.hasDemos).sort();
+      for (const name of withDemos) selected.add(name);
+      reasons.push(`${path} → ${withDemos.join(", ") || "nothing"} (parity names)`);
       continue;
     }
 

@@ -7,9 +7,10 @@ on:
   workflow_dispatch:
     inputs:
       update-snapshots:
-        description: Rewrite the baselines that differ or are missing and upload just those as an artifact
-        type: boolean
-        default: false
+        description: "Rewrite baselines and upload the rewritten ones as an artifact: true = those that fail the comparison or are missing; all = every shot whose bytes differ (the exact regeneration, once a batch)"
+        type: choice
+        options: ["false", "true", "all"]
+        default: "false"
       items:
         description: "Visual set (E2E_ITEMS): items and site/mcp/annotations, comma-separated; empty = computed from the diff against main"
         type: string
@@ -78,6 +79,11 @@ jobs:
     # 2026-11-05 (15 MB at 23 kB/s); the full suite needs about 7. A browser cache hit skips apt.
     timeout-minutes: 30
     env:
+      # Playwright's --update-snapshots mode for the update-snapshots input: `true` is `changed`
+      # (a baseline that fails the comparison or is missing), `all` is `all` (every shot is taken
+      # without comparing, and written when its bytes differ: below maxDiffPixelRatio too). Empty
+      # when not updating (push, pull requests, `false`).
+      UPDATE_SNAPSHOTS: ${{ inputs.update-snapshots == 'true' && 'changed' || inputs.update-snapshots == 'all' && 'all' || '' }}
       # The landing is shot whole (as well as its first viewport) only on main (its push run,
       # or a dispatch there) and `full` dispatches; e2e/site.spec.ts has the rule.
       SITE_FULL: ${{ (github.ref == 'refs/heads/main' || inputs.full) && '1' || '' }}
@@ -113,7 +119,7 @@ jobs:
           echo "E2E_ITEMS=$items ($why)"
           echo "E2E_ITEMS=$items" >> "$GITHUB_ENV"
           echo "items=$items" >> "$GITHUB_OUTPUT"
-          echo "Visual set: \`E2E_ITEMS=$items\` ($why); \`SITE_FULL=${SITE_FULL:-}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Visual set: \`E2E_ITEMS=$items\` ($why); \`SITE_FULL=${SITE_FULL:-}\`; \`UPDATE_SNAPSHOTS=${UPDATE_SNAPSHOTS:-}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "SITE_FULL=${SITE_FULL:-} (1: the landing is also shot whole)"
       - name: Playwright version
         id: playwright
@@ -139,14 +145,15 @@ jobs:
           sudo apt-get install -y -qq --no-install-recommends fonts-ipafont-gothic fonts-wqy-zenhei fonts-freefont-ttf fonts-liberation fonts-noto-color-emoji fonts-unifont fonts-tlwg-loma-otf
       - if: steps.filter.outputs.items != 'none'
         run: pnpm build
-      - if: ${{ steps.filter.outputs.items != 'none' && !inputs.update-snapshots }}
+      - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS == '' }}
         run: pnpm test:e2e
-      # `changed` rewrites only the baselines that are missing or fail the comparison, so the
-      # artifact holds exactly the PNGs to commit: a straight copy, no sifting.
-      - if: ${{ steps.filter.outputs.items != 'none' && inputs.update-snapshots }}
-        run: pnpm test:e2e --update-snapshots=changed
+      # Either mode writes a baseline only when it is missing or its new bytes differ (Playwright
+      # 1.64 skips byte-identical ones under `all`), so git sees exactly the files the run wrote
+      # and the artifact holds exactly the PNGs to commit: a straight copy, no sifting.
+      - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
+        run: pnpm test:e2e --update-snapshots=$UPDATE_SNAPSHOTS
       - name: Collect the rewritten baselines
-        if: ${{ steps.filter.outputs.items != 'none' && inputs.update-snapshots }}
+        if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
         run: |
           out="$RUNNER_TEMP/playwright-baselines"
           mkdir -p "$out"
@@ -157,10 +164,10 @@ jobs:
             cp "$file" "$target"
           done < "$RUNNER_TEMP/baselines.txt"
           count=$(wc -l < "$RUNNER_TEMP/baselines.txt")
-          echo "$count baseline(s) rewritten"
+          echo "$count baseline(s) rewritten (--update-snapshots=$UPDATE_SNAPSHOTS)"
           cat "$RUNNER_TEMP/baselines.txt"
-          { echo "**$count baseline(s) rewritten**"; sed 's/^/- /' "$RUNNER_TEMP/baselines.txt"; } >> "$GITHUB_STEP_SUMMARY"
-      - if: ${{ steps.filter.outputs.items != 'none' && inputs.update-snapshots }}
+          { echo "**$count baseline(s) rewritten** (\`--update-snapshots=$UPDATE_SNAPSHOTS\`)"; sed 's/^/- /' "$RUNNER_TEMP/baselines.txt"; } >> "$GITHUB_STEP_SUMMARY"
+      - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
         uses: actions/upload-artifact@v7
         with:
           name: playwright-baselines
