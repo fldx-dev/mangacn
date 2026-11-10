@@ -17,6 +17,7 @@
       "!public/r",
       "!registry/ui/__parity__",
       "!font-specimen.html",
+      "!brand",
       "!**/SKILL.md"
     ]
   },

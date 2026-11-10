@@ -1,0 +1,36 @@
+{
+  "brand": "mangacn",
+  "tagline": "Your UI, drawn by hand.",
+  "brief": "A shadcn registry of manga-styled React components: rough.js ink outlines, screentone greys, one spot red, speech bubbles and sound effects. The logo should look drawn by the same pen as the components.",
+  "adjectives": ["hand-drawn", "playful", "inky", "crafted"],
+  "criteria": "Success: reads as manga at a glance, is clearly drawn by hand, holds up as a 16 px favicon, and works on the site's light paper and dark ink themes.",
+  "industry": "software",
+  "nav": ["Docs", "Components", "Theme"],
+  "brand_color": "#db1c22",
+  "tile_color": "#fdfaf4",
+  "greyscale": false,
+  "final": true,
+  "designer": "mangacn",
+  "concepts": [
+    {
+      "name": "Speech",
+      "symbol": "../logo/mangacn-symbol.svg",
+      "lockup": "../logo/mangacn-horizontal.svg",
+      "stacked": "../logo/mangacn-stacked.svg",
+      "avatar": "../logo/mangacn-symbol-small.svg",
+      "symbol_on_tile": "../logo/mangacn-symbol-small.svg",
+      "stacked_on_tile": "../logo/mangacn-stacked.svg",
+      "symbol_on_dark": "../logo/mangacn-symbol-dark.svg",
+      "lockup_on_dark": "../logo/mangacn-horizontal-dark.svg",
+      "stacked_on_dark": "../logo/mangacn-stacked-dark.svg",
+      "idea": "A hand-inked speech bubble that says one word: m.",
+      "rationale": [
+        "Drawn with the same rough.js pen and Dela Gothic letters as the components",
+        "The speech bubble is manga's most recognisable device and mangacn's flagship component",
+        "Ink, paper and one spot red, taken straight from the theme tokens",
+        "A heavier small-size cut keeps the bubble and the m readable at 16 px"
+      ]
+    }
+  ],
+  "recommendation": "Speech: one bubble, one letter, one red shadow, drawn by hand like everything else in mangacn."
+}
