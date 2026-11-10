@@ -457,24 +457,45 @@ announcements. Props are data in, callbacks out. `chapter-list` is the reference
 Every check runs on what your branch changed; main runs everything on each push, so nothing
 here weakens the gate, it only stops a branch from paying for the whole of it. One dispatch
 per task: the `update-snapshots` run is the verification, so the session reviews its
-artifact, commits the PNGs and stops. The recommended loop, in order, for a branch that adds
-or changes items:
+artifact, commits the PNGs and stops. The loop, in order, for a branch that adds or changes
+items (batch 4, SPEC-components-4 §8.1):
 
 ```bash
-pnpm check:changed                                   # Biome on changed files, demo map, typecheck, related tests
+pnpm gen:theme                                       # once, in a fresh worktree
+pnpm check:changed                                   # while you work: Biome on changed files, demo map, typecheck, related tests
+pnpm dev                                             # then look at each new demo at 360 px, light and dark (below)
+pnpm check:catalog                                   # once: the catalog suites, a build, the component index pass
 pnpm registry:build && pnpm registry:smoke --only=<items>   # once: install just these (+ ink-frame, deps)
-pnpm exec vitest run lib/mcp lib/docs lib/registry components --coverage.enabled=false   # catalog suites
-pnpm build && E2E_ITEMS=site pnpm exec playwright test -c e2e/playwright.config.ts -g "docs/components"
 git push -u origin HEAD:refs/heads/<type>/<slug>
 gh workflow run ci.yml --ref <type>/<slug> -f update-snapshots=true   # the one dispatch; no -f when no shot may move
 gh run watch <id> --exit-status
-gh run download <id> -n playwright-baselines -D e2e/__screenshots__   # review, commit, push, stop
+gh run download <id> -n playwright-baselines -D e2e/__screenshots__   # look at every PNG, commit, push, stop
 ```
 
-The last two lines before the push are what batch 3 learned: the catalog suites (MCP, docs,
-registry, the component index) count items and pages, so a new item breaks them even when
-`check:changed` does not select them, and only the index checks a default demo against its
-20rem stage and its h2 outline; each would have kept a red run of this batch from dispatching.
+**Each new demo at 360 px, before the dispatch.** Four of five second dispatches in batch 3
+came from a PNG that was wrong at 360 px. With `pnpm dev` running, open
+`http://localhost:3000/demo/<item>/<demo>` (and `?mode=dark`) in a window 360 px wide, or shoot
+it (`playwright screenshot` has no viewport option, so a short script; one URL and file each):
+
+```bash
+pnpm exec node -e "const{chromium}=require('@playwright/test');(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:360,height:800}});await p.goto(process.argv[1]);await p.waitForTimeout(2000);await p.screenshot({path:process.argv[2],fullPage:true});await b.close()})()" "http://localhost:3000/demo/<item>/<demo>?mode=dark" <scratch>/<item>-<demo>-dark-w360.png
+```
+
+The file is for your eyes, not a baseline (Windows fonts differ from the runner's); write it
+outside the repo.
+
+**`pnpm check:catalog`** runs what `check:changed` does not reach, and is what batch 3
+learned: the catalog suites (`vitest run lib/mcp lib/docs lib/registry components`) read the
+catalog from disk and pin item strings (a description in `lib/mcp/tools.test.ts`), so Vitest's
+`--changed` does not select them; and only the component index checks a default demo against
+its 20rem stage and its `h2` outline (axe `heading-order`). It then runs `pnpm build` and the
+index's Playwright pass (`E2E_ITEMS=site`, `-g docs/components`; no pixels off Linux), stopping
+at the first failure with that step's exit code (`scripts/check-catalog.ts`). Each of those
+checks would have kept a red run of batch 3 from dispatching.
+
+A task whose only config change is a path alias (`tsconfig.json`, `vitest.config.mts`) or a
+name appended to `PARITY_PRIMITIVES` runs `visual` on its own items, not on every shot; a task
+that adds a dependency changes `pnpm-lock.yaml` and re-shoots everything, which is right.
 
 Never run a full local `pnpm run ci` or a full `pnpm registry:smoke` on a branch (25–40 min on
 Windows for the 60-item smoke); main's push run does both after the merge.
@@ -502,6 +523,10 @@ Windows for the 60-item smoke); main's push run does both after the merge.
    pixels); a diff then fails the run. A task that changes the landing dispatches with
    `full=true` as well, so the landing's full-page shot (taken only under `SITE_FULL=1`) is
    regenerated in that same run; nothing needs a refresh on main after a merge.
+   `update-snapshots=all` is the exact mode, used once at the start of a batch and once in its
+   proof (with `full=true`): every shot is taken without comparing and written when its bytes
+   differ, under `maxDiffPixelRatio` too, so a baseline a small change left stale is caught;
+   byte-identical PNGs do not change in git, so the diff (and the artifact) is the stale set.
 4. The orchestrator merges on green; main's push run then checks every shot and smokes every
    item.
 
@@ -560,10 +585,18 @@ diff against origin/main (`pnpm exec tsx scripts/changed-e2e.ts` prints it and w
 - `lib/mcp/`, `app/api/mcp/`, `skills/`, `e2e/mcp.spec.ts` → `mcp`; `content/`, `lib/docs/`
   and `scripts/gen-props.ts` → `mcp` and `site` (the MCP serves the pages and props tables);
   other `app/`, `components/`, `e2e/site.spec.ts` → `site`;
+- `tsconfig.json` whose diff only adds path aliases → the items they name and the items that
+  use them, without `site` (`@/components/ui/<x>` and `@/components/<x>` name `<x>`,
+  `@/components/blocks/<x>/...` the block `<x>`, `@/hooks/<x>` the item whose folder holds its
+  target); `lib/registry/parity.ts` whose diff only appends names to `PARITY_PRIMITIVES` →
+  those items; `vitest.config.mts` reaches no shot at all. The diff is read from the file's
+  content at the merge base and now, not from its path;
 - everything: the suite's config, demo spec or `e2e/ready.ts`, the demo stage (`app/demo/`),
-  `app/layout.tsx`, `app/globals.css`, `ink-frame`, `lib/registry/`, `lib/utils.ts`, the theme
-  catalog or any item's `css`, a dependency (`pnpm-lock.yaml`, `package.json` outside
-  `scripts`), the Next or TypeScript config, and any path no rule knows;
+  `app/layout.tsx`, `app/globals.css`, `ink-frame`, the rest of `lib/registry/` and any other
+  change to the two files above (a `compilerOptions` edit, a removed, edited or reordered
+  alias or name, an alias that names no item), `lib/utils.ts`, the theme catalog or any item's
+  `css`, a dependency (`pnpm-lock.yaml`, `package.json` outside `scripts`), the Next config,
+  and any path no rule knows;
 - nothing: unit tests, Markdown, `scripts/` (but the demo, theme and docs generators), CI.
 
 CI (`.github/workflows/ci.yml`): a `workflow_dispatch` on a branch runs the `items` input, or
@@ -641,15 +674,16 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   do not move the landing, so nothing needs a refresh on main after a merge; a task that
   changes the landing regenerates its full shot in its own update run with `full=true`.
 - A new demo has no baseline, so the `visual` CI job fails until you add one. Baselines are
-  only made on CI: dispatch with `update-snapshots` checked (step 3 of the loop above), which
+  only made on CI: dispatch with `update-snapshots=true` (step 3 of the loop above), which
   uploads only the missing and changed PNGs, copy them in and commit them with the item.
 - Every `InkFrame` without an explicit `seed` hashes `useId()`, and React ids depend on the
   tree above the component. Changing the demo stage's tree (`app/demo/[item]/[demo]/page.tsx`)
   therefore changes every wobble; such a change selects every shot, and the update run
   rewrites each one that moved past the threshold. Two runs of the same commit also differ in
   a few dozen PNGs by one to a few hundred pixels (renderer antialiasing at text and stroke
-  edges); that is within the threshold, so `--update-snapshots=changed` leaves them alone.
-  `pnpm test:e2e:update` (`--update-snapshots=all`) still rewrites every shot it runs.
+  edges); that is within the threshold, so `--update-snapshots=changed` leaves them alone, but
+  `--update-snapshots=all` (the `all` dispatch, `pnpm test:e2e:update`) rewrites them, since it
+  writes every shot whose bytes differ: expect those few dozen in every exact regeneration.
 
 ## Docs page per item
 
