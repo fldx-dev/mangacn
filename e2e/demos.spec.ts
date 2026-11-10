@@ -98,6 +98,53 @@ for (const { item, demo, popup } of EDGE_POPUPS) {
   }
 }
 
+// The spread viewer pages in reading order from the keyboard and the buttons, at a phone and a
+// desktop width: the arrow pointing the way the book reads is next (Left in rtl, Right in ltr),
+// Home and End go to the ends, the buttons stop there, and the live region says where.
+const SPREADS = [
+  { demo: "default", next: "ArrowLeft", previous: "ArrowRight", later: "left" },
+  { demo: "ltr", next: "ArrowRight", previous: "ArrowLeft", later: "right" },
+].filter(({ demo }) =>
+  entries.some((entry) => entry.item === "spread-viewer" && entry.demo === demo),
+);
+for (const { demo, next, previous, later } of SPREADS) {
+  test(`spread-viewer/${demo} pages in reading order from the keys and the buttons`, async ({
+    page,
+  }) => {
+    test.skip(test.info().project.name === "w768", "a phone and a desktop width are enough");
+    await page.goto(`/demo/spread-viewer/${demo}`);
+    await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+    const region = page.locator('[data-slot="spread-viewer"]');
+    await expect(region).toHaveAttribute("role", "region");
+    await expect(region).toHaveAttribute("aria-roledescription", "spread");
+    const status = region.locator('[data-slot="spread-viewer-status"]');
+    const laterPage = region.locator(`[data-slot="spread-viewer-page"][data-side="${later}"] img`);
+    const nextButton = region.getByRole("button", { name: "Next" });
+    const previousButton = region.getByRole("button", { name: "Previous" });
+    await expect(status).toHaveText("Pages 4–5 of 24");
+
+    await region.focus();
+    await page.keyboard.press(next);
+    await expect(status).toHaveText("Pages 6–7 of 24");
+    // The later page of the pair sits on the side the book reads towards (the old one has left).
+    await expect(laterPage).toHaveCount(1);
+    await expect(laterPage).toHaveAttribute("alt", /^Page 7:/);
+    await page.keyboard.press(previous);
+    await expect(status).toHaveText("Pages 4–5 of 24");
+    await page.keyboard.press("End");
+    await expect(status).toHaveText("Page 24 of 24");
+    await expect(nextButton).toBeDisabled();
+    await page.keyboard.press("Home");
+    await expect(status).toHaveText("Page 1 of 24");
+    await expect(previousButton).toBeDisabled();
+
+    await nextButton.click();
+    await expect(status).toHaveText("Pages 2–3 of 24");
+    await previousButton.click();
+    await expect(status).toHaveText("Page 1 of 24");
+  });
+}
+
 for (const { item, demo } of entries) {
   for (const mode of ["light", "dark"] as const) {
     test(`${item}/${demo} (${mode})`, async ({ page }) => {

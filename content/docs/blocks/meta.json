@@ -1,5 +1,5 @@
 {
   "title": "Blocks",
   "defaultOpen": true,
-  "pages": ["chapter-list"]
+  "pages": ["chapter-list", "spread-viewer"]
 }

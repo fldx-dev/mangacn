@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 73 items in the registry. Each line gives the item's name, what it is, the one
+All 74 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -262,3 +262,6 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `chapter-list`: Chapter index for a series: one item row per chapter, read titles struck through, the latest stamped; Latin or Japanese numerals.
   Install: `npx shadcn@latest add @mangacn/chapter-list --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/chapter-list (Markdown: https://www.mangacn.com/docs/blocks/chapter-list.md)
+- `spread-viewer`: Two-page manga spread reader: facing pages in ink frames, folios, a page turn, buttons, arrow keys and swipe; right to left by default.
+  Install: `npx shadcn@latest add @mangacn/spread-viewer --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/spread-viewer (Markdown: https://www.mangacn.com/docs/blocks/spread-viewer.md)

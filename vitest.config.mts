@@ -74,6 +74,29 @@ export default defineConfig({
         find: /^@\/components\/ui\/item$/,
         replacement: fileURLToPath(new URL("./registry/ui/item/item.tsx", import.meta.url)),
       },
+      // spread-viewer → kbd, manga-frame, page-number, page-turn (button is above).
+      {
+        find: /^@\/components\/ui\/kbd$/,
+        replacement: fileURLToPath(new URL("./registry/ui/kbd/kbd.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/manga-frame$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/manga-frame/manga-frame.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/page-number$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/page-number/page-number.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/page-turn$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/page-turn/page-turn.tsx", import.meta.url),
+        ),
+      },
       // empty → emanata (the default media mark).
       {
         find: /^@\/components\/emanata$/,

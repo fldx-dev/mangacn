@@ -30,6 +30,36 @@
           "target": "@components/blocks/chapter-list/chapter-numeral.ts"
         }
       ]
+    },
+    {
+      "name": "spread-viewer",
+      "type": "registry:block",
+      "title": "Spread Viewer",
+      "description": "Two-page manga spread reader: facing pages in ink frames, folios, a page turn, buttons, arrow keys and swipe; right to left by default.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react", "motion"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/page-number.json",
+        "https://www.mangacn.com/r/page-turn.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/kbd.json"
+      ],
+      "files": [
+        {
+          "path": "spread-viewer/spread-viewer.tsx",
+          "type": "registry:block",
+          "target": "@components/blocks/spread-viewer/spread-viewer.tsx"
+        },
+        {
+          "path": "spread-viewer/use-spread.ts",
+          "type": "registry:block",
+          "target": "@components/blocks/spread-viewer/use-spread.ts"
+        }
+      ]
     }
   ]
 }

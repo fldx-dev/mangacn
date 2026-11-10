@@ -1,0 +1,49 @@
+---
+title: Spread Viewer
+description: "Two-page manga spread reader: facing pages in ink frames, folios, a page turn, buttons, arrow keys and swipe; right to left by default."
+item: spread-viewer
+---
+
+<InstallCommand item="spread-viewer" />
+
+<ItemFiles item="spread-viewer" />
+
+<CopyPrompt item="spread-viewer" />
+
+A reader for a chapter: two facing pages at a time, right to left as a manga reads, turned with the buttons, the arrow keys or a swipe. Pair it with [Chapter List](/docs/blocks/chapter-list) on the series page that links to it. It composes manga-frame, page-number, page-turn, button and kbd and draws nothing of its own.
+
+The spread is laid out as a printed book. Each page is a manga-frame with a plain `<img>` at 3:4; the two frames meet at the spine with no gutter, and their outer edges run to the viewer's edges, so the pages bleed to the reader's width (set it with `className`, `max-w-3xl` by default). A folio sits under each page at its outer corner. The first page opens alone, facing the inside of the cover, then the pages pair from an even number (pages 2–3, 4–5, …), and an even last page closes alone; a side with no page stays blank paper. In `rtl` the earlier page of a pair is on the right. Between spreads each half swings away around the spine with page-turn, instantly under reduced motion.
+
+The viewer is a `role="region"` with `aria-roledescription="spread"`, named by `label`; it takes focus so the keys work. The arrow that points the way the book reads turns to the next spread (Left in `rtl`, Right in `ltr`), the other one back, and Home and End go to the first and last. A sideways swipe of 40 px or more turns the same way: a finger moving right brings in the left-hand page, as the Left arrow does. A polite live region says where the reader is ("Pages 4–5 of 24"), each page's `img` carries its own `alt`, and the buttons are disabled at the ends. The current pages load with `fetchpriority="high"` and the next spread is preloaded; pages further on are not rendered at all until the reader gets there.
+
+## Examples
+
+<DemoFrame item="spread-viewer" demo="default" />
+
+`direction="ltr"` reads like a western comic: the earlier page on the left, Right arrow and the right-hand button for the next spread.
+
+<DemoFrame item="spread-viewer" demo="ltr" />
+
+`single` shows one page at a time, for phones. The block does not watch the screen itself; pass it from a media query in your app, and the reader stays on the same page when it changes.
+
+<DemoFrame item="spread-viewer" demo="single" />
+
+## Custom chrome
+
+`useSpread`, from `use-spread.ts` (also re-exported by the entry file), is the paging state the viewer is built on: which pages are open and on which side of the spine, the announcement, `next`, `previous`, `goTo`, the ends, and an `onKeyDown` handler for your own element. Use it to draw a reader of your own around the same pages.
+
+```tsx
+const spread = useSpread({ count: pages.length, direction: "rtl" });
+// spread.sides.left, spread.sides.right: the page index on each side, or null
+// spread.announcement: "Pages 4–5 of 24"
+```
+
+## Props
+
+<PropsTable item="spread-viewer" />
+
+### SpreadPage
+
+One entry of `pages`.
+
+<PropsTable item="spread-viewer" name="SpreadPage" />
