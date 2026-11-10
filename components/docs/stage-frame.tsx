@@ -20,6 +20,9 @@ export interface StageFrameProps {
    * the stage document inside it. The frame's `inert` alone does not stop a same-origin page in
    * it from focusing itself (Chromium), and a stage whose popup opens on mount would then pull
    * focus and the scroll position to the frame as it loads, and a modal would trap the Tab key.
+   * An embedded stage now holds its own focus (lib/docs/stage-focus.ts), on the item pages too,
+   * where the frame is live; the inert document stays for what it also does here: a preview's
+   * popup is no content of this page, for a screen reader or for the axe pass.
    */
   inert?: boolean;
 }

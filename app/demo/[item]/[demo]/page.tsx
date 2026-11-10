@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { STAGE_FOCUS_SCRIPT } from "@/lib/docs/stage-focus";
 import { getDemoLoader, listDemos } from "@/lib/registry/demos";
 import { DemoMode } from "./demo-mode";
 
@@ -26,6 +27,13 @@ export default function DemoStage({ params }: StageProps) {
       aria-labelledby="demo-stage-label"
       className="flex flex-1 items-center justify-center bg-paper p-4 text-ink sm:p-8"
     >
+      {/*
+        Embedded in a docs page, a stage does not take the reader's focus until they go there
+        (lib/docs/stage-focus.ts). Inline and first, so it runs while the document is parsed,
+        before the demo's markup below arrives and long before it hydrates and opens anything.
+      */}
+      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: a constant script of our own */}
+      <script dangerouslySetInnerHTML={{ __html: STAGE_FOCUS_SCRIPT }} />
       {/* The URL-dependent part renders inside the boundary; the stage itself is the shell. */}
       <Suspense fallback={null}>
         <Demo params={params} />
