@@ -3,6 +3,7 @@ import { AutoTypeTable } from "fumadocs-typescript/ui";
 import { type TypeNode, TypeTable } from "fumadocs-ui/components/type-table";
 import { cacheLife } from "next/cache";
 import type { ReactNode } from "react";
+import { inkDark, inkLight } from "@/lib/docs/code-theme";
 import { generatedProps, propsInterfaceName } from "@/lib/docs/props";
 import { PROPS_DELTA, type PropDelta, shadcnDocsUrl } from "@/lib/docs/props-delta";
 import { loadRegistry } from "@/lib/registry";
@@ -40,7 +41,9 @@ export async function PropsTable({ item, name = propsInterfaceName(item) }: Prop
 
 /**
  * The generated table, cached for good: Shiki runs at build time only, never as a background
- * revalidation on the server.
+ * revalidation on the server. Types are highlighted in the ink themes of the code blocks:
+ * AutoTypeTable's default (GitHub's) sets parameter names and operators in an orange and a red
+ * that fall under 4.5:1 on the paper card.
  */
 async function ownPropsTable(item: string, file: string, name: string) {
   "use cache";
@@ -49,7 +52,12 @@ async function ownPropsTable(item: string, file: string, name: string) {
   if (!docs) return <PropsFallback item={item} name={name} file={file} />;
   return (
     <div data-slot="props-table">
-      <AutoTypeTable generator={resolved(docs)} path={file} name={name} />
+      <AutoTypeTable
+        generator={resolved(docs)}
+        path={file}
+        name={name}
+        shiki={{ themes: { light: inkLight, dark: inkDark } }}
+      />
     </div>
   );
 }
