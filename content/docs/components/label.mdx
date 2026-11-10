@@ -8,11 +8,15 @@ item: label
 
 <CopyPrompt item="label" />
 
-The stock form label in the body face, for any control that has no visible label of its own: a `checkbox`, an `input`, a `select`. `required` adds a spot asterisk; still set `required` on the control, which is what assistive tech announces.
+The stock form label in the body face, for a control that has no visible text of its own, such as a `checkbox`, an `input` or a `select`. `required` adds a spot asterisk; still set `required` on the control, which is what assistive tech announces.
 
 ## Examples
 
+A label tied to a checkbox through `htmlFor`, so a click on the text toggles the box.
+
 <DemoFrame item="label" demo="default" />
+`required` on the label draws the asterisk; `required` on the input is what gets announced.
+
 <DemoFrame item="label" demo="required" />
 
 ## Props

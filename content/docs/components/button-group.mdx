@@ -8,12 +8,18 @@ item: button-group
 
 <CopyPrompt item="button-group" />
 
-Related actions in one hand-drawn strip with inked rules between them, such as chapter navigation or zoom controls, across or (`orientation="vertical"`) down. Name the group with `aria-label`; mangacn's buttons, inputs and select triggers inside it draw no frame of their own, and a group of groups leaves each nested group to draw its own strip.
+Related actions in one hand-drawn strip with inked rules between them, such as chapter navigation or zoom controls, across or (`orientation="vertical"`) down. Inside it, mangacn's buttons, inputs and select triggers draw no frame of their own, and a group nested in a group draws its own strip.
 
 ## Examples
 
+Previous, the chapter and Next as one strip, named with `aria-label` as every group should be.
+
 <DemoFrame item="button-group" demo="default" />
+A select, an input and a button in one strip: a search scoped to series, chapters or artists.
+
 <DemoFrame item="button-group" demo="select" />
+`orientation="vertical"` stacks the buttons, here three zoom controls.
+
 <DemoFrame item="button-group" demo="vertical" />
 
 ## Props

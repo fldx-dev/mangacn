@@ -8,12 +8,18 @@ item: input-group
 
 <CopyPrompt item="input-group" />
 
-An input or textarea with text, icons or buttons attached, such as a URL prefix, a result count or a send button, drawn as one outline with an inked rule between each addon and the control. Use mangacn's `input`, `textarea` and `button` inside it: they draw no frame of their own in a group, and the group takes the focus ring; name the control with a label or `aria-label`.
+An input or textarea with text, icons or buttons attached, such as a URL prefix, a result count or a send button, drawn as one outline with an inked rule between each addon and the control. Use mangacn's `input`, `textarea` and `button` inside it: they draw no frame of their own in a group, and the group takes the focus ring.
 
 ## Examples
 
+Addons on both sides of the input: a search icon and a hit count, then text before and after a site name. Each input is named with `aria-label`, because an addon does not label it.
+
 <DemoFrame item="input-group" demo="default" />
+`InputGroupButton` in an end addon: an icon button that copies a link, and a text button that subscribes.
+
 <DemoFrame item="input-group" demo="button" />
+`align="block-end"` puts the addon under a textarea, here a character count and a send button.
+
 <DemoFrame item="input-group" demo="textarea" />
 
 ## Props

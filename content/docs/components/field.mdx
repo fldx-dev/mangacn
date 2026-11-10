@@ -8,11 +8,15 @@ item: field
 
 <CopyPrompt item="field" />
 
-The parts of a form field around any control: label, description, error, and fieldsets with a display-face legend, so forms read alike whatever the control. A field is not a group: the input, select or checkbox inside keeps its own frame; set `data-invalid` on the field and `aria-invalid` on the control, and `FieldError` announces the message and inks a spot underline under the control.
+The parts of a form field around any control (label, description and error) and fieldsets with a display-face legend, so forms read alike whatever the control. A field is not a group: the input, select or checkbox inside it keeps its own frame.
 
 ## Examples
 
+A described field above an invalid one. Set `data-invalid` on the field and `aria-invalid` on the control; `FieldError` announces the message and inks a spot underline under the control.
+
 <DemoFrame item="field" demo="default" />
+A fieldset with a legend and a description, radio cards made of a `FieldLabel` around a horizontal `Field`, and a `FieldSeparator` with a word in it.
+
 <DemoFrame item="field" demo="fieldset" />
 
 ## Props
