@@ -41,6 +41,9 @@ export async function ComponentIndex() {
               demo: "default",
               height: "100%",
               className: "h-full p-4 sm:p-4",
+              // Most overlay defaults open on mount; live, they pull focus and the scroll
+              // position into their frame as the card mounts, and a modal traps Tab there.
+              inert: true,
             }),
           ] as const,
       ),
@@ -74,7 +77,8 @@ export async function ComponentIndex() {
   );
 }
 
-// The demo stays interactive, so only the title links to the page (no card-wide overlay link).
+// Inline demos stay interactive (overlay previews are inert), so only the title links to the
+// page (no card-wide overlay link).
 function IndexCard({ item, preview }: { item: DocItem; preview: ReactNode }) {
   return (
     <Card data-item={item.name} className="w-full min-w-0">

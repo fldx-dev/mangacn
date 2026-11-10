@@ -153,20 +153,46 @@ async function expectLazyDemosOnLoad(page: Page) {
   expect(mounted, "the index leaves the demos further down unmounted").toBeLessThan(total);
 }
 
-/** Scrolls the index screen by screen to the bottom; every demo mounts on the way. */
-async function expectLazyDemosOnScroll(page: Page) {
+/**
+ * Focus and scroll stay the reader's while the cards mount (Task 80): the overlay previews are
+ * inert, so a stage whose popup opens on mount neither pulls focus into its frame (a modal one
+ * would trap Tab there) nor scrolls the page to it. `top` is where the page was last put.
+ */
+async function expectFocusAndScrollKept(page: Page, top: number) {
+  const state = await page.evaluate(() => ({
+    y: window.scrollY,
+    max: document.documentElement.scrollHeight - window.innerHeight,
+    active: document.activeElement?.tagName ?? "",
+    title: document.activeElement?.getAttribute("title") ?? "",
+  }));
+  expect(state.active, `focus moved into the frame "${state.title}"`).not.toBe("IFRAME");
+  expect(
+    Math.abs(state.y - Math.min(top, state.max)),
+    `the page scrolled by itself to ${state.y} (put at ${top})`,
+  ).toBeLessThanOrEqual(1);
+}
+
+/**
+ * Scrolls the index screen by screen to the bottom; every demo mounts on the way, and none moves
+ * the focus or the scroll position. Returns where the page was put last.
+ */
+async function expectLazyDemosOnScroll(page: Page): Promise<number> {
   const { total } = await lazyDemoCounts(page);
   const [height, screen] = await page.evaluate(() => [
     document.documentElement.scrollHeight,
     window.innerHeight,
   ]);
+  let last = 0;
   for (let top = 0; top < height + screen; top += screen / 2) {
+    await expectFocusAndScrollKept(page, last);
     await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), top);
     await page.evaluate(() => new Promise(requestAnimationFrame));
+    last = top;
   }
   await expect
     .poll(async () => (await lazyDemoCounts(page)).mounted, "every demo mounts by the bottom")
     .toBe(total);
+  return last;
 }
 
 /** Every inline demo fits its fixed stage (`TALL_STAGES` in the index raises one that does not). */
@@ -223,6 +249,7 @@ for (const path of pages) {
         await waitForInk(page);
       }
       await waitForStages(page, mode);
+      if (path === "/docs/components") await expectFocusAndScrollKept(page, 0);
 
       if (comparePixels) {
         // The whole page first, in the state its baseline was always taken in.
@@ -233,8 +260,7 @@ for (const path of pages) {
           });
         }
         if (VIEWPORT_SHOT.has(path)) {
-          // The first viewport is the top of the page, whichever demo took focus (on the index the
-          // popover demo's focused field, in its iframe, scrolls the page down to it).
+          // The first viewport is the top of the page (the full shot above may leave it scrolled).
           await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
           await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
           await expect(page).toHaveScreenshot(`site-${slug(path)}-viewport-${mode}.png`);
@@ -243,9 +269,11 @@ for (const path of pages) {
 
       if (path === "/docs/components") {
         // Every demo mounted, so the checks below see the whole index.
-        await expectLazyDemosOnScroll(page);
+        const top = await expectLazyDemosOnScroll(page);
         await waitForInk(page);
         await waitForStages(page, mode);
+        // Late openers too (context-menu opens once its fonts are ready).
+        await expectFocusAndScrollKept(page, top);
         await expectDemosFitStages(page);
       }
 

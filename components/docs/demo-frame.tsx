@@ -58,6 +58,8 @@ export async function DemoFrame({ item, demo, title, height }: DemoFrameProps) {
 export interface DemoPreviewProps extends DemoFrameProps {
   /** Classes for the paper box of an inline demo. */
   className?: string;
+  /** Overlay items: render the stage iframe inert (see `StageFrame`). The component index sets it. */
+  inert?: boolean;
 }
 
 /**
@@ -70,6 +72,7 @@ export async function DemoPreview({
   title,
   height = "32rem",
   className,
+  inert,
 }: DemoPreviewProps) {
   getDemoEntry(item, demo);
   const load = getDemoLoader(item, demo);
@@ -81,6 +84,7 @@ export async function DemoPreview({
         src={`/demo/${item}/${demo}`}
         title={title ?? `${item} / ${demo}`}
         height={height}
+        inert={inert}
       />
     );
   }
