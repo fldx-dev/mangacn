@@ -17,9 +17,13 @@ const chapters = [
   { number: "9.5", title: "Interlude", href: "/c/9-5" },
 ];
 
-/** The rows' link names, top to bottom. */
-function linkNames(): string[] {
-  return screen.getAllByRole("link").map((link) => link.textContent ?? "");
+/** The rows' links, top to bottom, checked against their accessible names (aria-labelledby). */
+function expectLinkNames(names: string[]) {
+  const links = screen.getAllByRole("link");
+  expect(links).toHaveLength(names.length);
+  names.forEach((name, index) => {
+    expect(screen.getByRole("link", { name })).toBe(links[index]);
+  });
 }
 
 describe("orderChapters", () => {
@@ -74,12 +78,12 @@ describe("ChapterList", () => {
   it("names each link by number and title, with read and latest state in hidden text", () => {
     render(<ChapterList chapters={chapters} order="asc" />);
     expect(screen.getByRole("navigation", { name: "Chapters" })).toBeTruthy();
-    expect(linkNames()).toEqual([
-      "Chapter 1First, read",
-      "Chapter 2Second, read",
-      "Chapter 9.5Interlude",
-      "Chapter 10Tenth, latest",
-      "Chapter ExtraOmake",
+    expectLinkNames([
+      "Chapter 1 First, read",
+      "Chapter 2 Second, read",
+      "Chapter 9.5 Interlude",
+      "Chapter 10 Tenth, latest",
+      "Chapter Extra Omake",
     ]);
     for (const state of screen.getAllByText(/^, (read|latest)$/)) {
       expect(state?.classList.contains("sr-only")).toBe(true);
@@ -99,6 +103,60 @@ describe("ChapterList", () => {
     expect(
       rows.find((row) => row.dataset.read !== "true")?.querySelector("[data-slot=ink-mark]"),
     ).toBeNull();
+  });
+
+  it("draws each row as an item: outlined while unread, muted once read", () => {
+    render(<ChapterList chapters={chapters} />);
+    for (const row of screen.getAllByRole("listitem")) {
+      const item = row.querySelector("[data-slot=item]");
+      expect(item?.getAttribute("data-variant")).toBe(row.dataset.read ? "muted" : "outline");
+      expect(item?.getAttribute("data-size")).toBe("sm");
+      // Every row takes the list's columns, so the titles line up past the widest number.
+      expect(row.classList.contains("grid-cols-subgrid")).toBe(true);
+      expect(item?.classList.contains("grid-cols-subgrid")).toBe(true);
+      // The number sits in a caption box, outside the link but in its name.
+      const number = item?.querySelector("[data-slot=caption-box] span[id]");
+      const link = within(row).getByRole("link");
+      expect(link.getAttribute("aria-labelledby")).toBe(`${number?.id} ${link.id}`);
+    }
+  });
+
+  it("rules off each turn of the read state, inside the list items", () => {
+    // desc: Extra, 10, 9.5 unread; 2, 1 read → one turn, above chapter 2.
+    render(<ChapterList chapters={chapters} />);
+    const list = screen.getByRole("list");
+    for (const child of list.children) expect(child.tagName).toBe("LI");
+    const ruled = screen
+      .getAllByRole("listitem")
+      .filter((row) => row.firstElementChild?.getAttribute("data-slot") === "separator");
+    expect(ruled.map((row) => within(row).getByRole("link").getAttribute("href"))).toEqual([
+      "/c/2",
+    ]);
+  });
+
+  it("rules every turn, and none when the state never changes", () => {
+    const mixed = [
+      { number: 1, title: "A", href: "/1", read: true },
+      { number: 2, title: "B", href: "/2" },
+      { number: 3, title: "C", href: "/3", read: true },
+      { number: 4, title: "D", href: "/4" },
+    ];
+    const { unmount } = render(<ChapterList chapters={mixed} order="asc" />);
+    expect(document.querySelectorAll("[data-slot=separator]")).toHaveLength(3);
+    unmount();
+    render(<ChapterList chapters={mixed.map((c) => ({ ...c, read: false }))} />);
+    expect(document.querySelectorAll("[data-slot=separator]")).toHaveLength(0);
+  });
+
+  it("gives every row's link a unique id, across two lists on one page", () => {
+    render(
+      <>
+        <ChapterList chapters={chapters} label="One" />
+        <ChapterList chapters={chapters} label="Two" />
+      </>,
+    );
+    const ids = [...document.querySelectorAll("[id]")].map((node) => node.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it("stamps the latest chapter only, and nothing with latest={false}", () => {
@@ -128,10 +186,11 @@ describe("ChapterList", () => {
     expect(stamp?.getAttribute("lang")).toBe("ja");
   });
 
-  it("separates rows with hand-drawn rules and shows the date", () => {
+  it("shows the date under the title, outside the link's name", () => {
     render(<ChapterList chapters={chapters} className="mx-auto" />);
-    expect(document.querySelectorAll("[data-slot=separator]")).toHaveLength(4);
-    expect(screen.getByText("2026-11-02")).toBeTruthy();
+    const date = screen.getByText("2026-11-02");
+    expect(date.getAttribute("data-slot")).toBe("item-description");
+    expect(date.closest("a")).toBeNull();
     expect(screen.getByRole("navigation")?.classList.contains("mx-auto")).toBe(true);
   });
 

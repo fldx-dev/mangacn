@@ -5,7 +5,7 @@
       "name": "chapter-list",
       "type": "registry:block",
       "title": "Chapter List",
-      "description": "Chapter index for a series: numbered links, read titles struck through, the latest stamped; Latin or Japanese numerals.",
+      "description": "Chapter index for a series: one item row per chapter, read titles struck through, the latest stamped; Latin or Japanese numerals.",
       "categories": ["block"],
       "meta": {
         "since": "0.1.0"
@@ -15,7 +15,8 @@
         "https://www.mangacn.com/r/caption-box.json",
         "https://www.mangacn.com/r/ink-mark.json",
         "https://www.mangacn.com/r/stamp.json",
-        "https://www.mangacn.com/r/separator.json"
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/item.json"
       ],
       "files": [
         {
