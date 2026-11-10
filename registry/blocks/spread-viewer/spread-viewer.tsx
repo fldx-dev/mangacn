@@ -213,12 +213,14 @@ export function SpreadViewer({
       </div>
       <div
         data-slot="spread-viewer-controls"
-        className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2"
+        // A container: the help line goes between the buttons only when the controls are wide
+        // enough (a two-page spread on a desktop), whatever the viewport; else it takes its own row.
+        className="@container flex flex-wrap items-center justify-between gap-x-3 gap-y-2"
       >
         {leftIsNext ? nextButton : previousButton}
         <p
           data-slot="spread-viewer-help"
-          className="order-last basis-full text-center text-xs text-muted-foreground sm:order-none sm:basis-auto"
+          className="order-last basis-full text-center text-xs text-muted-foreground @2xl:order-none @2xl:basis-auto"
         >
           {arrow(spread.nextKey)} next, {arrow(spread.previousKey)} previous, <Kbd>Home</Kbd>{" "}
           <Kbd>End</Kbd> first and last
