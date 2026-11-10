@@ -200,7 +200,7 @@ describe("list_items", () => {
   it("lists the blocks last, under the category block", async () => {
     const { text } = await call("list_items", { category: "block" });
     expect(text).toContain(
-      "- chapter-list · registry:block · block: Chapter index for a series: numbered links",
+      "- chapter-list · registry:block · block: Chapter index for a series: one item row per chapter",
     );
     expect(text).toContain(
       "Server component. Install: `pnpm dlx shadcn@latest add @mangacn/chapter-list --overwrite`. Docs: https://www.mangacn.com/docs/blocks/chapter-list",
@@ -246,7 +246,7 @@ describe("get_item", () => {
     expect(isError).toBe(false);
     expect(text).toContain("npx shadcn@latest add @mangacn/chapter-list");
     expect(text).toContain(
-      "Files: components/blocks/chapter-list/chapter-list.tsx, components/blocks/chapter-list/chapter-numeral.ts; also adds components/caption-box.tsx, components/ink-frame.tsx, components/ink-mark.tsx, components/stamp.tsx, components/ui/separator.tsx through its registry dependencies",
+      "Files: components/blocks/chapter-list/chapter-list.tsx, components/blocks/chapter-list/chapter-numeral.ts; also adds components/caption-box.tsx, components/ink-frame.tsx, components/ink-mark.tsx, components/stamp.tsx, components/ui/separator.tsx, components/ui/item.tsx through its registry dependencies",
     );
   });
 

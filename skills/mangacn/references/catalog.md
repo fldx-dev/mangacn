@@ -259,6 +259,6 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 
 ## Blocks
 
-- `chapter-list`: Chapter index for a series: numbered links, read titles struck through, the latest stamped; Latin or Japanese numerals.
+- `chapter-list`: Chapter index for a series: one item row per chapter, read titles struck through, the latest stamped; Latin or Japanese numerals.
   Install: `npx shadcn@latest add @mangacn/chapter-list --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/chapter-list (Markdown: https://www.mangacn.com/docs/blocks/chapter-list.md)

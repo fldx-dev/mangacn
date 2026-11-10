@@ -69,6 +69,11 @@ export default defineConfig({
         find: /^@\/components\/ui\/label$/,
         replacement: fileURLToPath(new URL("./registry/ui/label/label.tsx", import.meta.url)),
       },
+      // chapter-list → item (each row).
+      {
+        find: /^@\/components\/ui\/item$/,
+        replacement: fileURLToPath(new URL("./registry/ui/item/item.tsx", import.meta.url)),
+      },
       // empty → emanata (the default media mark).
       {
         find: /^@\/components\/emanata$/,

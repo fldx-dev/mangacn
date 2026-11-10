@@ -1,6 +1,6 @@
 ---
 title: Chapter List
-description: "Chapter index for a series: numbered links, read titles struck through, the latest stamped; Latin or Japanese numerals."
+description: "Chapter index for a series: one item row per chapter, read titles struck through, the latest stamped; Latin or Japanese numerals."
 item: chapter-list
 ---
 
@@ -10,11 +10,21 @@ item: chapter-list
 
 <CopyPrompt item="chapter-list" />
 
-A series page's chapter index: pass the chapters in any order and it lists them newest first, each row one link named by its number and title, read chapters struck through in tone and announced, the latest stamped NEW. `numerals="ja"` writes <span lang="ja">第12話</span> and stamps <span lang="ja">最新</span>. It is a server component that composes caption-box, stamp, ink-mark and separator and draws nothing of its own, so it takes the theme and the pen like the items do.
+A series page's chapter index. Pass the chapters in any order: it sorts them by number, newest first, with anything that is not a number (an "Extra") after the numbered ones. Each row is an `item`, outlined on paper while unread and set on tone-1 once read, with the number in a caption box, the title in the display face and the date under it. Read titles are struck through with a tone `ink-mark`, and the newest chapter gets a NEW stamp. It is a server component that composes item, caption-box, stamp, ink-mark and separator and draws nothing of its own, so it follows the theme and the pen like the items it uses.
+
+The list is a `<nav>` named by `label` around an ordered list. Each row is one link, named by its number and title through `aria-labelledby`, and its hit area covers the whole card. The read and latest states are said in visually hidden text inside the link (", read", ", latest"), so they never rest on the strike or the colour alone. The stamp is decoration and stays hidden from assistive technology. Where the read state turns, a hand-drawn rule marks the place you read up to; the rule sits inside the list item below it, so the list holds nothing but list items and nothing needs `aria-hidden`.
 
 ## Examples
 
 <DemoFrame item="chapter-list" demo="default" />
+
+`numerals="ja"` writes <span lang="ja">第12話</span>, stamps <span lang="ja">最新</span> and says the states as <span lang="ja">既読</span> and <span lang="ja">最新</span>, each under `lang="ja"`. The block cannot know the language of your titles, so put `lang="ja"` on the list (it passes through to the `<nav>`) when they are Japanese.
+
+<DemoFrame item="chapter-list" demo="japanese" />
+
+`order="asc"` lists the series in reading order, the way a reader part way through sees it: read chapters struck through above, the next one outlined. Numbers can be strings (`"2.5"` sorts between 2 and 3), and an extra chapter never takes the stamp from the newest numbered one. Set `latest={false}` to drop the stamp.
+
+<DemoFrame item="chapter-list" demo="read-states" />
 
 ## Props
 
