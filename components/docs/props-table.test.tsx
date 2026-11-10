@@ -3,6 +3,7 @@ import type { GeneratedDoc } from "fumadocs-typescript";
 import { AutoTypeTable, type AutoTypeTableProps } from "fumadocs-typescript/ui";
 import { isValidElement, type ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { inkDark, inkLight } from "@/lib/docs/code-theme";
 import { generatedProps } from "@/lib/docs/props";
 import { expectNoA11yViolations } from "@/lib/test/axe";
 import { PropsTable } from "./props-table";
@@ -95,6 +96,34 @@ describe("PropsTable for a manga-native piece", () => {
     const { container } = await renderAutoTypeTable(element);
     expect(within(container).getAllByRole("button").length).toBeGreaterThan(0);
     expect(container.textContent).not.toContain("could not be generated");
+  });
+
+  it("highlights types in the ink themes, never the highlighter's default hues", async () => {
+    // spread-viewer's `onChange?(first: number)` is the case that failed contrast on the paper
+    // card: GitHub's light theme sets the parameter name in #E36209 (3.3:1) and `|` in #D73A49.
+    const { container } = await renderAutoTypeTable(await PropsTable({ item: "spread-viewer" }));
+    for (const [variable, theme] of [
+      ["--shiki-light", inkLight],
+      ["--shiki-dark", inkDark],
+    ] as const) {
+      const used = new Set(
+        [...container.innerHTML.matchAll(new RegExp(`${variable}:s*(#[0-9a-f]{3,8})`, "gi"))].map(
+          ([, colour]) => colour.toLowerCase(),
+        ),
+      );
+      const palette = new Set(
+        theme.settings.flatMap(({ settings }) =>
+          "foreground" in settings && settings.foreground
+            ? [settings.foreground.toLowerCase()]
+            : [],
+        ),
+      );
+      expect(used.size, variable).toBeGreaterThan(0);
+      expect(
+        [...used].filter((colour) => !palette.has(colour)),
+        variable,
+      ).toEqual([]);
+    }
   });
 
   it("falls back to a link to the source when the file has no table", async () => {
