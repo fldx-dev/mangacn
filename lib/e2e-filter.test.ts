@@ -279,6 +279,13 @@ describe("selectE2e on alias and parity diffs", () => {
     );
   });
 
+  it("still selects everything when the filter itself changes beside an alias", () => {
+    const src = sources({ [TS]: [tsconfig(), tsconfig([INPUT_ALIAS])] });
+    const { selection, reasons } = selectE2e([TS, "lib/e2e-filter.ts"], src);
+    expect(selection).toBeUndefined();
+    expect(reasons.at(-1)).toBe("lib/e2e-filter.ts → everything (every snapshot depends on it)");
+  });
+
   it("selects everything for any other tsconfig.json change", () => {
     const cases: Record<string, [string | undefined, string | undefined]> = {
       "a compilerOptions edit": [tsconfig(), tsconfig([], (t) => t.replace("ES2017", "ES2022"))],
