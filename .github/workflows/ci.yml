@@ -139,10 +139,49 @@ jobs:
       # The fonts install-deps would bring (CJK, emoji, Unifont) are needed on every run: without
       # them Japanese set in a Latin face (Geist) renders blank, and baselines written on a
       # cache hit differ from those written on a miss (Task 68 found 18 such shots).
-      - if: steps.filter.outputs.items != 'none'
+      #
+      # Their .deb files are cached, so a run needs the package mirror only when that cache is
+      # empty: on 2026-11-11 the runners could not resolve azure.archive.ubuntu.com for over an
+      # hour and every visual job failed here before a single test ran. The cached files also
+      # pin the fonts' versions, so a package update cannot move a glyph under the baselines.
+      - name: Ubuntu release
+        id: os
+        if: steps.filter.outputs.items != 'none'
+        run: . /etc/os-release && echo "codename=$VERSION_CODENAME" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v6
+        id: fonts
+        if: steps.filter.outputs.items != 'none'
+        with:
+          path: ${{ runner.temp }}/font-debs
+          key: font-debs-${{ steps.os.outputs.codename }}-v1
+      - name: Fonts
+        if: steps.filter.outputs.items != 'none'
+        env:
+          FONT_PACKAGES: fonts-ipafont-gothic fonts-wqy-zenhei fonts-freefont-ttf fonts-liberation fonts-noto-color-emoji fonts-unifont fonts-tlwg-loma-otf
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends fonts-ipafont-gothic fonts-wqy-zenhei fonts-freefont-ttf fonts-liberation fonts-noto-color-emoji fonts-unifont fonts-tlwg-loma-otf
+          debs="$RUNNER_TEMP/font-debs"
+          mkdir -p "$debs"
+          # Fetch the packages and whatever they depend on that the image lacks, as files.
+          fetch() {
+            mkdir -p "$debs/partial"
+            sudo apt-get update -qq &&
+              sudo apt-get install -y -qq --no-install-recommends --download-only -o Dir::Cache::archives="$debs" $FONT_PACKAGES
+          }
+          if ! ls "$debs"/*.deb > /dev/null 2>&1; then
+            if ! fetch; then
+              # Azure's mirror is first in the runner's list and takes the whole fetch down
+              # with it when it does not resolve: go to the archive itself, once.
+              echo "::warning::the apt mirror failed; fetching the fonts from archive.ubuntu.com"
+              printf '%s\tpriority:1\n%s\tpriority:2\n' http://archive.ubuntu.com/ubuntu/ http://security.ubuntu.com/ubuntu/ | sudo tee /etc/apt/apt-mirrors.txt
+              sudo rm -f "$debs"/*.deb
+              fetch
+            fi
+            sudo rm -rf "$debs/partial" "$debs/lock"
+            sudo chown -R "$(id -u):$(id -g)" "$debs"
+          fi
+          ls -1 "$debs"
+          # From the files alone: nothing is fetched when their dependencies are on the image.
+          sudo apt-get install -y -qq --no-install-recommends "$debs"/*.deb
       - if: steps.filter.outputs.items != 'none'
         run: pnpm build
       - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS == '' }}
