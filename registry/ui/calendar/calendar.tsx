@@ -23,6 +23,7 @@ function Calendar({
   buttonVariant = "ghost",
   locale,
   formatters,
+  labels,
   components,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
@@ -42,8 +43,27 @@ function Calendar({
       captionLayout={captionLayout}
       locale={locale}
       formatters={{
-        formatMonthDropdown: (date) => date.toLocaleString(locale?.code, { month: "short" }),
+        // "en-US" when no locale is given, as react-day-picker itself defaults to: stock passes
+        // undefined, which is the machine's locale, so a server and a browser that differ render
+        // different month names ("Sept" and "Sep") and React reports a hydration mismatch.
+        formatMonthDropdown: (date) =>
+          date.toLocaleString(locale?.code ?? "en-US", { month: "short" }),
         ...formatters,
+      }}
+      labels={{
+        // The day's number as it is shown, not as an ordinal: react-day-picker's default
+        // ("Sunday, May 31st, 2026") does not contain the visible "31" as a word, which fails
+        // WCAG 2.5.3 Label in Name (axe label-content-name-mismatch) and speech input.
+        labelDayButton: (date, modifiers) => {
+          const day = date.toLocaleDateString(locale?.code ?? "en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          return `${modifiers.today ? "Today, " : ""}${day}${modifiers.selected ? ", selected" : ""}`;
+        },
+        ...labels,
       }}
       classNames={{
         root: cn("w-fit", defaultClassNames.root),
@@ -195,7 +215,7 @@ function CalendarDayButton({
       ref={ref}
       variant="ghost"
       size="icon"
-      data-day={day.date.toLocaleDateString(locale?.code)}
+      data-day={day.date.toLocaleDateString(locale?.code ?? "en-US")}
       data-selected-single={selectedSingle}
       data-range-start={modifiers.range_start}
       data-range-end={modifiers.range_end}

@@ -8,7 +8,8 @@
  * element until the reader presses, types or tabs into the frame; from then on the stage is an
  * ordinary page. A reader who tabs in gets the focus the stage last asked for (the open dialog,
  * not the trigger behind it), which is the state the stage has on its own page. The popup still
- * opens and still works with a pointer the whole time.
+ * opens and still works with a pointer the whole time. `scrollIntoView` is held the same way,
+ * since it scrolls the embedding page as well.
  *
  * Self-contained on purpose: the stage inlines this function's source as a script that runs
  * before the demo's markup arrives, so it must not reach for anything outside its own body.
@@ -25,8 +26,14 @@ export function holdStageFocus(win: Window & typeof globalThis): void {
   const events = ["pointerdown", "keydown", "focusin"];
 
   let asked: HTMLElement | SVGElement | null = null;
+  // The same goes for `scrollIntoView`: a list that brings its highlighted row into view on load
+  // (a command palette does) scrolls every scroller above it, the embedding page among them.
+  const elements = win.Element.prototype;
+  const scrollIntoView = elements.scrollIntoView;
+  elements.scrollIntoView = () => {};
 
   function release(event: Event) {
+    elements.scrollIntoView = scrollIntoView;
     prototypes.forEach((prototype, index) => {
       prototype.focus = originals[index] as typeof prototype.focus;
     });

@@ -215,8 +215,10 @@ jobs:
       # and the artifact holds exactly the PNGs to commit: a straight copy, no sifting.
       - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
         run: pnpm test:e2e --update-snapshots=$UPDATE_SNAPSHOTS --shard=${{ matrix.shard }}/4 ${{ matrix.shard != 1 && '--pass-with-no-tests' || '' }}
+      # Also after a failed test: the wave's update run on main is expected to fail on the
+      # non-pixel checks of a few new demos, and the baselines it wrote are still wanted.
       - name: Collect the rewritten baselines
-        if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
+        if: ${{ !cancelled() && steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
         run: |
           out="$RUNNER_TEMP/playwright-baselines"
           mkdir -p "$out"
@@ -230,7 +232,7 @@ jobs:
           echo "$count baseline(s) rewritten (--update-snapshots=$UPDATE_SNAPSHOTS)"
           cat "$RUNNER_TEMP/baselines.txt"
           { echo "**$count baseline(s) rewritten** (\`--update-snapshots=$UPDATE_SNAPSHOTS\`)"; sed 's/^/- /' "$RUNNER_TEMP/baselines.txt"; } >> "$GITHUB_STEP_SUMMARY"
-      - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
+      - if: ${{ !cancelled() && steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
         uses: actions/upload-artifact@v7
         with:
           name: playwright-baselines-${{ matrix.shard }}

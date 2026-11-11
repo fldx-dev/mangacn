@@ -73,6 +73,10 @@ function ComboboxInput({
             variant="ghost"
             render={<ComboboxTrigger />}
             data-slot="input-group-button"
+            // Not a tab stop, as the ARIA combobox pattern has it: the input opens the list
+            // from the keyboard. While the list is open Base UI hides the addon from
+            // assistive tech, and a tabbable button in there fails axe aria-hidden-focus.
+            tabIndex={-1}
             className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
             disabled={disabled}
           />

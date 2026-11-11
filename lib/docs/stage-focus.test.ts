@@ -107,6 +107,23 @@ describe("holdStageFocus", () => {
     expect(win.document.activeElement).toBe(win.document.body);
   });
 
+  it("holds scrollIntoView until the reader comes, then gives it back", () => {
+    const win = embed();
+    // jsdom has no scrollIntoView; the stage's browser does.
+    let calls = 0;
+    const real = () => {
+      calls += 1;
+    };
+    win.Element.prototype.scrollIntoView = real;
+    holdStageFocus(win);
+    button(win, "a").scrollIntoView();
+    expect(calls).toBe(0);
+    button(win, "a").dispatchEvent(new win.Event("pointerdown", { bubbles: true }));
+    expect(win.Element.prototype.scrollIntoView).toBe(real);
+    button(win, "a").scrollIntoView();
+    expect(calls).toBe(1);
+  });
+
   it("releases once and stops listening", () => {
     const win = embed();
     const focus = win.HTMLElement.prototype.focus;

@@ -12,7 +12,7 @@ const pages = [1, 2, 3, 4, 5];
 export default function CarouselDefaultDemo() {
   return (
     <div className="px-12">
-      <Carousel className="w-full max-w-48 sm:max-w-xs" aria-label="Pages">
+      <Carousel className="w-full max-w-48 sm:max-w-56" aria-label="Pages">
         <CarouselContent>
           {pages.map((page) => (
             <CarouselItem key={page}>

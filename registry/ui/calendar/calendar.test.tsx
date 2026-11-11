@@ -16,7 +16,8 @@ const month = { today, defaultMonth: today };
 
 /** The day button for `day` of June 2026, by its accessible name. */
 const dayButton = (day: number) =>
-  screen.getByRole("button", { name: new RegExp(`June ${day}(st|nd|rd|th), 2026`) });
+  // The label carries the number as it is shown ("June 14, 2026"), never as an ordinal.
+  screen.getByRole("button", { name: new RegExp(`June ${day}, 2026`) });
 const cell = (day: number) => dayButton(day).closest("td") as HTMLElement;
 const inked = (button: HTMLElement) =>
   button.querySelector<HTMLElement>(':scope > [data-slot="ink-frame"]');
