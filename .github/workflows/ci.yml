@@ -140,10 +140,14 @@ jobs:
       # them Japanese set in a Latin face (Geist) renders blank, and baselines written on a
       # cache hit differ from those written on a miss (Task 68 found 18 such shots).
       #
-      # Their .deb files are cached, so a run needs the package mirror only when that cache is
-      # empty: on 2026-11-11 the runners could not resolve azure.archive.ubuntu.com for over an
-      # hour and every visual job failed here before a single test ran. The cached files also
-      # pin the fonts' versions, so a package update cannot move a glyph under the baselines.
+      # Their .deb files are cached, so a run needs a package mirror only when that cache is
+      # empty: on 2026-11-11 the runners could not resolve any ubuntu.com host for hours
+      # (azure.archive, archive and security alike, while the hosts themselves were up), and
+      # every visual job failed here before a single test ran. With an empty cache and no
+      # ubuntu.com, the files come from kernel.org's mirror of the same archive: apt checks
+      # them against Ubuntu's signed indexes whichever mirror serves them. The cached files
+      # also pin the fonts' versions, so a package update cannot move a glyph under the
+      # baselines.
       - name: Ubuntu release
         id: os
         if: steps.filter.outputs.items != 'none'
@@ -167,12 +171,18 @@ jobs:
             sudo apt-get update -qq &&
               sudo apt-get install -y -qq --no-install-recommends --download-only -o Dir::Cache::archives="$debs" $FONT_PACKAGES
           }
+          # The runner's mirror list names only ubuntu.com hosts; this one is outside that domain.
+          elsewhere() {
+            echo "::warning::no ubuntu.com mirror; fetching the fonts from mirrors.kernel.org"
+            printf '%s\tpriority:1\n%s\tpriority:2\n' http://mirrors.kernel.org/ubuntu/ http://mirrors.edge.kernel.org/ubuntu/ | sudo tee /etc/apt/apt-mirrors.txt
+          }
           if ! ls "$debs"/*.deb > /dev/null 2>&1; then
-            if ! fetch; then
-              # Azure's mirror is first in the runner's list and takes the whole fetch down
-              # with it when it does not resolve: go to the archive itself, once.
-              echo "::warning::the apt mirror failed; fetching the fonts from archive.ubuntu.com"
-              printf '%s\tpriority:1\n%s\tpriority:2\n' http://archive.ubuntu.com/ubuntu/ http://security.ubuntu.com/ubuntu/ | sudo tee /etc/apt/apt-mirrors.txt
+            # Ask the resolver first: apt takes about eight minutes to give up on a name.
+            if ! getent hosts azure.archive.ubuntu.com > /dev/null; then
+              elsewhere
+              fetch
+            elif ! fetch; then
+              elsewhere
               sudo rm -f "$debs"/*.deb
               fetch
             fi
