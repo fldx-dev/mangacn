@@ -102,6 +102,11 @@ export default defineConfig({
         find: /^@\/components\/emanata$/,
         replacement: fileURLToPath(new URL("./registry/ui/emanata/emanata.tsx", import.meta.url)),
       },
+      // sidebar → use-mobile (the hook catalog's one file per hook).
+      {
+        find: /^@\/hooks\/use-mobile$/,
+        replacement: fileURLToPath(new URL("./registry/hooks/use-mobile.ts", import.meta.url)),
+      },
       { find: "@", replacement: fileURLToPath(new URL("./", import.meta.url)) },
     ],
   },

@@ -37,6 +37,7 @@
       "@/components/ink-mark": ["./registry/ui/ink-mark/ink-mark.tsx"],
       "@/components/stamp": ["./registry/ui/stamp/stamp.tsx"],
       "@/components/emanata": ["./registry/ui/emanata/emanata.tsx"],
+      "@/hooks/use-mobile": ["./registry/hooks/use-mobile.ts"],
       "@/*": ["./*"]
     }
   },
