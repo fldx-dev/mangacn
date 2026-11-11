@@ -9,6 +9,7 @@ import {
   findImportViolations,
   findRegistryDependencyProblems,
   formatImportViolations,
+  hookImportViolation,
   importViolation,
   packageName,
 } from "./imports";
@@ -232,6 +233,129 @@ describe("blocks", () => {
     expect(
       blockImportViolation("@/components/ui/separator", item, "registry/blocks/x/x.tsx", allowed),
     ).toContain("alias import");
+  });
+});
+
+describe("hooks", () => {
+  // A hook imports React and the platform only; an item or a block imports a hook from its
+  // install path, @/hooks/<name>, only when it declares the hook by mangacn URL
+  // (SPEC-components-4 §7).
+  const root = mkdtempSync(path.join(tmpdir(), "mangacn-hook-imports-"));
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+  const write = (file: string, lines: string[]) => {
+    mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    writeFileSync(path.join(root, file), `${lines.join("\n")}\n`);
+  };
+  const url = (name: string) => `https://www.mangacn.com/r/${name}.json`;
+  const hook = (name: string) => ({
+    name,
+    type: "registry:hook",
+    files: [{ path: `${name}.ts`, type: "registry:hook", target: `@hooks/${name}.ts` }],
+  });
+  write("registry/hooks/registry.json", [
+    JSON.stringify({ items: [hook("use-tilt"), hook("use-pan")] }),
+  ]);
+  write("registry.json", [
+    JSON.stringify({
+      include: ["registry/hooks/registry.json"],
+      items: [
+        {
+          name: "tilted",
+          type: "registry:component",
+          registryDependencies: [url("use-tilt")],
+          files: [{ path: "tilted.tsx", type: "registry:component" }],
+        },
+        {
+          name: "bare",
+          type: "registry:component",
+          registryDependencies: ["use-tilt"],
+          files: [{ path: "bare.tsx", type: "registry:component" }],
+        },
+        {
+          name: "shelf",
+          type: "registry:block",
+          registryDependencies: [url("use-tilt")],
+          files: [
+            {
+              path: "registry/blocks/shelf/shelf.tsx",
+              type: "registry:block",
+              target: "@components/blocks/shelf/shelf.tsx",
+            },
+          ],
+        },
+      ],
+    }),
+  ]);
+  write("registry/hooks/use-tilt.ts", [
+    'import * as React from "react";',
+    'import { flushSync } from "react-dom";',
+    'import { cn } from "@/lib/utils";',
+    'import { usePan } from "@/hooks/use-pan";',
+    'import { InkFrame } from "@/components/ink-frame";',
+    'import { clamp } from "./clamp";',
+    'import { motion } from "motion/react";',
+  ]);
+  write("registry/hooks/use-pan.ts", ['import { useState } from "react";']);
+  write("tilted.tsx", ['import { useTilt } from "@/hooks/use-tilt";']);
+  const both = [
+    'import { useTilt } from "@/hooks/use-tilt";',
+    'import { usePan } from "@/hooks/use-pan";',
+  ];
+  write("bare.tsx", both);
+  write("registry/blocks/shelf/shelf.tsx", both);
+  const registry = loadRegistry(path.join(root, "registry.json"));
+
+  it.each(["react", "react/jsx-runtime", "react-dom"])("a hook may import %s", (specifier) => {
+    expect(hookImportViolation(specifier)).toBeNull();
+  });
+
+  it.each(["@/lib/utils", "@/hooks/use-pan", "@/components/ink-frame", "./clamp", "cn", "node:fs"])(
+    "a hook may not import %s",
+    (specifier) => {
+      expect(hookImportViolation(specifier)).toBe(
+        "a hook imports React and the platform only (no registry item, package or other file)",
+      );
+    },
+  );
+
+  it("lets an item import a hook it declares by URL, not by bare name or undeclared", () => {
+    const file = "registry/ui/x/x.tsx";
+    const byUrl = { registryDependencies: [url("use-tilt")], files: [] };
+    const bare = { registryDependencies: ["use-tilt"], files: [] };
+    const reason = "hook import that is not a hook this item declares by mangacn URL";
+    expect(importViolation("@/hooks/use-tilt", byUrl, file)).toBeNull();
+    expect(importViolation("@/hooks/use-pan", byUrl, file)).toBe(reason);
+    expect(importViolation("@/hooks/use-tilt/extra", byUrl, file)).toBe(reason);
+    expect(importViolation("@/hooks/use-tilt", bare, file)).toBe(reason);
+  });
+
+  it("lets a block import a hook it declares by URL, through its install path", () => {
+    const catalog = new Map(registry.items.map((item) => [item.name, item]));
+    const shelf = catalog.get("shelf");
+    expect(shelf && [...blockImportPaths(shelf, catalog)]).toEqual(["@/hooks/use-tilt"]);
+  });
+
+  it("reports every forbidden import of hooks, items and blocks, and nothing allowed", () => {
+    expect(findImportViolations(registry, root).map((v) => [v.item, v.specifier, v.line])).toEqual([
+      ["bare", "@/hooks/use-tilt", 1],
+      ["bare", "@/hooks/use-pan", 2],
+      ["shelf", "@/hooks/use-pan", 2],
+      ["use-tilt", "@/lib/utils", 3],
+      ["use-tilt", "@/hooks/use-pan", 4],
+      ["use-tilt", "@/components/ink-frame", 5],
+      ["use-tilt", "./clamp", 6],
+      ["use-tilt", "motion/react", 7],
+    ]);
+  });
+
+  it("asks for the URL of every hook imported or declared by bare name", () => {
+    expect(findRegistryDependencyProblems(registry, root)).toEqual([
+      `bare: "use-tilt" resolves to shadcn's registry; declare ${url("use-tilt")}`,
+      `bare: imports use-tilt without declaring ${url("use-tilt")}`,
+      `bare: imports use-pan without declaring ${url("use-pan")}`,
+      `shelf: imports use-pan without declaring ${url("use-pan")}`,
+      `use-tilt: imports use-pan without declaring ${url("use-pan")}`,
+    ]);
   });
 });
 

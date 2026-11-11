@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "use-mobile",
+      "type": "registry:hook",
+      "title": "Use Mobile",
+      "description": "Stock hook useIsMobile: true below 768 px, following the viewport; sidebar reads it to become a sheet on phones.",
+      "categories": ["hook"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "files": [
+        {
+          "path": "use-mobile.ts",
+          "type": "registry:hook",
+          "target": "@hooks/use-mobile.ts"
+        }
+      ]
+    }
+  ]
+}

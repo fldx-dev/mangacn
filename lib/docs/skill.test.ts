@@ -23,10 +23,21 @@ describe("renderSkillCatalog", () => {
     }
   });
 
-  it("ends with the blocks under their own heading", () => {
-    const blocks = catalog.slice(catalog.indexOf("\n## Blocks\n"));
+  it("ends with the blocks, then the hooks, under their own headings", () => {
+    const at = catalog.indexOf("\n## Hooks\n");
+    const blocks = catalog.slice(catalog.indexOf("\n## Blocks\n"), at);
     expect(blocks).toContain("- `chapter-list`: ");
     expect(blocks.match(/^## /gm)).toHaveLength(1);
+    const hooks = catalog.slice(at);
+    expect(hooks.match(/^## /gm)).toHaveLength(1);
+    expect(hooks).toContain("A hook installs with the item that needs it");
+    expect(hooks).toContain(
+      [
+        "- `use-mobile`: Stock hook useIsMobile: true below 768 px, following the viewport; sidebar reads it to become a sheet on phones.",
+        "  Install: `npx shadcn@latest add @mangacn/use-mobile --overwrite`",
+        "  Docs: https://www.mangacn.com/r/use-mobile.json",
+      ].join("\n"),
+    );
   });
 
   it("starts with the generated header and the foundation, then categories in order", () => {

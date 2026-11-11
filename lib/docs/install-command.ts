@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { type LoadedRegistry, type LoadedRegistryItem, loadRegistry } from "@/lib/registry";
+import {
+  type LoadedRegistry,
+  type LoadedRegistryItem,
+  loadRegistry,
+  registryItemUrl,
+} from "@/lib/registry";
 import { clientNote, isClientItem } from "@/lib/registry/client";
 import { extractImports } from "@/lib/registry/imports";
 import { dependencyFiles, installTarget } from "@/lib/registry/install-target";
@@ -166,11 +171,12 @@ export function initCommand(manager: PackageManager): string {
 
 /**
  * The docs page for an item: a component's or a block's own page (`/docs/blocks/<name>`); the
- * theme is documented on the theming guide.
+ * theme is documented on the theming guide; a hook, which has no page, links its registry JSON.
  */
 export function docsUrl(name: string): string {
   const item = catalogItem(name);
   if (item.type === "registry:theme") return `${SITE_URL}/docs/theming`;
+  if (item.type === "registry:hook") return registryItemUrl(name);
   return `${SITE_URL}${itemPagePath(item) ?? `/docs/components/${name}`}`;
 }
 

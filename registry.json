@@ -5,6 +5,7 @@
   "include": [
     "registry/theme/registry.json",
     "registry/ui/registry.json",
-    "registry/blocks/registry.json"
+    "registry/blocks/registry.json",
+    "registry/hooks/registry.json"
   ]
 }

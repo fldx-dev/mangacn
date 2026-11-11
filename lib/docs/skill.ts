@@ -1,5 +1,6 @@
 import type { LoadedRegistry, LoadedRegistryItem } from "@/lib/registry";
 import { registryItemUrl } from "@/lib/registry";
+import { HOOKS_CATALOG } from "@/lib/registry/hooks";
 import {
   BLOCKS_CATALOG,
   CATEGORY_LABELS,
@@ -52,8 +53,9 @@ function entry(name: string, description: string, docs: string): string[] {
 
 /**
  * `skills/mangacn/references/catalog.md`: every registry item, the theme catalog first, then
- * the component catalog under `CATEGORIES` headings, then the blocks under "Blocks", each with
- * its one-line description, the npm install command and its docs URL.
+ * the component catalog under `CATEGORIES` headings, then the blocks under "Blocks", then the
+ * hooks under "Hooks", each with its one-line description, the npm install command and its docs
+ * URL (a hook's registry JSON: it has no page).
  */
 export function renderSkillCatalog(
   registry: LoadedRegistry,
@@ -69,7 +71,9 @@ export function renderSkillCatalog(
     .sort((a, b) => FOUNDATION_ORDER.indexOf(a.name) - FOUNDATION_ORDER.indexOf(b.name));
   // Blocks carry the one category `block`, so they group under "Blocks" after the components.
   const components = [...docItems(registry, demos), ...docItems(registry, demos, BLOCKS_CATALOG)];
-  const count = foundation.length + components.length;
+  // Hooks have no demos and no page, so they come from their catalog, not from docItems.
+  const hooks = registry.items.filter((item) => item.source === HOOKS_CATALOG);
+  const count = foundation.length + components.length + hooks.length;
 
   const lines = [
     SKILL_CATALOG_HEADER,
@@ -96,6 +100,21 @@ export function renderSkillCatalog(
   for (const [category, group] of groupByCategory(components)) {
     lines.push("", `## ${CATEGORY_LABELS[category]}`, "");
     for (const item of group) lines.push(...entry(item.name, item.description, docsUrl(item.name)));
+  }
+
+  if (hooks.length > 0) {
+    lines.push(
+      "",
+      `## ${CATEGORY_LABELS.hook}`,
+      "",
+      "A hook installs with the item that needs it: that item declares it by URL, so its one add",
+      "writes the hook to the project's hooks folder (`hooks/<name>.ts`) and the item imports it from",
+      "`@/hooks/<name>`. Add a hook alone only to call it from your own components.",
+      "",
+    );
+    for (const item of hooks) {
+      lines.push(...entry(item.name, item.description ?? "", docsUrl(item.name)));
+    }
   }
 
   return `${lines.join("\n")}\n`;

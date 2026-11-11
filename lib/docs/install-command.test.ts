@@ -165,6 +165,10 @@ describe("promptFor", () => {
     );
   });
 
+  it("points a hook, which has no page, at its registry JSON", () => {
+    expect(docsUrl("use-mobile")).toBe("https://www.mangacn.com/r/use-mobile.json");
+  });
+
   it("points the theme at the theming guide", () => {
     expect(docsUrl("theme")).toBe("https://www.mangacn.com/docs/theming");
     expect(promptFor("theme")).toContain(
