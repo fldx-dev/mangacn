@@ -3,6 +3,7 @@ import type { ComponentProps } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
+import InAFieldDemo from "./demos/in-a-field";
 import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "./native-select";
 
 afterEach(() => {
@@ -85,6 +86,13 @@ describe("NativeSelect", () => {
     render(<Genres />);
     observers.drawAll(192, 32);
     expect(slot("ink-frame")?.dataset.inked).toBe("true");
+  });
+
+  it("takes its name from a field's FieldLabel and its description from the hint", () => {
+    render(<InAFieldDemo />);
+    const select = screen.getByRole("combobox", { name: "Release schedule" });
+    expect(select.getAttribute("aria-describedby")).toBe("native-select-demo-schedule-hint");
+    expect(select.closest('[data-slot="field"]')).toBeTruthy();
   });
 
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));

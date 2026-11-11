@@ -39,6 +39,13 @@ export interface StampProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 
   "aria-label"?: string;
   /** Same seed, same wobble. Defaults to a stable hash of `useId()`. */
   seed?: number;
+  /**
+   * Sets the word top to bottom in one column, as a two-kanji hanko is cut (完結, 検印), in a
+   * larger face that fills the seal; it still shrinks to fit inside the ring. Meant for one to
+   * three CJK characters (the column is `vertical-rl`, upright).
+   * @default false
+   */
+  vertical?: boolean;
 }
 
 /** The seal's box in pixels and its classes (box and text size). */
@@ -46,6 +53,13 @@ const SIZES: Record<StampSize, { box: number; className: string }> = {
   sm: { box: 56, className: "size-14 text-xs" },
   md: { box: 80, className: "size-20 text-lg" },
   lg: { box: 112, className: "size-28 text-2xl" },
+};
+
+/** The text size of a vertical word: one column of two characters fills the seal. */
+const VERTICAL_TEXT: Record<StampSize, string> = {
+  sm: "text-base",
+  md: "text-2xl",
+  lg: "text-4xl",
 };
 
 /** Room between the box and the outer stroke, for the wobble and the round caps. */
@@ -154,6 +168,7 @@ export function Stamp({
   rotate = -8,
   size = "md",
   seed,
+  vertical = false,
   "aria-label": label,
   className,
   style,
@@ -215,6 +230,7 @@ export function Stamp({
       data-size={size}
       data-inked={pen ? "true" : undefined}
       data-fit={fit < 1 ? fit : undefined}
+      data-vertical={vertical ? "true" : undefined}
       className={cn(
         // Slightly uneven ink: the whole seal at 90 %.
         // One track the seal's size, so a word wider than the seal overflows it from the centre.
@@ -275,7 +291,13 @@ export function Stamp({
       <span
         ref={textRef}
         data-slot="stamp-text"
-        className="relative max-w-[72%] min-w-min [place-self:unsafe_center] text-center leading-none text-balance break-keep"
+        className={cn(
+          "relative max-w-[72%] min-w-min [place-self:unsafe_center] text-center leading-none text-balance break-keep",
+          vertical && [
+            "[text-orientation:upright] [writing-mode:vertical-rl]",
+            VERTICAL_TEXT[size],
+          ],
+        )}
         style={fit < 1 ? { scale: String(fit) } : undefined}
       >
         {children}

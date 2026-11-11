@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
+import WithLabelDemo from "./demos/with-label";
 import {
   InputGroup,
   InputGroupAddon,
@@ -149,6 +150,12 @@ describe("InputGroup", () => {
     for (const rule of group.querySelectorAll<HTMLElement>('[data-shape="line"]')) {
       expect(rule.dataset.inked).toBe("true");
     }
+  });
+
+  it("names its input from a visible label", () => {
+    render(<WithLabelDemo />);
+    const input = screen.getByRole("textbox", { name: "Artist handle" });
+    expect(input.closest('[data-slot="input-group"]')).toBeTruthy();
   });
 
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));

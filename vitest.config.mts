@@ -144,7 +144,12 @@ export default defineConfig({
     // CI runners are quiet, so they keep the default.
     ...(process.env.CI ? {} : { maxWorkers: "50%" }),
     setupFiles: ["./vitest.setup.ts"],
-    include: ["registry/**/*.test.{ts,tsx}", "lib/**/*.test.ts", "components/**/*.test.{ts,tsx}"],
+    include: [
+      "registry/**/*.test.{ts,tsx}",
+      "lib/**/*.test.ts",
+      "components/**/*.test.{ts,tsx}",
+      "app/**/*.test.{ts,tsx}",
+    ],
     coverage: {
       enabled: true,
       provider: "v8",
