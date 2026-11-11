@@ -169,6 +169,16 @@ describe("SpreadViewer", () => {
     expect(help?.querySelectorAll('[data-slot="kbd"]')).toHaveLength(4);
   });
 
+  it("hides the key help for a coarse pointer and shows it otherwise", () => {
+    render(<SpreadViewer pages={pages} label="Chapter 1" />);
+    const help = region().querySelector('[data-slot="spread-viewer-help"]') as HTMLElement;
+    // The class is Tailwind's `@media (pointer: coarse)` variant; nothing hides it otherwise.
+    expect(help.classList.contains("pointer-coarse:hidden")).toBe(true);
+    expect([...help.classList].filter((name) => name.endsWith("hidden"))).toEqual([
+      "pointer-coarse:hidden",
+    ]);
+  });
+
   it("turns one page at a time with single", async () => {
     render(<SpreadViewer pages={pages} single start={4} label="Chapter 1" />);
     expect(region().dataset.single).toBe("true");

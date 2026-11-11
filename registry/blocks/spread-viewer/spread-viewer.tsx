@@ -242,7 +242,8 @@ export function SpreadViewer({
         {leftIsNext ? nextButton : previousButton}
         <p
           data-slot="spread-viewer-help"
-          className="order-last basis-full text-center text-xs text-muted-foreground @2xl:order-none @2xl:basis-auto"
+          // Keys mean nothing on a touch screen: hidden for a coarse pointer, shown otherwise.
+          className="order-last basis-full text-center text-xs text-muted-foreground pointer-coarse:hidden @2xl:order-none @2xl:basis-auto"
         >
           {arrow(spread.nextKey)} next, {arrow(spread.previousKey)} previous, <Kbd>Home</Kbd>{" "}
           <Kbd>End</Kbd> first and last
