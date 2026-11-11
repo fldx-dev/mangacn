@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { isBlock } from "./blocks";
+import { HOOKS_CATALOG, isHook } from "./hooks";
 import {
   type LoadedRegistry,
   type LoadedRegistryItem,
@@ -108,10 +109,10 @@ function aliasedItemName(specifier: string): string | null {
 /**
  * Why `specifier` may not appear in a file shipped by `item`, or `null` when it is allowed.
  * Allowed (SPEC-registry-core §6.5): `react`, `react-dom`, packages in the item's
- * `dependencies`, `@/lib/utils`, and `@/components/ui/<x>` (or the lib/component/hook alias)
+ * `dependencies`, `@/lib/utils`, and `@/components/ui/<x>` (or the lib or component alias)
  * where `x` is in the item's `registryDependencies`, as a bare stock name or a
- * `https://www.mangacn.com/r/<x>.json` URL; relative imports only to another file of the same
- * item.
+ * `https://www.mangacn.com/r/<x>.json` URL; `@/hooks/<x>` only by that URL (SPEC-components-4
+ * §7); relative imports only to another file of the same item.
  */
 export function importViolation(
   specifier: string,
@@ -122,6 +123,15 @@ export function importViolation(
     const target = path.posix.normalize(path.posix.join(path.posix.dirname(file), specifier));
     const own = item.files.some((entry) => entry.path.replace(/\.[jt]sx?$/, "") === target);
     return own ? null : "relative import outside this item (declare a registryDependency)";
+  }
+
+  if (specifier.startsWith("@/hooks/")) {
+    // A hook is mangacn's by URL only: a bare `use-mobile` would install shadcn's own copy.
+    const name = aliasedItemName(specifier);
+    const byUrl = (item.registryDependencies ?? []).some((dep) => mangacnItemName(dep) === name);
+    return name && byUrl
+      ? null
+      : "hook import that is not a hook this item declares by mangacn URL";
   }
 
   if (specifier.startsWith("@/")) {
@@ -183,8 +193,22 @@ export function blockImportViolation(
 }
 
 /**
+ * Why `specifier` may not appear in a hook's file (SPEC-components-4 §7), or `null`: a hook
+ * imports React and the platform only. No registry item (it sits below every item), no package,
+ * no `@/lib/utils`, no other file.
+ */
+export function hookImportViolation(specifier: string): string | null {
+  const local = specifier.startsWith(".") || specifier.startsWith("@/");
+  const pkg = local ? null : packageName(specifier);
+  return pkg === "react" || pkg === "react-dom"
+    ? null
+    : "a hook imports React and the platform only (no registry item, package or other file)";
+}
+
+/**
  * Checks every file in every item's `files[]` against the allow-list: `importViolation` for
- * items, `blockImportViolation` (stricter) for blocks.
+ * items, `blockImportViolation` (stricter) for blocks, `hookImportViolation` (React only) for
+ * hooks and anything else in the hook catalog.
  */
 export function findImportViolations(
   registry: LoadedRegistry,
@@ -193,13 +217,16 @@ export function findImportViolations(
   const catalog = new Map(registry.items.map((item) => [item.name, item]));
   const violations: ImportViolation[] = [];
   for (const item of registry.items) {
+    const hook = isHook(item) || item.source === HOOKS_CATALOG;
     const allowed = isBlock(item) ? blockImportPaths(item, catalog) : undefined;
     for (const entry of item.files) {
       const source = readFileSync(path.resolve(rootDir, entry.path), "utf8");
       for (const { specifier, line } of extractImports(source)) {
-        const reason = allowed
-          ? blockImportViolation(specifier, item, entry.path, allowed)
-          : importViolation(specifier, item, entry.path);
+        const reason = hook
+          ? hookImportViolation(specifier)
+          : allowed
+            ? blockImportViolation(specifier, item, entry.path, allowed)
+            : importViolation(specifier, item, entry.path);
         if (reason) violations.push({ item: item.name, file: entry.path, specifier, line, reason });
       }
     }

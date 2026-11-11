@@ -13,7 +13,8 @@
  *                       lib/registry changed, and adds the Installation page's first
  *                       install (theme, ink-frame, speech-bubble) when
  *                       lib/docs/install-command.ts changed
- * Blocks (`registry:block`) must leave every file of their `files[]` at its target.
+ * Blocks (`registry:block`) and hooks (`registry:hook`, in `hooks/`) must leave every file of
+ * their `files[]` at its target; `--changed` selects a hook when `registry/hooks/<name>.*` changed.
  * The stock pre-install + overwrite check runs only when button, card and dialog are all
  * in the set. Each one-command check (a fresh project per command, ONE_COMMANDS) runs with
  * every item, or when the set names all of its items (`--only=pagination`).
@@ -62,14 +63,19 @@ interface CatalogItem {
   files?: { path: string; type: string; target?: string }[];
 }
 
+/** Item types whose every file is checked at its install target after the adds. */
+const LANDING_TYPES = ["registry:block", "registry:hook"];
+
 /**
- * Every file a block lists in `files[]` must land at its target (`@components/blocks/<name>/<file>`
- * → `components/blocks/<name>/<file>`): a block ships several files, and a missing target makes
- * the CLI flatten them into `components/` (SPEC-components-3 §3, §7).
+ * Every file a block or a hook lists in `files[]` must land at its target: a block's
+ * `@components/blocks/<name>/<file>` → `components/blocks/<name>/<file>` (a block ships several
+ * files, and a missing target makes the CLI flatten them into `components/`, SPEC-components-3
+ * §3, §7); a hook's `@hooks/<name>.ts` → `hooks/<name>.ts`, where the items that declare it
+ * import it from (SPEC-components-4 §4).
  */
-function blockFileProblems(project: string, items: CatalogItem[]): string[] {
+function landingProblems(project: string, items: CatalogItem[]): string[] {
   return items
-    .filter((item) => item.type === "registry:block")
+    .filter((item) => LANDING_TYPES.includes(item.type ?? ""))
     .flatMap((item) =>
       (item.files ?? [])
         .map(installTarget)
@@ -189,6 +195,14 @@ const EXPECTED_CONTENT: Record<
   ],
   "page-number": [
     { file: "components/page-number.tsx", includes: ["export function PageNumber("] },
+  ],
+  // Hooks: registry:hook with `target: "@hooks/<name>.ts"`, stock source with the header.
+  "use-mobile": [
+    {
+      file: "hooks/use-mobile.ts",
+      attribution: attribution("use-mobile"),
+      includes: ["export function useIsMobile("],
+    },
   ],
 };
 
@@ -311,7 +325,10 @@ function changedItems(listed: string[]): string[] | undefined {
     if (posix === "lib/docs/install-command.ts") {
       for (const name of SETUP_ITEMS) items.add(name);
     }
-    const match = /^registry\/[^/]+\/([^/]+)\//.exec(posix);
+    // An item's folder (registry/ui/<name>/…), or a hook's file (registry/hooks/<name>.ts and
+    // its test), since a hook has no folder of its own.
+    const match =
+      /^registry\/[^/]+\/([^/]+)\//.exec(posix) ?? /^registry\/hooks\/([^/.]+)\./.exec(posix);
     if (match && listed.includes(match[1])) items.add(match[1]);
   }
   return [...items];
@@ -816,7 +833,7 @@ async function main() {
     }
 
     console.log("→ installed content");
-    const missing = [...contentProblems(project, names), ...blockFileProblems(project, items)];
+    const missing = [...contentProblems(project, names), ...landingProblems(project, items)];
     if (missing.length > 0) {
       throw new SmokeError(`Installed content check failed:\n  ${missing.join("\n  ")}`);
     }
