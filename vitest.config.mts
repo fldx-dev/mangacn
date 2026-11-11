@@ -136,6 +136,19 @@ export default defineConfig({
           new URL("./registry/ui/aspect-ratio/aspect-ratio.tsx", import.meta.url),
         ),
       },
+      // reader (Task 95): its items, and the blocks it composes at their install paths.
+      {
+        find: /^@\/components\/ui\/drawer$/,
+        replacement: fileURLToPath(new URL("./registry/ui/drawer/drawer.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/progress$/,
+        replacement: fileURLToPath(new URL("./registry/ui/progress/progress.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/blocks\/(.+)$/,
+        replacement: `${fileURLToPath(new URL("./registry/blocks/", import.meta.url))}$1`,
+      },
       { find: "@", replacement: fileURLToPath(new URL("./", import.meta.url)) },
     ],
   },

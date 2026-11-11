@@ -111,6 +111,37 @@
           "target": "@components/blocks/volume-grid/volume-grid.tsx"
         }
       ]
+    },
+    {
+      "name": "reader",
+      "type": "registry:block",
+      "title": "Reader",
+      "description": "A chapter page: the spread viewer, a drawer with the series' chapter list, progress as text, the page kept in the address through use-reader; made of two blocks.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/spread-viewer.json",
+        "https://www.mangacn.com/r/chapter-list.json",
+        "https://www.mangacn.com/r/drawer.json",
+        "https://www.mangacn.com/r/progress.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/kbd.json"
+      ],
+      "files": [
+        {
+          "path": "reader/reader.tsx",
+          "type": "registry:block",
+          "target": "@components/blocks/reader/reader.tsx"
+        },
+        {
+          "path": "reader/use-reader.ts",
+          "type": "registry:block",
+          "target": "@components/blocks/reader/use-reader.ts"
+        }
+      ]
     }
   ]
 }

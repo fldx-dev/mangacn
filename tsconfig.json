@@ -43,6 +43,9 @@
       "@/components/ui/card": ["./registry/ui/card/card.tsx"],
       "@/components/panel-grid": ["./registry/ui/panel-grid/panel-grid.tsx"],
       "@/components/ui/aspect-ratio": ["./registry/ui/aspect-ratio/aspect-ratio.tsx"],
+      "@/components/ui/drawer": ["./registry/ui/drawer/drawer.tsx"],
+      "@/components/ui/progress": ["./registry/ui/progress/progress.tsx"],
+      "@/components/blocks/*": ["./registry/blocks/*"],
       "@/*": ["./*"]
     }
   },

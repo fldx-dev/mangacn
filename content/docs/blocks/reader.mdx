@@ -1,0 +1,62 @@
+---
+title: Reader
+description: "A chapter page: the spread viewer, a drawer with the series' chapter list, progress as text, the page kept in the address through use-reader; made of two blocks."
+item: reader
+---
+
+<InstallCommand item="reader" />
+
+<ItemFiles item="reader" />
+
+<CopyPrompt item="reader" />
+
+A chapter page in one block: the series and chapter, the pages as a two-page spread, how far the reader is, and a drawer with every chapter of the series. Put it on each chapter's page, with [Volume Grid](/docs/blocks/volume-grid) and [Chapter List](/docs/blocks/chapter-list) on the series page.
+
+It is the first block made of blocks: it composes [Spread Viewer](/docs/blocks/spread-viewer) and [Chapter List](/docs/blocks/chapter-list), declared by URL like any item, with drawer, progress, button and kbd, and draws nothing of its own. The header holds the series and the chapter's number and title, with a Chapters button that opens a drawer from the bottom edge; the drawer lists the series' chapters with chapter-list and says where you are. Under the spread a progress bar fills up through the chapter. `direction` and `single` go to the spread viewer as they are.
+
+The reader is the page's one `main` region by default, named by its heading; inside a page that already has a main (as these demos do, on a docs page), pass `as="section"` and it becomes a region with an `h2`. Only the spread takes the arrow keys, and only while it has focus: the header, the drawer and the rest of the page keep theirs. The progress bar's value text is the same words it shows, "Page 5 of 24", counting the last page on screen. The drawer is drawer's dialog: it traps focus while open, closes on Escape, and returns focus to the Chapters button.
+
+## Examples
+
+A chapter opened at pages 4 and 5, right to left. The address follows the page: turn it and `?page=` changes, reload and the reader opens where you were (on this page it is this page's own address).
+
+<DemoFrame item="reader" demo="default" />
+
+`direction="ltr"` reads like a western comic, the earlier page on the left and the Right arrow reading on.
+
+<DemoFrame item="reader" demo="ltr" />
+
+`single` shows one page at a time for phones; pass it from a media query in your app. The reader keeps the same page when it changes.
+
+<DemoFrame item="reader" demo="single" />
+
+## The page in the address
+
+`useReader`, from `use-reader.ts` (also re-exported by the entry file), holds the reader's page. Give it `url` with a `read` and a `write` and it keeps the page in `?page=` (from 1), reading it once after the page has hydrated and writing every turn, other parameters kept. The block never touches `window` or a router itself: you wire them.
+
+```tsx
+"use client";
+
+const reader = useReader({
+  count: pages.length,
+  url: {
+    read: () => window.location.search,
+    // Next.js picks replaceState up: usePathname and useSearchParams follow.
+    write: (search) => window.history.replaceState(window.history.state, "", search),
+  },
+});
+
+<Reader {...chapterProps} page={reader.page} onPageChange={reader.setPage} />;
+```
+
+Without `url` the hook keeps the page in state; without `page` the reader keeps its own. `readPageParam`, `writePageParam` and `readerProgress` are exported for a router of your own.
+
+## Props
+
+<PropsTable item="reader" />
+
+### ReaderChapter
+
+The `chapter`. `pages` takes spread-viewer's [SpreadPage](/docs/blocks/spread-viewer#spreadpage) and `chapters` chapter-list's [Chapter](/docs/blocks/chapter-list#chapter).
+
+<PropsTable item="reader" name="ReaderChapter" />

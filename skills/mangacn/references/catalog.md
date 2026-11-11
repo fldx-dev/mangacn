@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 77 items in the registry. Each line gives the item's name, what it is, the one
+All 78 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -271,6 +271,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `volume-grid`: A series' volumes as covers: 2:3 ink frames on a panel grid, a folio for each volume number, NEW stamps; Latin or Japanese numerals, lazy covers below the first row.
   Install: `npx shadcn@latest add @mangacn/volume-grid --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/volume-grid (Markdown: https://www.mangacn.com/docs/blocks/volume-grid.md)
+- `reader`: A chapter page: the spread viewer, a drawer with the series' chapter list, progress as text, the page kept in the address through use-reader; made of two blocks.
+  Install: `npx shadcn@latest add @mangacn/reader --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/reader (Markdown: https://www.mangacn.com/docs/blocks/reader.md)
 
 ## Hooks
 
