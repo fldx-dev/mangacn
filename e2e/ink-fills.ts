@@ -14,8 +14,9 @@ import type { Page } from "@playwright/test";
  * The custom properties resolve where the drawing read them, so a host's `--ink` or `--paper`
  * override still applies. `data-inked` stays, so no host falls back to its pre-drawing styles
  * (the destructive button's fallback is a tint; drawn, it fills with paper). A `hatch` fill is
- * a pattern and stays drawn: axe reports text over it as unmeasurable, which it is. Call it
- * after every other check: the page no longer looks as it was shot.
+ * a pattern and stays drawn: axe reports text over it as unmeasurable, which it is. Transitions
+ * are off on each painted box, so axe reads the settled colour. Call it after every other
+ * check: the page no longer looks as it was shot.
  */
 export async function paintInkFillsAsCss(page: Page): Promise<void> {
   await page.evaluate(() => {
@@ -34,6 +35,9 @@ export async function paintInkFillsAsCss(page: Page): Promise<void> {
       const layer = frame.children.length === 1 && !frame.textContent?.trim();
       const box = layer ? frame.parentElement : frame;
       if (layer) frame.style.display = "none";
+      // In the same style change, so a host that transitions its background (a badge) does not
+      // fade in from transparent while axe reads it.
+      box?.style.setProperty("transition", "none", "important");
       box?.style.setProperty("background-color", color, "important");
     }
   });
