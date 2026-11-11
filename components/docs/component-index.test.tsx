@@ -31,7 +31,8 @@ const CARDS = docItems(loadRegistry(), listDemos()).length;
 
 // Every test renders every default demo in jsdom; the first import of them is slow on a busy
 // machine.
-vi.setConfig({ testTimeout: 30_000 });
+// 30 s was not enough with 76 cards while other work shared the machine (33 s, 2026-11-12).
+vi.setConfig({ testTimeout: 120_000 });
 
 describe("ComponentIndex", () => {
   it("groups every item under the eight categories in spec order", async () => {
