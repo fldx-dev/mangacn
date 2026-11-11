@@ -104,6 +104,29 @@ describe("SpreadViewer", () => {
     expect(region().querySelector('[data-slot="spread-viewer-blank"]')).toBeTruthy();
   });
 
+  it("fills the side facing a lone page with blank, plain paper by default", async () => {
+    render(
+      <SpreadViewer
+        pages={pages}
+        label="Chapter 1"
+        blank={<div data-testid="halftone" className="bg-halftone" />}
+      />,
+    );
+    await sides();
+    const blank = region().querySelector('[data-slot="spread-viewer-blank"]');
+    expect(blank?.closest('[data-side="right"]')).toBeTruthy();
+    expect(within(blank as HTMLElement).getByTestId("halftone")).toBeTruthy();
+    // The blank keeps the page's box, so the spread stays two pages wide.
+    expect(blank?.classList.contains("aspect-3/4")).toBe(true);
+    // A full spread has no blank side, so the fill is not rendered.
+    fireEvent.keyDown(region(), { key: "ArrowLeft" });
+    await sides();
+    expect(screen.queryByTestId("halftone")).toBeNull();
+    cleanup();
+    render(<SpreadViewer pages={pages} label="Chapter 1" />);
+    expect(region().querySelector('[data-slot="spread-viewer-blank"]')?.childElementCount).toBe(0);
+  });
+
   it("pages with the arrow keys in reading order, Home and End, and announces it", async () => {
     const onChange = vi.fn();
     render(<SpreadViewer pages={pages} start={3} onChange={onChange} label="Chapter 1" />);

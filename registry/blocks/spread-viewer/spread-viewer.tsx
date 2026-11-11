@@ -65,6 +65,12 @@ export interface SpreadViewerProps
    */
   single?: boolean;
   /**
+   * What fills the side facing a lone page (the first page, an even last page): a halftone, the
+   * inside of the cover. It fills a 3:4 box beside the page.
+   * @default plain paper
+   */
+  blank?: React.ReactNode;
+  /**
    * The region's name, which says what is being read ("Chapter 12").
    * @default "Pages"
    */
@@ -90,6 +96,7 @@ export function SpreadViewer({
   page,
   onPageChange,
   single = false,
+  blank,
   label = "Pages",
   className,
   onKeyDown,
@@ -201,7 +208,9 @@ export function SpreadViewer({
                 duration={reduce ? 0 : 0.5}
               >
                 {index === null ? (
-                  <div data-slot="spread-viewer-blank" className="aspect-3/4 w-full" />
+                  <div data-slot="spread-viewer-blank" className="grid aspect-3/4 w-full">
+                    {blank}
+                  </div>
                 ) : (
                   <MangaFrame
                     src={pages[index].src}

@@ -1573,6 +1573,20 @@
             "deprecated": false
           },
           {
+            "name": "blank",
+            "description": "What fills the side facing a lone page (the first page, an even last page): a halftone, the\ninside of the cover. It fills a 3:4 box beside the page.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "plain paper"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
             "name": "label",
             "description": "The region's name, which says what is being read (\"Chapter 12\").",
             "type": "string | undefined",
