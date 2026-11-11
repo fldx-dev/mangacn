@@ -1,0 +1,47 @@
+---
+title: Character Card
+description: "Cast entry: portrait in an ink frame with a status stamp, the name with its reading as ruby, role, a line of dialogue and stats as power gauges, on a card."
+item: character-card
+---
+
+<InstallCommand item="character-card" />
+
+<ItemFiles item="character-card" />
+
+<CopyPrompt item="character-card" />
+
+A cast entry for a series page: the character's portrait, name and reading, role, a line they say and their stats, on one card. Use one per character on a cast page, and link each to the character's own page with `href`.
+
+It is a server component that composes card, manga-frame, caption-box, speech-bubble, power-gauge and stamp and draws nothing of its own. The portrait sits in a 3:4 manga-frame with the `status` word stamped on its top corner; the name is in the display face, with `reading` set as ruby over it under `lang="ja"`; the role is in a caption box, the quote in a speech bubble whose tail points back at the speaker, and each stat is a segmented power gauge. The card is a container: wider than 24 rem it puts the portrait beside the text, narrower it stacks them, whatever the viewport.
+
+The card is an `article` named by `name` (the reading is not part of the name). The stats are a description list whose values are text ("80 of 100"), so they never rest on the gauges, which draw the same label and value for the eye and are hidden from assistive technology. With `href` the name is one link whose hit area covers the card, and the card shows a focus ring when it is focused. The `role` prop is the character's part in the story, not an ARIA role: the card is always an article.
+
+## Examples
+
+A lead character with every part: a role, a line, three stats and a MAIN stamp, the whole card a link.
+
+<DemoFrame item="character-card" demo="default" />
+
+With `lang="ja"` on the card (it passes through to the `<article>`), the name, role, line and stamp are Japanese; `reading` sets あまの みお as ruby over 天野 ミオ.
+
+<DemoFrame item="character-card" demo="japanese" />
+
+A cast page lays narrow cards side by side, with only a name, a role and a portrait each; the parts a card is not given are left out.
+
+<DemoFrame item="character-card" demo="cast" />
+
+## Props
+
+<PropsTable item="character-card" />
+
+### CharacterPortrait
+
+The `portrait`.
+
+<PropsTable item="character-card" name="CharacterPortrait" />
+
+### CharacterStat
+
+One entry of `stats`.
+
+<PropsTable item="character-card" name="CharacterStat" />

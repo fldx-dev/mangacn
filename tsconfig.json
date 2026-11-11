@@ -38,6 +38,11 @@
       "@/components/stamp": ["./registry/ui/stamp/stamp.tsx"],
       "@/components/emanata": ["./registry/ui/emanata/emanata.tsx"],
       "@/hooks/use-mobile": ["./registry/hooks/use-mobile.ts"],
+      "@/components/speech-bubble": ["./registry/ui/speech-bubble/speech-bubble.tsx"],
+      "@/components/power-gauge": ["./registry/ui/power-gauge/power-gauge.tsx"],
+      "@/components/ui/card": ["./registry/ui/card/card.tsx"],
+      "@/components/panel-grid": ["./registry/ui/panel-grid/panel-grid.tsx"],
+      "@/components/ui/aspect-ratio": ["./registry/ui/aspect-ratio/aspect-ratio.tsx"],
       "@/*": ["./*"]
     }
   },

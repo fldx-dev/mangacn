@@ -60,6 +60,57 @@
           "target": "@components/blocks/spread-viewer/use-spread.ts"
         }
       ]
+    },
+    {
+      "name": "character-card",
+      "type": "registry:block",
+      "title": "Character Card",
+      "description": "Cast entry: portrait in an ink frame with a status stamp, the name with its reading as ruby, role, a line of dialogue and stats as power gauges, on a card.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/caption-box.json",
+        "https://www.mangacn.com/r/speech-bubble.json",
+        "https://www.mangacn.com/r/power-gauge.json",
+        "https://www.mangacn.com/r/stamp.json"
+      ],
+      "files": [
+        {
+          "path": "character-card/character-card.tsx",
+          "type": "registry:block",
+          "target": "@components/blocks/character-card/character-card.tsx"
+        }
+      ]
+    },
+    {
+      "name": "volume-grid",
+      "type": "registry:block",
+      "title": "Volume Grid",
+      "description": "A series' volumes as covers: 2:3 ink frames on a panel grid, a folio for each volume number, NEW stamps; Latin or Japanese numerals, lazy covers below the first row.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/panel-grid.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/aspect-ratio.json",
+        "https://www.mangacn.com/r/page-number.json",
+        "https://www.mangacn.com/r/stamp.json"
+      ],
+      "files": [
+        {
+          "path": "volume-grid/volume-grid.tsx",
+          "type": "registry:block",
+          "target": "@components/blocks/volume-grid/volume-grid.tsx"
+        }
+      ]
     }
   ]
 }

@@ -107,6 +107,35 @@ export default defineConfig({
         find: /^@\/hooks\/use-mobile$/,
         replacement: fileURLToPath(new URL("./registry/hooks/use-mobile.ts", import.meta.url)),
       },
+      // character-card and volume-grid (Task 94).
+      {
+        find: /^@\/components\/speech-bubble$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/speech-bubble/speech-bubble.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/power-gauge$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/power-gauge/power-gauge.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/card$/,
+        replacement: fileURLToPath(new URL("./registry/ui/card/card.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/panel-grid$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/panel-grid/panel-grid.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/aspect-ratio$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/aspect-ratio/aspect-ratio.tsx", import.meta.url),
+        ),
+      },
       { find: "@", replacement: fileURLToPath(new URL("./", import.meta.url)) },
     ],
   },

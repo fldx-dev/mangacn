@@ -189,6 +189,156 @@
       }
     ]
   },
+  "character-card": {
+    "CharacterCardProps": [
+      {
+        "id": "character-card.tsx-CharacterCardProps",
+        "name": "CharacterCardProps",
+        "entries": [
+          {
+            "name": "name",
+            "description": "The character's name: the card's heading and the article's name.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "reading",
+            "description": "How the name is read, set as ruby over it under `lang=\"ja\"` (あまの みお).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "role",
+            "description": "The character's part in the story (\"Lead · Lantern keeper\"), in a caption box. Not the ARIA\nrole: the card is always an `article`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "portrait",
+            "description": "The portrait, in a 3:4 manga-frame.",
+            "type": "CharacterPortrait",
+            "simplifiedType": "CharacterPortrait",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "quote",
+            "description": "A line the character says, in a speech bubble.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "stats",
+            "description": "Stats as power gauges, listed in a description list with each value as text.",
+            "type": "CharacterStat[] | undefined",
+            "simplifiedType": "CharacterStat[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "status",
+            "description": "One stamp word pressed on the portrait's top corner (MAIN, 新人).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "href",
+            "description": "Makes the whole card one link to the character's page, named by the name.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "CharacterPortrait": [
+      {
+        "id": "character-card.tsx-CharacterPortrait",
+        "name": "CharacterPortrait",
+        "description": "The character's picture.",
+        "entries": [
+          {
+            "name": "src",
+            "description": "The picture's URL, passed to a plain `<img>`.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "alt",
+            "description": "Who is shown and how, for readers who cannot see it.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "CharacterStat": [
+      {
+        "id": "character-card.tsx-CharacterStat",
+        "name": "CharacterStat",
+        "description": "One stat, drawn as a power gauge and given as text.",
+        "entries": [
+          {
+            "name": "label",
+            "description": "What is measured (\"Speed\").",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "value",
+            "description": "The stat's value.",
+            "type": "number",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "max",
+            "description": "The value of a full gauge.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "100"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "emanata": {
     "EmanataProps": [
       {
@@ -1769,6 +1919,157 @@
               {
                 "name": "default",
                 "text": "\"mixed\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "volume-grid": {
+    "Volume": [
+      {
+        "id": "volume-grid.tsx-Volume",
+        "name": "Volume",
+        "description": "One volume of the series.",
+        "entries": [
+          {
+            "name": "number",
+            "description": "The volume's number, shown as its folio and in its name (\"Volume 3\", 第3巻).",
+            "type": "number",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "title",
+            "description": "The volume's title.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "cover",
+            "description": "The cover, in a 2:3 manga-frame.",
+            "type": "VolumeCover",
+            "simplifiedType": "VolumeCover",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "href",
+            "description": "Where the volume's page is; the cover, number and title are one link to it.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "date",
+            "description": "When it came out, printed as given (\"2026/10/05\", \"Oct 2026\").",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "isNew",
+            "description": "Stamps the cover NEW (最新 with `numerals=\"ja\"`).",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "VolumeCover": [
+      {
+        "id": "volume-grid.tsx-VolumeCover",
+        "name": "VolumeCover",
+        "description": "A volume's cover picture.",
+        "entries": [
+          {
+            "name": "src",
+            "description": "The cover's URL, passed to a plain `<img>`. Portrait covers fill best (the frame is 2:3).",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "alt",
+            "description": "What the cover shows, for readers who cannot see it.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "VolumeGridProps": [
+      {
+        "id": "volume-grid.tsx-VolumeGridProps",
+        "name": "VolumeGridProps",
+        "entries": [
+          {
+            "name": "volumes",
+            "description": "The volumes, in the order to show them.",
+            "type": "Volume[]",
+            "simplifiedType": "Volume[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "columns",
+            "description": "Covers per row: a count from `sm` up (one on phones), or one per breakpoint, as\npanel-grid takes it. Covers past the widest row's count load lazily.",
+            "type": "PanelGridColumns | undefined",
+            "simplifiedType": "1 | 2 | 3 | 4 | { base?: 1 | 2 | 3 | 4; sm?: 1 | 2 | 3 | 4; md?: 1 | 2 | 3 | 4; lg?: 1 | 2 | 3 | 4; }",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ base: 2, sm: 3, md: 4 }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "numerals",
+            "description": "`latin` names each volume \"Volume 3\"; `ja` writes 第3巻 under `lang=\"ja\"`, with the stamp in\nJapanese too.",
+            "type": "VolumeNumerals | undefined",
+            "simplifiedType": "\"ja\" | \"latin\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"latin\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "label",
+            "description": "The navigation landmark's name, which tells it apart from the page's other navs.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Volumes\""
               }
             ],
             "required": false,
