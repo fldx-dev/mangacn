@@ -46,6 +46,9 @@
       "correctness": {
         "noUnusedImports": "error",
         "useExhaustiveDependencies": "error"
+      },
+      "a11y": {
+        "useValidAriaRole": { "level": "error", "options": { "ignoreNonDom": true } }
       }
     },
     "domains": {

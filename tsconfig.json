@@ -44,6 +44,10 @@
       "@/hooks/use-mobile": ["./registry/hooks/use-mobile.ts"],
       "@/components/ui/input-group": ["./registry/ui/input-group/input-group.tsx"],
       "@/components/ui/dialog": ["./registry/ui/dialog/dialog.tsx"],
+      "@/components/speech-bubble": ["./registry/ui/speech-bubble/speech-bubble.tsx"],
+      "@/components/power-gauge": ["./registry/ui/power-gauge/power-gauge.tsx"],
+      "@/components/panel-grid": ["./registry/ui/panel-grid/panel-grid.tsx"],
+      "@/components/ui/aspect-ratio": ["./registry/ui/aspect-ratio/aspect-ratio.tsx"],
       "@/*": ["./*"]
     }
   },

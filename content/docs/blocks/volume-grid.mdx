@@ -1,0 +1,47 @@
+---
+title: Volume Grid
+description: "A series' volumes as covers: 2:3 ink frames on a panel grid, a folio for each volume number, NEW stamps; Latin or Japanese numerals, lazy covers below the first row."
+item: volume-grid
+---
+
+<InstallCommand item="volume-grid" />
+
+<ItemFiles item="volume-grid" />
+
+<CopyPrompt item="volume-grid" />
+
+A series' volumes as a shelf of covers, each one link to its volume's page. Put it on the series page above [Chapter List](/docs/blocks/chapter-list), or on its own as the series' volume index.
+
+It is a server component that composes panel-grid, aspect-ratio, manga-frame, page-number and stamp and draws nothing of its own. panel-grid lays the covers out, two a row on phones, three from `sm` and four from `md` by default (`columns` takes a count or one per breakpoint, as panel-grid does); each cover is a manga-frame filling a 2:3 aspect-ratio box, the shape of a tankōbon. Under it the volume number is a folio in the display face, beside its name ("Volume 3", or <span lang="ja">第3巻</span> with `numerals="ja"`), the title and the date as given. `isNew` stamps NEW (<span lang="ja">最新</span>) on the cover's corner. The text sits beside the folio, or under it when a cover is too narrow for both, and the title steps down a size on narrow covers.
+
+The grid is a `<nav>` named by `label` around a list. Each volume is one link, cover, folio and text together, named by the volume and its title through `aria-labelledby` ("Volume 3 Night Market", with "NEW" after a new one); the folio repeats the number for the eye and is hidden from assistive technology, and each cover keeps its own `alt`. The covers in the first row load at once and the rest with `loading="lazy"`; the first row is the widest one `columns` gives.
+
+## Examples
+
+Five volumes of a series, the newest stamped: two a row at phone width, four on a desktop.
+
+<DemoFrame item="volume-grid" demo="default" />
+
+`numerals="ja"` names each volume <span lang="ja">第N巻</span> and stamps <span lang="ja">最新</span>, each under `lang="ja"`. The block cannot know the language of your titles, so put `lang="ja"` on the grid (it passes through to the `<nav>`) when they are Japanese.
+
+<DemoFrame item="volume-grid" demo="japanese" />
+
+A long run packed tighter, three covers a row on phones and four from `sm` (`columns={{ base: 3, sm: 4 }}`); the covers past the first four load lazily.
+
+<DemoFrame item="volume-grid" demo="dense" />
+
+## Props
+
+<PropsTable item="volume-grid" />
+
+### Volume
+
+One entry of `volumes`.
+
+<PropsTable item="volume-grid" name="Volume" />
+
+### VolumeCover
+
+A volume's `cover`.
+
+<PropsTable item="volume-grid" name="VolumeCover" />

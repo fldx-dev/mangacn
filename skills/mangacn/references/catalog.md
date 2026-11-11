@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 86 items in the registry. Each line gives the item's name, what it is, the one
+All 88 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -298,6 +298,12 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `spread-viewer`: Two-page manga spread reader: facing pages in ink frames, folios, a page turn, buttons, arrow keys and swipe; right to left by default.
   Install: `npx shadcn@latest add @mangacn/spread-viewer --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/spread-viewer (Markdown: https://www.mangacn.com/docs/blocks/spread-viewer.md)
+- `character-card`: Cast entry: portrait in an ink frame with a status stamp, the name with its reading as ruby, role, a line of dialogue and stats as power gauges, on a card.
+  Install: `npx shadcn@latest add @mangacn/character-card --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/character-card (Markdown: https://www.mangacn.com/docs/blocks/character-card.md)
+- `volume-grid`: A series' volumes as covers: 2:3 ink frames on a panel grid, a folio for each volume number, NEW stamps; Latin or Japanese numerals, lazy covers below the first row.
+  Install: `npx shadcn@latest add @mangacn/volume-grid --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/volume-grid (Markdown: https://www.mangacn.com/docs/blocks/volume-grid.md)
 
 ## Hooks
 
