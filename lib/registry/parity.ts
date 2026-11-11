@@ -54,6 +54,9 @@ export const PARITY_PRIMITIVES = [
   "sidebar",
   "navigation-menu",
   "combobox",
+  "direction",
+  "input-otp",
+  "resizable",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";

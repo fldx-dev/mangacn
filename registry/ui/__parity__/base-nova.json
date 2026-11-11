@@ -1308,6 +1308,59 @@
         "input-group"
       ],
       "sha1": "66f84803788c127674f3cb1639bcda1faeb0840a"
+    },
+    "direction": {
+      "exports": [
+        "DirectionProvider",
+        "useDirection"
+      ],
+      "dataSlots": [],
+      "variants": {},
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "registryDependencies": [],
+      "sha1": "9e01bf8227da5c2c12148ac0884fa4a50d0f56e2"
+    },
+    "input-otp": {
+      "exports": [
+        "InputOTP",
+        "InputOTPGroup",
+        "InputOTPSeparator",
+        "InputOTPSlot"
+      ],
+      "dataSlots": [
+        "input-otp",
+        "input-otp-group",
+        "input-otp-separator",
+        "input-otp-slot"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn",
+        "input-otp"
+      ],
+      "registryDependencies": [],
+      "sha1": "650ba3fbbbf0afd6d9d5ab1b4c38d6e6db5a5e1f"
+    },
+    "resizable": {
+      "exports": [
+        "ResizableHandle",
+        "ResizablePanel",
+        "ResizablePanelGroup"
+      ],
+      "dataSlots": [
+        "resizable-handle",
+        "resizable-panel",
+        "resizable-panel-group"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn",
+        "react-resizable-panels"
+      ],
+      "registryDependencies": [],
+      "sha1": "08de05327985d4550ee14d424beebfe64bf2e5bf"
     }
   }
 }

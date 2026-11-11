@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 78 items in the registry. Each line gives the item's name, what it is, the one
+All 81 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -181,6 +181,15 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `combobox`: Stock combobox in one hand-drawn input group; its list is dropdown-menu's paper with an ink highlight, and chips are outlined.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/combobox --overwrite`
   Docs: https://www.mangacn.com/docs/components/combobox (Markdown: https://www.mangacn.com/docs/components/combobox.md)
+- `direction`: Stock direction provider (Base UI): tells Base UI's components the text direction, for right-to-left pages; draws nothing.
+  Install: `npx shadcn@latest add @mangacn/direction --overwrite`
+  Docs: https://www.mangacn.com/docs/components/direction (Markdown: https://www.mangacn.com/docs/components/direction.md)
+- `input-otp`: Stock one-time code field: paper slots each in a hand-drawn outline, the active one heavy with an ink caret, groups parted by an ink dash.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/input-otp --overwrite`
+  Docs: https://www.mangacn.com/docs/components/input-otp (Markdown: https://www.mangacn.com/docs/components/input-otp.md)
+- `resizable`: Stock resizable panels whose handle is a hand-drawn rule, heavy while hovered, focused or dragged, with an optional paper grip tab.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/resizable --overwrite`
+  Docs: https://www.mangacn.com/docs/components/resizable (Markdown: https://www.mangacn.com/docs/components/resizable.md)
 
 ## Layout
 
