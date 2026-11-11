@@ -53,6 +53,7 @@ export const PARITY_PRIMITIVES = [
   "item",
   "navigation-menu",
   "combobox",
+  "command",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";

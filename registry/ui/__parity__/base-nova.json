@@ -1226,6 +1226,40 @@
         "input-group"
       ],
       "sha1": "66f84803788c127674f3cb1639bcda1faeb0840a"
+    },
+    "command": {
+      "exports": [
+        "Command",
+        "CommandDialog",
+        "CommandEmpty",
+        "CommandGroup",
+        "CommandInput",
+        "CommandItem",
+        "CommandList",
+        "CommandSeparator",
+        "CommandShortcut"
+      ],
+      "dataSlots": [
+        "command",
+        "command-empty",
+        "command-group",
+        "command-input",
+        "command-input-wrapper",
+        "command-item",
+        "command-list",
+        "command-separator",
+        "command-shortcut"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cmdk",
+        "cn"
+      ],
+      "registryDependencies": [
+        "dialog",
+        "input-group"
+      ],
+      "sha1": "03c12c7ea1198f63ee015149b660f5144f852abb"
     }
   }
 }

@@ -50,6 +50,7 @@
     "item",
     "navigation-menu",
     "combobox",
+    "command",
     "---Layout---",
     "panel",
     "panel-grid",

@@ -1326,6 +1326,29 @@
           "target": "@ui/combobox.tsx"
         }
       ]
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "Stock cmdk palette on heavy-outlined paper: a ruled search row, display-face headings, ink-filled selection and key-cap shortcuts.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "cmdk", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/dialog.json",
+        "https://www.mangacn.com/r/input-group.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "command/command.tsx",
+          "type": "registry:ui",
+          "target": "@ui/command.tsx"
+        }
+      ]
     }
   ]
 }
