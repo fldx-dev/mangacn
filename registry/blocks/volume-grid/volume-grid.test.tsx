@@ -55,14 +55,17 @@ describe("VolumeGrid", () => {
     expect(screen.getByRole("navigation", { name: "Volumes" })).toBeTruthy();
   });
 
-  it("makes each cover one link named by the volume and title, the new one stamped", () => {
+  it("makes each cover one link named by all its text in the order shown, the new one stamped", () => {
     render(<VolumeGrid volumes={volumes} />);
     const links = screen.getAllByRole("link");
     expect(links).toHaveLength(6);
-    expect(screen.getByRole("link", { name: "Volume 1 Title 1" }).getAttribute("href")).toBe(
-      "/volumes/1",
-    );
-    const newest = screen.getByRole("link", { name: "Volume 6 Title 6 NEW" });
+    // Named by its content (no aria-labelledby): the cover's alt, then the text as shown.
+    expect(links.every((link) => !link.hasAttribute("aria-labelledby"))).toBe(true);
+    expect(
+      screen.getByRole("link", { name: "Cover 1 Volume 1 Title 1 Jan 2026" }).getAttribute("href"),
+    ).toBe("/volumes/1");
+    expect(screen.getByRole("link", { name: "Cover 2 Volume 2 Title 2" })).toBeTruthy();
+    const newest = screen.getByRole("link", { name: "Cover 6 NEW Volume 6 Title 6" });
     expect(newest.querySelector('[data-slot="stamp"]')?.textContent).toBe("NEW");
     expect(document.querySelectorAll('[data-slot="stamp"]')).toHaveLength(1);
     // The cover, folio and text are all inside the one link; the date is printed as given.
@@ -84,12 +87,12 @@ describe("VolumeGrid", () => {
 
   it("writes 第3巻 under lang=ja with the stamp in Japanese", () => {
     render(<VolumeGrid volumes={volumes} numerals="ja" />);
-    expect(screen.getByRole("link", { name: "第3巻 Title 3" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Cover 3 第3巻 Title 3" })).toBeTruthy();
     expect(screen.getByText("第3巻").getAttribute("lang")).toBe("ja");
     const stamp = document.querySelector('[data-slot="stamp"]');
     expect(stamp?.textContent).toBe("最新");
     expect(stamp?.getAttribute("lang")).toBe("ja");
-    expect(screen.getByRole("link", { name: "第6巻 Title 6 最新" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Cover 6 最新 第6巻 Title 6" })).toBeTruthy();
   });
 
   it("loads the first row's covers at once and the rest lazily", () => {

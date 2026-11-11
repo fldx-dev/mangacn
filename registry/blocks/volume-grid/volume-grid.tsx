@@ -1,6 +1,5 @@
 import { cn } from "cn";
 import type * as React from "react";
-import { useId } from "react";
 import { MangaFrame } from "@/components/manga-frame";
 import { PageNumber } from "@/components/page-number";
 import { PanelGrid, type PanelGridColumns, PanelGridItem } from "@/components/panel-grid";
@@ -72,7 +71,7 @@ export function firstRowSize(columns: PanelGridColumns): number {
 /**
  * A series' volumes as covers: a named `<nav>` around a list laid out by panel-grid, each
  * volume one link (its cover in a 2:3 manga-frame, its number as a folio, its title and date)
- * named by the volume and title, the new ones stamped. Covers past the first row load lazily.
+ * named by what it shows, the new ones stamped. Covers past the first row load lazily.
  * A server component; it composes panel-grid, aspect-ratio, manga-frame, page-number and stamp
  * and draws nothing of its own.
  */
@@ -84,7 +83,6 @@ export function VolumeGrid({
   className,
   ...props
 }: VolumeGridProps) {
-  const id = useId();
   const lang = numerals === "ja" ? "ja" : undefined;
   const eager = firstRowSize(columns);
 
@@ -98,9 +96,6 @@ export function VolumeGrid({
       {/* panel-grid lays the covers out (it renders divs); the list roles keep it a list. */}
       <PanelGrid role="list" columns={columns} gutter="lg">
         {volumes.map((volume, index) => {
-          const nameId = `${id}-${index}-name`;
-          const titleId = `${id}-${index}-title`;
-          const stampId = `${id}-${index}-stamp`;
           return (
             <PanelGridItem
               role="listitem"
@@ -110,9 +105,8 @@ export function VolumeGrid({
             >
               <a
                 href={volume.href}
-                aria-labelledby={[nameId, titleId, volume.isNew ? stampId : null]
-                  .filter(Boolean)
-                  .join(" ")}
+                // Named by its content, cover first: a name written apart from the text shown
+                // (`aria-labelledby` over part of it) fails WCAG 2.5.3 Label in Name.
                 className="group @container flex min-w-0 flex-col gap-2 rounded-sm outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
               >
                 <div className="relative">
@@ -128,13 +122,7 @@ export function VolumeGrid({
                     />
                   </AspectRatio>
                   {volume.isNew && (
-                    <Stamp
-                      id={stampId}
-                      size="sm"
-                      rotate={10}
-                      lang={lang}
-                      className="absolute -top-3 -right-3"
-                    >
+                    <Stamp size="sm" rotate={10} lang={lang} className="absolute -top-3 -right-3">
                       {numerals === "ja" ? "最新" : "NEW"}
                     </Stamp>
                   )}
@@ -148,20 +136,18 @@ export function VolumeGrid({
                     aria-hidden
                     className="[&_[data-slot=page-number-page]]:text-2xl"
                   />
-                  <span className="flex min-w-0 grow basis-24 flex-col gap-0.5">
-                    <span id={nameId} lang={lang} className="text-xs text-muted-foreground">
+                  {/* Blocks, not spans: each line is then its own word group in the link's name. */}
+                  <div className="flex min-w-0 grow basis-24 flex-col gap-0.5">
+                    <div lang={lang} className="text-xs text-muted-foreground">
                       {volumeLabel(volume.number, numerals)}
-                    </span>
-                    <span
-                      id={titleId}
-                      className="font-display text-sm leading-tight wrap-break-word group-hover:text-spot @max-[7rem]:text-xs @[9rem]:text-base"
-                    >
+                    </div>
+                    <div className="font-display text-sm leading-tight wrap-break-word group-hover:text-spot @max-[7rem]:text-xs @[9rem]:text-base">
                       {volume.title}
-                    </span>
+                    </div>
                     {volume.date && (
-                      <span className="text-xs text-muted-foreground">{volume.date}</span>
+                      <div className="text-xs text-muted-foreground">{volume.date}</div>
                     )}
-                  </span>
+                  </div>
                 </div>
               </a>
             </PanelGridItem>
