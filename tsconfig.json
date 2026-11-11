@@ -40,6 +40,7 @@
       "@/components/ui/sheet": ["./registry/ui/sheet/sheet.tsx"],
       "@/components/ui/skeleton": ["./registry/ui/skeleton/skeleton.tsx"],
       "@/components/ui/tooltip": ["./registry/ui/tooltip/tooltip.tsx"],
+      "@/components/ui/card": ["./registry/ui/card/card.tsx"],
       "@/hooks/use-mobile": ["./registry/hooks/use-mobile.ts"],
       "@/components/ui/input-group": ["./registry/ui/input-group/input-group.tsx"],
       "@/components/ui/dialog": ["./registry/ui/dialog/dialog.tsx"],

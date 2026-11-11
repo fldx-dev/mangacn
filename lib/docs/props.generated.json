@@ -189,6 +189,39 @@
       }
     ]
   },
+  "chart-tones": {
+    "ChartTonesProps": [
+      {
+        "id": "chart-tones.tsx-ChartTonesProps",
+        "name": "ChartTonesProps",
+        "entries": [
+          {
+            "name": "prefix",
+            "description": "Prepended to every pattern id, for a second set on one page in another colour\n(`prefix=\"spot-\"` defines `spot-tone-dots-2`). Name them with `chartToneFill(tone, prefix)`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes on the hidden `<svg>` that holds the defs. Its text colour is the patterns' colour:\nthey draw in `currentColor` where they are defined, so `className=\"text-spot\"` makes a spot\nset. The svg takes no space.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "emanata": {
     "EmanataProps": [
       {

@@ -57,6 +57,7 @@
     "command",
     "calendar",
     "carousel",
+    "chart",
     "---Layout---",
     "panel",
     "panel-grid",
@@ -84,6 +85,7 @@
     "---Data---",
     "manga-frame",
     "power-gauge",
-    "page-number"
+    "page-number",
+    "chart-tones"
   ]
 }

@@ -1440,6 +1440,28 @@
         "button"
       ],
       "sha1": "b8eb5b9ba36031ef2796ab8b122dc0fba5bcbd5e"
+    },
+    "chart": {
+      "exports": [
+        "ChartContainer",
+        "ChartLegend",
+        "ChartLegendContent",
+        "ChartStyle",
+        "ChartTooltip",
+        "ChartTooltipContent"
+      ],
+      "dataSlots": [
+        "chart"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn",
+        "recharts@3.8.0"
+      ],
+      "registryDependencies": [
+        "card"
+      ],
+      "sha1": "f282f95fcc099cae80bd344920f10007cd8dd709"
     }
   }
 }

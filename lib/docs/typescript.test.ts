@@ -57,8 +57,8 @@ describe("propsInterfaceName", () => {
 });
 
 describe("propsTargets", () => {
-  it("covers the 21 manga-native pieces, ink-frame and the interfaces pages name", () => {
-    expect(mangaNative).toHaveLength(21);
+  it("covers the 22 manga-native pieces, ink-frame and the interfaces pages name", () => {
+    expect(mangaNative).toHaveLength(22);
     const targets = propsTargets(registry).map((target) => `${target.item}/${target.name}`);
     for (const item of mangaNative) {
       expect(targets).toContain(`${item.name}/${propsInterfaceName(item.name)}`);
