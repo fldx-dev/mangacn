@@ -86,15 +86,15 @@ branches merge as appended array entries.
 
 Enforced by `registry/ui/imports.test.ts` for every file in every catalog:
 
-| Allowed                                                                                                      | Example                                             |
-| ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- |
-| `react`, `react-dom` (and subpaths)                                                                          | `import * as React from "react"`                    |
-| packages in the item's `dependencies` (and subpaths)                                                         | `import { Popover } from "@base-ui/react/popover"`  |
-| `@/lib/utils`                                                                                                | `import { cn } from "@/lib/utils"`                  |
-| `@/components/ui/<x>`, `@/components/<x>`, `@/lib/<x>` where `x` is in `registryDependencies`               | `import { Button } from "@/components/ui/button"`   |
-| the same for a mangacn item declared by URL (`https://www.mangacn.com/r/ink-frame.json`; see recipe 1)       | `import { InkFrame } from "@/components/ink-frame"` |
-| `@/hooks/<x>` only where `x` is declared by URL (`https://www.mangacn.com/r/use-mobile.json`; recipe 4)      | `import { useIsMobile } from "@/hooks/use-mobile"`  |
-| relative imports to another file of the **same** item                                                        | `import { parts } from "./dialog-parts"`            |
+| Allowed                                                                                                 | Example                                             |
+| ------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `react`, `react-dom` (and subpaths)                                                                     | `import * as React from "react"`                    |
+| packages in the item's `dependencies` (and subpaths)                                                    | `import { Popover } from "@base-ui/react/popover"`  |
+| `@/lib/utils`                                                                                           | `import { cn } from "@/lib/utils"`                  |
+| `@/components/ui/<x>`, `@/components/<x>`, `@/lib/<x>` where `x` is in `registryDependencies`           | `import { Button } from "@/components/ui/button"`   |
+| the same for a mangacn item declared by URL (`https://www.mangacn.com/r/ink-frame.json`; see recipe 1)  | `import { InkFrame } from "@/components/ink-frame"` |
+| `@/hooks/<x>` only where `x` is declared by URL (`https://www.mangacn.com/r/use-mobile.json`; recipe 4) | `import { useIsMobile } from "@/hooks/use-mobile"`  |
+| relative imports to another file of the **same** item                                                   | `import { parts } from "./dialog-parts"`            |
 
 Everything else fails with `file:line imports "specifier" (item): reason`: `@/app/…`,
 `@/lib/registry/…`, `@/registry/…`, docs-only `@/components/…`, relative imports into
