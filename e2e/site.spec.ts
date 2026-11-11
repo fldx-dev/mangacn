@@ -208,6 +208,31 @@ async function expectDemosFitStages(page: Page) {
 }
 
 /**
+ * The suite's axe pass over a whole page and the stages it embeds, contrast included. Base UI's
+ * focus guards around an open popup are aria-hidden sentinels with tabindex 0 that hand focus on
+ * at once; axe only lets them pass under an open dialog, so an open menu or select stage (an
+ * iframe) would fail on Base UI's own markup. Inside a frame `region` is off, as on the stage
+ * page itself (e2e/demos.spec.ts): a stage is a fragment, and its own content is checked there.
+ * A node in a frame is one whose target is a frame path (`["iframe", "…"]`). Every other node of
+ * the page and of its stages is checked.
+ */
+async function expectNoAxeViolations(page: Page) {
+  const { violations } = await new AxeBuilder({ page })
+    .exclude("[data-base-ui-focus-guard]")
+    .exclude(["iframe", "[data-base-ui-focus-guard]"])
+    .analyze();
+  const found = violations
+    .map(({ id, nodes }) => ({
+      id,
+      targets: nodes
+        .filter((node) => id !== "region" || node.target.length === 1)
+        .map((node) => node.target),
+    }))
+    .filter(({ targets }) => targets.length > 0);
+  expect(found, "axe violations").toEqual([]);
+}
+
+/**
  * What a whole-page shot masks (Task 68): an item page's sidebar. Its scroll is not the test's
  * to set: Fumadocs scrolls the active item into view when it is out of view at the moment it
  * checks, and the full-page capture itself moves it again (locally a sidebar set to 0 or to
@@ -283,19 +308,7 @@ for (const path of pages) {
 
       if (path === "/docs/components") await expectIndexCards(page, viewport);
 
-      // Base UI's focus guards around an open popup are aria-hidden sentinels with tabindex 0
-      // that hand focus on at once; axe only lets them pass under an open dialog, so an open
-      // menu or select stage (an iframe) would fail on Base UI's own markup. Every other node
-      // of those stages is still checked.
-      const { violations } = await new AxeBuilder({ page })
-        .exclude("[data-base-ui-focus-guard]")
-        .exclude(["iframe", "[data-base-ui-focus-guard]"])
-        .analyze();
-      const found = violations.map(({ id, nodes }) => ({
-        id,
-        targets: nodes.map((node) => node.target),
-      }));
-      expect(found, "axe violations").toEqual([]);
+      await expectNoAxeViolations(page);
       expect(errors).toEqual([]);
     });
   }
@@ -303,7 +316,8 @@ for (const path of pages) {
 
 // Overlay item pages and the gallery embed live stages whose popup opens on load. A stage holds
 // its script-driven focus while embedded (lib/docs/stage-focus.ts), so the page keeps the
-// reader's focus and scroll position, and the stage still works once they go there.
+// reader's focus and scroll position, and the stage still works once they go there. Each page
+// then gets the suite's axe pass, stages included, at every width in light mode (no pixels).
 const OVERLAY_PAGES = [
   "/docs/components/dialog",
   "/docs/components/popover",
@@ -326,6 +340,7 @@ for (const path of OVERLAY_PAGES) {
       const frame = await (await iframe.elementHandle())?.contentFrame();
       await expect(frame?.locator("html") ?? iframe).toHaveAttribute("data-focus-held", "true");
     }
+    await expectNoAxeViolations(page);
   });
 }
 

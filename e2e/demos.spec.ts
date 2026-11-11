@@ -2,8 +2,26 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
 import { demoEntries } from "../lib/registry/demos.generated";
-import { AXE_DISABLED_RULES } from "../lib/test/axe-rules";
+import { AXE_DISABLED_RULES, CONTRAST_EXEMPTIONS } from "../lib/test/axe-rules";
+import { paintInkFillsAsCss } from "./ink-fills";
 import { waitForInk } from "./ready";
+
+type AxeResults = Awaited<ReturnType<AxeBuilder["analyze"]>>;
+
+/** Each violated rule with its nodes; a contrast failure also says its colours and ratio. */
+function axeFindings(violations: AxeResults["violations"]) {
+  return violations.map(({ id, nodes }) => ({
+    id,
+    nodes: nodes.map((node) => {
+      const data = node.any[0]?.data as
+        | { fgColor?: string; bgColor?: string; contrastRatio?: number }
+        | undefined;
+      return data?.contrastRatio
+        ? `${node.target.join(" ")}: ${data.fgColor} on ${data.bgColor}, ${data.contrastRatio}:1`
+        : node.target.join(" ");
+    }),
+  }));
+}
 
 // Every demo in the generated map, light and dark, at each project's width. Baselines are
 // Linux-only (CI); elsewhere the page is loaded and checked for errors, without pixels.
@@ -189,7 +207,7 @@ for (const { item, demo } of entries) {
       }
 
       // The stage page as the gallery iframes it, drawn, with the unit tests' rule set
-      // (lib/test/axe-rules.ts). Light only: with color-contrast off both modes are one DOM.
+      // (lib/test/axe-rules.ts). Light only: apart from contrast both modes are one DOM.
       // Base UI's focus guards are excluded, as in site.spec.ts: an open select or menu
       // (select/open, the dropdown-menu demos) portals visually hidden spans with tabindex 0 and
       // aria-hidden that hand focus on at once, which aria-hidden-focus flags; Base UI 1.9 has no
@@ -199,12 +217,23 @@ for (const { item, demo } of entries) {
           .disableRules(AXE_DISABLED_RULES)
           .exclude("[data-base-ui-focus-guard]")
           .analyze();
-        const found = violations.map(({ id, nodes }) => ({
-          id,
-          targets: nodes.map((node) => node.target),
-        }));
-        expect(found, "axe violations").toEqual([]);
+        expect(axeFindings(violations), "axe violations").toEqual([]);
       }
+
+      // Contrast, in both modes, last: the pen's fills become CSS so axe can measure the text
+      // over them (e2e/ink-fills.ts), which changes the page. Text axe cannot measure (over a
+      // screentone, under an SFX outline) is reported as incomplete and is not a failure.
+      await paintInkFillsAsCss(page);
+      const contrast = new AxeBuilder({ page })
+        .withRules(["color-contrast"])
+        .exclude("[data-base-ui-focus-guard]");
+      for (const { selector } of CONTRAST_EXEMPTIONS.filter(
+        (exemption) => exemption.item === item && exemption.demo === demo,
+      )) {
+        contrast.exclude(selector);
+      }
+      const { violations } = await contrast.analyze();
+      expect(axeFindings(violations), "color-contrast below WCAG AA").toEqual([]);
       expect(errors).toEqual([]);
     });
   }
