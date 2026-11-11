@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import * as React from "react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { expectDemosAccessible } from "@/lib/test/axe";
 import { SpreadViewer } from "./spread-viewer";
@@ -41,6 +42,19 @@ async function sides() {
       .querySelector(`[data-slot="spread-viewer-page"][data-side="${side}"] img`)
       ?.getAttribute("alt") ?? null;
   return { left: of("left"), right: of("right") };
+}
+
+/** A viewer whose page lives in its owner's state, with a button that jumps from outside. */
+function Controlled() {
+  const [page, setPage] = React.useState(9);
+  return (
+    <>
+      <SpreadViewer pages={pages} page={page} onPageChange={setPage} label="Chapter 1" />
+      <button type="button" onClick={() => setPage(2)}>
+        Jump
+      </button>
+    </>
+  );
 }
 
 describe("SpreadViewer", () => {
@@ -171,6 +185,22 @@ describe("SpreadViewer", () => {
     );
     fireEvent.keyDown(region(), { key: "End" });
     expect(status()?.textContent).toBe("Page 1 of 24");
+  });
+
+  it("takes a controlled page and turns only when the owner passes the new one back", () => {
+    render(<Controlled />);
+    expect(status()?.textContent).toBe("Pages 10–11 of 24");
+    fireEvent.keyDown(region(), { key: "ArrowLeft" });
+    expect(status()?.textContent).toBe("Pages 12–13 of 24");
+    fireEvent.click(screen.getByRole("button", { name: "Jump" }));
+    expect(status()?.textContent).toBe("Pages 2–3 of 24");
+
+    const frozen = vi.fn();
+    cleanup();
+    render(<SpreadViewer pages={pages} page={3} onPageChange={frozen} label="Chapter 1" />);
+    fireEvent.keyDown(region(), { key: "ArrowLeft" });
+    expect(frozen).toHaveBeenCalledWith(5);
+    expect(status()?.textContent).toBe("Pages 4–5 of 24");
   });
 
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));

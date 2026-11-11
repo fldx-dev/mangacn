@@ -162,3 +162,68 @@ describe("useSpread", () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 });
+
+describe("useSpread, controlled", () => {
+  it("opens the spread that holds page and asks onPageChange to turn, without moving itself", () => {
+    const onPageChange = vi.fn();
+    const onChange = vi.fn();
+    const { result } = renderHook(() => useSpread({ count: 24, page: 4, onPageChange, onChange }));
+    expect(result.current.page).toBe(4);
+    expect(result.current.announcement).toBe("Pages 4–5 of 24");
+    act(() => result.current.next());
+    expect(onPageChange).toHaveBeenCalledWith(5);
+    expect(onChange).toHaveBeenCalledWith(5);
+    // Nobody passed the new page back: the spread stays where the owner says.
+    expect(result.current.announcement).toBe("Pages 4–5 of 24");
+    act(() => {
+      result.current.onKeyDown(key("End"));
+    });
+    expect(onPageChange).toHaveBeenLastCalledWith(23);
+    expect(result.current.page).toBe(4);
+  });
+
+  it("follows a page changed from outside, and pages from there", () => {
+    const onPageChange = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ page }) => useSpread({ count: 24, page, onPageChange }),
+      { initialProps: { page: 0 } },
+    );
+    expect(result.current.announcement).toBe("Page 1 of 24");
+    rerender({ page: 9 });
+    expect(result.current.announcement).toBe("Pages 10–11 of 24");
+    expect(result.current.canPrevious).toBe(true);
+    act(() => result.current.previous());
+    expect(onPageChange).toHaveBeenLastCalledWith(7);
+    rerender({ page: 7 });
+    expect(result.current.announcement).toBe("Pages 8–9 of 24");
+    // Setting the page from outside is not a turn: nothing is reported for it.
+    expect(onPageChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("clamps a page outside the book and reports the clamped page once", () => {
+    const onPageChange = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ page }) => useSpread({ count: 24, page, onPageChange }),
+      { initialProps: { page: 99 } },
+    );
+    expect(result.current.page).toBe(23);
+    expect(result.current.announcement).toBe("Page 24 of 24");
+    expect(onPageChange.mock.calls).toEqual([[23]]);
+    rerender({ page: 99 });
+    expect(onPageChange).toHaveBeenCalledTimes(1);
+    rerender({ page: -3 });
+    expect(result.current.announcement).toBe("Page 1 of 24");
+    expect(onPageChange.mock.calls).toEqual([[23], [0]]);
+    rerender({ page: 2 });
+    expect(onPageChange).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps start and onChange as they were when page is left out", () => {
+    const onPageChange = vi.fn();
+    const { result } = renderHook(() => useSpread({ count: 24, start: 4, onPageChange }));
+    expect(result.current.page).toBe(3);
+    act(() => result.current.next());
+    expect(result.current.announcement).toBe("Pages 6–7 of 24");
+    expect(onPageChange).toHaveBeenCalledWith(5);
+  });
+});

@@ -29,9 +29,23 @@ export interface UseSpreadOptions {
   start?: number;
   /** Called with the index of the new spread's first page whenever the reader turns. */
   onChange?: (first: number) => void;
+  /**
+   * The reader's page, controlled: an index into the pages (0 is the first). The spread that
+   * holds it is open; a turn calls `onPageChange` and waits for the new `page`. A page outside
+   * the book is clamped, and `onPageChange` is called once with the clamped index. Leave it
+   * out to let the hook keep the page itself (from `start`).
+   */
+  page?: number;
+  /**
+   * Called with the index of the new spread's first page whenever the reader turns (both
+   * modes), and once with the clamped index when a controlled `page` is out of bounds.
+   */
+  onPageChange?: (page: number) => void;
 }
 
 export interface Spread {
+  /** The reader's page (0-based): the controlled `page` clamped to the book, or the hook's own. */
+  page: number;
   /** The indices of the pages shown, in reading order: one or two. Empty when there are none. */
   pages: number[];
   /** The page on each side of the spine (`null` for a side left blank), for laying them out. */
@@ -123,6 +137,12 @@ export function spreadAnnouncement(pages: number[], count: number): string {
   return `Pages ${pages[0] + 1}–${pages[pages.length - 1] + 1} of ${count}`;
 }
 
+/** A page index clamped to the book: a whole number from 0 to `count - 1` (0 for no pages). */
+function clampPage(index: number, count: number): number {
+  if (count <= 0) return 0;
+  return Math.min(Math.max(Math.trunc(index) || 0, 0), count - 1);
+}
+
 /**
  * The paging state of a manga reader: which pages are open, in which order they sit, what to
  * announce, and the keyboard. `SpreadViewer` is built on it; use it on its own to draw your own
@@ -134,13 +154,17 @@ export function useSpread({
   single = false,
   start = 0,
   onChange,
+  page: controlled,
+  onPageChange,
 }: UseSpreadOptions): Spread {
   // The page the reader is at; the spread is derived from it, so switching `single` keeps the
-  // reader on the same page.
-  const [page, setPage] = React.useState(() => {
+  // reader on the same page. Controlled, it is the `page` prop clamped to the book.
+  const [own, setOwn] = React.useState(() => {
     const starts = spreadStarts(count, single);
     return starts[spreadIndexOf(start, count, single)] ?? 0;
   });
+  const isControlled = controlled !== undefined;
+  const page = isControlled ? clampPage(controlled, count) : own;
   const starts = spreadStarts(count, single);
   const index = spreadIndexOf(page, count, single);
   const first = starts[index] ?? 0;
@@ -148,9 +172,24 @@ export function useSpread({
   const total = starts.length;
 
   const onChangeRef = React.useRef(onChange);
+  const onPageChangeRef = React.useRef(onPageChange);
   React.useEffect(() => {
     onChangeRef.current = onChange;
+    onPageChangeRef.current = onPageChange;
   });
+
+  // A controlled page outside the book is reported once with its clamped value, so the owner
+  // can correct its state; the same wrong value is not reported again on every render.
+  const reported = React.useRef<number | undefined>(undefined);
+  React.useEffect(() => {
+    if (!isControlled || count <= 0 || controlled === page) {
+      reported.current = undefined;
+      return;
+    }
+    if (reported.current === controlled) return;
+    reported.current = controlled;
+    onPageChangeRef.current?.(page);
+  }, [isControlled, controlled, page, count]);
 
   const goToSpread = React.useCallback(
     (target: number) => {
@@ -158,10 +197,11 @@ export function useSpread({
       if (list.length === 0) return;
       const next = list[Math.min(Math.max(target, 0), list.length - 1)];
       if (next === first) return;
-      setPage(next);
+      if (!isControlled) setOwn(next);
       onChangeRef.current?.(next);
+      onPageChangeRef.current?.(next);
     },
-    [count, single, first],
+    [count, single, first, isControlled],
   );
 
   const next = React.useCallback(() => goToSpread(index + 1), [goToSpread, index]);
@@ -196,6 +236,7 @@ export function useSpread({
   );
 
   return {
+    page,
     pages,
     sides: spreadSides(pages, direction, single),
     index,

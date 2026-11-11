@@ -30,6 +30,15 @@ A 24-page chapter opened at pages 4 and 5, right to left: page 4 on the right, a
 
 <DemoFrame item="spread-viewer" demo="single" />
 
+## Controlled page
+
+`start` opens the viewer at a page and lets it keep the page itself. To own the page, as a reader that keeps it in the URL does, pass `page` with `onPageChange`: the viewer opens the spread that holds `page`, and a turn calls `onPageChange` with the new spread's first page instead of moving on its own. A `page` outside the book is clamped, and `onPageChange` is called once with the clamped index so your state can follow. `onChange` still fires on every turn in both modes.
+
+```tsx
+const [page, setPage] = React.useState(0);
+<SpreadViewer pages={pages} page={page} onPageChange={setPage} />;
+```
+
 ## Custom chrome
 
 `useSpread`, from `use-spread.ts` (also re-exported by the entry file), is the paging state the viewer is built on: which pages are open and on which side of the spine, the announcement, `next`, `previous`, `goTo`, the ends, and an `onKeyDown` handler for your own element. Use it to draw a reader of your own around the same pages.

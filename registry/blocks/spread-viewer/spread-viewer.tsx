@@ -49,6 +49,17 @@ export interface SpreadViewerProps
   /** Called with the index of the new spread's first page whenever the reader turns. */
   onChange?: (first: number) => void;
   /**
+   * The reader's page, controlled: an index into `pages`. The viewer opens the spread that
+   * holds it, and a turn calls `onPageChange` instead of moving on its own. A page outside the
+   * book is clamped and reported once through `onPageChange`. Leave it out to use `start`.
+   */
+  page?: number;
+  /**
+   * Called with the index of the new spread's first page whenever the reader turns, controlled
+   * or not.
+   */
+  onPageChange?: (page: number) => void;
+  /**
    * One page at a time, for phones; pass it from a media query.
    * @default false
    */
@@ -76,6 +87,8 @@ export function SpreadViewer({
   direction = "rtl",
   start = 0,
   onChange,
+  page,
+  onPageChange,
   single = false,
   label = "Pages",
   className,
@@ -83,7 +96,7 @@ export function SpreadViewer({
   ...props
 }: SpreadViewerProps) {
   const count = pages.length;
-  const spread = useSpread({ count, direction, single, start, onChange });
+  const spread = useSpread({ count, direction, single, start, onChange, page, onPageChange });
   const reduce = useReducedMotion() ?? false;
 
   // The current pages load first; the next spread is fetched ahead so a turn shows it at once.
