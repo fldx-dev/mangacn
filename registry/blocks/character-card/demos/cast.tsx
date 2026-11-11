@@ -10,13 +10,13 @@ function portrait(hair: string, sky: string): string {
 const cast = [
   {
     name: "Mio Amano",
-    role: "Lead",
+    castRole: "Lead",
     hair: "M78 190 C70 100 230 100 222 190 C200 150 110 140 78 190 Z",
     alt: "Mio Amano, short dark hair",
   },
   {
     name: "Ren Kuroda",
-    role: "Rival",
+    castRole: "Rival",
     hair: "M74 200 L90 110 L120 140 L150 96 L180 140 L210 110 L226 200 C200 160 100 160 74 200 Z",
     alt: "Ren Kuroda, spiky black hair",
   },
@@ -28,14 +28,14 @@ const cast = [
 ];
 
 export default function CharacterCardCastDemo() {
-  // A cast page: narrow cards side by side, only a name, a role and a portrait each.
+  // A cast page: narrow cards side by side, only a name, a cast role and a portrait each.
   return (
     <ul className="grid w-full max-w-3xl grid-cols-2 gap-4 md:grid-cols-3">
-      {cast.map(({ name, role, hair, alt }) => (
+      {cast.map(({ name, castRole, hair, alt }) => (
         <li key={name} className="flex">
           <CharacterCard
             name={name}
-            role={role}
+            castRole={castRole}
             portrait={{ src: portrait(hair, "#ededed"), alt }}
             href={`#${name.toLowerCase().replace(" ", "-")}`}
           />

@@ -12,7 +12,7 @@ export default function CharacterCardDefaultDemo() {
   return (
     <CharacterCard
       name="Mio Amano"
-      role="Lead · Lantern keeper"
+      castRole="Lead · Lantern keeper"
       portrait={{
         src: portrait("M78 190 C70 100 230 100 222 190 C200 150 110 140 78 190 Z", "#d6d6d6"),
         alt: "Mio Amano, short dark hair, smiling under a pale moon",

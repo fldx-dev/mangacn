@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
 import {
+  aliasedBlockName,
   blockImportPaths,
   blockImportViolation,
   extractImports,
@@ -233,6 +234,88 @@ describe("blocks", () => {
     expect(
       blockImportViolation("@/components/ui/separator", item, "registry/blocks/x/x.tsx", allowed),
     ).toContain("alias import");
+  });
+});
+
+describe("a block made of blocks", () => {
+  // SPEC-components-4 §3: a block may compose a block it declares by mangacn URL, importing it
+  // from its install path, as it does an item. An undeclared block stays refused.
+  const root = mkdtempSync(path.join(tmpdir(), "mangacn-block-blocks-"));
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+  const write = (file: string, content: string) => {
+    mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    writeFileSync(path.join(root, file), content);
+  };
+  const url = (name: string) => `https://www.mangacn.com/r/${name}.json`;
+  const block = (name: string, files: string[], registryDependencies: string[] = []) => ({
+    name,
+    type: "registry:block",
+    registryDependencies,
+    files: files.map((file) => ({
+      path: `registry/blocks/${name}/${file}`,
+      type: "registry:block",
+      target: `@components/blocks/${name}/${file}`,
+    })),
+  });
+  write(
+    "registry.json",
+    JSON.stringify({
+      items: [
+        block("viewer", ["viewer.tsx", "use-viewer.ts"]),
+        block("index", ["index.tsx"]),
+        block("reader", ["reader.tsx"], [url("viewer")]),
+        block("shelf", ["shelf.tsx"], [url("viewer")]),
+      ],
+    }),
+  );
+  write("registry/blocks/viewer/viewer.tsx", "export const Viewer = 1;\n");
+  write("registry/blocks/viewer/use-viewer.ts", "export const useViewer = 1;\n");
+  write("registry/blocks/index/index.tsx", "export const Index = 1;\n");
+  write(
+    "registry/blocks/reader/reader.tsx",
+    [
+      'import { Viewer } from "@/components/blocks/viewer/viewer";',
+      'import { useViewer } from "@/components/blocks/viewer/use-viewer";',
+      'import { Index } from "@/components/blocks/index/index";',
+    ].join("\n"),
+  );
+  // shelf declares viewer and never imports it.
+  write("registry/blocks/shelf/shelf.tsx", "export const Shelf = 1;\n");
+  const registry = loadRegistry(path.join(root, "registry.json"));
+  const catalog = new Map(registry.items.map((item) => [item.name, item]));
+
+  it("names the block a block path imports from", () => {
+    expect(aliasedBlockName("@/components/blocks/spread-viewer/use-spread")).toBe("spread-viewer");
+    expect(aliasedBlockName("@/components/blocks/spread-viewer")).toBeNull();
+    expect(aliasedBlockName("@/components/stamp")).toBeNull();
+  });
+
+  it("allows every file of a block declared by URL, through its install path", () => {
+    const reader = catalog.get("reader");
+    expect(reader && [...blockImportPaths(reader, catalog)]).toEqual([
+      "@/components/blocks/viewer/viewer",
+      "@/components/blocks/viewer/use-viewer",
+    ]);
+  });
+
+  it("refuses a block it does not declare, and nothing else", () => {
+    expect(
+      findImportViolations(registry, root).map((v) => [v.item, v.specifier, v.line, v.reason]),
+    ).toEqual([
+      [
+        "reader",
+        "@/components/blocks/index/index",
+        3,
+        "alias import that is not @/lib/utils or the install path of an item this block declares by mangacn URL",
+      ],
+    ]);
+  });
+
+  it("asks for the URL of an imported block and the import of a declared one", () => {
+    expect(findRegistryDependencyProblems(registry, root)).toEqual([
+      "reader: imports index without declaring https://www.mangacn.com/r/index.json",
+      "shelf: declares https://www.mangacn.com/r/viewer.json but no shipped file imports it",
+    ]);
   });
 });
 

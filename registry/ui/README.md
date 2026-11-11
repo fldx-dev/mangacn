@@ -437,8 +437,10 @@ announcements. Props are data in, callbacks out. `chapter-list` is the reference
 3. **Imports.** A block's files may import React, its `dependencies`, `@/lib/utils`, its own
    part files relatively (`./chapter-numeral`), and the install path of each item it declares:
    `@/components/ui/<x>` for a restyled primitive, `@/components/<x>` for a manga-native piece
-   or `ink-frame`. Nothing else: no undeclared item, no `@/lib/<x>` it did not declare, no
-   `@/components/blocks/…` path, no other block. `registry/ui/imports.test.ts` enforces it.
+   or `ink-frame`, and `@/components/blocks/<x>/<file>` for a block it composes (a block may
+   compose blocks: `reader` declares `spread-viewer` and `chapter-list` by URL). Nothing else: no
+   undeclared item or block, no `@/lib/<x>` it did not declare, no `@/components/blocks/…` path
+   to its own parts. `registry/ui/imports.test.ts` enforces it.
    Map each declared item to its source in `tsconfig.json` `paths` and the
    `vitest.config.mts` aliases, as `@/components/ink-frame` is, so the block typechecks and
    tests in this repo.

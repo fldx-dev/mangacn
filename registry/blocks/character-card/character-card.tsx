@@ -28,17 +28,13 @@ export interface CharacterStat {
   max?: number;
 }
 
-export interface CharacterCardProps
-  extends Omit<React.ComponentProps<"article">, "children" | "role"> {
+export interface CharacterCardProps extends Omit<React.ComponentProps<"article">, "children"> {
   /** The character's name: the card's heading and the article's name. */
   name: string;
   /** How the name is read, set as ruby over it under `lang="ja"` (あまの みお). */
   reading?: string;
-  /**
-   * The character's part in the story ("Lead · Lantern keeper"), in a caption box. Not the ARIA
-   * role: the card is always an `article`.
-   */
-  role?: string;
+  /** The part they play: Protagonist, Rival…, in a caption box. */
+  castRole?: string;
   /** The portrait, in a 3:4 manga-frame. */
   portrait: CharacterPortrait;
   /** A line the character says, in a speech bubble. */
@@ -53,7 +49,7 @@ export interface CharacterCardProps
 
 /**
  * A cast entry: the portrait in a manga-frame with an optional status stamp, the name with its
- * reading as ruby, the role in a caption box, a line of dialogue in a speech bubble and stats as
+ * reading as ruby, the part they play in a caption box, a line of dialogue in a speech bubble and stats as
  * power gauges, on a card. An `article` named by the name; the stats are a description list
  * whose values are text, so they do not rely on the gauges; with `href` the name is one link
  * whose hit area covers the card. A server component; it composes card, manga-frame,
@@ -62,7 +58,7 @@ export interface CharacterCardProps
 export function CharacterCard({
   name,
   reading,
-  role,
+  castRole,
   portrait,
   quote,
   stats,
@@ -125,9 +121,9 @@ export function CharacterCard({
                   title
                 )}
               </p>
-              {role && (
+              {castRole && (
                 <CaptionBox font="body" className="text-xs">
-                  {role}
+                  {castRole}
                 </CaptionBox>
               )}
             </div>

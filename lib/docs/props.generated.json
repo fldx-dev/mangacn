@@ -214,8 +214,8 @@
             "deprecated": false
           },
           {
-            "name": "role",
-            "description": "The character's part in the story (\"Lead · Lantern keeper\"), in a caption box. Not the ARIA\nrole: the card is always an `article`.",
+            "name": "castRole",
+            "description": "The part they play: Protagonist, Rival…, in a caption box.",
             "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],
@@ -1332,6 +1332,139 @@
             "type": "((value: number, max: number) => string) | undefined",
             "simplifiedType": "(value: number, max: number) => string",
             "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "reader": {
+    "ReaderChapter": [
+      {
+        "id": "reader.tsx-ReaderChapter",
+        "name": "ReaderChapter",
+        "description": "The chapter being read.",
+        "entries": [
+          {
+            "name": "number",
+            "description": "Its number, as the chapter list shows it.",
+            "type": "string | number",
+            "simplifiedType": "string | number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "title",
+            "description": "Its title.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "ReaderProps": [
+      {
+        "id": "reader.tsx-ReaderProps",
+        "name": "ReaderProps",
+        "entries": [
+          {
+            "name": "series",
+            "description": "The series' name, above the chapter's.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "chapter",
+            "description": "The chapter on the page.",
+            "type": "ReaderChapter",
+            "simplifiedType": "ReaderChapter",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "pages",
+            "description": "The chapter's pages in reading order, as spread-viewer takes them.",
+            "type": "SpreadPage[]",
+            "simplifiedType": "SpreadPage[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "chapters",
+            "description": "Every chapter of the series, for the drawer's chapter list (as chapter-list takes them).",
+            "type": "Chapter[]",
+            "simplifiedType": "Chapter[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "direction",
+            "description": "`rtl` reads like a manga, `ltr` like a western book.",
+            "type": "SpreadDirection | undefined",
+            "simplifiedType": "\"ltr\" | \"rtl\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"rtl\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "page",
+            "description": "The reader's page, controlled: an index into `pages`. Wire it to the address with\n`useReader` (its `url` option) and pass `page` and `setPage` here. Leave it out to let the\nreader keep the page.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onPageChange",
+            "description": "Called with the new page (an index) whenever the reader turns.",
+            "type": "((page: number) => void) | undefined",
+            "simplifiedType": "(page: number) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "single",
+            "description": "One page at a time, for phones; pass it from a media query.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "as",
+            "description": "`main` makes the reader the page's one main region, as a chapter page is. Use `section`\n(a region named by the chapter) inside a page that has a main of its own.",
+            "type": "\"main\" | \"section\" | undefined",
+            "simplifiedType": "\"main\" | \"section\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"main\""
+              }
+            ],
             "required": false,
             "deprecated": false
           }

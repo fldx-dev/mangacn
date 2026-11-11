@@ -106,6 +106,11 @@ function aliasedItemName(specifier: string): string | null {
   return null;
 }
 
+/** The block a `@/components/blocks/<name>/<file>` specifier imports from, or `null`. */
+export function aliasedBlockName(specifier: string): string | null {
+  return /^@\/components\/blocks\/([^/]+)\/[^/]+$/.exec(specifier)?.[1] ?? null;
+}
+
 /**
  * Why `specifier` may not appear in a file shipped by `item`, or `null` when it is allowed.
  * Allowed (SPEC-registry-core §6.5): `react`, `react-dom`, packages in the item's
@@ -151,7 +156,9 @@ export function importViolation(
 /**
  * The `@/` specifiers a block may import: the install path of every file of every item it
  * declares by mangacn URL (`@/components/ui/separator`, `@/components/stamp`,
- * `@/components/ink-frame`), as `shadcn add` writes them at the default aliases.
+ * `@/components/ink-frame`), as `shadcn add` writes them at the default aliases. A block it
+ * declares counts as an item (SPEC-components-4 §3): `reader` declares `spread-viewer` and may
+ * import `@/components/blocks/spread-viewer/spread-viewer`.
  */
 export function blockImportPaths(
   item: Pick<LoadedRegistryItem, "registryDependencies">,
@@ -171,8 +178,9 @@ export function blockImportPaths(
  * Why `specifier` may not appear in a file shipped by a block (SPEC-components-3 §3, §10), or
  * `null`: a block composes items, so beyond React, its declared packages, `@/lib/utils` and its
  * own part files (relatively), it imports only the install paths of the items it declares by
- * mangacn URL (`blockImportPaths`). No bare stock names, no `@/lib/<x>` or `@/hooks/<x>` it did
- * not declare, no other block's files, no `@/components/blocks/…` path to its own parts.
+ * mangacn URL (`blockImportPaths`), a declared block among them. No bare stock names, no
+ * `@/lib/<x>` or `@/hooks/<x>` it did not declare, no undeclared block's files, no
+ * `@/components/blocks/…` path to its own parts.
  */
 export function blockImportViolation(
   specifier: string,
@@ -235,7 +243,13 @@ export function findImportViolations(
 }
 
 /** Item types whose files land in an install folder, so a dependent must import them. */
-const IMPORTED_TYPES = ["registry:ui", "registry:component", "registry:lib", "registry:hook"];
+const IMPORTED_TYPES = [
+  "registry:ui",
+  "registry:component",
+  "registry:lib",
+  "registry:hook",
+  "registry:block",
+];
 
 /**
  * Checks every item's `registryDependencies` against its shipped imports (SPEC-registry-core
@@ -258,8 +272,9 @@ export function findRegistryDependencyProblems(
     for (const entry of item.files) {
       const source = readFileSync(path.resolve(rootDir, entry.path), "utf8");
       for (const { specifier } of extractImports(source)) {
-        const name = aliasedItemName(specifier);
-        if (name) imported.add(name);
+        // A block's own parts are imported relatively; its alias path is refused elsewhere.
+        const name = aliasedItemName(specifier) ?? aliasedBlockName(specifier);
+        if (name && name !== item.name) imported.add(name);
       }
     }
     const declared = new Set<string>();
