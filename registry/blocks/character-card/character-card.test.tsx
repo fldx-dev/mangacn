@@ -43,11 +43,11 @@ describe("CharacterCard", () => {
     expect(ruby?.firstChild?.textContent).toBe("天野 ミオ");
   });
 
-  it("puts the role in a caption box, the quote in a speech bubble and the status on a stamp", () => {
+  it("puts the cast role in a caption box, the quote in a speech bubble and the status on a stamp", () => {
     render(
       <CharacterCard
         name="Mio Amano"
-        role="Lead · Lantern keeper"
+        castRole="Lead · Lantern keeper"
         quote="The lanterns are lit."
         status="MAIN"
         portrait={portrait}
@@ -63,7 +63,7 @@ describe("CharacterCard", () => {
     const stamp = article.querySelector('[data-slot="stamp"]');
     expect(stamp?.textContent).toBe("MAIN");
     expect(stamp?.closest('[data-slot="character-card-portrait"]')).toBeTruthy();
-    // The role is the character's, not an ARIA role: the card stays an article.
+    // castRole is the part they play; the card itself stays a plain article.
     expect(article.getAttribute("role")).toBeNull();
   });
 

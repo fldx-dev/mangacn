@@ -214,8 +214,8 @@
             "deprecated": false
           },
           {
-            "name": "role",
-            "description": "The character's part in the story (\"Lead · Lantern keeper\"), in a caption box. Not the ARIA\nrole: the card is always an `article`.",
+            "name": "castRole",
+            "description": "The part they play: Protagonist, Rival…, in a caption box.",
             "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],

@@ -8,13 +8,13 @@ function portrait(hair: string, sky: string): string {
 }
 
 export default function CharacterCardJapaneseDemo() {
-  // lang on the article covers the name, role, line and stamp; the reading is ruby over the name.
+  // lang on the article covers the name, cast role, line and stamp; the reading is ruby over the name.
   return (
     <CharacterCard
       lang="ja"
       name="天野 ミオ"
       reading="あまの みお"
-      role="主人公・灯籠番"
+      castRole="主人公・灯籠番"
       portrait={{
         src: portrait(
           "M78 190 C60 90 240 90 222 190 L222 260 C210 200 200 150 150 140 C100 150 90 200 78 260 Z",
