@@ -245,10 +245,17 @@ function Sidebar({
         )}
         {...props}
       >
+        {/* floating: a heavy-outlined paper card inside the container's padding. */}
+        {variant === "floating" && (
+          <InkFrame
+            fill="paper"
+            className="pointer-events-none absolute inset-2 -z-1 rounded-lg [--ink:var(--sidebar-border)] [--outline-width:var(--outline-width-heavy)] [--paper:var(--sidebar)]"
+          />
+        )}
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
+          className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:bg-transparent"
         >
           {children}
         </div>
@@ -322,16 +329,23 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
   );
 }
 
-function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
+function SidebarInset({ className, children, ...props }: React.ComponentProps<"main">) {
   return (
     <main
       data-slot="sidebar-inset"
       className={cn(
-        "relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2",
+        "relative isolate flex w-full flex-1 flex-col bg-background has-[>[data-inked=true]]:bg-transparent! md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2",
         className,
       )}
       {...props}
-    />
+    >
+      {/* inset: the page is a heavy-outlined paper card on the sidebar's paper (desktop only). */}
+      <InkFrame
+        fill="paper"
+        className="pointer-events-none absolute inset-0 -z-1 hidden rounded-xl [--ink:var(--sidebar-border)] [--outline-width:var(--outline-width-heavy)] [--paper:var(--background)] md:group-has-data-[variant=inset]/sidebar-wrapper:block"
+      />
+      {children}
+    </main>
   );
 }
 
@@ -373,7 +387,7 @@ function SidebarSeparator({ className, ...props }: React.ComponentProps<typeof S
     <Separator
       data-slot="sidebar-separator"
       data-sidebar="separator"
-      className={cn("mx-2 w-auto bg-sidebar-border", className)}
+      className={cn("mx-2 w-auto bg-sidebar-border data-horizontal:w-auto", className)}
       {...props}
     />
   );
