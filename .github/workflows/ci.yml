@@ -139,10 +139,61 @@ jobs:
       # The fonts install-deps would bring (CJK, emoji, Unifont) are needed on every run: without
       # them Japanese set in a Latin face (Geist) renders blank, and baselines written on a
       # cache hit differ from those written on a miss (Task 68 found 18 such shots).
-      - if: steps.filter.outputs.items != 'none'
+      #
+      # Their .deb files are cached, so a run needs a package mirror only when that cache is
+      # empty: on 2026-11-11 the runners could not resolve any ubuntu.com host for hours
+      # (azure.archive, archive and security alike, while the hosts themselves were up), and
+      # every visual job failed here before a single test ran. With an empty cache and no
+      # ubuntu.com, the files come from kernel.org's mirror of the same archive: apt checks
+      # them against Ubuntu's signed indexes whichever mirror serves them. The cached files
+      # also pin the fonts' versions, so a package update cannot move a glyph under the
+      # baselines.
+      - name: Ubuntu release
+        id: os
+        if: steps.filter.outputs.items != 'none'
+        run: . /etc/os-release && echo "codename=$VERSION_CODENAME" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v6
+        id: fonts
+        if: steps.filter.outputs.items != 'none'
+        with:
+          path: ${{ runner.temp }}/font-debs
+          key: font-debs-${{ steps.os.outputs.codename }}-v1
+      - name: Fonts
+        if: steps.filter.outputs.items != 'none'
+        env:
+          FONT_PACKAGES: fonts-ipafont-gothic fonts-wqy-zenhei fonts-freefont-ttf fonts-liberation fonts-noto-color-emoji fonts-unifont fonts-tlwg-loma-otf
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends fonts-ipafont-gothic fonts-wqy-zenhei fonts-freefont-ttf fonts-liberation fonts-noto-color-emoji fonts-unifont fonts-tlwg-loma-otf
+          debs="$RUNNER_TEMP/font-debs"
+          mkdir -p "$debs"
+          # Fetch the packages and whatever they depend on that the image lacks, as files.
+          fetch() {
+            mkdir -p "$debs/partial"
+            sudo apt-get update -qq &&
+              sudo apt-get install -y -qq --no-install-recommends --download-only -o Dir::Cache::archives="$debs" $FONT_PACKAGES
+          }
+          # The runner's mirror list names only ubuntu.com hosts; this one is outside that domain.
+          elsewhere() {
+            echo "::warning::no ubuntu.com mirror; fetching the fonts from mirrors.kernel.org"
+            printf '%s\tpriority:1\n%s\tpriority:2\n' http://mirrors.kernel.org/ubuntu/ http://mirrors.edge.kernel.org/ubuntu/ | sudo tee /etc/apt/apt-mirrors.txt
+          }
+          if ! ls "$debs"/*.deb > /dev/null 2>&1; then
+            # Ask the resolver first: apt takes about eight minutes to give up on a name.
+            if ! getent hosts azure.archive.ubuntu.com > /dev/null; then
+              elsewhere
+              fetch
+            elif ! fetch; then
+              elsewhere
+              sudo rm -f "$debs"/*.deb
+              fetch
+            fi
+            sudo rm -rf "$debs/partial" "$debs/lock"
+            sudo chown -R "$(id -u):$(id -g)" "$debs"
+          fi
+          ls -1 "$debs"
+          # From the files alone, with dpkg: apt would read them as its own user, which may not
+          # enter the runner's temp folder, and would wait on the resolver first (four minutes
+          # in run 43060493756). The fetch above already brought any dependency the image lacks.
+          sudo dpkg -i "$debs"/*.deb
       - if: steps.filter.outputs.items != 'none'
         run: pnpm build
       - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS == '' }}
