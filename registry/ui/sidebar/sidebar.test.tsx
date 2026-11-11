@@ -8,8 +8,14 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSkeleton,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
@@ -205,6 +211,128 @@ describe("Sidebar", () => {
     expect(rule?.className).toContain("group-hover/sidebar-rail:opacity-100");
     fireEvent.click(rail as Element);
     expect(sidebarRoot()?.dataset.state).toBe("collapsed");
+  });
+
+  it("sets group labels in the display face", () => {
+    render(<Shell />);
+    const label = screen.getByText("Library");
+    expect(label.dataset.slot).toBe("sidebar-group-label");
+    expect(label.className).toContain("font-display");
+  });
+
+  it("fills the active menu button with ink and hovers the rest on tone-1", () => {
+    render(
+      <SidebarProvider>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton isActive render={<a href="#home" />}>
+              <span>Home</span>
+            </SidebarMenuButton>
+            <SidebarMenuAction aria-label="More">+</SidebarMenuAction>
+            <SidebarMenuBadge>12</SidebarMenuBadge>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg">
+              <span>History</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarProvider>,
+    );
+    const active = screen.getByRole("link", { name: "Home" });
+    expect(active.dataset.slot).toBe("sidebar-menu-button");
+    expect(active.hasAttribute("data-active")).toBe(true);
+    const fill = active.querySelector(':scope > [data-slot="ink-frame"]');
+    expect(fill?.getAttribute("data-fill")).toBe("ink");
+    expect(fill?.className).toContain("[--ink:var(--sidebar-primary)]");
+    expect(active.className).toContain("data-active:text-sidebar-primary-foreground");
+    // The label still truncates, the frame does not.
+    expect(active.className).toContain("[&>span:last-child:not([data-slot=ink-frame])]:truncate");
+
+    const idle = screen.getByRole("button", { name: "History" });
+    expect(idle.dataset.size).toBe("lg");
+    expect(idle.querySelector('[data-slot="ink-frame"]')).toBeNull();
+    expect(idle.className).toContain("hover:bg-sidebar-accent");
+
+    // Text over the ink reads in paper.
+    expect(screen.getByText("12").className).toContain(
+      "peer-data-active/menu-button:text-sidebar-primary-foreground",
+    );
+    expect(screen.getByRole("button", { name: "More" }).className).toContain(
+      "peer-data-active/menu-button:text-sidebar-primary-foreground",
+    );
+  });
+
+  it("outlines variant=outline in a paper frame instead of a shadow ring", () => {
+    render(
+      <SidebarProvider>
+        <SidebarMenuButton variant="outline">Search</SidebarMenuButton>
+      </SidebarProvider>,
+    );
+    const button = screen.getByRole("button", { name: "Search" });
+    expect(button.className).not.toMatch(/shadow-/);
+    expect(
+      button.querySelector(':scope > [data-slot="ink-frame"]')?.getAttribute("data-fill"),
+    ).toBe("paper");
+  });
+
+  it("halftones disabled menu buttons instead of fading them", () => {
+    render(
+      <SidebarProvider>
+        <SidebarMenuButton disabled>Locked</SidebarMenuButton>
+      </SidebarProvider>,
+    );
+    const className = screen.getByRole("button", { name: "Locked" }).className;
+    expect(className).toContain("disabled:halftone-light");
+    expect(className).not.toContain("disabled:opacity-50");
+  });
+
+  it("draws the sub-menu guide as a hand-drawn rule outside the list's items", () => {
+    render(
+      <SidebarProvider>
+        <SidebarMenuSub>
+          <SidebarMenuSubItem>
+            <SidebarMenuSubButton href="#c12" isActive>
+              Chapter 12
+            </SidebarMenuSubButton>
+          </SidebarMenuSubItem>
+          <SidebarMenuSubItem>
+            <SidebarMenuSubButton href="#c13">Chapter 13</SidebarMenuSubButton>
+          </SidebarMenuSubItem>
+        </SidebarMenuSub>
+      </SidebarProvider>,
+    );
+    const list = screen.getByRole("list");
+    expect(list.className).not.toContain("border-l");
+    const rule = list.querySelector(':scope > [data-slot="ink-frame"]');
+    expect(rule?.tagName).toBe("LI");
+    expect(rule?.getAttribute("role")).toBe("presentation");
+    expect(rule?.getAttribute("aria-hidden")).toBe("true");
+    expect(rule?.getAttribute("data-shape")).toBe("line");
+    // Only the two chapters are list items.
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+    const chapter = screen.getByRole("link", { name: "Chapter 12" });
+    expect(chapter.dataset.slot).toBe("sidebar-menu-sub-button");
+    expect(
+      chapter.querySelector(':scope > [data-slot="ink-frame"]')?.getAttribute("data-fill"),
+    ).toBe("ink");
+    expect(
+      screen.getByRole("link", { name: "Chapter 13" }).querySelector("[data-slot]"),
+    ).toBeNull();
+  });
+
+  it("pencils the menu skeleton with mangacn's skeleton", () => {
+    render(
+      <SidebarProvider>
+        <SidebarMenuSkeleton showIcon />
+      </SidebarProvider>,
+    );
+    const row = document.querySelector('[data-slot="sidebar-menu-skeleton"]');
+    const bones = row?.querySelectorAll('[data-slot="skeleton"]');
+    expect(bones).toHaveLength(2);
+    expect(bones?.[1].querySelector('[data-slot="ink-frame"]')?.getAttribute("data-fill")).toBe(
+      "hatch",
+    );
   });
 
   it("throws outside a provider, like stock", () => {
