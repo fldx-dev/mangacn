@@ -1312,6 +1312,22 @@
           "target": "@ui/sidebar.tsx"
         }
       ]
+    },
+    {
+      "name": "chart-tones",
+      "type": "registry:component",
+      "title": "Chart Tones",
+      "description": "Screentone SVG patterns for charts: dots at four densities, a hatch and a cross-hatch in currentColor, under stable ids.",
+      "categories": ["data"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "files": [
+        {
+          "path": "chart-tones/chart-tones.tsx",
+          "type": "registry:component"
+        }
+      ]
     }
   ]
 }
