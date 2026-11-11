@@ -1,0 +1,29 @@
+---
+title: Calendar
+description: "Stock date picker on an outlined paper card: display-face caption, today underlined, picked days ink-filled, a range's middle in halftone."
+item: calendar
+---
+
+<InstallCommand item="calendar" />
+
+<CopyPrompt item="calendar" />
+
+A month to pick a date or a range from, for a release date, a reading schedule or a convention's days: an outlined paper card with the caption in the display face, today underlined and the picked days filled in ink. Put it in a `popover` behind a `button` for a date field; inside a `card` or `popover` it drops its own outline and uses theirs.
+
+## Examples
+
+One date picked; today, the 12th, is underlined.
+
+<DemoFrame item="calendar" demo="default" />
+
+`captionLayout="dropdown"` swaps the caption for a month and a year select, boxed in ink.
+
+<DemoFrame item="calendar" demo="dropdowns" />
+
+A range across two months: its ends are filled in ink and the days between sit on halftone.
+
+<DemoFrame item="calendar" demo="range" />
+
+## Props
+
+<PropsTable item="calendar" />

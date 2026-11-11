@@ -1201,6 +1201,51 @@
       ],
       "registryDependencies": [],
       "sha1": "08de05327985d4550ee14d424beebfe64bf2e5bf"
+    },
+    "calendar": {
+      "exports": [
+        "Calendar",
+        "CalendarDayButton"
+      ],
+      "dataSlots": [
+        "calendar"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn",
+        "date-fns",
+        "react-day-picker@latest"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "sha1": "7917467a286b4f1dafceb42e8b38f5ceabfecdce"
+    },
+    "carousel": {
+      "exports": [
+        "Carousel",
+        "CarouselContent",
+        "CarouselItem",
+        "CarouselNext",
+        "CarouselPrevious",
+        "useCarousel"
+      ],
+      "dataSlots": [
+        "carousel",
+        "carousel-content",
+        "carousel-item",
+        "carousel-next",
+        "carousel-previous"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn",
+        "embla-carousel-react"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "sha1": "b8eb5b9ba36031ef2796ab8b122dc0fba5bcbd5e"
     }
   }
 }

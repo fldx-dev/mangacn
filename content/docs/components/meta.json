@@ -51,6 +51,8 @@
     "direction",
     "input-otp",
     "resizable",
+    "calendar",
+    "carousel",
     "---Layout---",
     "panel",
     "panel-grid",

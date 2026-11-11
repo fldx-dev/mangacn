@@ -18,6 +18,29 @@ afterAll(() => restoreAnimations());
 
 beforeEach(() => {
   stubResizeObserver();
+  // The carousel card (embla) asks for matchMedia and IntersectionObserver on mount; jsdom has
+  // neither. Reduced data keeps every card mounting at once, as it does with no observer.
+  vi.stubGlobal("matchMedia", (query: string) => ({
+    matches: query === "(prefers-reduced-data: reduce)",
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  }));
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+      takeRecords() {
+        return [];
+      }
+    },
+  );
 });
 
 afterEach(() => {
