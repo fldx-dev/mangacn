@@ -265,6 +265,38 @@ describe("Stamp", () => {
       }
     });
 
+    it("sets a vertical word in one upright column at a larger face, fitted to the ring", () => {
+      // Two kanji at md's vertical text-2xl: one column 24 px wide, 48 px tall. Ring: 80 - 6 -
+      // 16 - 1.5 - 2 = 54.5 px; the diagonal (53.7 px) fits, so the word is not shrunk.
+      layout(80, 24, 48);
+      const { container } = render(<Stamp vertical>完結</Stamp>);
+      const text = textOf(container);
+      expect(stampOf(container)?.dataset.vertical).toBe("true");
+      for (const name of ["[writing-mode:vertical-rl]", "[text-orientation:upright]", "text-2xl"]) {
+        expect(text.classList.contains(name), name).toBe(true);
+      }
+      expect(stampOf(container)?.dataset.fit).toBeUndefined();
+      expect(text.textContent).toBe("完結");
+      cleanup();
+      // At sm the column (16 × 32 px) overruns the 35.3 px ring a little and is fitted.
+      layout(56, 16, 32);
+      const small = render(
+        <Stamp vertical size="sm">
+          最新
+        </Stamp>,
+      );
+      expect(textOf(small.container).classList.contains("text-base")).toBe(true);
+      expect(stampOf(small.container)?.dataset.fit).toBe("0.98");
+      expect(Math.hypot(16, 32) * 0.98).toBeLessThanOrEqual(35.3);
+    });
+
+    it("keeps a word horizontal unless vertical is set", () => {
+      layout(80, 36, 18);
+      const { container } = render(<Stamp>完結</Stamp>);
+      expect(stampOf(container)?.dataset.vertical).toBeUndefined();
+      expect(textOf(container).className).not.toContain("writing-mode");
+    });
+
     it("refits when the text or the seal resizes (a web font swapping in)", () => {
       const observed: Element[] = [];
       let notify = () => {};

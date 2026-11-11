@@ -1683,6 +1683,20 @@
             "tags": [],
             "required": false,
             "deprecated": false
+          },
+          {
+            "name": "vertical",
+            "description": "Sets the word top to bottom in one column, as a two-kanji hanko is cut (完結, 検印), in a\nlarger face that fills the seal; it still shrinks to fit inside the ring. Meant for one to\nthree CJK characters (the column is `vertical-rl`, upright).",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
           }
         ]
       }
