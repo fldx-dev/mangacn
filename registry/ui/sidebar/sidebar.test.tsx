@@ -7,6 +7,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupLabel,
+  SidebarInset,
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuBadge,
@@ -211,6 +212,41 @@ describe("Sidebar", () => {
     expect(rule?.className).toContain("group-hover/sidebar-rail:opacity-100");
     fireEvent.click(rail as Element);
     expect(sidebarRoot()?.dataset.state).toBe("collapsed");
+  });
+
+  it("makes variant=floating a heavy-outlined paper card, with no ring or shadow", () => {
+    render(<Shell sidebar={{ variant: "floating" }} />);
+    const container = document.querySelector('[data-slot="sidebar-container"]');
+    const frames = container?.querySelectorAll(':scope > [data-slot="ink-frame"]');
+    expect(frames).toHaveLength(1);
+    expect(frames?.[0].getAttribute("data-shape")).toBe("rect");
+    expect(frames?.[0].getAttribute("data-fill")).toBe("paper");
+    expect(frames?.[0].className).toContain("[--outline-width:var(--outline-width-heavy)]");
+    expect(frames?.[0].className).toContain("[--paper:var(--sidebar)]");
+    const inner = document.querySelector('[data-slot="sidebar-inner"]');
+    expect(inner?.className).not.toMatch(/shadow-|ring-1/);
+  });
+
+  it("makes variant=inset's page a heavy-outlined paper card on desktop", () => {
+    render(
+      <SidebarProvider>
+        <Sidebar variant="inset">
+          <SidebarContent />
+        </Sidebar>
+        <SidebarInset>Page</SidebarInset>
+      </SidebarProvider>,
+    );
+    // The sidebar itself draws no frame and no rule; the page carries the card.
+    const container = document.querySelector('[data-slot="sidebar-container"]');
+    expect(container?.querySelector(':scope > [data-slot="ink-frame"]')).toBeNull();
+    const page = screen.getByRole("main");
+    expect(page.dataset.slot).toBe("sidebar-inset");
+    expect(page.className).not.toMatch(/shadow-/);
+    const card = page.querySelector(':scope > [data-slot="ink-frame"]');
+    expect(card?.getAttribute("data-fill")).toBe("paper");
+    expect(card?.className).toContain("md:group-has-data-[variant=inset]/sidebar-wrapper:block");
+    expect(card?.className).toContain("[--outline-width:var(--outline-width-heavy)]");
+    expect(page.textContent).toBe("Page");
   });
 
   it("sets group labels in the display face", () => {
