@@ -21,6 +21,8 @@ export const OVERLAY_ITEMS: ReadonlySet<string> = new Set([
   "sonner",
   "context-menu",
   "menubar",
+  "navigation-menu",
+  "combobox",
 ]);
 
 export interface DemoFrameProps {

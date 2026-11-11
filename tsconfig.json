@@ -38,6 +38,7 @@
       "@/components/stamp": ["./registry/ui/stamp/stamp.tsx"],
       "@/components/emanata": ["./registry/ui/emanata/emanata.tsx"],
       "@/hooks/use-mobile": ["./registry/hooks/use-mobile.ts"],
+      "@/components/ui/input-group": ["./registry/ui/input-group/input-group.tsx"],
       "@/*": ["./*"]
     }
   },

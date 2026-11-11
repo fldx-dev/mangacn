@@ -1284,6 +1284,48 @@
           "target": "@ui/item.tsx"
         }
       ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "title": "Navigation Menu",
+      "description": "Stock navigation menu with display-face triggers that ink when open and dropdown-menu's heavy-outlined paper popup.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "class-variance-authority", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "navigation-menu/navigation-menu.tsx",
+          "type": "registry:ui",
+          "target": "@ui/navigation-menu.tsx"
+        }
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "Stock combobox in one hand-drawn input group; its list is dropdown-menu's paper with an ink highlight, and chips are outlined.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input-group.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "combobox/combobox.tsx",
+          "type": "registry:ui",
+          "target": "@ui/combobox.tsx"
+        }
+      ]
     }
   ]
 }

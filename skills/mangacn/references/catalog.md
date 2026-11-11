@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 75 items in the registry. Each line gives the item's name, what it is, the one
+All 77 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -172,6 +172,12 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `item`: Stock item row: a heavy-outlined paper card when outlined, tone-1 when muted, display-face titles and hand-drawn separators.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/item --overwrite`
   Docs: https://www.mangacn.com/docs/components/item (Markdown: https://www.mangacn.com/docs/components/item.md)
+- `navigation-menu`: Stock navigation menu with display-face triggers that ink when open and dropdown-menu's heavy-outlined paper popup.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/navigation-menu --overwrite`
+  Docs: https://www.mangacn.com/docs/components/navigation-menu (Markdown: https://www.mangacn.com/docs/components/navigation-menu.md)
+- `combobox`: Stock combobox in one hand-drawn input group; its list is dropdown-menu's paper with an ink highlight, and chips are outlined.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/combobox --overwrite`
+  Docs: https://www.mangacn.com/docs/components/combobox (Markdown: https://www.mangacn.com/docs/components/combobox.md)
 
 ## Layout
 

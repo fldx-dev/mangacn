@@ -48,6 +48,8 @@
     "menubar",
     "field",
     "item",
+    "navigation-menu",
+    "combobox",
     "---Layout---",
     "panel",
     "panel-grid",
