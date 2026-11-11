@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 81 items in the registry. Each line gives the item's name, what it is, the one
+All 82 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -190,6 +190,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `resizable`: Stock resizable panels whose handle is a hand-drawn rule, heavy while hovered, focused or dragged, with an optional paper grip tab.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/resizable --overwrite`
   Docs: https://www.mangacn.com/docs/components/resizable (Markdown: https://www.mangacn.com/docs/components/resizable.md)
+- `command`: Stock cmdk palette on heavy-outlined paper: a ruled search row, display-face headings, ink-filled selection and key-cap shortcuts.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/command --overwrite`
+  Docs: https://www.mangacn.com/docs/components/command (Markdown: https://www.mangacn.com/docs/components/command.md)
 
 ## Layout
 

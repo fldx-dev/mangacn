@@ -120,6 +120,11 @@ export default defineConfig({
         find: /^@\/hooks\/use-mobile$/,
         replacement: fileURLToPath(new URL("./registry/hooks/use-mobile.ts", import.meta.url)),
       },
+      // command → dialog.
+      {
+        find: /^@\/components\/ui\/dialog$/,
+        replacement: fileURLToPath(new URL("./registry/ui/dialog/dialog.tsx", import.meta.url)),
+      },
       // combobox, command → input-group.
       {
         find: /^@\/components\/ui\/input-group$/,

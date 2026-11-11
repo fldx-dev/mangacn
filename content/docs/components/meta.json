@@ -54,6 +54,7 @@
     "direction",
     "input-otp",
     "resizable",
+    "command",
     "---Layout---",
     "panel",
     "panel-grid",
