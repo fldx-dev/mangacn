@@ -42,6 +42,7 @@ registry/ui/<name>/
 | `registry/theme/`         | `registry:theme`, `registry:font`, `registry:lib`, `ink-frame`   | css, `app/layout.tsx`, `@/lib/<name>.ts`, `@/components/` |
 | `registry/ui/<name>/`     | `registry:ui` (primitive) or `registry:component` (manga-native) | `@/components/ui/<name>.tsx` or `@/components/<name>.tsx` |
 | `registry/blocks/<name>/` | `registry:block` (recipe 3)                                      | `@/components/blocks/<name>/…`                            |
+| `registry/hooks/`         | `registry:hook` (recipe 4), one `<name>.ts` each                 | `@/hooks/<name>.ts`                                       |
 
 ### Catalog entry
 
@@ -64,7 +65,7 @@ Add the item to `registry/ui/registry.json` (never to the root `registry.json`, 
 
 - `description`: one sentence, at most 140 characters.
 - `categories`: at least one of `primitive`, `layout`, `text`, `background`, `feedback`,
-  `overlay`, `navigation`, `form`, `data`, `decoration`, `animation`, `block`.
+  `overlay`, `navigation`, `form`, `data`, `decoration`, `animation`, `block`, `hook`.
 - `meta.since`: the `package.json` version the item first ships in.
 - `files[]`: the shipped file only. Demos, tests, fixtures and `__parity__` are never listed.
 - `dependencies`: every npm package the shipped file imports (`class-variance-authority`,
@@ -90,15 +91,16 @@ Enforced by `registry/ui/imports.test.ts` for every file in every catalog:
 | `react`, `react-dom` (and subpaths)                                                                          | `import * as React from "react"`                    |
 | packages in the item's `dependencies` (and subpaths)                                                         | `import { Popover } from "@base-ui/react/popover"`  |
 | `@/lib/utils`                                                                                                | `import { cn } from "@/lib/utils"`                  |
-| `@/components/ui/<x>`, `@/components/<x>`, `@/lib/<x>`, `@/hooks/<x>` where `x` is in `registryDependencies` | `import { Button } from "@/components/ui/button"`   |
+| `@/components/ui/<x>`, `@/components/<x>`, `@/lib/<x>` where `x` is in `registryDependencies`               | `import { Button } from "@/components/ui/button"`   |
 | the same for a mangacn item declared by URL (`https://www.mangacn.com/r/ink-frame.json`; see recipe 1)       | `import { InkFrame } from "@/components/ink-frame"` |
+| `@/hooks/<x>` only where `x` is declared by URL (`https://www.mangacn.com/r/use-mobile.json`; recipe 4)      | `import { useIsMobile } from "@/hooks/use-mobile"`  |
 | relative imports to another file of the **same** item                                                        | `import { parts } from "./dialog-parts"`            |
 
 Everything else fails with `file:line imports "specifier" (item): reason`: `@/app/…`,
 `@/lib/registry/…`, `@/registry/…`, docs-only `@/components/…`, relative imports into
 another item, undeclared packages, Node built-ins. Demos and tests may import anything
 (they import the item via `@/registry/ui/<name>/<name>`), because they are not shipped.
-Blocks follow a stricter version of this table (recipe 3).
+Blocks follow a stricter version of this table (recipe 3); a hook imports React only (recipe 4).
 
 ### Design rules (every item)
 
@@ -451,6 +453,66 @@ announcements. Props are data in, callbacks out. `chapter-list` is the reference
 5. **Smoke it once:** `pnpm registry:build && pnpm registry:smoke --only=<name>` installs the
    block with its items, checks every file in `files[]` landed at its target, then typechecks
    and builds the fresh app. `--changed` selects a block whose folder changed.
+
+## Recipe 4: add a hook
+
+A hook is a stock React hook that a restyled primitive needs (`use-mobile`, which `sidebar`
+reads). It ships unchanged but for the attribution header, has **no demo, no docs page and no
+index card**, and installs with the item that declares it. `use-mobile` is the reference.
+
+1. **Fetch the stock source** as in recipe 1, at the hooks path:
+
+   ```bash
+   pnpm dlx shadcn@4.23.0 add https://ui.shadcn.com/r/styles/base-nova/<name>.json --dry-run --view hooks/<name>.ts
+   ```
+
+   Copy it to `registry/hooks/<name>.ts` (one flat file, no folder), Biome-format it, and add the
+   attribution header after the imports (`// Based on shadcn/ui <name> (MIT, https://ui.shadcn.com),
+   base-nova style, fetched YYYY-MM-DD.`). A hook imports React and the platform only: no
+   registry item, no package, no `@/lib/utils`, no other file (`registry/ui/imports.test.ts`).
+2. **Catalog entry** in `registry/hooks/registry.json`, appended. The file's target is
+   `@hooks/<name>.ts`: `@hooks/` resolves against the user's own `hooks` alias, so the file lands
+   in `hooks/` (or wherever their components.json points it). A literal `@/hooks/…` target is
+   written into a folder named `@`; no target also lands in `hooks/` (the CLI places a
+   `registry:hook` by type) but every mangacn file states its target (Task 84's spike).
+
+   ```json
+   {
+     "name": "use-mobile",
+     "type": "registry:hook",
+     "title": "Use Mobile",
+     "description": "Stock hook useIsMobile: true below 768 px, …",
+     "categories": ["hook"],
+     "meta": { "since": "0.1.0" },
+     "files": [
+       { "path": "use-mobile.ts", "type": "registry:hook", "target": "@hooks/use-mobile.ts" }
+     ]
+   }
+   ```
+
+   `registry/hooks/catalog.test.ts` checks the type, the `hook` category, the one file at
+   `registry/hooks/<name>.ts`, its target, and that the hook depends on no registry item.
+3. **Use it from an item or a block.** Declare it by URL, never by bare name (a bare
+   `use-mobile` installs shadcn's own copy), and import it from its install path:
+
+   ```json
+   "registryDependencies": ["https://www.mangacn.com/r/use-mobile.json", "…"]
+   ```
+
+   ```tsx
+   import { useIsMobile } from "@/hooks/use-mobile";
+   ```
+
+   Map the path to `registry/hooks/<name>.ts` in `tsconfig.json` `paths` and the
+   `vitest.config.mts` aliases (as `@/hooks/use-mobile` is), so the item typechecks and tests
+   here. One `add` of the item then writes the hook too, and the item's Files line (its page's
+   `<ItemFiles>`, `get_item`) names `hooks/<name>.ts` among what its dependencies add.
+4. **Test, catalogs, smoke.** A unit test beside the hook (`registry/hooks/<name>.test.ts`,
+   stubbing what jsdom lacks, such as `matchMedia`). `pnpm gen:skill` lists it in the skill
+   catalog's Hooks group; `list_items` lists it as `registry:hook` (filter `hook`). Smoke it once:
+   `pnpm registry:build && pnpm registry:smoke --only=<name>` checks that `hooks/<name>.ts`
+   landed with its header, then typechecks and builds the fresh app; `--changed` selects a
+   hook whose `registry/hooks/<name>.*` files changed.
 
 ## Run the checks
 
