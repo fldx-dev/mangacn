@@ -50,6 +50,17 @@ describe("collectDemos", () => {
     expect(collectDemos(registry, root).map((entry) => entry.item)).toEqual(["alpha"]);
   });
 
+  it("skips hooks, which have no demos of their own", () => {
+    const { root, registry } = fixture({ alpha: ["default.tsx"] });
+    registry.items.push({
+      name: "use-mobile",
+      type: "registry:hook",
+      source: "registry/hooks/registry.json",
+      files: [{ path: "registry/hooks/use-mobile.ts", type: "registry:hook" }],
+    });
+    expect(collectDemos(registry, root).map((entry) => entry.item)).toEqual(["alpha"]);
+  });
+
   it("names every item without demos/default.tsx", () => {
     const { root, registry } = fixture({ alpha: ["extra.tsx"], beta: [], gamma: ["default.tsx"] });
     rmSync(path.join(root, "registry", "ui", "beta", "demos"), { recursive: true });

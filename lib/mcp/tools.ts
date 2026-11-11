@@ -19,6 +19,7 @@ import {
   registryItemUrl,
 } from "@/lib/registry";
 import { clientNote, isClientItem } from "@/lib/registry/client";
+import { isHook } from "@/lib/registry/hooks";
 import { dependencyFiles, installTarget } from "@/lib/registry/install-target";
 
 // The four mangacn tools of the MCP server (SPEC-agent-tooling §4): list_items, get_item,
@@ -45,7 +46,7 @@ export interface CatalogEntry {
   adds: string[];
   /**
    * Whether the item's entry file starts with `"use client"`; null when it ships no script
-   * (the theme, the fonts).
+   * (the theme, the fonts) or is a hook (it runs in whichever client component calls it).
    */
   client: boolean | null;
   /**
@@ -53,7 +54,10 @@ export interface CatalogEntry {
    * null when it has none.
    */
   page: string | null;
-  /** Absolute docs URL: the item's page, else the guide that covers it. */
+  /**
+   * Absolute docs URL: the item's page, else the guide that covers it; a hook's registry JSON
+   * (a hook has no page: the item that declares it documents it).
+   */
   docs: string;
 }
 
@@ -72,6 +76,10 @@ export const SKILL_DIR = "skills/mangacn";
 export { dependencyFiles, installTarget };
 
 const THEMING_PAGE = "/docs/theming";
+
+/** The one line list_items and get_item print about a hook in place of the client line. */
+export const HOOK_NOTE =
+  "Hook: installs with the item that declares it by URL, which imports it from @/hooks/; call it from a client component.";
 
 function categoryRank(category: string): number {
   const index = (CATEGORIES as readonly string[]).indexOf(category);
@@ -92,9 +100,12 @@ export function readCatalog(registry: LoadedRegistry = loadRegistry()): CatalogE
       files: item.files.map(installTarget),
       dependencyFiles: dependencyFiles(item.name, registry),
       adds: itemsToAdd(item.name),
-      client: isClientItem(item),
+      client: isHook(item) ? null : isClientItem(item),
       page,
-      docs: `${SITE_URL}${page ?? THEMING_PAGE}`,
+      docs:
+        page === null && isHook(item)
+          ? registryItemUrl(item.name)
+          : `${SITE_URL}${page ?? THEMING_PAGE}`,
     };
   });
   return entries.sort((a, b) => categoryRank(a.category) - categoryRank(b.category));
@@ -144,7 +155,13 @@ export function listItemsText(catalog: readonly CatalogEntry[], category?: strin
     [
       `- ${entry.name} · ${entry.type} · ${entry.category}: ${entry.description}`,
       entry.dependencies.length > 0 ? `Needs: ${entry.dependencies.join(", ")}.` : undefined,
-      entry.client === null ? undefined : entry.client ? "Client component." : "Server component.",
+      entry.type === "registry:hook"
+        ? HOOK_NOTE
+        : entry.client === null
+          ? undefined
+          : entry.client
+            ? "Client component."
+            : "Server component.",
       `Install: \`${addCommand(entry.adds, "pnpm")}\`.`,
       `Docs: ${entry.docs}`,
     ]
@@ -180,13 +197,16 @@ export function filesLine(entry: Pick<CatalogEntry, "files" | "dependencyFiles">
     : `Files: ${own} ${ALIASES_NOTE}.`;
 }
 
-/** The Markdown get_item returns for an item without a page of its own (fonts, ink-frame). */
+/** The Markdown get_item returns for an item without a page of its own (fonts, ink-frame, hooks). */
 function summaryMarkdown(entry: CatalogEntry): string {
+  const hook = entry.type === "registry:hook";
   return [
     `# ${entry.title}`,
     `> ${entry.description}`,
     `URL: ${registryItemUrl(entry.name)}`,
-    `This item has no docs page of its own; ${entry.docs} covers it.`,
+    hook
+      ? "A hook has no docs page of its own: the page of the item that declares it covers it."
+      : `This item has no docs page of its own; ${entry.docs} covers it.`,
     [
       "```bash",
       ...PACKAGE_MANAGERS.flatMap((manager, index) => [
@@ -197,7 +217,7 @@ function summaryMarkdown(entry: CatalogEntry): string {
       "```",
     ].join("\n"),
     flagsNote(entry.adds),
-    entry.client === null ? undefined : clientNote(entry.client),
+    hook ? HOOK_NOTE : entry.client === null ? undefined : clientNote(entry.client),
     entry.dependencies.length > 0 ? `Dependencies: ${entry.dependencies.join(", ")}.` : undefined,
   ]
     .filter((part) => part !== undefined)

@@ -59,13 +59,15 @@ command. The CLI also installs straight from this repository without the registr
 | Restyled primitives (`button`, `dialog`, …)       | `components/ui/<item>.tsx`, replacing the stock file         |
 | Manga-native pieces (`speech-bubble`, `panel`, …) | `components/<item>.tsx`                                      |
 | Blocks (`chapter-list`, `spread-viewer`)          | `components/blocks/<block>/`, every file of the block        |
+| Hooks (`use-mobile`)                              | `hooks/<hook>.ts`, with the item that declares the hook      |
 | The ink frame                                     | `components/ink-frame.tsx` (and `roughjs` in `package.json`) |
 | Tokens, utilities and keyframes                   | your `globals.css`                                           |
 | Font loaders                                      | your root `layout.tsx`                                       |
 
 ## What is in the registry
 
-Seventy-four items, all listed at https://www.mangacn.com/docs/components.
+Seventy-five items, all listed at https://www.mangacn.com/docs/components (the hook in the
+skill catalog and `list_items`: it has no page of its own).
 
 | Group                    | Items                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -77,6 +79,7 @@ Seventy-four items, all listed at https://www.mangacn.com/docs/components.
 | Decoration               | `emanata`, `ink-arrow`, `stamp`, `ink-splatter`, `sfx-ticker`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | Motion and feedback      | `page-turn`, `ink-splash-loader`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | Blocks                   | `chapter-list`, `spread-viewer`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Hooks                    | `use-mobile` (installs with the item that needs it)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 The look comes from one theme and one pen. The theme is ink on paper with four screentone
 greys and a single spot red, exposed as CSS variables and Tailwind utilities; dark mode swaps

@@ -1,5 +1,6 @@
 import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
+import { isHook } from "./hooks";
 import type { LoadedRegistry } from "./index";
 
 /** Repo-relative path of the generated demo map (gitignored, built by `pnpm gen:demos`). */
@@ -23,7 +24,8 @@ function compare(a: string, b: string): number {
 /**
  * Finds every demo of every item that ships files. An item's folder is the folder of its
  * first file; its demos are the `.tsx` files directly inside `<folder>/demos/`.
- * Throws naming each item that has no `demos/default.tsx`.
+ * Throws naming each item that has no `demos/default.tsx`. Hooks have no demos (the item that
+ * declares one shows it), so they are skipped.
  */
 export function collectDemos(registry: LoadedRegistry, rootDir = process.cwd()): DemoEntry[] {
   const entries: DemoEntry[] = [];
@@ -31,7 +33,7 @@ export function collectDemos(registry: LoadedRegistry, rootDir = process.cwd()):
 
   for (const item of registry.items) {
     const first = item.files[0];
-    if (!first) continue;
+    if (!first || isHook(item)) continue;
     const demosDir = path.posix.join(path.posix.dirname(first.path), "demos");
     const absolute = path.resolve(rootDir, demosDir);
     const files = existsSync(absolute)

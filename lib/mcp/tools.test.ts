@@ -4,11 +4,14 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { createMcpHandler } from "@modelcontextprotocol/server";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import type { LoadedRegistry } from "@/lib/registry";
 import { type SearchHit, searchText } from "./docs-tools";
 import { createMcpServer, type McpDeps } from "./server";
 import {
   type CatalogReaders,
+  dependencyFiles,
   filesLine,
+  HOOK_NOTE,
   installTarget,
   readCatalog,
   readSkill,
@@ -205,7 +208,19 @@ describe("list_items", () => {
     expect(text).toContain(
       "Server component. Install: `pnpm dlx shadcn@latest add @mangacn/chapter-list --overwrite`. Docs: https://www.mangacn.com/docs/blocks/chapter-list",
     );
-    expect(catalog.at(-1)?.category).toBe("block");
+    expect(catalog.findLastIndex((entry) => entry.category === "block")).toBe(
+      catalog.findIndex((entry) => entry.category === "hook") - 1,
+    );
+  });
+
+  it("lists the hooks after the blocks, as hooks rather than client or server components", async () => {
+    const { text } = await call("list_items", { category: "hook" });
+    expect(text).toContain('1 items in "hook"');
+    expect(text).toContain(
+      `- use-mobile · registry:hook · hook: Stock hook useIsMobile: true below 768 px, following the viewport; sidebar reads it to become a sheet on phones. ${HOOK_NOTE} Install: \`pnpm dlx shadcn@latest add @mangacn/use-mobile --overwrite\`. Docs: https://www.mangacn.com/r/use-mobile.json`,
+    );
+    expect(text).not.toMatch(/(Client|Server) component/);
+    expect(catalog.at(-1)?.category).toBe("hook");
   });
 
   it("rejects a category outside the catalog", async () => {
@@ -263,6 +278,69 @@ describe("get_item", () => {
     expect(text).toContain("pnpm dlx shadcn@latest add @mangacn/font-display");
     expect(text).toContain("https://www.mangacn.com/docs/theming covers it");
     expect(text).toContain("Files: none;");
+  });
+
+  it("summarises a hook: no page, its install target, the hook line", async () => {
+    const entry = catalog.find((item) => item.name === "use-mobile");
+    expect(entry).toMatchObject({ type: "registry:hook", page: null, client: null });
+    const { text, isError } = await call("get_item", { name: "use-mobile" });
+    expect(isError).toBe(false);
+    expect(text).toContain("# Use Mobile");
+    expect(text).toContain("A hook has no docs page of its own");
+    expect(text).toContain(HOOK_NOTE);
+    expect(text).toContain(
+      "Files: hooks/use-mobile.ts (where `shadcn add` writes them with the default components.json aliases).",
+    );
+  });
+
+  it("names a declared hook's hooks/<name>.ts in the Files line of the item that declares it", () => {
+    const fixture: LoadedRegistry = {
+      name: "fixture",
+      homepage: "",
+      items: [
+        {
+          name: "use-mobile",
+          type: "registry:hook",
+          source: "registry/hooks/registry.json",
+          files: [
+            {
+              path: "registry/hooks/use-mobile.ts",
+              type: "registry:hook",
+              target: "@hooks/use-mobile.ts",
+            },
+          ],
+        },
+        {
+          name: "rail",
+          type: "registry:ui",
+          source: "registry/ui/registry.json",
+          registryDependencies: [
+            "https://www.mangacn.com/r/use-mobile.json",
+            "https://www.mangacn.com/r/ink-frame.json",
+          ],
+          files: [
+            { path: "registry/ui/rail/rail.tsx", type: "registry:ui", target: "@ui/rail.tsx" },
+          ],
+        },
+        {
+          name: "ink-frame",
+          type: "registry:component",
+          source: "registry/theme/registry.json",
+          files: [
+            {
+              path: "registry/theme/ink-frame/ink-frame.tsx",
+              type: "registry:component",
+              target: "@components/ink-frame.tsx",
+            },
+          ],
+        },
+      ],
+    };
+    const deps = dependencyFiles("rail", fixture);
+    expect(deps).toEqual(["hooks/use-mobile.ts", "components/ink-frame.tsx"]);
+    expect(filesLine({ files: ["components/ui/rail.tsx"], dependencyFiles: deps })).toBe(
+      "Files: components/ui/rail.tsx; also adds hooks/use-mobile.ts, components/ink-frame.tsx through its registry dependencies (where `shadcn add` writes them with the default components.json aliases).",
+    );
   });
 
   it("words the Files line for every mix of own and dependency files", () => {
@@ -373,5 +451,11 @@ describe("installTarget", () => {
     expect(catalog.find((entry) => entry.name === "manga-motion")?.files).toEqual([
       "lib/manga-motion.ts",
     ]);
+  });
+
+  it("puts a hook in hooks/, by its @hooks target or by its type", () => {
+    const file = { path: "registry/hooks/use-mobile.ts", type: "registry:hook" };
+    expect(installTarget({ ...file, target: "@hooks/use-mobile.ts" })).toBe("hooks/use-mobile.ts");
+    expect(installTarget(file)).toBe("hooks/use-mobile.ts");
   });
 });
