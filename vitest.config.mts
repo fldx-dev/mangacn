@@ -115,6 +115,11 @@ export default defineConfig({
         find: /^@\/components\/ui\/tooltip$/,
         replacement: fileURLToPath(new URL("./registry/ui/tooltip/tooltip.tsx", import.meta.url)),
       },
+      // chart → card (its tooltip box).
+      {
+        find: /^@\/components\/ui\/card$/,
+        replacement: fileURLToPath(new URL("./registry/ui/card/card.tsx", import.meta.url)),
+      },
       // sidebar → use-mobile (the hook catalog's one file per hook).
       {
         find: /^@\/hooks\/use-mobile$/,

@@ -1230,6 +1230,28 @@
         "use-mobile"
       ],
       "sha1": "ada4f1102bd6f7d244b2254132ddf06cc2119110"
+    },
+    "chart": {
+      "exports": [
+        "ChartContainer",
+        "ChartLegend",
+        "ChartLegendContent",
+        "ChartStyle",
+        "ChartTooltip",
+        "ChartTooltipContent"
+      ],
+      "dataSlots": [
+        "chart"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn",
+        "recharts@3.8.0"
+      ],
+      "registryDependencies": [
+        "card"
+      ],
+      "sha1": "f282f95fcc099cae80bd344920f10007cd8dd709"
     }
   }
 }

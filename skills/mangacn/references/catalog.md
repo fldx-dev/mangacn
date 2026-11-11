@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 77 items in the registry. Each line gives the item's name, what it is, the one
+All 78 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -175,6 +175,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `sidebar`: Stock sidebar on paper: a hand-drawn rule on its edge, ink-filled active rows, outlined floating and inset cards, a sheet on phones.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/sidebar --overwrite`
   Docs: https://www.mangacn.com/docs/components/sidebar (Markdown: https://www.mangacn.com/docs/components/sidebar.md)
+- `chart`: Stock recharts container in ink: ink axes, a tone-3 grid, a small outlined paper tooltip; pairs with chart-tones fills.
+  Install: `npx shadcn@latest add @mangacn/chart --overwrite`
+  Docs: https://www.mangacn.com/docs/components/chart (Markdown: https://www.mangacn.com/docs/components/chart.md)
 
 ## Layout
 

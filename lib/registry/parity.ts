@@ -52,6 +52,7 @@ export const PARITY_PRIMITIVES = [
   "field",
   "item",
   "sidebar",
+  "chart",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";

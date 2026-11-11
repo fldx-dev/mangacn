@@ -1328,6 +1328,25 @@
           "type": "registry:component"
         }
       ]
+    },
+    {
+      "name": "chart",
+      "type": "registry:ui",
+      "title": "Chart",
+      "description": "Stock recharts container in ink: ink axes, a tone-3 grid, a small outlined paper tooltip; pairs with chart-tones fills.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "recharts@3.8.0"],
+      "registryDependencies": ["https://www.mangacn.com/r/card.json"],
+      "files": [
+        {
+          "path": "chart/chart.tsx",
+          "type": "registry:ui",
+          "target": "@ui/chart.tsx"
+        }
+      ]
     }
   ]
 }

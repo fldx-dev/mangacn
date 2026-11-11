@@ -1,0 +1,31 @@
+---
+title: Chart
+description: "Stock recharts container in ink: ink axes, a tone-3 grid, a small outlined paper tooltip; pairs with chart-tones fills."
+item: chart
+---
+
+<InstallCommand item="chart" />
+
+<CopyPrompt item="chart" />
+
+Charts drawn with recharts in ink: the container turns the axes and the cursor to ink and the grid to tone-3, the tooltip is a small heavy-outlined paper box and the legend sits in the body face. Series stay in ink, the tones and at most one spot, told apart by line weight, dash and Chart Tones' screentone fills rather than by hue; the theme's `--chart-1` to `--chart-5` are there for flat tones.
+
+## Examples
+
+Each chart has a fixed height and a caption, and its numbers are also in a visually hidden table beside it for screen readers.
+
+Bars filled with Chart Tones' screentones: dense dots for print, a hatch for digital.
+
+<DemoFrame item="chart" demo="default" />
+
+Three lines in ink told apart by weight and dash, with the tooltip's line indicators.
+
+<DemoFrame item="chart" demo="lines" />
+
+An area chart with one spot series: a second Chart Tones set drawn in the spot colour fills this week, an ink hatch the average.
+
+<DemoFrame item="chart" demo="area" />
+
+## Props
+
+<PropsTable item="chart" />
