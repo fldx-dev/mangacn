@@ -49,10 +49,27 @@ export interface SpreadViewerProps
   /** Called with the index of the new spread's first page whenever the reader turns. */
   onChange?: (first: number) => void;
   /**
+   * The reader's page, controlled: an index into `pages`. The viewer opens the spread that
+   * holds it, and a turn calls `onPageChange` instead of moving on its own. A page outside the
+   * book is clamped and reported once through `onPageChange`. Leave it out to use `start`.
+   */
+  page?: number;
+  /**
+   * Called with the index of the new spread's first page whenever the reader turns, controlled
+   * or not.
+   */
+  onPageChange?: (page: number) => void;
+  /**
    * One page at a time, for phones; pass it from a media query.
    * @default false
    */
   single?: boolean;
+  /**
+   * What fills the side facing a lone page (the first page, an even last page): a halftone, the
+   * inside of the cover. It fills a 3:4 box beside the page.
+   * @default plain paper
+   */
+  blank?: React.ReactNode;
   /**
    * The region's name, which says what is being read ("Chapter 12").
    * @default "Pages"
@@ -76,14 +93,17 @@ export function SpreadViewer({
   direction = "rtl",
   start = 0,
   onChange,
+  page,
+  onPageChange,
   single = false,
+  blank,
   label = "Pages",
   className,
   onKeyDown,
   ...props
 }: SpreadViewerProps) {
   const count = pages.length;
-  const spread = useSpread({ count, direction, single, start, onChange });
+  const spread = useSpread({ count, direction, single, start, onChange, page, onPageChange });
   const reduce = useReducedMotion() ?? false;
 
   // The current pages load first; the next spread is fetched ahead so a turn shows it at once.
@@ -188,7 +208,9 @@ export function SpreadViewer({
                 duration={reduce ? 0 : 0.5}
               >
                 {index === null ? (
-                  <div data-slot="spread-viewer-blank" className="aspect-3/4 w-full" />
+                  <div data-slot="spread-viewer-blank" className="grid aspect-3/4 w-full">
+                    {blank}
+                  </div>
                 ) : (
                   <MangaFrame
                     src={pages[index].src}
@@ -220,7 +242,8 @@ export function SpreadViewer({
         {leftIsNext ? nextButton : previousButton}
         <p
           data-slot="spread-viewer-help"
-          className="order-last basis-full text-center text-xs text-muted-foreground @2xl:order-none @2xl:basis-auto"
+          // Keys mean nothing on a touch screen: hidden for a coarse pointer, shown otherwise.
+          className="order-last basis-full text-center text-xs text-muted-foreground pointer-coarse:hidden @2xl:order-none @2xl:basis-auto"
         >
           {arrow(spread.nextKey)} next, {arrow(spread.previousKey)} previous, <Kbd>Home</Kbd>{" "}
           <Kbd>End</Kbd> first and last

@@ -1541,6 +1541,24 @@
             "deprecated": false
           },
           {
+            "name": "page",
+            "description": "The reader's page, controlled: an index into `pages`. The viewer opens the spread that\nholds it, and a turn calls `onPageChange` instead of moving on its own. A page outside the\nbook is clamped and reported once through `onPageChange`. Leave it out to use `start`.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onPageChange",
+            "description": "Called with the index of the new spread's first page whenever the reader turns, controlled\nor not.",
+            "type": "((page: number) => void) | undefined",
+            "simplifiedType": "(page: number) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
             "name": "single",
             "description": "One page at a time, for phones; pass it from a media query.",
             "type": "boolean | undefined",
@@ -1549,6 +1567,20 @@
               {
                 "name": "default",
                 "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "blank",
+            "description": "What fills the side facing a lone page (the first page, an even last page): a halftone, the\ninside of the cover. It fills a 3:4 box beside the page.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "plain paper"
               }
             ],
             "required": false,

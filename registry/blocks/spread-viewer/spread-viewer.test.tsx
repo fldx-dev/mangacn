@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import * as React from "react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { expectDemosAccessible } from "@/lib/test/axe";
 import { SpreadViewer } from "./spread-viewer";
@@ -41,6 +42,19 @@ async function sides() {
       .querySelector(`[data-slot="spread-viewer-page"][data-side="${side}"] img`)
       ?.getAttribute("alt") ?? null;
   return { left: of("left"), right: of("right") };
+}
+
+/** A viewer whose page lives in its owner's state, with a button that jumps from outside. */
+function Controlled() {
+  const [page, setPage] = React.useState(9);
+  return (
+    <>
+      <SpreadViewer pages={pages} page={page} onPageChange={setPage} label="Chapter 1" />
+      <button type="button" onClick={() => setPage(2)}>
+        Jump
+      </button>
+    </>
+  );
 }
 
 describe("SpreadViewer", () => {
@@ -90,6 +104,29 @@ describe("SpreadViewer", () => {
     expect(region().querySelector('[data-slot="spread-viewer-blank"]')).toBeTruthy();
   });
 
+  it("fills the side facing a lone page with blank, plain paper by default", async () => {
+    render(
+      <SpreadViewer
+        pages={pages}
+        label="Chapter 1"
+        blank={<div data-testid="halftone" className="bg-halftone" />}
+      />,
+    );
+    await sides();
+    const blank = region().querySelector('[data-slot="spread-viewer-blank"]');
+    expect(blank?.closest('[data-side="right"]')).toBeTruthy();
+    expect(within(blank as HTMLElement).getByTestId("halftone")).toBeTruthy();
+    // The blank keeps the page's box, so the spread stays two pages wide.
+    expect(blank?.classList.contains("aspect-3/4")).toBe(true);
+    // A full spread has no blank side, so the fill is not rendered.
+    fireEvent.keyDown(region(), { key: "ArrowLeft" });
+    await sides();
+    expect(screen.queryByTestId("halftone")).toBeNull();
+    cleanup();
+    render(<SpreadViewer pages={pages} label="Chapter 1" />);
+    expect(region().querySelector('[data-slot="spread-viewer-blank"]')?.childElementCount).toBe(0);
+  });
+
   it("pages with the arrow keys in reading order, Home and End, and announces it", async () => {
     const onChange = vi.fn();
     render(<SpreadViewer pages={pages} start={3} onChange={onChange} label="Chapter 1" />);
@@ -132,6 +169,16 @@ describe("SpreadViewer", () => {
     expect(help?.querySelectorAll('[data-slot="kbd"]')).toHaveLength(4);
   });
 
+  it("hides the key help for a coarse pointer and shows it otherwise", () => {
+    render(<SpreadViewer pages={pages} label="Chapter 1" />);
+    const help = region().querySelector('[data-slot="spread-viewer-help"]') as HTMLElement;
+    // The class is Tailwind's `@media (pointer: coarse)` variant; nothing hides it otherwise.
+    expect(help.classList.contains("pointer-coarse:hidden")).toBe(true);
+    expect([...help.classList].filter((name) => name.endsWith("hidden"))).toEqual([
+      "pointer-coarse:hidden",
+    ]);
+  });
+
   it("turns one page at a time with single", async () => {
     render(<SpreadViewer pages={pages} single start={4} label="Chapter 1" />);
     expect(region().dataset.single).toBe("true");
@@ -171,6 +218,22 @@ describe("SpreadViewer", () => {
     );
     fireEvent.keyDown(region(), { key: "End" });
     expect(status()?.textContent).toBe("Page 1 of 24");
+  });
+
+  it("takes a controlled page and turns only when the owner passes the new one back", () => {
+    render(<Controlled />);
+    expect(status()?.textContent).toBe("Pages 10–11 of 24");
+    fireEvent.keyDown(region(), { key: "ArrowLeft" });
+    expect(status()?.textContent).toBe("Pages 12–13 of 24");
+    fireEvent.click(screen.getByRole("button", { name: "Jump" }));
+    expect(status()?.textContent).toBe("Pages 2–3 of 24");
+
+    const frozen = vi.fn();
+    cleanup();
+    render(<SpreadViewer pages={pages} page={3} onPageChange={frozen} label="Chapter 1" />);
+    fireEvent.keyDown(region(), { key: "ArrowLeft" });
+    expect(frozen).toHaveBeenCalledWith(5);
+    expect(status()?.textContent).toBe("Pages 4–5 of 24");
   });
 
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
