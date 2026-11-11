@@ -120,6 +120,13 @@ export default defineConfig({
         find: /^@\/hooks\/use-mobile$/,
         replacement: fileURLToPath(new URL("./registry/hooks/use-mobile.ts", import.meta.url)),
       },
+      // combobox, command → input-group.
+      {
+        find: /^@\/components\/ui\/input-group$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/input-group/input-group.tsx", import.meta.url),
+        ),
+      },
       { find: "@", replacement: fileURLToPath(new URL("./", import.meta.url)) },
     ],
   },

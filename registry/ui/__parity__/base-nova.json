@@ -1230,6 +1230,84 @@
         "use-mobile"
       ],
       "sha1": "ada4f1102bd6f7d244b2254132ddf06cc2119110"
+    },
+    "navigation-menu": {
+      "exports": [
+        "NavigationMenu",
+        "NavigationMenuContent",
+        "NavigationMenuIndicator",
+        "NavigationMenuItem",
+        "NavigationMenuLink",
+        "NavigationMenuList",
+        "NavigationMenuPositioner",
+        "NavigationMenuTrigger",
+        "navigationMenuTriggerStyle"
+      ],
+      "dataSlots": [
+        "navigation-menu",
+        "navigation-menu-content",
+        "navigation-menu-indicator",
+        "navigation-menu-item",
+        "navigation-menu-link",
+        "navigation-menu-list",
+        "navigation-menu-trigger"
+      ],
+      "variants": {
+        "navigationMenuTriggerStyle": {}
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "sha1": "bf3320febd458d60d94fb41ec3e7e5f4afbfb632"
+    },
+    "combobox": {
+      "exports": [
+        "Combobox",
+        "ComboboxChip",
+        "ComboboxChips",
+        "ComboboxChipsInput",
+        "ComboboxCollection",
+        "ComboboxContent",
+        "ComboboxEmpty",
+        "ComboboxGroup",
+        "ComboboxInput",
+        "ComboboxItem",
+        "ComboboxLabel",
+        "ComboboxList",
+        "ComboboxSeparator",
+        "ComboboxTrigger",
+        "ComboboxValue",
+        "useComboboxAnchor"
+      ],
+      "dataSlots": [
+        "combobox-chip",
+        "combobox-chip-input",
+        "combobox-chip-remove",
+        "combobox-chips",
+        "combobox-clear",
+        "combobox-collection",
+        "combobox-content",
+        "combobox-empty",
+        "combobox-group",
+        "combobox-item",
+        "combobox-label",
+        "combobox-list",
+        "combobox-separator",
+        "combobox-trigger",
+        "combobox-value",
+        "input-group-button"
+      ],
+      "variants": {},
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [
+        "button",
+        "input-group"
+      ],
+      "sha1": "66f84803788c127674f3cb1639bcda1faeb0840a"
     }
   }
 }

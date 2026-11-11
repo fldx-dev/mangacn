@@ -49,6 +49,8 @@
     "field",
     "item",
     "sidebar",
+    "navigation-menu",
+    "combobox",
     "---Layout---",
     "panel",
     "panel-grid",
