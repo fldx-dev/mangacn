@@ -1284,6 +1284,34 @@
           "target": "@ui/item.tsx"
         }
       ]
+    },
+    {
+      "name": "sidebar",
+      "type": "registry:ui",
+      "title": "Sidebar",
+      "description": "Stock sidebar on paper: a hand-drawn rule on its edge, ink-filled active rows, outlined floating and inset cards, a sheet on phones.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "class-variance-authority", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/sheet.json",
+        "https://www.mangacn.com/r/skeleton.json",
+        "https://www.mangacn.com/r/tooltip.json",
+        "https://www.mangacn.com/r/use-mobile.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar/sidebar.tsx",
+          "type": "registry:ui",
+          "target": "@ui/sidebar.tsx"
+        }
+      ]
     }
   ]
 }
