@@ -1433,6 +1433,47 @@
           "target": "@ui/command.tsx"
         }
       ]
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "Stock date picker on an outlined paper card: display-face caption, today underlined, picked days ink-filled, a range's middle in halftone.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "react-day-picker@latest", "date-fns", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "calendar/calendar.tsx",
+          "type": "registry:ui",
+          "target": "@ui/calendar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "carousel",
+      "type": "registry:ui",
+      "title": "Carousel",
+      "description": "Stock embla carousel: previous and next are mangacn's outlined icon buttons; the viewport draws nothing, slides bring their own frames.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "embla-carousel-react", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/button.json"],
+      "files": [
+        {
+          "path": "carousel/carousel.tsx",
+          "type": "registry:ui",
+          "target": "@ui/carousel.tsx"
+        }
+      ]
     }
   ]
 }

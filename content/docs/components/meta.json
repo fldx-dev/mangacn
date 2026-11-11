@@ -55,6 +55,8 @@
     "input-otp",
     "resizable",
     "command",
+    "calendar",
+    "carousel",
     "---Layout---",
     "panel",
     "panel-grid",

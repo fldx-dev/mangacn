@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 82 items in the registry. Each line gives the item's name, what it is, the one
+All 84 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -193,6 +193,12 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `command`: Stock cmdk palette on heavy-outlined paper: a ruled search row, display-face headings, ink-filled selection and key-cap shortcuts.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/command --overwrite`
   Docs: https://www.mangacn.com/docs/components/command (Markdown: https://www.mangacn.com/docs/components/command.md)
+- `calendar`: Stock date picker on an outlined paper card: display-face caption, today underlined, picked days ink-filled, a range's middle in halftone.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/calendar --overwrite`
+  Docs: https://www.mangacn.com/docs/components/calendar (Markdown: https://www.mangacn.com/docs/components/calendar.md)
+- `carousel`: Stock embla carousel: previous and next are mangacn's outlined icon buttons; the viewport draws nothing, slides bring their own frames.
+  Install: `npx shadcn@latest add @mangacn/carousel --overwrite`
+  Docs: https://www.mangacn.com/docs/components/carousel (Markdown: https://www.mangacn.com/docs/components/carousel.md)
 
 ## Layout
 
