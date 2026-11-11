@@ -560,7 +560,8 @@ name appended to `PARITY_PRIMITIVES` runs `visual` on its own items, not on ever
 that adds a dependency changes `pnpm-lock.yaml` and re-shoots everything, which is right.
 
 Never run a full local `pnpm run ci` or a full `pnpm registry:smoke` on a branch (25–40 min on
-Windows for the 60-item smoke); main's push run does both after the merge.
+Windows for the full smoke, timed when the catalog had 60 items; `public/r/registry.json` holds
+75 now, so expect the top of that range or more); main's push run does both after the merge.
 
 1. **`pnpm check:changed`** is the gate while you work: about 75 s on Windows for a one-item
    change (Biome on your files, `gen:demos`, typecheck, the 9 or so test files that import what
