@@ -190,8 +190,10 @@ jobs:
             sudo chown -R "$(id -u):$(id -g)" "$debs"
           fi
           ls -1 "$debs"
-          # From the files alone: nothing is fetched when their dependencies are on the image.
-          sudo apt-get install -y -qq --no-install-recommends "$debs"/*.deb
+          # From the files alone, with dpkg: apt would read them as its own user, which may not
+          # enter the runner's temp folder, and would wait on the resolver first (four minutes
+          # in run 43060493756). The fetch above already brought any dependency the image lacks.
+          sudo dpkg -i "$debs"/*.deb
       - if: steps.filter.outputs.items != 'none'
         run: pnpm build
       - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS == '' }}
