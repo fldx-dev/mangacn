@@ -73,8 +73,18 @@ jobs:
           SMOKE_ARGS: ${{ github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main' && !inputs.full && '--changed' || '' }}
         run: pnpm run ci:smoke $SMOKE_ARGS
 
+  # Four runners share the shots (Playwright's --shard): a run of every demo took 12 to 15
+  # minutes on one runner, most of a task's wait in batch 4's foundation tasks. Each shard
+  # builds the site and serves it for its own quarter of the tests; a small set simply gives
+  # each shard a few tests. The baselines an update run rewrites are merged into one artifact
+  # by the `baselines` job, so `gh run download -n playwright-baselines` works as before.
   visual:
+    name: visual (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     # `playwright install --with-deps` waits on the Ubuntu apt mirror, which took 11 minutes on
     # 2026-11-05 (15 MB at 23 kB/s); the full suite needs about 7. A browser cache hit skips apt.
     timeout-minutes: 30
@@ -196,13 +206,15 @@ jobs:
           sudo dpkg -i "$debs"/*.deb
       - if: steps.filter.outputs.items != 'none'
         run: pnpm build
+      # Shard 1 always has a test when the set has any, so it keeps Playwright's "no tests
+      # found" failure; a later shard of a small set may be empty, which is not a failure.
       - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS == '' }}
-        run: pnpm test:e2e
+        run: pnpm test:e2e --shard=${{ matrix.shard }}/4 ${{ matrix.shard != 1 && '--pass-with-no-tests' || '' }}
       # Either mode writes a baseline only when it is missing or its new bytes differ (Playwright
       # 1.64 skips byte-identical ones under `all`), so git sees exactly the files the run wrote
       # and the artifact holds exactly the PNGs to commit: a straight copy, no sifting.
       - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
-        run: pnpm test:e2e --update-snapshots=$UPDATE_SNAPSHOTS
+        run: pnpm test:e2e --update-snapshots=$UPDATE_SNAPSHOTS --shard=${{ matrix.shard }}/4 ${{ matrix.shard != 1 && '--pass-with-no-tests' || '' }}
       - name: Collect the rewritten baselines
         if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
         run: |
@@ -221,12 +233,27 @@ jobs:
       - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-baselines
+          name: playwright-baselines-${{ matrix.shard }}
           path: ${{ runner.temp }}/playwright-baselines
-          if-no-files-found: warn
+          if-no-files-found: ignore
       - if: ${{ failure() }}
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-results
+          name: playwright-results-${{ matrix.shard }}
           path: e2e/test-results
           if-no-files-found: ignore
+
+  # One `playwright-baselines` artifact from the shards' parts, for update runs only. No part
+  # exists when nothing was rewritten, and then there is nothing to merge.
+  baselines:
+    needs: visual
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.update-snapshots != 'false' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/upload-artifact/merge@v7
+        continue-on-error: true
+        with:
+          name: playwright-baselines
+          pattern: playwright-baselines-*
+          delete-merged: true
