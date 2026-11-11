@@ -48,6 +48,7 @@
     "menubar",
     "field",
     "item",
+    "sidebar",
     "---Layout---",
     "panel",
     "panel-grid",

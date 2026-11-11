@@ -1,0 +1,25 @@
+---
+title: Sidebar
+description: "Stock sidebar on paper: a hand-drawn rule on its edge, ink-filled active rows, outlined floating and inset cards, a sheet on phones."
+item: sidebar
+---
+
+<InstallCommand item="sidebar" />
+
+<CopyPrompt item="sidebar" />
+
+<ItemFiles item="sidebar" />
+
+The app's side navigation for a reader or a library: a paper rail with one hand-drawn rule on the edge facing the page, the current page's row filled with ink and group labels in the display face. It folds away by its trigger, its rail or Ctrl+B (⌘B) as in stock, and on a phone it opens as mangacn's Sheet; Button, Input, Separator, Sheet, Skeleton, Tooltip and the `use-mobile` hook install with it.
+
+## Examples
+
+Each example fills its own stage, since a sidebar takes the whole window. In an app the page beside it goes in `SidebarInset`, a `main`; the examples use a `div`, because the stage around them is already the page's main. Below 768 px the rail becomes a sheet behind the trigger.
+
+A library with an active row, a badge, a chapter sub-menu, a footer and the rail, beside a page.
+
+<DemoFrame item="sidebar" demo="default" />
+
+## Props
+
+<PropsTable item="sidebar" />

@@ -102,6 +102,19 @@ export default defineConfig({
         find: /^@\/components\/emanata$/,
         replacement: fileURLToPath(new URL("./registry/ui/emanata/emanata.tsx", import.meta.url)),
       },
+      // sidebar → sheet, skeleton, tooltip (button, input and separator are above).
+      {
+        find: /^@\/components\/ui\/sheet$/,
+        replacement: fileURLToPath(new URL("./registry/ui/sheet/sheet.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/skeleton$/,
+        replacement: fileURLToPath(new URL("./registry/ui/skeleton/skeleton.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/tooltip$/,
+        replacement: fileURLToPath(new URL("./registry/ui/tooltip/tooltip.tsx", import.meta.url)),
+      },
       // sidebar → use-mobile (the hook catalog's one file per hook).
       {
         find: /^@\/hooks\/use-mobile$/,
