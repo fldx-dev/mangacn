@@ -1,5 +1,9 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
+import { hasUseClientDirective } from "@/lib/registry/client";
 import { expectDemosAccessible } from "@/lib/test/axe";
 import { Label } from "./label";
 
@@ -50,6 +54,14 @@ describe("Label", () => {
     expect(mark?.classList.contains("text-spot")).toBe(true);
     // The accessible name stays the text alone.
     expect(screen.getByRole("textbox", { name: "Title" })).not.toBeNull();
+  });
+
+  it("is a server component: no directive, renders on the server with no hooks", () => {
+    const source = readFileSync(path.resolve("registry/ui/label/label.tsx"), "utf8");
+    expect(hasUseClientDirective(source)).toBe(false);
+    const html = renderToStaticMarkup(<Label required>Pen name</Label>);
+    expect(html).toMatch(/^<label data-slot="label" data-required="true"/);
+    expect(html).toContain('Pen name<span aria-hidden="true" class="-ml-1.5 text-spot">*</span>');
   });
 
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
