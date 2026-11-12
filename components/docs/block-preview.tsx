@@ -55,7 +55,8 @@ export function ScaledView({
   return (
     <div ref={box} inert={inert} className={cn("overflow-hidden", className)} {...props}>
       <div
-        className="mx-auto"
+        // Narrower than the box, the screen's edges show as an outline, which takes no width.
+        className={cn("mx-auto", boxWidth && boxWidth > width && "outline outline-border")}
         style={{
           width: boxWidth ? width : "100%",
           height: `${100 / scale}%`,
@@ -68,7 +69,7 @@ export function ScaledView({
           title={title}
           height="100%"
           inert={inert}
-          className={cn("rounded-none", boxWidth && boxWidth > width ? "border-y-0" : "border-0")}
+          className="rounded-none border-0"
         />
       </div>
     </div>

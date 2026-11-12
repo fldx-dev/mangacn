@@ -129,10 +129,11 @@ if (checkIndex) {
     // The boxes keep their height from placeholder to preview, so mounting moves nothing.
     const before = await previewBoxes(page);
     const documentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-    await expect
-      .poll(async () => (await previewBoxes(page)).every((box) => box.mounted))
-      .toBe(true);
+    // Card by card: a jump to the bottom would pass the middle ones by without mounting them.
+    for (const box of await page.locator(LAZY).all()) {
+      await box.scrollIntoViewIfNeeded();
+      await expect(box).toHaveAttribute("data-mounted", "true");
+    }
     const after = await previewBoxes(page);
     expect(after.map((box) => box.height)).toEqual(before.map((box) => box.height));
     expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(documentHeight);
