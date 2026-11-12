@@ -1,0 +1,27 @@
+---
+title: Questionnaire
+description: "Stock step-by-step questions on outlined paper rows: the chosen row turns ink, an inked progress track, spot errors, ink buttons."
+item: questionnaire
+---
+
+<InstallCommand item="questionnaire" />
+
+<CopyPrompt item="questionnaire" />
+
+Questions asked one at a time, for a reader survey, a sign-up step or an agent waiting on a choice: each answer is an outlined paper row that turns ink once chosen, under an inked progress track. Navigation and the keyboard are stock's from `@shadcn/react` (arrows move between answers, letters or numbers choose, Enter goes on), and Previous, Skip, Next and Submit are Button.
+
+## Examples
+
+Three questions with a progress track and letter shortcuts: a required single choice with descriptions and a field for another answer, an optional multiple choice, and a last required question.
+
+<DemoFrame item="questionnaire" demo="default" />
+One optional question that takes any number of answers, two chosen to start, with number shortcuts and Skip.
+
+<DemoFrame item="questionnaire" demo="multiple" />
+A required question with one answer sold out: send it empty and the error appears in spot under the rows.
+
+<DemoFrame item="questionnaire" demo="required" />
+
+## Props
+
+<PropsTable item="questionnaire" />

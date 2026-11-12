@@ -91,6 +91,8 @@
     "manga-frame",
     "power-gauge",
     "page-number",
-    "chart-tones"
+    "chart-tones",
+    "message-scroller",
+    "questionnaire"
   ]
 }

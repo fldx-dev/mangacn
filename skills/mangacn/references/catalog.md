@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 100 items in the registry. Each line gives the item's name, what it is, the one
+All 102 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -227,6 +227,12 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `trace`: Stock agent trace: steps on a hand-drawn ink line, a drawn dot each, pulsing while running and spot on error.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/trace --overwrite`
   Docs: https://www.mangacn.com/docs/components/trace (Markdown: https://www.mangacn.com/docs/components/trace.md)
+- `message-scroller`: Stock chat scroller: lands on the latest message and follows new ones; an outlined icon button jumps back to the end.
+  Install: `npx shadcn@latest add @mangacn/message-scroller --overwrite`
+  Docs: https://www.mangacn.com/docs/components/message-scroller (Markdown: https://www.mangacn.com/docs/components/message-scroller.md)
+- `questionnaire`: Stock step-by-step questions on outlined paper rows: the chosen row turns ink, an inked progress track, spot errors, ink buttons.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/questionnaire --overwrite`
+  Docs: https://www.mangacn.com/docs/components/questionnaire (Markdown: https://www.mangacn.com/docs/components/questionnaire.md)
 
 ## Layout
 
