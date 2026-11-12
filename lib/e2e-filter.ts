@@ -7,7 +7,7 @@ import { mangacnItemName } from "./registry/index";
  * `E2E_ITEMS` is a comma-separated list of item names (their demos, `e2e/demos.spec.ts`) and the
  * suites below; unset, empty or `all` runs everything; `none` runs nothing.
  */
-export const E2E_SUITES = ["site", "mcp", "annotations", "presets"] as const;
+export const E2E_SUITES = ["site", "mcp", "annotations", "presets", "create"] as const;
 export type E2eSuite = (typeof E2E_SUITES)[number];
 
 export function isE2eSuite(name: string): name is E2eSuite {
@@ -127,6 +127,18 @@ const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
       "e2e/presets.spec.ts",
       "content/docs/theming.mdx",
       /^components\/docs\/theme-preset/,
+    ],
+  },
+  // The Create page (Task C4): its route, components, configuration logic and spec, and the
+  // preset values its looks show. Its route and components also select `site` below.
+  {
+    suite: "create",
+    paths: [
+      /^app\/\(site\)\/create\//,
+      /^components\/create\//,
+      /^lib\/create\//,
+      "e2e/create.spec.ts",
+      /^registry\/theme\/presets\//,
     ],
   },
   {
@@ -320,12 +332,14 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  *   item that uses it (registryDependencies or an import, transitively), and `site`, whose
  *   component index renders every item's default demo; `ink-mark`/`ink-arrow` add `annotations`
  * - a baseline PNG → its item (`<block>-view-<mode>.png` is a page block's view shot), `site`
- *   for `site-*.png`, `presets` for `presets-*.png`
+ *   for `site-*.png`, `presets` for `presets-*.png`, `create` for `create-*.png`
  * - the `/view/<block>` route or e2e/blocks.spec.ts → every page block and `site`
  * - anything under `registry/theme/` (Markdown aside) → `presets` too; its values files
  *   (`registry/theme/presets/`), the presets spec, the Theming page and its switch → `presets`
  * - `lib/mcp/`, `app/api/mcp/`, `skills/`, the MCP spec → `mcp`; `content/`, `lib/docs/` and the
  *   props generator → `mcp` and `site` (the MCP serves pages and props tables)
+ * - the Create page's route, `components/create/`, `lib/create/`, its spec and the preset values
+ *   → `create` (the route and components also `site`)
  * - other `app/`, `components/`, the site spec → `site`
  * - `tsconfig.json` that only adds path aliases → the items they name and the items that use
  *   them (no `site`); `lib/registry/parity.ts` that only appends names → those items
@@ -383,7 +397,9 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
         ? "site"
         : file.startsWith("presets-")
           ? "presets"
-          : itemOfBaseline(file, sources.items);
+          : file.startsWith("create-")
+            ? "create"
+            : itemOfBaseline(file, sources.items);
       if (owner) {
         selected.add(owner);
         reasons.push(`${path} → ${owner}`);
