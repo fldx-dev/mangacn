@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 94 items in the registry. Each line gives the item's name, what it is, the one
+All 96 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -215,6 +215,12 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `marker`: Stock chat marker: hand-drawn rules either side of a caption-boxed label, or a rule under it, for dates and unread lines.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/marker --overwrite`
   Docs: https://www.mangacn.com/docs/components/marker (Markdown: https://www.mangacn.com/docs/components/marker.md)
+- `attachment`: Stock file attachment as an outlined paper card: dashed while idle, spot on error, the preview in a thin ink frame.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/attachment --overwrite`
+  Docs: https://www.mangacn.com/docs/components/attachment (Markdown: https://www.mangacn.com/docs/components/attachment.md)
+- `trace`: Stock agent trace: steps on a hand-drawn ink line, a drawn dot each, pulsing while running and spot on error.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/trace --overwrite`
+  Docs: https://www.mangacn.com/docs/components/trace (Markdown: https://www.mangacn.com/docs/components/trace.md)
 
 ## Layout
 

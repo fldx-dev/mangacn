@@ -1,0 +1,27 @@
+---
+title: Attachment
+description: "Stock file attachment as an outlined paper card: dashed while idle, spot on error, the preview in a thin ink frame."
+item: attachment
+---
+
+<InstallCommand item="attachment" />
+
+<CopyPrompt item="attachment" />
+
+A file in a chat or a composer, drawn as a paper card in a hand-drawn outline, with its preview in a thinner ink frame and its actions as mangacn's icon [Button](/docs/components/button). The `state` shows where the file is: dashed while `idle`, a pulsing preview while `uploading` or `processing`, and an outline in spot on `error`.
+
+## Examples
+
+A sent file with its icon, name, size and a remove action.
+
+<DemoFrame item="attachment" demo="default" />
+Files inside a sent [Bubble](/docs/components/bubble): an `AttachmentGroup` of an image and a PDF, wrapped here so a narrow bubble shows both whole (the group scrolls sideways otherwise).
+
+<DemoFrame item="attachment" demo="in-a-bubble" />
+Files attached to a reply: one waiting to be sent (`idle`), one uploading with [Spinner](/docs/components/spinner) in its preview, and one that failed, the one spot on the surface, with a retry action.
+
+<DemoFrame item="attachment" demo="upload" />
+
+## Props
+
+<PropsTable item="attachment" />

@@ -182,6 +182,13 @@ export default defineConfig({
           new URL("./registry/blocks/login-01/components/login-form.tsx", import.meta.url),
         ),
       },
+      // trace (Task 101) → collapsible.
+      {
+        find: /^@\/components\/ui\/collapsible$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/collapsible/collapsible.tsx", import.meta.url),
+        ),
+      },
       {
         find: /^@\/components\/blocks\/(.+)$/,
         replacement: `${fileURLToPath(new URL("./registry/blocks/", import.meta.url))}$1`,

@@ -53,6 +53,7 @@
       "@/components/blocks/*": ["./registry/blocks/*"],
       "@/components/ui/field": ["./registry/ui/field/field.tsx"],
       "@/components/login-form": ["./registry/blocks/login-01/components/login-form.tsx"],
+      "@/components/ui/collapsible": ["./registry/ui/collapsible/collapsible.tsx"],
       "@/*": ["./*"]
     }
   },

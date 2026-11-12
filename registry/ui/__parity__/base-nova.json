@@ -1555,6 +1555,87 @@
       ],
       "registryDependencies": [],
       "sha1": "946811b399f2f5e7fc9c88ddf7b367d808a094f1"
+    },
+    "attachment": {
+      "exports": [
+        "Attachment",
+        "AttachmentAction",
+        "AttachmentActions",
+        "AttachmentContent",
+        "AttachmentDescription",
+        "AttachmentGroup",
+        "AttachmentMedia",
+        "AttachmentTitle",
+        "AttachmentTrigger"
+      ],
+      "dataSlots": [
+        "attachment",
+        "attachment-action",
+        "attachment-actions",
+        "attachment-content",
+        "attachment-description",
+        "attachment-group",
+        "attachment-media",
+        "attachment-title",
+        "attachment-trigger"
+      ],
+      "variants": {
+        "attachmentVariants": {
+          "size": [
+            "default",
+            "sm",
+            "xs"
+          ],
+          "orientation": [
+            "horizontal",
+            "vertical"
+          ]
+        },
+        "attachmentMediaVariants": {
+          "variant": [
+            "icon",
+            "image"
+          ]
+        }
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "sha1": "d60619474dd49d205d0da3e029d5623dac7e35e6"
+    },
+    "trace": {
+      "exports": [
+        "Trace",
+        "TraceCollapsible",
+        "TraceCollapsibleContent",
+        "TraceCollapsibleTrigger",
+        "TraceDescription",
+        "TraceIcon",
+        "TraceLine",
+        "TraceTitle"
+      ],
+      "dataSlots": [
+        "trace",
+        "trace-collapsible",
+        "trace-collapsible-content",
+        "trace-collapsible-content-inner",
+        "trace-collapsible-trigger",
+        "trace-description",
+        "trace-icon",
+        "trace-line",
+        "trace-title"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "collapsible"
+      ],
+      "sha1": "ae8de5944b430ae4acf23362d9ae0bb1a8f871f2"
     }
   }
 }

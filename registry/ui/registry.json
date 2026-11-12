@@ -1565,6 +1565,50 @@
           "target": "@ui/marker.tsx"
         }
       ]
+    },
+    {
+      "name": "attachment",
+      "type": "registry:ui",
+      "title": "Attachment",
+      "description": "Stock file attachment as an outlined paper card: dashed while idle, spot on error, the preview in a thin ink frame.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "attachment/attachment.tsx",
+          "type": "registry:ui",
+          "target": "@ui/attachment.tsx"
+        }
+      ]
+    },
+    {
+      "name": "trace",
+      "type": "registry:ui",
+      "title": "Trace",
+      "description": "Stock agent trace: steps on a hand-drawn ink line, a drawn dot each, pulsing while running and spot on error.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "trace/trace.tsx",
+          "type": "registry:ui",
+          "target": "@ui/trace.tsx"
+        }
+      ]
     }
   ]
 }
