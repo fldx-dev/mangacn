@@ -42,6 +42,8 @@
       "@/components/ui/tooltip": ["./registry/ui/tooltip/tooltip.tsx"],
       "@/components/ui/card": ["./registry/ui/card/card.tsx"],
       "@/hooks/use-mobile": ["./registry/hooks/use-mobile.ts"],
+      "@/hooks/use-highlighted-code": ["./registry/hooks/use-highlighted-code.ts"],
+      "@/lib/highlighter": ["./registry/hooks/lib/highlighter.tsx"],
       "@/components/ui/input-group": ["./registry/ui/input-group/input-group.tsx"],
       "@/components/ui/dialog": ["./registry/ui/dialog/dialog.tsx"],
       "@/components/speech-bubble": ["./registry/ui/speech-bubble/speech-bubble.tsx"],

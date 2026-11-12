@@ -70,6 +70,7 @@ export const PARITY_PRIMITIVES = [
   "trace",
   "message-scroller",
   "questionnaire",
+  "code-block",
 ] as const;
 
 /**
@@ -415,4 +416,10 @@ export function loadBlockParitySnapshot(rootDir = process.cwd()): BlockParitySna
   return existsSync(file)
     ? (JSON.parse(readFileSync(file, "utf8")) as BlockParitySnapshot)
     : undefined;
+}
+
+/** The primitive parity snapshot, or `undefined` before `pnpm gen:parity` has written one. */
+export function loadParitySnapshot(rootDir = process.cwd()): ParitySnapshot | undefined {
+  const file = path.resolve(rootDir, PARITY_SNAPSHOT_PATH);
+  return existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as ParitySnapshot) : undefined;
 }

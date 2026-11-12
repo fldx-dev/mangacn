@@ -439,10 +439,32 @@ describe("hooks", () => {
     "a hook may not import %s",
     (specifier) => {
       expect(hookImportViolation(specifier)).toBe(
-        "a hook imports React and the platform only (no registry item, package or other file)",
+        "a hook imports React, its declared packages and its own lib file only (no registry item or other file)",
       );
     },
   );
+
+  it("lets a hook import its declared packages, and its hook file its own lib by install path", () => {
+    const item = {
+      dependencies: ["shiki@4.5.0"],
+      files: [
+        {
+          path: "registry/hooks/use-code.ts",
+          type: "registry:hook",
+          target: "@hooks/use-code.ts",
+        },
+        { path: "registry/hooks/lib/code.tsx", type: "registry:lib", target: "@lib/code.tsx" },
+      ],
+    };
+    const [hookFile, libFile] = item.files.map((file) => file.path);
+    expect(hookImportViolation("shiki/core", item, libFile)).toBeNull();
+    expect(hookImportViolation("shiki/langs/css.mjs", item, hookFile)).toBeNull();
+    expect(hookImportViolation("@/lib/code", item, hookFile)).toBeNull();
+    // The lib may not import itself back through the alias, nor anything else of the registry.
+    expect(hookImportViolation("@/lib/code", item, libFile)).not.toBeNull();
+    expect(hookImportViolation("@/lib/utils", item, hookFile)).not.toBeNull();
+    expect(hookImportViolation("motion/react", item, hookFile)).not.toBeNull();
+  });
 
   it("lets an item import a hook it declares by URL, not by bare name or undeclared", () => {
     const file = "registry/ui/x/x.tsx";

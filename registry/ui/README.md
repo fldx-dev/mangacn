@@ -43,7 +43,7 @@ registry/ui/<name>/
 | `registry/ui/<name>/`     | `registry:ui` (primitive) or `registry:component` (manga-native) | `@/components/ui/<name>.tsx` or `@/components/<name>.tsx` |
 | `registry/blocks/<name>/` | `registry:block` (recipe 3)                                      | `@/components/blocks/<name>/…`                            |
 | (a page block)            | `registry:block` with `registry:page` + `registry:component`     | `app/<route>/page.tsx` and `@/components/<file>.tsx`      |
-| `registry/hooks/`         | `registry:hook` (recipe 4), one `<name>.ts` each                 | `@/hooks/<name>.ts`                                       |
+| `registry/hooks/`         | `registry:hook` (recipe 4), one `<name>.ts` each, `lib/` helpers | `@/hooks/<name>.ts`, a helper at `@/lib/<file>`           |
 
 ### Catalog entry
 
@@ -101,7 +101,8 @@ Everything else fails with `file:line imports "specifier" (item): reason`: `@/ap
 `@/lib/registry/…`, `@/registry/…`, docs-only `@/components/…`, relative imports into
 another item, undeclared packages, Node built-ins. Demos and tests may import anything
 (they import the item via `@/registry/ui/<name>/<name>`), because they are not shipped.
-Blocks follow a stricter version of this table (recipe 3); a hook imports React only (recipe 4).
+Blocks follow a stricter version of this table (recipe 3); a hook imports React, its declared
+packages and its own lib file only (recipe 4).
 
 ### Design rules (every item)
 
@@ -517,8 +518,17 @@ index card**, and installs with the item that declares it. `use-mobile` is the r
 
    Copy it to `registry/hooks/<name>.ts` (one flat file, no folder), Biome-format it, and add the
    attribution header after the imports (`// Based on shadcn/ui <name> (MIT, https://ui.shadcn.com),
-   base-nova style, fetched YYYY-MM-DD.`). A hook imports React and the platform only: no
-   registry item, no package, no `@/lib/utils`, no other file (`registry/ui/imports.test.ts`).
+   base-nova style, fetched YYYY-MM-DD.`). A hook imports React, the packages it declares in
+   `dependencies` and, from its hook file, its own lib file (below): no registry item, no
+   `@/lib/utils`, no other file (`registry/ui/imports.test.ts`).
+
+   **A hook with a helper file.** Where stock ships a `registry:lib` beside the hook
+   (`use-highlighted-code` and its `lib/highlighter.tsx`), fetch it the same way
+   (`--view lib/<file>`), copy it to `registry/hooks/lib/<file>` with the same header, and list it
+   after the hook file. It installs where stock's copy does, so a project that has stock's files
+   gets the same paths; the hook imports it as stock does, `@/lib/<file stem>`, and the lib file
+   imports React and the hook's packages only. Map that path too (`@/lib/highlighter` in
+   `tsconfig.json` and `vitest.config.mts`).
 2. **Catalog entry** in `registry/hooks/registry.json`, appended. The file's target is
    `@hooks/<name>.ts`: `@hooks/` resolves against the user's own `hooks` alias, so the file lands
    in `hooks/` (or wherever their components.json points it). A literal `@/hooks/…` target is
@@ -539,8 +549,15 @@ index card**, and installs with the item that declares it. `use-mobile` is the r
    }
    ```
 
-   `registry/hooks/catalog.test.ts` checks the type, the `hook` category, the one file at
-   `registry/hooks/<name>.ts`, its target, and that the hook depends on no registry item.
+   A helper file follows the hook file with type `registry:lib` and target `@lib/<file>`:
+
+   ```json
+   { "path": "lib/highlighter.tsx", "type": "registry:lib", "target": "@lib/highlighter.tsx" }
+   ```
+
+   `registry/hooks/catalog.test.ts` checks the type, the `hook` category, the hook file first at
+   `registry/hooks/<name>.ts` with its target, every further file a `registry:lib` in
+   `registry/hooks/lib/` at its `@lib/` target, and that the hook depends on no registry item.
 3. **Use it from an item or a block.** Declare it by URL, never by bare name (a bare
    `use-mobile` installs shadcn's own copy), and import it from its install path:
 
@@ -554,8 +571,13 @@ index card**, and installs with the item that declares it. `use-mobile` is the r
 
    Map the path to `registry/hooks/<name>.ts` in `tsconfig.json` `paths` and the
    `vitest.config.mts` aliases (as `@/hooks/use-mobile` is), so the item typechecks and tests
-   here. One `add` of the item then writes the hook too, and the item's Files line (its page's
-   `<ItemFiles>`, `get_item`) names `hooks/<name>.ts` among what its dependencies add.
+   here. One `add` of the item then writes the hook (and its lib file) too, and the item's Files
+   line (its page's `<ItemFiles>`, `get_item`) names `hooks/<name>.ts` (and `lib/<file>`) among
+   what its dependencies add; `renderItemPage` writes `<ItemFiles>` only for blocks, so add it by
+   hand under `<CopyPrompt>` on a primitive's page (`sidebar`, `code-block`). A stock primitive
+   that declares a hook it does not import itself (stock's `code-block` declares
+   `use-highlighted-code` for its users to call) keeps the declaration: the dependency check
+   accepts what the parity snapshot says stock declares.
 4. **Test, catalogs, smoke.** A unit test beside the hook (`registry/hooks/<name>.test.ts`,
    stubbing what jsdom lacks, such as `matchMedia`). `pnpm gen:skill` lists it in the skill
    catalog's Hooks group; `list_items` lists it as `registry:hook` (filter `hook`). Main's

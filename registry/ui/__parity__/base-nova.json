@@ -1717,6 +1717,54 @@
         "button"
       ],
       "sha1": "ff0e4d47f54897fab7404d75bd330c0fc4c94f54"
+    },
+    "code-block": {
+      "exports": [
+        "CodeBlock",
+        "CodeBlockActions",
+        "CodeBlockContent",
+        "CodeBlockCopyButton",
+        "CodeBlockFooter",
+        "CodeBlockHeader",
+        "CodeBlockLine",
+        "CodeBlockTitle"
+      ],
+      "dataSlots": [
+        "code-block",
+        "code-block-actions",
+        "code-block-code",
+        "code-block-content",
+        "code-block-copy-button",
+        "code-block-footer",
+        "code-block-header",
+        "code-block-line",
+        "code-block-line-content",
+        "code-block-title"
+      ],
+      "variants": {
+        "codeBlockVariants": {
+          "variant": [
+            "default",
+            "destructive"
+          ]
+        },
+        "codeBlockLineVariants": {
+          "variant": [
+            "default",
+            "added",
+            "removed",
+            "highlighted"
+          ]
+        }
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "button",
+        "use-highlighted-code"
+      ],
+      "sha1": "e2d3a8499f4b510e8a298a7e23727d372dce5fcf"
     }
   }
 }

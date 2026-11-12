@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { isBlock } from "./blocks";
-import { HOOKS_CATALOG, isHook } from "./hooks";
+import { HOOK_LIB_TYPE, HOOKS_CATALOG, hookLibSpecifiers, isHook } from "./hooks";
 import {
   type LoadedRegistry,
   type LoadedRegistryItem,
@@ -10,7 +10,7 @@ import {
   registryItemUrl,
 } from "./index";
 import { importSpecifier, installTarget } from "./install-target";
-import { loadBlockParitySnapshot, PARITY_PRIMITIVES } from "./parity";
+import { loadBlockParitySnapshot, loadParitySnapshot, PARITY_PRIMITIVES } from "./parity";
 
 export interface ImportSpecifier {
   specifier: string;
@@ -240,21 +240,28 @@ function relativeSurvivesInstall(from: RegistryFile, to: RegistryFile): boolean 
 
 /**
  * Why `specifier` may not appear in a hook's file (SPEC-components-4 §7), or `null`: a hook
- * imports React and the platform only. No registry item (it sits below every item), no package,
- * no `@/lib/utils`, no other file.
+ * imports React, the packages it declares (`shiki` for use-highlighted-code) and, from its hook
+ * file only, its own `registry:lib` companion by install path (`@/lib/highlighter`). No registry
+ * item (it sits below every item), no `@/lib/utils`, no other file.
  */
-export function hookImportViolation(specifier: string): string | null {
+export function hookImportViolation(
+  specifier: string,
+  item: Pick<LoadedRegistryItem, "dependencies" | "files"> = { files: [] },
+  file?: string,
+): string | null {
   const local = specifier.startsWith(".") || specifier.startsWith("@/");
   const pkg = local ? null : packageName(specifier);
-  return pkg === "react" || pkg === "react-dom"
-    ? null
-    : "a hook imports React and the platform only (no registry item, package or other file)";
+  if (pkg === "react" || pkg === "react-dom") return null;
+  if (pkg && (item.dependencies ?? []).some((dep) => packageName(dep) === pkg)) return null;
+  const fromHookFile = item.files.find((entry) => entry.path === file)?.type !== HOOK_LIB_TYPE;
+  if (fromHookFile && hookLibSpecifiers(item).includes(specifier)) return null;
+  return "a hook imports React, its declared packages and its own lib file only (no registry item or other file)";
 }
 
 /**
  * Checks every file in every item's `files[]` against the allow-list: `importViolation` for
  * items, `blockImportViolation` (stricter) for blocks, `hookImportViolation` (React only) for
- * hooks and anything else in the hook catalog.
+ * hooks and anything else in the hook catalog (React, declared packages and the hook's own lib).
  */
 export function findImportViolations(
   registry: LoadedRegistry,
@@ -269,7 +276,7 @@ export function findImportViolations(
       const source = readFileSync(path.resolve(rootDir, entry.path), "utf8");
       for (const { specifier, line } of extractImports(source)) {
         const reason = hook
-          ? hookImportViolation(specifier)
+          ? hookImportViolation(specifier, item, entry.path)
           : allowed
             ? blockImportViolation(specifier, item, entry.path, allowed)
             : importViolation(specifier, item, entry.path);
@@ -304,11 +311,14 @@ export function findRegistryDependencyProblems(
   // Restyled primitives keep stock names, so a bare `button` is shadcn's and stays bare.
   const mangacnOnly = (name: string) =>
     catalog.has(name) && !(PARITY_PRIMITIVES as readonly string[]).includes(name);
-  // A stock-derived block keeps every dependency stock declares, imported or not: stock's
-  // login-01 declares `label`, which its form reaches only through `field`.
+  // A stock-derived block or restyled primitive keeps every dependency stock declares, imported
+  // or not: stock's login-01 declares `label`, which its form reaches only through `field`, and
+  // stock's code-block declares `use-highlighted-code` for its users to call, not itself.
   const blockParity = loadBlockParitySnapshot(rootDir);
+  const parity = loadParitySnapshot(rootDir);
   const keptForParity = (item: string, name: string) =>
-    blockParity?.items[item]?.registryDependencies.includes(name) ?? false;
+    (blockParity?.items[item]?.registryDependencies.includes(name) ?? false) ||
+    (parity?.items[item]?.registryDependencies.includes(name) ?? false);
   const problems: string[] = [];
   for (const item of registry.items) {
     const imported = new Set<string>();

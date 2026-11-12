@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 102 items in the registry. Each line gives the item's name, what it is, the one
+All 104 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -233,6 +233,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `questionnaire`: Stock step-by-step questions on outlined paper rows: the chosen row turns ink, an inked progress track, spot errors, ink buttons.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/questionnaire --overwrite`
   Docs: https://www.mangacn.com/docs/components/questionnaire (Markdown: https://www.mangacn.com/docs/components/questionnaire.md)
+- `code-block`: Stock code block in the docs' ink: a heavy outline, a hand-drawn rule under a mono title, numbered lines, an outlined copy button.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/code-block --overwrite`
+  Docs: https://www.mangacn.com/docs/components/code-block (Markdown: https://www.mangacn.com/docs/components/code-block.md)
 
 ## Layout
 
@@ -352,8 +355,13 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 
 A hook installs with the item that needs it: that item declares it by URL, so its one add
 writes the hook to the project's hooks folder (`hooks/<name>.ts`) and the item imports it from
-`@/hooks/<name>`. Add a hook alone only to call it from your own components.
+`@/hooks/<name>`. A hook that needs a helper brings it as a lib file, where stock puts it
+(`use-highlighted-code` writes `lib/highlighter.tsx` too). Add a hook alone only to call it
+from your own components.
 
 - `use-mobile`: Stock hook useIsMobile: true below 768 px, following the viewport; sidebar reads it to become a sheet on phones.
   Install: `npx shadcn@latest add @mangacn/use-mobile --overwrite`
   Docs: https://www.mangacn.com/r/use-mobile.json
+- `use-highlighted-code`: Stock hook useHighlightedCode: shiki-highlighted lines that keep up with streaming code; ships lib/highlighter.tsx with it.
+  Install: `npx shadcn@latest add @mangacn/use-highlighted-code --overwrite`
+  Docs: https://www.mangacn.com/r/use-highlighted-code.json

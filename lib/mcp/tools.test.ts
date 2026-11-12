@@ -220,7 +220,7 @@ describe("list_items", () => {
 
   it("lists the hooks after the blocks, as hooks rather than client or server components", async () => {
     const { text } = await call("list_items", { category: "hook" });
-    expect(text).toContain('1 items in "hook"');
+    expect(text).toContain('2 items in "hook"');
     expect(text).toContain(
       `- use-mobile · registry:hook · hook: Stock hook useIsMobile: true below 768 px, following the viewport; sidebar reads it to become a sheet on phones. ${HOOK_NOTE} Install: \`pnpm dlx shadcn@latest add @mangacn/use-mobile --overwrite\`. Docs: https://www.mangacn.com/r/use-mobile.json`,
     );

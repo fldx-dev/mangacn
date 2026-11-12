@@ -125,6 +125,19 @@ export default defineConfig({
         find: /^@\/hooks\/use-mobile$/,
         replacement: fileURLToPath(new URL("./registry/hooks/use-mobile.ts", import.meta.url)),
       },
+      // code-block → use-highlighted-code, and the hook → its lib companion.
+      {
+        find: /^@\/hooks\/use-highlighted-code$/,
+        replacement: fileURLToPath(
+          new URL("./registry/hooks/use-highlighted-code.ts", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/lib\/highlighter$/,
+        replacement: fileURLToPath(
+          new URL("./registry/hooks/lib/highlighter.tsx", import.meta.url),
+        ),
+      },
       // command → dialog.
       {
         find: /^@\/components\/ui\/dialog$/,
