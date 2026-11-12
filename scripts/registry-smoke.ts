@@ -70,8 +70,9 @@ const LANDING_TYPES = ["registry:block", "registry:hook"];
  * Every file a block or a hook lists in `files[]` must land at its target: a block's
  * `@components/blocks/<name>/<file>` → `components/blocks/<name>/<file>` (a block ships several
  * files, and a missing target makes the CLI flatten them into `components/`, SPEC-components-3
- * §3, §7); a hook's `@hooks/<name>.ts` → `hooks/<name>.ts`, where the items that declare it
- * import it from (SPEC-components-4 §4).
+ * §3, §7); a page block's route at its `app/<route>/page.tsx` and its components'
+ * `@components/<file>` → `components/<file>`; a hook's `@hooks/<name>.ts` → `hooks/<name>.ts`,
+ * where the items that declare it import it from (SPEC-components-4 §4).
  */
 function landingProblems(project: string, items: CatalogItem[]): string[] {
   return items
@@ -195,6 +196,15 @@ const EXPECTED_CONTENT: Record<
   ],
   "page-number": [
     { file: "components/page-number.tsx", includes: ["export function PageNumber("] },
+  ],
+  // A page block: the route at stock's target, the form where stock's untargeted component
+  // lands, and the page importing it from there (the build proves the import resolves).
+  "login-01": [
+    {
+      file: "app/login/page.tsx",
+      includes: ['import { LoginForm } from "@/components/login-form"'],
+    },
+    { file: "components/login-form.tsx", includes: ["export function LoginForm("] },
   ],
   // Hooks: registry:hook with `target: "@hooks/<name>.ts"`, stock source with the header.
   "use-mobile": [

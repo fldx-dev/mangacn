@@ -1,5 +1,5 @@
 import type { LoadedRegistry } from "@/lib/registry";
-import { BLOCKS_CATALOG } from "@/lib/registry/blocks";
+import { BLOCKS_CATALOG, isPageBlock } from "@/lib/registry/blocks";
 
 // The docs document the component catalog (registry/ui/registry.json) and the block catalog
 // (registry/blocks/registry.json): one page per item that has demos, under "Components" and
@@ -83,6 +83,8 @@ export interface DocItem {
   category: Category;
   /** The item's demos, `default` first, then by name. */
   demos: string[];
+  /** A page block (a `registry:page` route): its page shows the whole page, framed, not demos. */
+  page?: true;
 }
 
 function isCategory(value: string | undefined): value is Category {
@@ -118,6 +120,7 @@ export function docItems(
       demos: [...names].sort((a, b) =>
         a === "default" ? -1 : b === "default" ? 1 : a < b ? -1 : a > b ? 1 : 0,
       ),
+      ...(isPageBlock(entry) ? { page: true as const } : {}),
     });
   }
   return items.sort((a, b) => CATEGORIES.indexOf(a.category) - CATEGORIES.indexOf(b.category));
@@ -140,14 +143,21 @@ function yamlScalar(value: string): string {
 /**
  * The scaffold of one item page (SPEC-docs-site §6); the author replaces the placeholder. A
  * block's page (SPEC-components-3 §5) also lists the files it installs, under the install block.
+ * A page block's shows the whole page in a framed preview (`/view/<name>` at phone, tablet and
+ * desktop widths) instead of its demos, which it skips, and has no props table of its own: add
+ * `<PropsTable item="<name>" name="<Interface>" />` for a component's props where it has some.
  */
 export function renderItemPage(item: DocItem): string {
   const attr = `item="${item.name}"`;
+  const examples = item.page
+    ? [`<BlockPreview ${attr} />`]
+    : item.demos.map((demo) => `<DemoFrame ${attr} demo="${demo}" />`);
   return [
     "---",
     `title: ${yamlScalar(item.title)}`,
     `description: ${yamlScalar(item.description)}`,
     `item: ${item.name}`,
+    ...(item.page ? [`skipDemos: ${JSON.stringify(item.demos)}`] : []),
     "---",
     "",
     `<InstallCommand ${attr} />`,
@@ -157,14 +167,11 @@ export function renderItemPage(item: DocItem): string {
     "",
     PROSE_PLACEHOLDER,
     "",
-    "## Examples",
+    item.page ? "## Preview" : "## Examples",
     "",
-    ...item.demos.map((demo) => `<DemoFrame ${attr} demo="${demo}" />`),
+    ...examples,
     "",
-    "## Props",
-    "",
-    `<PropsTable ${attr} />`,
-    "",
+    ...(item.page ? [] : ["## Props", "", `<PropsTable ${attr} />`, ""]),
   ].join("\n");
 }
 

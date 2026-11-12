@@ -21,6 +21,7 @@ import {
   importedItems,
   selectE2e,
 } from "../lib/e2e-filter";
+import { isPageBlock } from "../lib/registry/blocks";
 import { loadRegistry } from "../lib/registry/index";
 import { changedPaths, defaultBase, fileAt } from "./changed-paths";
 
@@ -48,6 +49,7 @@ function catalogItems(): E2eItem[] {
       name: item.name,
       folder,
       hasDemos: folder !== undefined && existsSync(path.join(folder, "demos", "default.tsx")),
+      page: isPageBlock(item),
       uses: [...uses],
     };
   });

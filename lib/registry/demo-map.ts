@@ -1,5 +1,6 @@
 import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
+import { pageFile } from "./blocks";
 import { isHook } from "./hooks";
 import type { LoadedRegistry } from "./index";
 
@@ -59,8 +60,27 @@ export function collectDemos(registry: LoadedRegistry, rootDir = process.cwd()):
   return entries.sort((a, b) => compare(a.item, b.item) || compare(a.demo, b.demo));
 }
 
-/** Renders the demo map module: a data list plus lazy loaders keyed by item, then demo. */
-export function renderDemoMap(entries: DemoEntry[]): string {
+export interface PageEntry {
+  block: string;
+  /** Repo-relative POSIX path of the block's `page.tsx`. */
+  path: string;
+}
+
+/** Every page block's route file, by block name, for `/view/<block>` (app/view/[block]). */
+export function collectPages(registry: LoadedRegistry): PageEntry[] {
+  return registry.items
+    .flatMap((item) => {
+      const page = pageFile(item);
+      return page ? [{ block: item.name, path: page.path }] : [];
+    })
+    .sort((a, b) => compare(a.block, b.block));
+}
+
+/**
+ * Renders the demo map module: a data list plus lazy loaders keyed by item, then demo; and the
+ * page blocks' routes with a lazy loader each.
+ */
+export function renderDemoMap(entries: DemoEntry[], pages: PageEntry[] = []): string {
   const byItem = new Map<string, DemoEntry[]>();
   for (const entry of entries) {
     byItem.set(entry.item, [...(byItem.get(entry.item) ?? []), entry]);
@@ -91,6 +111,19 @@ export function renderDemoMap(entries: DemoEntry[]): string {
     "",
     "export const demoLoaders: Record<string, Record<string, DemoLoader>> = {",
     ...loaders,
+    "};",
+    "",
+    "export const pageEntries: readonly { block: string; path: string }[] = [",
+    ...pages.map(
+      (page) => `  { block: ${JSON.stringify(page.block)}, path: ${JSON.stringify(page.path)} },`,
+    ),
+    "];",
+    "",
+    "export const pageLoaders: Record<string, DemoLoader> = {",
+    ...pages.map(
+      (page) =>
+        `  ${JSON.stringify(page.block)}: () => import(${JSON.stringify(`@/${page.path.slice(0, -".tsx".length)}`)}),`,
+    ),
     "};",
     "",
   ].join("\n");

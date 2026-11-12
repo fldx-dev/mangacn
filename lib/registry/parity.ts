@@ -1,4 +1,6 @@
 import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 import { mangacnItemName } from "./index";
 
 /**
@@ -63,7 +65,15 @@ export const PARITY_PRIMITIVES = [
   "chart",
 ] as const;
 
+/**
+ * The blocks mangacn redraws from stock base-nova blocks, by stock name (batch 5): each keeps
+ * stock's files, page target, exports and registry dependencies (`compareBlockParity`).
+ */
+export const PARITY_BLOCKS = ["login-01"] as const;
+
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";
+
+export const BLOCK_PARITY_SNAPSHOT_PATH = "registry/blocks/__parity__/base-nova.json";
 
 export const STOCK_ITEM_URL = "https://ui.shadcn.com/r/styles/base-nova/{name}.json";
 
@@ -267,19 +277,10 @@ function diffList(label: string, expected: string[], actual: string[]): string[]
  * added groups, keys or `cva` objects are allowed (SPEC-components §4.2: additions only).
  */
 export function compareParity(stock: ParityShape, actual: ParityShape): string[] {
-  // A URL naming a stock dependency stands in for it; any other mangacn URL is an addition.
-  const registryDependencies = actual.registryDependencies.flatMap((dep) => {
-    const name = mangacnItemName(dep);
-    if (name === null) return [dep];
-    return stock.registryDependencies.includes(name) ? [name] : [];
-  });
   const problems = [
     ...diffList("exports", stock.exports, actual.exports),
     ...diffList("data-slot", stock.dataSlots, actual.dataSlots),
-    ...diffList("dependencies", stock.dependencies, actual.dependencies).filter((problem) =>
-      problem.startsWith("dependencies: missing"),
-    ),
-    ...diffList("registryDependencies", stock.registryDependencies, registryDependencies),
+    ...dependencyProblems(stock, actual),
   ];
   for (const [name, groups] of Object.entries(stock.variants)) {
     const restyled = actual.variants[name];
@@ -293,4 +294,118 @@ export function compareParity(stock: ParityShape, actual: ParityShape): string[]
     }
   }
   return problems;
+}
+
+type DependencyLists = Pick<ParityShape, "dependencies" | "registryDependencies">;
+
+/**
+ * `dependencies` must include every stock package; `registryDependencies` every stock name,
+ * a mangacn URL of the same name standing in for it, plus only other mangacn URLs.
+ */
+function dependencyProblems(stock: DependencyLists, actual: DependencyLists): string[] {
+  // A URL naming a stock dependency stands in for it; any other mangacn URL is an addition.
+  const registryDependencies = actual.registryDependencies.flatMap((dep) => {
+    const name = mangacnItemName(dep);
+    if (name === null) return [dep];
+    return stock.registryDependencies.includes(name) ? [name] : [];
+  });
+  return [
+    ...diffList("dependencies", stock.dependencies, actual.dependencies).filter((problem) =>
+      problem.startsWith("dependencies: missing"),
+    ),
+    ...diffList("registryDependencies", stock.registryDependencies, registryDependencies),
+  ];
+}
+
+/** One file of a block as parity sees it: its path inside the block's folder, type, exports. */
+export interface BlockParityFile {
+  /** `page.tsx`, `components/login-form.tsx`. */
+  path: string;
+  type: string;
+  /** A page's route target (`app/login/page.tsx`); other files' targets are mangacn's own. */
+  target?: string;
+  /** Runtime exports, `default` for a default export. */
+  exports: string[];
+}
+
+/** The parts of a stock-derived block that must match stock. */
+export interface BlockParityShape extends DependencyLists {
+  files: BlockParityFile[];
+}
+
+export interface BlockParitySnapshotEntry extends BlockParityShape {
+  /** sha1 of the stock files' contents in order, to spot upstream changes on refresh. */
+  sha1: string;
+}
+
+export interface BlockParitySnapshot {
+  $comment: string;
+  source: string;
+  fetchedAt: string;
+  items: Record<string, BlockParitySnapshotEntry>;
+}
+
+/**
+ * A block file's path inside its block folder, for stock and mangacn alike:
+ * `registry/base-nova/blocks/login-01/components/login-form.tsx` and
+ * `registry/blocks/login-01/components/login-form.tsx` → `components/login-form.tsx`.
+ */
+export function blockRelativePath(name: string, file: string): string {
+  const marker = `blocks/${name}/`;
+  const index = file.indexOf(marker);
+  return index === -1 ? path.posix.basename(file) : file.slice(index + marker.length);
+}
+
+/** `extractExports` plus `default` when the module has a default export (a page). */
+export function extractModuleExports(source: string): string[] {
+  const names = extractExports(source);
+  return /^export\s+default\b/m.test(stripComments(source)) ? sorted([...names, "default"]) : names;
+}
+
+/** The parity shape of a block from its files' sources and its catalog dependency lists. */
+export function extractBlockParityShape(
+  name: string,
+  files: readonly { path: string; type: string; target?: string; content: string }[],
+  deps: { dependencies?: string[]; registryDependencies?: string[] } = {},
+): BlockParityShape {
+  return {
+    files: files
+      .map((file) => ({
+        path: blockRelativePath(name, file.path),
+        type: file.type,
+        ...(file.type === "registry:page" ? { target: file.target } : {}),
+        exports: extractModuleExports(file.content),
+      }))
+      .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0)),
+    dependencies: sorted(deps.dependencies ?? []),
+    registryDependencies: sorted(deps.registryDependencies ?? []),
+  };
+}
+
+/**
+ * Differences between a stock-derived block and its stock snapshot: the same files by path and
+ * type, the same page target, the same exports per file, and the dependency rules of
+ * `compareParity` (stock's packages kept, stock's names kept, by bare name or mangacn URL, and
+ * only mangacn items added).
+ */
+export function compareBlockParity(stock: BlockParityShape, actual: BlockParityShape): string[] {
+  const key = (file: BlockParityFile) => `${file.path} (${file.type})`;
+  const problems = diffList("files", stock.files.map(key), actual.files.map(key));
+  for (const file of stock.files) {
+    const own = actual.files.find((candidate) => key(candidate) === key(file));
+    if (!own) continue;
+    if (file.target !== own.target) {
+      problems.push(`${file.path}: target ${own.target}; stock's is ${file.target}`);
+    }
+    problems.push(...diffList(`${file.path} exports`, file.exports, own.exports));
+  }
+  return [...problems, ...dependencyProblems(stock, actual)];
+}
+
+/** The block parity snapshot, or `undefined` before `pnpm gen:parity` has written one. */
+export function loadBlockParitySnapshot(rootDir = process.cwd()): BlockParitySnapshot | undefined {
+  const file = path.resolve(rootDir, BLOCK_PARITY_SNAPSHOT_PATH);
+  return existsSync(file)
+    ? (JSON.parse(readFileSync(file, "utf8")) as BlockParitySnapshot)
+    : undefined;
 }

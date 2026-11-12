@@ -48,6 +48,8 @@ export interface E2eItem {
   folder?: string;
   /** Whether `<folder>/demos/default.tsx` exists, i.e. the item has demos to screenshot. */
   hasDemos: boolean;
+  /** A page block: e2e/blocks.spec.ts also shoots its whole page at `/view/<name>`. */
+  page?: boolean;
   /** Catalog items this one renders: its registryDependencies plus what its files import. */
   uses: string[];
 }
@@ -95,6 +97,12 @@ const EVERYTHING: (string | RegExp)[] = [
   /^postcss\.config\./,
 ];
 
+/**
+ * What every page block's `/view/<name>` shot renders inside, and the spec that shoots them: these
+ * select every page block (e2e/blocks.spec.ts runs a selected one's view shots) and the site.
+ */
+const VIEW_PATHS: (string | RegExp)[] = [/^app\/view\//, "e2e/blocks.spec.ts"];
+
 /** A path may select several suites: the MCP serves the docs pages and the props tables too. */
 const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
   {
@@ -141,7 +149,7 @@ const NOTHING: (string | RegExp)[] = [
   /^lib\/test\//,
   /^tasks\//,
   /^registry\/[^/]+\/[^/]+$/, // README.md, catalog tests (registry.json is handled first)
-  /^registry\/ui\/__parity__\//,
+  /^registry\/[^/]+\/__parity__\//, // the parity snapshots (unit tests read them)
   /^e2e\/__screenshots__\//, // baselines that match no demo or page
   /^vitest\./,
   "biome.json",
@@ -207,18 +215,22 @@ function changedCatalogEntries(path: string, sources: E2eSources): string[] | un
 /**
  * The item a path alias names: `@/components/ui/<x>` and `@/components/<x>` name `<x>`,
  * `@/components/blocks/<x>/...` names block `<x>`, `@/hooks/<x>` names the item whose folder
- * holds its target (a hook has no demo of its own). `undefined` for any other alias.
+ * holds its target (a hook has no demo of its own), and an install path that is no item's name
+ * names the item whose folder holds its target (a page block's component, `@/components/login-form`
+ * → `login-01`). `undefined` for any other alias.
  */
-function aliasItem(key: string, target: unknown): string | undefined {
+function aliasItem(key: string, target: unknown, names: ReadonlySet<string>): string | undefined {
   const named =
     /^@\/components\/ui\/([a-z0-9-]+)$/.exec(key) ??
     /^@\/components\/blocks\/([a-z0-9-]+)(?:\/[^*]+)?$/.exec(key) ??
     /^@\/components\/(?!ui$|blocks$)([a-z0-9-]+)$/.exec(key);
-  if (named) return named[1];
-  if (/^@\/hooks\/[a-z0-9-]+$/.test(key) && Array.isArray(target) && target.length === 1) {
-    return /^\.\/registry\/[^/]+\/([^/]+)\//.exec(String(target[0]))?.[1];
-  }
-  return undefined;
+  // The item whose folder holds the alias's one target (`./registry/blocks/login-01/…`).
+  const folder =
+    Array.isArray(target) && target.length === 1
+      ? /^\.\/registry\/[^/]+\/([^/]+)\//.exec(String(target[0]))?.[1]
+      : undefined;
+  if (named) return names.has(named[1]) || !folder || !names.has(folder) ? named[1] : folder;
+  return /^@\/hooks\/[a-z0-9-]+$/.test(key) ? folder : undefined;
 }
 
 /**
@@ -245,43 +257,39 @@ function addedAliasItems(sources: E2eSources, names: ReadonlySet<string>): strin
   }
   const added = Object.keys(pathsAfter).filter((key) => !(key in pathsBefore));
   if (added.length === 0) return undefined;
-  const items = added.map((key) => aliasItem(key, pathsAfter[key]));
+  const items = added.map((key) => aliasItem(key, pathsAfter[key], names));
   if (items.some((name) => name === undefined || !names.has(name))) return undefined;
   return [...new Set(items as string[])];
 }
 
 const PARITY_PATH = "lib/registry/parity.ts";
-const PARITY_LIST = /(export const PARITY_PRIMITIVES = \[)([^\]]*)(\] as const;)/;
+const PARITY_LISTS = ["PARITY_PRIMITIVES", "PARITY_BLOCKS"].map(
+  (name) => new RegExp(`(export const ${name} = \\[)([^\\]]*)(\\] as const;)`),
+);
 
 /**
- * The names a `lib/registry/parity.ts` diff appends to `PARITY_PRIMITIVES`, or `undefined` when
- * the diff is anything else (another line of the file, a removed or reordered name).
+ * The names a `lib/registry/parity.ts` diff appends to `PARITY_PRIMITIVES` or `PARITY_BLOCKS`, or
+ * `undefined` when the diff is anything else (another line of the file, a removed or reordered
+ * name, anything but quoted names in a list).
  */
 function appendedParityNames(sources: E2eSources): string[] | undefined {
-  const before = sources.before(PARITY_PATH);
-  const after = sources.after(PARITY_PATH);
-  const listBefore = before && PARITY_LIST.exec(before);
-  const listAfter = after && PARITY_LIST.exec(after);
-  if (!before || !after || !listBefore || !listAfter) return undefined;
-  if (before.replace(PARITY_LIST, "$1$3") !== after.replace(PARITY_LIST, "$1$3")) return undefined;
-  const entries = (body: string) =>
-    body
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
-  const namesBefore = entries(listBefore[2]);
-  const namesAfter = entries(listAfter[2]);
-  // The old entries, untouched and first (only the last may gain the comma it was missing).
-  const last = namesBefore.length - 1;
-  for (const [index, line] of namesBefore.entries()) {
-    const now = namesAfter[index];
-    if (now !== line && !(index === last && now === `${line},`)) return undefined;
+  let before = sources.before(PARITY_PATH);
+  let after = sources.after(PARITY_PATH);
+  if (!before || !after) return undefined;
+  const names = (body: string) =>
+    /^[\s",a-z0-9-]*$/.test(body) ? [...body.matchAll(/"([a-z0-9-]+)"/g)].map((m) => m[1]) : null;
+  const appended: string[] = [];
+  for (const list of PARITY_LISTS) {
+    const namesBefore = names(list.exec(before)?.[2] ?? "!");
+    const namesAfter = names(list.exec(after)?.[2] ?? "!");
+    if (!namesBefore || !namesAfter) return undefined;
+    // The old names, untouched and first; the rest are appended.
+    if (namesBefore.some((name, index) => namesAfter[index] !== name)) return undefined;
+    appended.push(...namesAfter.slice(namesBefore.length));
+    before = before.replace(list, "$1$3");
+    after = after.replace(list, "$1$3");
   }
-  const appended = namesAfter.slice(namesBefore.length);
-  if (appended.length === 0) return undefined;
-  const names = appended.map((line) => /^"([a-z0-9-]+)",?$/.exec(line)?.[1]);
-  if (names.some((name) => name === undefined)) return undefined;
-  return names as string[];
+  return before === after && appended.length > 0 ? appended : undefined;
 }
 
 /** The longest item name that `file` (`toggle-group-default-dark`) starts with, plus a dash. */
@@ -297,7 +305,9 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  * - an item's folder (`registry/<cat>/<item>/`, tests aside) or catalog entry → that item, every
  *   item that uses it (registryDependencies or an import, transitively), and `site`, whose
  *   component index renders every item's default demo; `ink-mark`/`ink-arrow` add `annotations`
- * - a baseline PNG → its item, or `site` for `site-*.png`
+ * - a baseline PNG → its item (`<block>-view-<mode>.png` is a page block's view shot), or `site`
+ *   for `site-*.png`
+ * - the `/view/<block>` route or e2e/blocks.spec.ts → every page block and `site`
  * - `lib/mcp/`, `app/api/mcp/`, `skills/`, the MCP spec → `mcp`; `content/`, `lib/docs/` and the
  *   props generator → `mcp` and `site` (the MCP serves pages and props tables)
  * - other `app/`, `components/`, the site spec → `site`
@@ -382,7 +392,7 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
     if (path === PARITY_PATH) {
       const named = appendedParityNames(sources);
       if (!named || named.some((name) => !byName.has(name))) {
-        return everything(path, "not only names appended to PARITY_PRIMITIVES");
+        return everything(path, "not only names appended to PARITY_PRIMITIVES or PARITY_BLOCKS");
       }
       const withDemos = named.filter((name) => byName.get(name)?.hasDemos).sort();
       for (const name of withDemos) selected.add(name);
@@ -391,6 +401,14 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
     }
 
     if (matches(path, EVERYTHING)) return everything(path, "every snapshot depends on it");
+
+    if (matches(path, VIEW_PATHS)) {
+      const pages = sources.items.filter((item) => item.page).map((item) => item.name);
+      for (const name of pages) selected.add(name);
+      selected.add("site");
+      reasons.push(`${path} → page blocks ${pages.sort().join(", ") || "(none)"} + site`);
+      continue;
+    }
 
     const folder = /^registry\/[^/]+\/([^/]+)\//.exec(path);
     if (folder && byName.has(folder[1])) {

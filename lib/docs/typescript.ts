@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type { GeneratedDoc, Generator } from "fumadocs-typescript";
 import { type LoadedRegistry, loadRegistry } from "@/lib/registry";
+import { isPageBlock } from "@/lib/registry/blocks";
 import { DOCS_SECTIONS } from "./catalog";
 import { type GeneratedProps, propsInterfaceName } from "./props";
 
@@ -120,10 +121,18 @@ export function propsTargets(
   const add = (item: string, name: string) => {
     const entry = registry.items.find((candidate) => candidate.name === item);
     if (!entry || entry.type === "registry:ui") return;
-    const file = entry.files[0]?.path;
+    // The file that declares the interface (a page block's component), else the entry file.
+    const declares = new RegExp(`\\b(?:interface|type)\\s+${name}\\b`);
+    const file =
+      entry.files.find((candidate) => {
+        const absolute = path.resolve(candidate.path);
+        return existsSync(absolute) && declares.test(readFileSync(absolute, "utf8"));
+      })?.path ?? entry.files[0]?.path;
     if (file) targets.set(`${item}/${name}`, { item, file, name });
   };
   for (const entry of registry.items) {
+    // A page block has no `<Pascal>Props`: its page takes none, its components name their own.
+    if (isPageBlock(entry)) continue;
     if (entry.type === "registry:component" || entry.type === "registry:block") {
       add(entry.name, propsInterfaceName(entry.name));
     }

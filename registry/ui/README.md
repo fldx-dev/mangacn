@@ -42,6 +42,7 @@ registry/ui/<name>/
 | `registry/theme/`         | `registry:theme`, `registry:font`, `registry:lib`, `ink-frame`   | css, `app/layout.tsx`, `@/lib/<name>.ts`, `@/components/` |
 | `registry/ui/<name>/`     | `registry:ui` (primitive) or `registry:component` (manga-native) | `@/components/ui/<name>.tsx` or `@/components/<name>.tsx` |
 | `registry/blocks/<name>/` | `registry:block` (recipe 3)                                      | `@/components/blocks/<name>/…`                            |
+| (a page block)            | `registry:block` with `registry:page` + `registry:component`     | `app/<route>/page.tsx` and `@/components/<file>.tsx`      |
 | `registry/hooks/`         | `registry:hook` (recipe 4), one `<name>.ts` each                 | `@/hooks/<name>.ts`                                       |
 
 ### Catalog entry
@@ -384,7 +385,9 @@ Branches are merged into `main` with a merge commit and deleted afterwards.
 
 A block is a page in miniature: it **composes items and draws nothing of its own**. Outlines,
 captions, stamps and folios are the items'; the block owns layout, keyboard handling and
-announcements. Props are data in, callbacks out. `chapter-list` is the reference.
+announcements. Props are data in, callbacks out. `chapter-list` is the reference. A block that
+is a whole route (stock's `login-01`) follows the steps below with the changes under
+[Page blocks](#page-blocks).
 
 1. **Folder.** One entry file named after the block, any part files beside it:
 
@@ -456,6 +459,49 @@ announcements. Props are data in, callbacks out. `chapter-list` is the reference
    its items, checks every file in `files[]` landed at its target, then typechecks and builds
    the fresh app. Locally, `pnpm registry:build && pnpm registry:smoke --only=<name>` does the
    same when an install needs debugging; `--changed` selects a block whose folder changed.
+
+### Page blocks
+
+A page block installs a whole route, as stock's `login-01` does; `login-01` is the reference.
+Its files are stock's, by name, type and place:
+
+```
+registry/blocks/<name>/
+├─ page.tsx                 the route: registry:page, target app/<route>/page.tsx (first in files[])
+├─ components/<file>.tsx    its components: registry:component, target @components/<file>.tsx
+├─ <name>.test.tsx          never shipped
+└─ demos/default.tsx        required: renders the page's main component (the stage shot)
+```
+
+- **Where the files land.** The page at its `app/<route>/page.tsx` target (stock's: never
+  change it). A component at `components/<file>.tsx`: shadcn 4.23 writes an untargeted
+  `registry:component` to the components folder at the path after the first `components`
+  segment of its registry path (`registry/blocks/login-01/components/login-form.tsx` →
+  `components/login-form.tsx`, where stock's lands), so an add replaces stock's files in place.
+  The catalog states it as `"target": "@components/login-form.tsx"`, so it does not hang on the
+  name of the user's components folder. `findBlockProblems` refuses a component that would land
+  on another item's file.
+- **Imports.** The page lands away from its components, so it imports them by install path,
+  `@/components/login-form`, as stock's page does once the CLI has rewritten it; components
+  import each other relatively (`./nav-main`: they land side by side). The import rule allows an
+  own file's install path only where a relative path would miss after install. Map each
+  component's install path in `tsconfig.json` `paths` and the `vitest.config.mts` aliases
+  (`"@/components/login-form": ["./registry/blocks/login-01/components/login-form.tsx"]`).
+- **Stock parity.** Append the stock name to `PARITY_BLOCKS` (`lib/registry/parity.ts`) and run
+  `pnpm gen:parity`: `registry/blocks/parity.test.ts` then holds the block to stock's file list,
+  page target, exports per file (`default` for the page) and registry dependencies, mangacn's
+  items by URL. A dependency stock declares stays declared even when no file imports it
+  (login-01's `label`, reached through `field`). A manga-native page block skips this step.
+- **The page.** It is the route's one `main`, with one `h1`, and every form named (by the
+  heading, `aria-labelledby`). `/view/<name>` (app/view/[block]) renders it alone at full
+  width, `?mode=dark` included; `e2e/blocks.spec.ts` shoots it at three widths, light and dark,
+  with axe's page rules on. `pnpm gen:docs` scaffolds the docs page with `<BlockPreview>`
+  (the page framed at phone, tablet and desktop widths) in place of the demos, which its
+  frontmatter skips, and no props table: add `<PropsTable item="<name>" name="<Interface>" />`
+  for a component that has props of its own. The Blocks index shows the page on its card.
+- **Smoke.** Add the route and each component to `EXPECTED_CONTENT` in
+  `scripts/registry-smoke.ts` (the page's import of its component as an `includes`); the build
+  of the fresh app proves the import resolves.
 
 ## Recipe 4: add a hook
 
