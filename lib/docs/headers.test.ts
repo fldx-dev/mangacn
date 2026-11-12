@@ -12,10 +12,22 @@ vi.mock("fumadocs-mdx/next", () => ({
 // The rule as configured; the served response (content type included) is checked with
 // `next build` + `next start` + `curl -I` (see the task notes).
 
+/** The /r/ rule: every path under /r/ but the Create routes, which set their own (app/r/create). */
+const REGISTRY_SOURCE = "/r/:path((?!create/).*)";
+
 describe("registry response headers", () => {
-  it("serves /r/:path* with the cache and CORS headers", async () => {
+  it("leaves /r/create/ to its routes and covers every other /r/ path", () => {
+    const pattern = /^\/r\/:path\((.*)\)$/.exec(REGISTRY_SOURCE)?.[1] ?? "";
+    const matches = (path: string) => new RegExp(`^${pattern}$`).test(path.replace(/^\/r\//, ""));
+    expect(matches("/r/button.json")).toBe(true);
+    expect(matches("/r/registry.json")).toBe(true);
+    expect(matches("/r/create/10.json")).toBe(false);
+    expect(matches("/r/create/10/theme.json")).toBe(false);
+  });
+
+  it("serves the static items with the cache and CORS headers", async () => {
     const rules = (await nextConfig.headers?.()) ?? [];
-    const registry = rules.find((rule) => rule.source === "/r/:path*");
+    const registry = rules.find((rule) => rule.source === REGISTRY_SOURCE);
 
     expect(registry).toBeDefined();
     expect(
