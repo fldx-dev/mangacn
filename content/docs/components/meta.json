@@ -61,6 +61,8 @@
     "bubble",
     "message",
     "marker",
+    "attachment",
+    "trace",
     "---Layout---",
     "panel",
     "panel-grid",

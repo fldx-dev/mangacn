@@ -245,6 +245,7 @@ export default defineConfig({
           new URL("./registry/blocks/sidebar-07/components/team-switcher.tsx", import.meta.url),
         ),
       },
+      // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,
         replacement: `${fileURLToPath(new URL("./registry/blocks/", import.meta.url))}$1`,

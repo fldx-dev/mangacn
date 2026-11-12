@@ -66,6 +66,8 @@ export const PARITY_PRIMITIVES = [
   "bubble",
   "message",
   "marker",
+  "attachment",
+  "trace",
 ] as const;
 
 /**
