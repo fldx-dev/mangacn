@@ -558,6 +558,15 @@ are the usual conflict), then runs on the merged tree the generator checks
 (`pnpm exec biome check .`), `pnpm typecheck` and the unit suite (`pnpm test`), and pushes
 `main`. There is no per-branch run and no per-task go-ahead.
 
+`pnpm loop:land <branch> "<subject>"` (`scripts/loop/land.ts`, run on a clean `main`) does that
+in one go: `--no-ff` merge of `origin/<branch>` with the subject as message (`LOOP_TRAILER`
+adds a trailer line), the catalog, list and generated-file conflicts resolved
+(`scripts/loop/resolve-catalogs.ts`), the checks above plus `install --frozen-lockfile`,
+`registry:validate` and one rerun of failed test files, and the push only when all pass. Exit
+10 leaves another conflict to resolve by hand; commit it, then `pnpm loop:check` checks `HEAD`
+and pushes. Exit 20 is a failed check, with the merge commit left local. `--dry-run` prints
+the plan and changes nothing; logs go to a temporary folder named at the start.
+
 **Once per wave, on `main`.** Main's push run checks, smokes every item and takes every shot;
 a new demo has no baseline, so its `visual` job is red until the wave's one dispatch writes
 them, which is expected between waves:
