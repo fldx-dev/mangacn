@@ -20,6 +20,24 @@
       "dependencies": ["cn"],
       "registryDependencies": ["button", "card", "field", "input", "label"],
       "sha1": "71af94ce5b4567e20d72281f5641a9126a733708"
+    },
+    "signup-01": {
+      "files": [
+        {
+          "path": "components/signup-form.tsx",
+          "type": "registry:component",
+          "exports": ["SignupForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["button", "card", "input", "label"],
+      "sha1": "0601d88af9726c341278d81be72465b5da503044"
     }
   }
 }

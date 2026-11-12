@@ -1,5 +1,13 @@
 {
   "title": "Blocks",
   "defaultOpen": true,
-  "pages": ["chapter-list", "spread-viewer", "character-card", "volume-grid", "reader", "login-01"]
+  "pages": [
+    "chapter-list",
+    "spread-viewer",
+    "character-card",
+    "volume-grid",
+    "reader",
+    "login-01",
+    "signup-01"
+  ]
 }

@@ -53,6 +53,7 @@
       "@/components/blocks/*": ["./registry/blocks/*"],
       "@/components/ui/field": ["./registry/ui/field/field.tsx"],
       "@/components/login-form": ["./registry/blocks/login-01/components/login-form.tsx"],
+      "@/components/signup-form": ["./registry/blocks/signup-01/components/signup-form.tsx"],
       "@/*": ["./*"]
     }
   },

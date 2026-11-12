@@ -221,6 +221,13 @@ const EXPECTED_CONTENT: Record<
     },
     { file: "components/login-form.tsx", includes: ["export function LoginForm("] },
   ],
+  "signup-01": [
+    {
+      file: "app/signup/page.tsx",
+      includes: ['import { SignupForm } from "@/components/signup-form"'],
+    },
+    { file: "components/signup-form.tsx", includes: ["export function SignupForm("] },
+  ],
   // Hooks: registry:hook with `target: "@hooks/<name>.ts"`, stock source with the header.
   "use-mobile": [
     {

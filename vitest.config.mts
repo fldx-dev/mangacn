@@ -182,6 +182,13 @@ export default defineConfig({
           new URL("./registry/blocks/login-01/components/login-form.tsx", import.meta.url),
         ),
       },
+      // signup-01 (Task 104): the page's own form at its install path.
+      {
+        find: /^@\/components\/signup-form$/,
+        replacement: fileURLToPath(
+          new URL("./registry/blocks/signup-01/components/signup-form.tsx", import.meta.url),
+        ),
+      },
       {
         find: /^@\/components\/blocks\/(.+)$/,
         replacement: `${fileURLToPath(new URL("./registry/blocks/", import.meta.url))}$1`,
