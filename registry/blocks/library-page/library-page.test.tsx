@@ -102,14 +102,16 @@ describe("library-page", () => {
     }
   });
 
-  it("loads the open chapters' covers at once and every shelf's covers lazily", () => {
+  it("loads the open chapters' covers and the first shelf's first row at once, the rest lazily", () => {
     render(<Page />);
     const covers = (name: string) =>
       [...screen.getByRole("region", { name }).querySelectorAll("img")].map((img) =>
         img.getAttribute("loading"),
       );
     expect(covers("Continue reading")).toEqual([null, null, null]);
-    expect(new Set([...covers("Reading"), ...covers("Finished")])).toEqual(new Set(["lazy"]));
+    // The first shelf's first row can be on a phone's first screen (and hold the largest paint).
+    expect(covers("Reading")).toEqual([null, null, null, null]);
+    expect(new Set(covers("Finished"))).toEqual(new Set(["lazy"]));
   });
 
   it("has no axe violations as a whole page", async () => {

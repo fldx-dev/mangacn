@@ -109,6 +109,9 @@ const library: Library = {
   ],
 };
 
+/** Covers in volume-grid's widest row: the first shelf loads that many at once. */
+const FIRST_ROW = 4;
+
 export default function Page() {
   return (
     <SidebarProvider>
@@ -137,13 +140,16 @@ export default function Page() {
         <div className="flex min-w-0 flex-1 flex-col gap-10 p-4 pt-0 pb-10">
           <h1 className="font-display text-2xl leading-tight uppercase">Library</h1>
           <ContinueReading items={library.continueReading} />
-          {library.shelves.map((shelf) => (
+          {library.shelves.map((shelf, index) => (
             <Shelf
               key={shelf.title}
               title={shelf.title}
               volumes={shelf.volumes}
               count={shelf.volumes.length > 0 ? shelf.volumes.length : undefined}
               empty={shelf.empty}
+              // The first shelf's first row is on a phone's first screen, and one of its
+              // covers is the page's largest paint: a lazy image there paints seconds late.
+              eager={index === 0 ? FIRST_ROW : 0}
             />
           ))}
         </div>
