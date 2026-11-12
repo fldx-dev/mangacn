@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { defineConfig } from "@playwright/test";
 import { E2E_SUITES, parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { pageEntries } from "../lib/registry/demos.generated";
 
 const root = path.resolve(__dirname, "..");
 
@@ -24,13 +25,16 @@ function freePort(): string {
 const port = freePort();
 const widths = [360, 768, 1280];
 
-// `E2E_ITEMS` narrows the run (lib/e2e-filter.ts): demo items for demos.spec.ts, and the
-// suites `site`, `mcp`, `annotations` for their specs. Unset, empty or `all` runs everything.
+// `E2E_ITEMS` narrows the run (lib/e2e-filter.ts): demo items for demos.spec.ts (and a page
+// block's view shots in blocks.spec.ts, which also checks the Blocks index under `site`), and
+// the suites `site`, `mcp`, `annotations` for their specs. Unset, empty or `all` runs everything.
 const filter = parseE2eItems(process.env.E2E_ITEMS);
 const demoItems = selectedDemoItems(filter);
+const pageBlocks = demoItems?.filter((name) => pageEntries.some((page) => page.block === name));
 const testIgnore = filter
   ? [
       ...(demoItems?.length ? [] : ["**/demos.spec.ts"]),
+      ...(pageBlocks?.length || filter.has("site") ? [] : ["**/blocks.spec.ts"]),
       ...E2E_SUITES.filter((suite) => !filter.has(suite)).map((suite) => `**/${suite}.spec.ts`),
     ]
   : [];

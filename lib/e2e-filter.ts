@@ -48,6 +48,8 @@ export interface E2eItem {
   folder?: string;
   /** Whether `<folder>/demos/default.tsx` exists, i.e. the item has demos to screenshot. */
   hasDemos: boolean;
+  /** A page block: e2e/blocks.spec.ts also shoots its whole page at `/view/<name>`. */
+  page?: boolean;
   /** Catalog items this one renders: its registryDependencies plus what its files import. */
   uses: string[];
 }
@@ -95,6 +97,12 @@ const EVERYTHING: (string | RegExp)[] = [
   /^postcss\.config\./,
 ];
 
+/**
+ * What every page block's `/view/<name>` shot renders inside, and the spec that shoots them: these
+ * select every page block (e2e/blocks.spec.ts runs a selected one's view shots) and the site.
+ */
+const VIEW_PATHS: (string | RegExp)[] = [/^app\/view\//, "e2e/blocks.spec.ts"];
+
 /** A path may select several suites: the MCP serves the docs pages and the props tables too. */
 const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
   {
@@ -141,7 +149,7 @@ const NOTHING: (string | RegExp)[] = [
   /^lib\/test\//,
   /^tasks\//,
   /^registry\/[^/]+\/[^/]+$/, // README.md, catalog tests (registry.json is handled first)
-  /^registry\/ui\/__parity__\//,
+  /^registry\/[^/]+\/__parity__\//, // the parity snapshots (unit tests read them)
   /^e2e\/__screenshots__\//, // baselines that match no demo or page
   /^vitest\./,
   "biome.json",
@@ -207,18 +215,22 @@ function changedCatalogEntries(path: string, sources: E2eSources): string[] | un
 /**
  * The item a path alias names: `@/components/ui/<x>` and `@/components/<x>` name `<x>`,
  * `@/components/blocks/<x>/...` names block `<x>`, `@/hooks/<x>` names the item whose folder
- * holds its target (a hook has no demo of its own). `undefined` for any other alias.
+ * holds its target (a hook has no demo of its own), and an install path that is no item's name
+ * names the item whose folder holds its target (a page block's component, `@/components/login-form`
+ * → `login-01`). `undefined` for any other alias.
  */
-function aliasItem(key: string, target: unknown): string | undefined {
+function aliasItem(key: string, target: unknown, names: ReadonlySet<string>): string | undefined {
   const named =
     /^@\/components\/ui\/([a-z0-9-]+)$/.exec(key) ??
     /^@\/components\/blocks\/([a-z0-9-]+)(?:\/[^*]+)?$/.exec(key) ??
     /^@\/components\/(?!ui$|blocks$)([a-z0-9-]+)$/.exec(key);
-  if (named) return named[1];
-  if (/^@\/hooks\/[a-z0-9-]+$/.test(key) && Array.isArray(target) && target.length === 1) {
-    return /^\.\/registry\/[^/]+\/([^/]+)\//.exec(String(target[0]))?.[1];
-  }
-  return undefined;
+  // The item whose folder holds the alias's one target (`./registry/blocks/login-01/…`).
+  const folder =
+    Array.isArray(target) && target.length === 1
+      ? /^\.\/registry\/[^/]+\/([^/]+)\//.exec(String(target[0]))?.[1]
+      : undefined;
+  if (named) return names.has(named[1]) || !folder || !names.has(folder) ? named[1] : folder;
+  return /^@\/hooks\/[a-z0-9-]+$/.test(key) ? folder : undefined;
 }
 
 /**
@@ -245,7 +257,7 @@ function addedAliasItems(sources: E2eSources, names: ReadonlySet<string>): strin
   }
   const added = Object.keys(pathsAfter).filter((key) => !(key in pathsBefore));
   if (added.length === 0) return undefined;
-  const items = added.map((key) => aliasItem(key, pathsAfter[key]));
+  const items = added.map((key) => aliasItem(key, pathsAfter[key], names));
   if (items.some((name) => name === undefined || !names.has(name))) return undefined;
   return [...new Set(items as string[])];
 }
@@ -297,7 +309,9 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  * - an item's folder (`registry/<cat>/<item>/`, tests aside) or catalog entry → that item, every
  *   item that uses it (registryDependencies or an import, transitively), and `site`, whose
  *   component index renders every item's default demo; `ink-mark`/`ink-arrow` add `annotations`
- * - a baseline PNG → its item, or `site` for `site-*.png`
+ * - a baseline PNG → its item (`<block>-view-<mode>.png` is a page block's view shot), or `site`
+ *   for `site-*.png`
+ * - the `/view/<block>` route or e2e/blocks.spec.ts → every page block and `site`
  * - `lib/mcp/`, `app/api/mcp/`, `skills/`, the MCP spec → `mcp`; `content/`, `lib/docs/` and the
  *   props generator → `mcp` and `site` (the MCP serves pages and props tables)
  * - other `app/`, `components/`, the site spec → `site`
@@ -391,6 +405,14 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
     }
 
     if (matches(path, EVERYTHING)) return everything(path, "every snapshot depends on it");
+
+    if (matches(path, VIEW_PATHS)) {
+      const pages = sources.items.filter((item) => item.page).map((item) => item.name);
+      for (const name of pages) selected.add(name);
+      selected.add("site");
+      reasons.push(`${path} → page blocks ${pages.sort().join(", ") || "(none)"} + site`);
+      continue;
+    }
 
     const folder = /^registry\/[^/]+\/([^/]+)\//.exec(path);
     if (folder && byName.has(folder[1])) {

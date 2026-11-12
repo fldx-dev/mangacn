@@ -40,6 +40,13 @@ const ITEMS: E2eItem[] = [
   { name: "progress", folder: "registry/ui/progress", hasDemos: true, uses: [] },
   { name: "chapter-list", folder: "registry/blocks/chapter-list", hasDemos: true, uses: [] },
   { name: "spread-viewer", folder: "registry/blocks/spread-viewer", hasDemos: true, uses: [] },
+  {
+    name: "login-01",
+    folder: "registry/blocks/login-01",
+    hasDemos: true,
+    page: true,
+    uses: ["label"],
+  },
 ];
 
 function sources(files: Record<string, [string | undefined, string | undefined]> = {}): E2eSources {
@@ -240,6 +247,35 @@ function parity(
   );
 }
 
+describe("selectE2e for page blocks", () => {
+  it("takes a page block's own files, with its view shots, and the site", () => {
+    expect(pick(["registry/blocks/login-01/components/login-form.tsx"])).toBe("login-01,site");
+    expect(pick(["registry/blocks/login-01/page.tsx"])).toBe("login-01,site");
+  });
+
+  it("reaches a page block through the items it renders", () => {
+    expect(pick(["registry/ui/label/label.tsx"])).toBe("label,login-01,site");
+  });
+
+  it("takes every page block and the site for the view route and the blocks spec", () => {
+    expect(pick(["app/view/[block]/page.tsx"])).toBe("login-01,site");
+    expect(pick(["e2e/blocks.spec.ts"])).toBe("login-01,site");
+    expect(selectE2e(["app/view/[block]/view-mode.tsx"], sources()).reasons).toEqual([
+      "app/view/[block]/view-mode.tsx → page blocks login-01 + site",
+    ]);
+  });
+
+  it("maps a view baseline to its block", () => {
+    expect(pick(["e2e/__screenshots__/linux/w360/login-01-view-dark.png"])).toBe("login-01");
+  });
+
+  it("selects nothing for the parity snapshots", () => {
+    expect(
+      pick(["registry/blocks/__parity__/base-nova.json", "registry/ui/__parity__/base-nova.json"]),
+    ).toBe("none");
+  });
+});
+
 describe("selectE2e on alias and parity diffs", () => {
   const TS = "tsconfig.json";
   const VITEST = "vitest.config.mts";
@@ -277,6 +313,12 @@ describe("selectE2e on alias and parity diffs", () => {
     expect(pick([TS], sources({ [TS]: [tsconfig(), tsconfig(aliases)] }))).toBe(
       "chapter-list,progress,spread-viewer",
     );
+  });
+
+  it("names a page block by its component's install path", () => {
+    const form =
+      '      "@/components/login-form": ["./registry/blocks/login-01/components/login-form.tsx"],';
+    expect(pick([TS], sources({ [TS]: [tsconfig(), tsconfig([form])] }))).toBe("login-01");
   });
 
   it("still selects everything when the filter itself changes beside an alias", () => {
