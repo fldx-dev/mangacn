@@ -192,6 +192,7 @@ export default defineConfig({
       "lib/**/*.test.ts",
       "components/**/*.test.{ts,tsx}",
       "app/**/*.test.{ts,tsx}",
+      "scripts/**/*.test.ts",
     ],
     coverage: {
       enabled: true,

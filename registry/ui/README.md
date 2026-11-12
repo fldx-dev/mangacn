@@ -558,6 +558,15 @@ are the usual conflict), then runs on the merged tree the generator checks
 (`pnpm exec biome check .`), `pnpm typecheck` and the unit suite (`pnpm test`), and pushes
 `main`. There is no per-branch run and no per-task go-ahead.
 
+`pnpm loop:land <branch> "<subject>"` (`scripts/loop/land.ts`, run on a clean `main`) does that
+in one go: `--no-ff` merge of `origin/<branch>` with the subject as message (`LOOP_TRAILER`
+adds a trailer line), the catalog, list and generated-file conflicts resolved
+(`scripts/loop/resolve-catalogs.ts`), the checks above plus `install --frozen-lockfile`,
+`registry:validate` and one rerun of failed test files, and the push only when all pass. Exit
+10 leaves another conflict to resolve by hand; commit it, then `pnpm loop:check` checks `HEAD`
+and pushes. Exit 20 is a failed check, with the merge commit left local. `--dry-run` prints
+the plan and changes nothing; logs go to a temporary folder named at the start.
+
 **Once per wave, on `main`.** Main's push run checks, smokes every item and takes every shot;
 a new demo has no baseline, so its `visual` job is red until the wave's one dispatch writes
 them, which is expected between waves:
@@ -581,6 +590,12 @@ used in a batch's proof (with `full=true`, so the landing's full-page shot, take
 `SITE_FULL=1`, is in it): every shot is taken without comparing and written when its bytes
 differ, under `maxDiffPixelRatio` too, so a baseline a small change left stale is caught;
 byte-identical PNGs do not change in git, so the diff (and the artifact) is the stale set.
+
+To tell stale baselines from run-to-run noise, run two exact dispatches on one commit, download
+both artifacts and `pnpm e2e:noise <dirA> <dirB>` (`scripts/e2e-noise.ts`): a file both runs
+wrote with the same bytes is a stale candidate (its pixels and box against the committed
+baseline are printed); one written by a single run, or differently by the two, is noise.
+`--json` prints the same for machines; `--baselines=<dir>` compares with another folder.
 
 1. **`pnpm check:changed`** is the gate while you work: about 75 s on Windows for a one-item
    change (Biome on your files, `gen:demos`, typecheck, the test files that import what you
@@ -754,6 +769,13 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   edges); that is within the threshold, so `--update-snapshots=changed` leaves them alone, but
   `--update-snapshots=all` (the `all` dispatch, `pnpm test:e2e:update`) rewrites them, since it
   writes every shot whose bytes differ: expect those few dozen in every exact regeneration.
+- A docs page streams its content as a Suspense boundary that React reveals up to 300 ms late
+  when the browser painted while parsing. Hydrating inside that window, the layout's providers
+  update the boundary before it is revealed, React renders it anew on the client, and every
+  `InkFrame` there takes a counter `useId`, so another seed: a second wobble of the same page,
+  and a sidebar scrolled differently. `e2e/site.spec.ts` therefore calls `hydrateAfterReveal`
+  (`e2e/ready.ts`), which holds the page's scripts until the HTML is parsed and revealed, so
+  every shot is of the hydrated page.
 
 ## Docs page per item
 
