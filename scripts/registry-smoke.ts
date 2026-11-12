@@ -87,12 +87,27 @@ function landingProblems(project: string, items: CatalogItem[]): string[] {
 /** What an installed item must leave in the temp project, keyed by item name. */
 const EXPECTED_CONTENT: Record<
   string,
-  { file: string; attribution?: string; includes?: string[] }[]
+  { file: string; attribution?: string; includes?: string[]; excludes?: string[] }[]
 > = {
   theme: [
     {
       file: "app/globals.css",
       includes: ["--ink:", "--paper:", "--spot:", "@utility halftone", "@keyframes mangacn-shake"],
+    },
+  ],
+  // A preset added over the installed theme (Task 99): the CLI rewrites the same variables in
+  // place, so globals.css holds sepia's paper and spot and no longer the default's, and the
+  // theme's utilities stay.
+  "theme-sepia": [
+    {
+      file: "app/globals.css",
+      includes: [
+        "--paper: oklch(0.945 0.03 84);",
+        "--spot: oklch(0.53 0.18 37);",
+        "--paper: oklch(0.215 0.018 55);",
+        "@utility halftone",
+      ],
+      excludes: ["--paper: oklch(0.985 0.008 85);", "--paper: oklch(0.24 0.004 60);"],
     },
   ],
   "font-display": [{ file: "app/layout.tsx", includes: ["Dela_Gothic_One(", "--font-display"] }],
@@ -610,7 +625,8 @@ function contentProblems(project: string, names: string[]): string[] {
   };
   const missing: string[] = [];
   for (const name of names) {
-    for (const { file, attribution, includes = [] } of EXPECTED_CONTENT[name] ?? []) {
+    for (const { file, attribution, includes = [], excludes = [] } of EXPECTED_CONTENT[name] ??
+      []) {
       const content = read(file);
       if (content === undefined) {
         missing.push(`${name}: ${file} was not installed`);
@@ -621,6 +637,9 @@ function contentProblems(project: string, names: string[]): string[] {
       }
       for (const needle of includes) {
         if (!content.includes(needle)) missing.push(`${name}: ${file} lacks "${needle}"`);
+      }
+      for (const needle of excludes) {
+        if (content.includes(needle)) missing.push(`${name}: ${file} still has "${needle}"`);
       }
     }
   }

@@ -188,6 +188,11 @@ describe("list_items", () => {
       bubble?.client ? " Client component. Install:" : " Server component. Install:",
     );
     expect(line("theme")).not.toMatch(/(Client|Server) component/);
+    // A theme preset (Task 99) is listed like the theme: its own add, both flags, the guide.
+    expect(line("theme-sepia")).toMatch(/^- theme-sepia · registry:theme · decoration: /);
+    expect(line("theme-sepia")).toContain(
+      "Install: `pnpm dlx shadcn@latest add @mangacn/theme-sepia --yes --overwrite`. Docs: https://www.mangacn.com/docs/theming",
+    );
   });
 
   it("filters by category", async () => {

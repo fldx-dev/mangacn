@@ -78,14 +78,19 @@ export const THEME_ITEM = "theme";
  * either question ends the run with exit 0 and nothing written.
  */
 export function addFlags(items: readonly string[]): string[] {
-  return items.includes(THEME_ITEM) ? ["--yes", "--overwrite"] : ["--overwrite"];
+  return items.some(isThemeItem) ? ["--yes", "--overwrite"] : ["--overwrite"];
+}
+
+/** Whether an add of `name` asks the theme's question: the theme and every preset (`theme-sepia`). */
+function isThemeItem(name: string): boolean {
+  return name === THEME_ITEM || catalogItem(name).type === "registry:theme";
 }
 
 /** Why the flags are there, in one sentence an agent can act on. */
 export function flagsNote(items: readonly string[]): string {
   const overwrite =
     "--overwrite answers the CLI's question when a file is already there (a stock or edited components/ui/button.tsx)";
-  return items.includes(THEME_ITEM)
+  return items.some(isThemeItem)
     ? `Keep both flags: --yes answers the theme's "You are about to install a new theme… Continue?", and ${overwrite}. Without them an unattended add stops at the question, exits 0 and writes nothing.`
     : `Keep the flag: ${overwrite}. Without it an unattended add stops at the question, exits 0 and writes nothing.`;
 }
@@ -171,11 +176,13 @@ export function initCommand(manager: PackageManager): string {
 
 /**
  * The docs page for an item: a component's or a block's own page (`/docs/blocks/<name>`); the
- * theme is documented on the theming guide; a hook, which has no page, links its registry JSON.
+ * theme is documented on the theming guide, a preset (`theme-sepia`) under its Presets heading; a hook, which has no page, links its registry JSON.
  */
 export function docsUrl(name: string): string {
   const item = catalogItem(name);
-  if (item.type === "registry:theme") return `${SITE_URL}/docs/theming`;
+  if (item.type === "registry:theme") {
+    return `${SITE_URL}/docs/theming${name === THEME_ITEM ? "" : "#presets"}`;
+  }
   if (item.type === "registry:hook") return registryItemUrl(name);
   return `${SITE_URL}${itemPagePath(item) ?? `/docs/components/${name}`}`;
 }
