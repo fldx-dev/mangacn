@@ -3,7 +3,7 @@ import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import { InkFrame } from "./ink-frame";
+import { INK_REDRAW_EVENT, InkFrame } from "./ink-frame";
 
 // Records the options handed to rough.js, with the real renderer still doing the drawing.
 const { pathOptions, rectangleOptions } = vi.hoisted(() => ({
@@ -217,6 +217,58 @@ describe("InkFrame in the browser", () => {
     // The hachure is a stroked path in the fill colour, thinner than the outline; no solid fill.
     expect(paths.some((path) => path.style.fill === "var(--ink)")).toBe(false);
     expect(paths.filter((path) => path.style.stroke === "var(--ink)").length).toBe(2);
+  });
+
+  it("draws again with the region's new pen on the redraw event, without remounting", () => {
+    const { container } = render(
+      <div data-testid="region">
+        <InkFrame>a</InkFrame>
+      </div>,
+    );
+    const region = container.firstElementChild as HTMLElement;
+    const frame = container.querySelector<HTMLElement>('[data-slot="ink-frame"]');
+    fireAll();
+    const before = rectangleOptions.length;
+    region.style.setProperty("--outline-width", "3px");
+    region.dispatchEvent(new Event(INK_REDRAW_EVENT, { bubbles: true }));
+    expect(rectangleOptions.length).toBe(before + 1);
+    expect(rectangleOptions.at(-1)).toMatchObject({ strokeWidth: 3 });
+    expect(container.querySelector('[data-slot="ink-frame"]')).toBe(frame);
+  });
+
+  it("ignores a redraw event dispatched outside it", () => {
+    const { container } = render(
+      <>
+        <div id="other" />
+        <InkFrame>a</InkFrame>
+      </>,
+    );
+    const other = container.querySelector("#other") as HTMLElement;
+    const start = rectangleOptions.length;
+    other.dispatchEvent(new Event(INK_REDRAW_EVENT, { bubbles: true }));
+    expect(rectangleOptions).toHaveLength(start);
+    fireAll();
+    const drawn = rectangleOptions.length;
+    other.dispatchEvent(new Event(INK_REDRAW_EVENT, { bubbles: true }));
+    expect(rectangleOptions).toHaveLength(drawn);
+  });
+
+  it("shifts its seed by --ink-seed, and keeps it without one", () => {
+    const { container } = render(
+      <div>
+        <InkFrame seed={40}>a</InkFrame>
+      </div>,
+    );
+    fireAll();
+    expect(rectangleOptions.at(-1)).toMatchObject({ seed: 40 });
+    const region = container.firstElementChild as HTMLElement;
+    region.style.setProperty("--ink-seed", "7");
+    region.dispatchEvent(new Event(INK_REDRAW_EVENT, { bubbles: true }));
+    expect(rectangleOptions.at(-1)).toMatchObject({ seed: 47 });
+    region.style.setProperty("--ink-seed", "-45");
+    region.dispatchEvent(new Event(INK_REDRAW_EVENT, { bubbles: true }));
+    // Wraps round, never to 0 (rough.js reads 0 as random).
+    expect(rectangleOptions.at(-1)).toMatchObject({ seed: 2147483641 });
   });
 
   it("renders the element given by as and forwards attributes", () => {
