@@ -37,6 +37,7 @@ import path from "node:path";
 import { SETUP_ITEMS, setCommand } from "../lib/docs/install-command";
 import { mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
 import { installTarget } from "../lib/registry/install-target";
+import { loadPresets } from "../lib/registry/theme-preset-items";
 
 const NEXT_VERSION = "16.4.3";
 const SHADCN_VERSION = "4.23.0";
@@ -94,21 +95,6 @@ const EXPECTED_CONTENT: Record<
     {
       file: "app/globals.css",
       includes: ["--ink:", "--paper:", "--spot:", "@utility halftone", "@keyframes mangacn-shake"],
-    },
-  ],
-  // A preset added over the installed theme (Task 99): the CLI rewrites the same variables in
-  // place, so globals.css holds sepia's paper and spot and no longer the default's, and the
-  // theme's utilities stay.
-  "theme-sepia": [
-    {
-      file: "app/globals.css",
-      includes: [
-        "--paper: oklch(0.945 0.03 84);",
-        "--spot: oklch(0.53 0.18 37);",
-        "--paper: oklch(0.215 0.018 55);",
-        "@utility halftone",
-      ],
-      excludes: ["--paper: oklch(0.985 0.008 85);", "--paper: oklch(0.24 0.004 60);"],
     },
   ],
   "font-display": [{ file: "app/layout.tsx", includes: ["Dela_Gothic_One(", "--font-display"] }],
@@ -649,13 +635,44 @@ async function createProject(workDir: string, name: string, port: number): Promi
   return project;
 }
 
+/** The default theme's papers, light and dark: a preset installed over it replaces them. */
+const DEFAULT_PAPERS = ["--paper: oklch(0.985 0.008 85);", "--paper: oklch(0.24 0.004 60);"];
+
+/**
+ * What the look installed last must have left in globals.css. A preset added over the theme
+ * (Task 99) rewrites the same variables in place, so the file holds that preset's paper and
+ * spot, no longer the default's, and the theme's utilities stay. Only the last theme item of
+ * the install order is checked: the full smoke installs every preset in turn, and each one
+ * replaces the one before it.
+ */
+function presetProblems(globals: string | undefined, names: string[]): string[] {
+  const last = names.filter((name) => name === "theme" || name.startsWith("theme-")).at(-1);
+  const preset = loadPresets().find(({ name }) => `theme-${name}` === last);
+  if (!preset) return [];
+  if (globals === undefined) return [`${last}: app/globals.css was not installed`];
+  const includes = [
+    `--paper: ${preset.light.paper};`,
+    `--spot: ${preset.light.spot};`,
+    `--paper: ${preset.dark.paper};`,
+    "@utility halftone",
+  ];
+  return [
+    ...includes
+      .filter((needle) => !globals.includes(needle))
+      .map((needle) => `${last}: app/globals.css lacks "${needle}"`),
+    ...DEFAULT_PAPERS.filter(
+      (needle) => !includes.includes(needle) && globals.includes(needle),
+    ).map((needle) => `${last}: app/globals.css still has "${needle}"`),
+  ];
+}
+
 /** What `EXPECTED_CONTENT` says `names` should have left in `project` but did not. */
 function contentProblems(project: string, names: string[]): string[] {
   const read = (file: string) => {
     const full = path.join(project, file);
     return existsSync(full) ? readFileSync(full, "utf8") : undefined;
   };
-  const missing: string[] = [];
+  const missing: string[] = presetProblems(read("app/globals.css"), names);
   for (const name of names) {
     for (const { file, attribution, includes = [], excludes = [] } of EXPECTED_CONTENT[name] ??
       []) {

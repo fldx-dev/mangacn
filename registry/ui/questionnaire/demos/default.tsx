@@ -5,7 +5,6 @@ import {
   Questionnaire,
   QuestionnaireActions,
   QuestionnaireChoice,
-  QuestionnaireChoiceDescription,
   QuestionnaireChoices,
   QuestionnaireDescription,
   QuestionnaireError,
@@ -55,24 +54,9 @@ export default function QuestionnaireDefaultDemo() {
             Choose one; press A, B or C to pick by key.
           </QuestionnaireDescription>
           <QuestionnaireChoices>
-            <QuestionnaireChoice value="rooftop">
-              <span className="font-medium">Rooftop Runners</span>
-              <QuestionnaireChoiceDescription>
-                Action, a chase across the city every week.
-              </QuestionnaireChoiceDescription>
-            </QuestionnaireChoice>
-            <QuestionnaireChoice value="tea">
-              <span className="font-medium">Tea at Midnight</span>
-              <QuestionnaireChoiceDescription>
-                Slice of life in a café that opens at night.
-              </QuestionnaireChoiceDescription>
-            </QuestionnaireChoice>
-            <QuestionnaireChoice value="bell">
-              <span className="font-medium">The Ninth Bell</span>
-              <QuestionnaireChoiceDescription>
-                Mystery, one bell and one clue per chapter.
-              </QuestionnaireChoiceDescription>
-            </QuestionnaireChoice>
+            <QuestionnaireChoice value="rooftop">Rooftop Runners</QuestionnaireChoice>
+            <QuestionnaireChoice value="tea">Tea at Midnight</QuestionnaireChoice>
+            <QuestionnaireChoice value="bell">The Ninth Bell</QuestionnaireChoice>
           </QuestionnaireChoices>
           <QuestionnaireError />
         </QuestionnaireItem>

@@ -58,20 +58,34 @@ export async function waitForInk(target: Page | Frame): Promise<void> {
         toast.querySelector(':scope > [data-slot="ink-frame"]') !== null,
     ),
   );
-  // InkFrame shows a CSS fallback until rough.js has drawn; never snapshot that frame.
-  await expect(
-    frame
-      .locator(
-        INKED_SLOTS.map((slot) => `[data-slot="${slot}"]:not([data-inked="true"])`).join(", "),
-      )
-      .filter({ visible: true }),
-  ).toHaveCount(0);
+  // InkFrame shows a CSS fallback until rough.js has drawn; never snapshot that frame. A
+  // drawing in content the browser is skipping is left out: stock's message-scroller items
+  // are `content-visibility: auto`, so a message scrolled out of its thread is not rendered,
+  // its frame gets no resize callback and cannot draw until it is shown, and it is in no shot.
+  await expect
+    .poll(
+      () =>
+        frame.evaluate(
+          (selector) =>
+            [...document.querySelectorAll<HTMLElement>(selector)].filter(
+              (node) =>
+                node.getClientRects().length > 0 &&
+                node.checkVisibility({ contentVisibilityAuto: true, visibilityProperty: true }),
+            ).length,
+          INKED_SLOTS.map((slot) => `[data-slot="${slot}"]:not([data-inked="true"])`).join(", "),
+        ),
+      { message: "visible drawings rough.js has not drawn" },
+    )
+    .toBe(0);
   // A web font swap after the first drawing resizes the box; wait until every drawing was
   // measured against the box it now covers, so no frame is captured mid-redraw. The layout
   // box, not the client rect: a tilted panel's rect is the rotated bounds, the drawing is not.
   await frame.waitForFunction(() =>
     [...document.querySelectorAll<HTMLElement>('[data-slot="ink-frame"][data-inked="true"]')]
-      .filter((host) => host.getClientRects().length > 0)
+      .filter(
+        (host) =>
+          host.getClientRects().length > 0 && host.checkVisibility({ contentVisibilityAuto: true }),
+      )
       .every((host) => {
         const [width, height] = (host.dataset.inkSize ?? "").split("x").map(Number);
         return Math.abs(width - host.offsetWidth) < 1 && Math.abs(height - host.offsetHeight) < 1;

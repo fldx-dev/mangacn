@@ -15,13 +15,17 @@ const STAGE_HEIGHT = "20rem";
 
 /**
  * Default demos taller than the stage at some width (panel-grid stacks to one column at 360 px,
- * card and panel wrap in the two-column grid at 768 px). `e2e/site.spec.ts` fails, naming the
+ * card and panel wrap in the two-column grid at 768 px; two of the chat set are tall by nature). `e2e/site.spec.ts` fails, naming the
  * item, when a demo overflows its stage.
  */
 const TALL_STAGES: Readonly<Record<string, string>> = {
   card: "30rem",
   panel: "24rem",
   "panel-grid": "35rem",
+  // A thread box of 20rem with its outline (335 px), and a whole question with its answers,
+  // progress and buttons, which wraps to its tallest in the narrow two-column cards at 768.
+  "message-scroller": "22rem",
+  questionnaire: "30rem",
 };
 
 /**
