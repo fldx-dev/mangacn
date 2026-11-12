@@ -1,6 +1,7 @@
 import { resolve } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
+import { PAGE_END_ID } from "../components/docs/page-end";
 import { docItems } from "../lib/docs/catalog";
 import { demoEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
@@ -247,6 +248,26 @@ async function shotOptions(page: Page, path: string) {
   return { mask: [page.locator("#nd-sidebar")], maskColor };
 }
 
+/**
+ * A docs page holds its first frame until its body is parsed (components/docs/page-end.tsx).
+ * Read from the HTML as served, which is what the parser sees: the head names the end marker
+ * once, and the marker is the last element of the page body, with nothing but closing tags
+ * (and, on a page without headings, Fumadocs' empty TOC placeholder) between it and the script
+ * that reveals the body.
+ */
+async function expectPaintsWithPage(page: Page, path: string) {
+  const html = await (await page.request.get(path)).text();
+  const head = html.slice(0, html.indexOf("<body"));
+  const link = `<link rel="expect" href="#${PAGE_END_ID}" blocking="render"/>`;
+  expect(head.split(link).length - 1, "one expect link in the head").toBe(1);
+  expect(html.split(`id="${PAGE_END_ID}"`).length - 1, "one end marker").toBe(1);
+  const marker = `<span id="${PAGE_END_ID}" hidden=""></span>`;
+  const rest = html.slice(html.indexOf(marker) + marker.length);
+  expect(rest, "the reveal script follows the end marker").toMatch(
+    /^(?:<\/[a-z]+>|<div id="nd-toc-placeholder"[^>]*>)*<script>[\s\S]{0,4000}?\$RC\("B:0","S:0"\)<\/script>/,
+  );
+}
+
 for (const path of pages) {
   for (const mode of ["light", "dark"] as const) {
     test(`${path} (${mode})`, async ({ page }) => {
@@ -309,6 +330,7 @@ for (const path of pages) {
       expect(width, "no horizontal overflow").toBeLessThanOrEqual(viewport);
 
       if (path === "/docs/components") await expectIndexCards(page, viewport);
+      if (path.startsWith("/docs")) await expectPaintsWithPage(page, path);
 
       await expectNoAxeViolations(page);
       expect(errors).toEqual([]);
