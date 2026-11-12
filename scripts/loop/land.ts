@@ -48,7 +48,7 @@ export function parseArgs(argv: string[]): Options | string {
 }
 
 /** The merge commit's message: the subject, then the trailer when one is given. */
-export function mergeMessage(subject: string, trailer = process.env.LOOP_TRAILER): string {
+export function mergeMessage(subject: string, trailer: string | undefined): string {
   return trailer?.trim() ? `${subject}\n\n${trailer.trim()}\n` : `${subject}\n`;
 }
 
@@ -154,7 +154,7 @@ function land(loop: Loop, branch: string, subject: string): number {
     const count = loop.git(["rev-list", "--count", `HEAD..${ref}`]).stdout.trim();
     console.log(`== merging ${ref} (${count} commits)`);
   }
-  const message = mergeMessage(subject);
+  const message = mergeMessage(subject, process.env.LOOP_TRAILER);
   if (loop.dryRun) {
     console.log(`   would run: git merge --no-ff ${ref} with the message:`);
     for (const line of message.trimEnd().split("\n")) console.log(`     | ${line}`);
