@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 104 items in the registry. Each line gives the item's name, what it is, the one
+All 105 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -350,6 +350,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `sidebar-07`: An app shell whose sidebar collapses to icons: a studio switcher, collapsible sections, series with their menus and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-07 in ink.
   Install: `npx shadcn@latest add @mangacn/sidebar-07 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/sidebar-07 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-07.md)
+- `library-page`: A reader's library inside sidebar-07's app shell: the chapters they have open as cards with a cover, a progress bar and a Resume link, then shelves of volume covers, an empty shelf showing what to do next.
+  Install: `npx shadcn@latest add @mangacn/library-page --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/library-page (Markdown: https://www.mangacn.com/docs/blocks/library-page.md)
 
 ## Hooks
 

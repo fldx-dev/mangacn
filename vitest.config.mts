@@ -258,6 +258,27 @@ export default defineConfig({
           new URL("./registry/blocks/sidebar-07/components/team-switcher.tsx", import.meta.url),
         ),
       },
+      // library-page (Task 110): empty, and the page's two component files at their install paths
+      // (the page reaches sidebar-07's app-sidebar through the alias above).
+      {
+        find: /^@\/components\/ui\/empty$/,
+        replacement: fileURLToPath(new URL("./registry/ui/empty/empty.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/shelf$/,
+        replacement: fileURLToPath(
+          new URL("./registry/blocks/library-page/components/shelf.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/continue-reading$/,
+        replacement: fileURLToPath(
+          new URL(
+            "./registry/blocks/library-page/components/continue-reading.tsx",
+            import.meta.url,
+          ),
+        ),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,

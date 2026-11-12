@@ -66,6 +66,11 @@
       "@/components/nav-projects": ["./registry/blocks/sidebar-07/components/nav-projects.tsx"],
       "@/components/nav-user": ["./registry/blocks/sidebar-07/components/nav-user.tsx"],
       "@/components/team-switcher": ["./registry/blocks/sidebar-07/components/team-switcher.tsx"],
+      "@/components/ui/empty": ["./registry/ui/empty/empty.tsx"],
+      "@/components/shelf": ["./registry/blocks/library-page/components/shelf.tsx"],
+      "@/components/continue-reading": [
+        "./registry/blocks/library-page/components/continue-reading.tsx"
+      ],
       "@/*": ["./*"]
     }
   },

@@ -256,6 +256,46 @@
           "target": "@components/team-switcher.tsx"
         }
       ]
+    },
+    {
+      "name": "library-page",
+      "type": "registry:block",
+      "title": "Library Page",
+      "description": "A reader's library inside sidebar-07's app shell: the chapters they have open as cards with a cover, a progress bar and a Resume link, then shelves of volume covers, an empty shelf showing what to do next.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar-07.json",
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/progress.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/volume-grid.json",
+        "https://www.mangacn.com/r/empty.json"
+      ],
+      "files": [
+        {
+          "path": "library-page/page.tsx",
+          "type": "registry:page",
+          "target": "app/library/page.tsx"
+        },
+        {
+          "path": "library-page/components/shelf.tsx",
+          "type": "registry:component",
+          "target": "@components/shelf.tsx"
+        },
+        {
+          "path": "library-page/components/continue-reading.tsx",
+          "type": "registry:component",
+          "target": "@components/continue-reading.tsx"
+        }
+      ]
     }
   ]
 }

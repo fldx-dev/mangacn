@@ -1,0 +1,18 @@
+---
+title: Library Page
+description: "A reader's library inside sidebar-07's app shell: the chapters they have open as cards with a cover, a progress bar and a Resume link, then shelves of volume covers, an empty shelf showing what to do next."
+item: library-page
+skipDemos: ["default"]
+---
+
+<InstallCommand item="library-page" />
+
+<ItemFiles item="library-page" />
+
+<CopyPrompt item="library-page" />
+
+A reader's library route, `app/library/page.tsx`, inside [Sidebar 07](/docs/blocks/sidebar-07)'s app shell: the add brings that block too, so its `app/dashboard/page.tsx` and its five sidebar components arrive with `shelf` and `continue-reading`. Everything on the page comes from the typed `library` object at the top of `page.tsx`; replace it with your fetch and the [Card](/docs/components/card)s, [Progress](/docs/components/progress) bars, [Volume Grid](/docs/blocks/volume-grid) shelves and [Empty](/docs/components/empty) state follow.
+
+## Preview
+
+<BlockPreview item="library-page" />
