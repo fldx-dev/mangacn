@@ -1462,6 +1462,87 @@
         "card"
       ],
       "sha1": "f282f95fcc099cae80bd344920f10007cd8dd709"
+    },
+    "message-scroller": {
+      "exports": [
+        "MessageScroller",
+        "MessageScrollerButton",
+        "MessageScrollerContent",
+        "MessageScrollerItem",
+        "MessageScrollerProvider",
+        "MessageScrollerViewport",
+        "useMessageScroller",
+        "useMessageScrollerScrollable",
+        "useMessageScrollerVisibility"
+      ],
+      "dataSlots": [
+        "message-scroller",
+        "message-scroller-button",
+        "message-scroller-content",
+        "message-scroller-item",
+        "message-scroller-viewport"
+      ],
+      "variants": {},
+      "dependencies": [
+        "@shadcn/react",
+        "cn"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "sha1": "85d5a95e081db69b3f437e5b4c9319036342513f"
+    },
+    "questionnaire": {
+      "exports": [
+        "Questionnaire",
+        "QuestionnaireActions",
+        "QuestionnaireChoice",
+        "QuestionnaireChoiceDescription",
+        "QuestionnaireChoices",
+        "QuestionnaireDescription",
+        "QuestionnaireError",
+        "QuestionnaireInput",
+        "QuestionnaireItem",
+        "QuestionnaireNext",
+        "QuestionnairePrevious",
+        "QuestionnaireProgress",
+        "QuestionnaireSkip",
+        "QuestionnaireSubmit",
+        "QuestionnaireTitle"
+      ],
+      "dataSlots": [
+        "questionnaire",
+        "questionnaire-actions",
+        "questionnaire-choice",
+        "questionnaire-choice-description",
+        "questionnaire-choice-indicator",
+        "questionnaire-choice-indicator-check",
+        "questionnaire-choice-indicator-dot",
+        "questionnaire-choice-input",
+        "questionnaire-choice-label",
+        "questionnaire-choice-shortcut",
+        "questionnaire-choices",
+        "questionnaire-description",
+        "questionnaire-error",
+        "questionnaire-input",
+        "questionnaire-input-wrapper",
+        "questionnaire-item",
+        "questionnaire-next",
+        "questionnaire-previous",
+        "questionnaire-progress",
+        "questionnaire-skip",
+        "questionnaire-submit",
+        "questionnaire-title"
+      ],
+      "variants": {},
+      "dependencies": [
+        "@shadcn/react",
+        "cn"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "sha1": "ff0e4d47f54897fab7404d75bd330c0fc4c94f54"
     }
   }
 }

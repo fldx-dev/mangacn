@@ -1509,6 +1509,47 @@
           "target": "@ui/chart.tsx"
         }
       ]
+    },
+    {
+      "name": "message-scroller",
+      "type": "registry:ui",
+      "title": "Message Scroller",
+      "description": "Stock chat scroller: lands on the latest message and follows new ones; an outlined icon button jumps back to the end.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@shadcn/react", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/button.json"],
+      "files": [
+        {
+          "path": "message-scroller/message-scroller.tsx",
+          "type": "registry:ui",
+          "target": "@ui/message-scroller.tsx"
+        }
+      ]
+    },
+    {
+      "name": "questionnaire",
+      "type": "registry:ui",
+      "title": "Questionnaire",
+      "description": "Stock step-by-step questions on outlined paper rows: the chosen row turns ink, an inked progress track, spot errors, ink buttons.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@shadcn/react", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "questionnaire/questionnaire.tsx",
+          "type": "registry:ui",
+          "target": "@ui/questionnaire.tsx"
+        }
+      ]
     }
   ]
 }

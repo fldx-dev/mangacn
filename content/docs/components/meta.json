@@ -58,6 +58,8 @@
     "calendar",
     "carousel",
     "chart",
+    "message-scroller",
+    "questionnaire",
     "---Layout---",
     "panel",
     "panel-grid",
