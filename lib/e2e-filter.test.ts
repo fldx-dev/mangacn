@@ -101,7 +101,8 @@ describe("selectE2e", () => {
 
   it("maps docs, MCP and spec paths to their suites", () => {
     expect(pick(["components/docs/demo-frame.tsx", "app/(site)/page.tsx"])).toBe("site");
-    expect(pick(["content/docs/theming.mdx"])).toBe("site,mcp");
+    expect(pick(["content/docs/theming.mdx"])).toBe("site,mcp,presets");
+    expect(pick(["content/docs/installation.mdx"])).toBe("site,mcp");
     expect(pick(["lib/docs/props.generated.json"])).toBe("site,mcp");
     expect(pick(["lib/mcp/tools.ts", "app/api/mcp/route.ts"])).toBe("mcp");
     expect(pick(["skills/mangacn/SKILL.md"])).toBe("mcp");
@@ -130,6 +131,18 @@ describe("selectE2e", () => {
     );
     expect(pick(["e2e/__screenshots__/linux/w360/site-home-light.png"])).toBe("site");
     expect(pick(["e2e/__screenshots__/linux/w360/gone-default-light.png"])).toBe("none");
+  });
+
+  it("selects the presets suite for anything under registry/theme/ (Task 99)", () => {
+    expect(pick(["registry/theme/presets/sepia.json"])).toBe("presets");
+    expect(pick(["e2e/presets.spec.ts"])).toBe("presets");
+    expect(pick(["components/docs/theme-preset-switch.tsx"])).toBe("site,presets");
+    // The stage's mode component reads the preset names: like all of lib/registry/, everything.
+    expect(pick(["lib/registry/theme-presets.ts"])).toBe("all");
+    expect(pick(["e2e/__screenshots__/linux/w360/presets-sepia-light.png"])).toBe("presets");
+    // A unit test or Markdown under the theme is still nothing; the pen is still everything.
+    expect(pick(["registry/theme/contrast.test.ts", "registry/theme/README.md"])).toBe("none");
+    expect(pick(["registry/theme/ink-frame/ink-frame.tsx"])).toBe("all");
   });
 
   it("reads package.json: scripts alone change nothing, dependencies everything", () => {
