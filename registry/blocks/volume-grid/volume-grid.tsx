@@ -53,6 +53,12 @@ export interface VolumeGridProps extends Omit<React.ComponentProps<"nav">, "chil
    * @default "Volumes"
    */
   label?: string;
+  /**
+   * How many covers load at once; the rest load lazily. Pass `0` for a grid below the page's
+   * first screen, such as a shelf further down a library page.
+   * @default the widest row's count
+   */
+  eager?: number;
 }
 
 const DEFAULT_COLUMNS: PanelGridColumns = { base: 2, sm: 3, md: 4 };
@@ -80,11 +86,11 @@ export function VolumeGrid({
   columns = DEFAULT_COLUMNS,
   numerals = "latin",
   label = "Volumes",
+  eager = firstRowSize(columns),
   className,
   ...props
 }: VolumeGridProps) {
   const lang = numerals === "ja" ? "ja" : undefined;
-  const eager = firstRowSize(columns);
 
   return (
     <nav

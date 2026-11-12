@@ -2240,6 +2240,20 @@
             ],
             "required": false,
             "deprecated": false
+          },
+          {
+            "name": "eager",
+            "description": "How many covers load at once; the rest load lazily. Pass `0` for a grid below the page's\nfirst screen, such as a shelf further down a library page.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "the widest row's count"
+              }
+            ],
+            "required": false,
+            "deprecated": false
           }
         ]
       }
