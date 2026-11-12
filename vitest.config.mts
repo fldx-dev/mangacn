@@ -189,6 +189,62 @@ export default defineConfig({
           new URL("./registry/blocks/signup-01/components/signup-form.tsx", import.meta.url),
         ),
       },
+      // sidebar-07 (Task 105): its items, and the page's five component files at their install
+      // paths (the components import each other relatively; the page reaches app-sidebar).
+      {
+        find: /^@\/components\/ui\/sidebar$/,
+        replacement: fileURLToPath(new URL("./registry/ui/sidebar/sidebar.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/breadcrumb$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/breadcrumb/breadcrumb.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/collapsible$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/collapsible/collapsible.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/avatar$/,
+        replacement: fileURLToPath(new URL("./registry/ui/avatar/avatar.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/panel$/,
+        replacement: fileURLToPath(new URL("./registry/ui/panel/panel.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/app-sidebar$/,
+        replacement: fileURLToPath(
+          new URL("./registry/blocks/sidebar-07/components/app-sidebar.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/nav-main$/,
+        replacement: fileURLToPath(
+          new URL("./registry/blocks/sidebar-07/components/nav-main.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/nav-projects$/,
+        replacement: fileURLToPath(
+          new URL("./registry/blocks/sidebar-07/components/nav-projects.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/nav-user$/,
+        replacement: fileURLToPath(
+          new URL("./registry/blocks/sidebar-07/components/nav-user.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/team-switcher$/,
+        replacement: fileURLToPath(
+          new URL("./registry/blocks/sidebar-07/components/team-switcher.tsx", import.meta.url),
+        ),
+      },
       {
         find: /^@\/components\/blocks\/(.+)$/,
         replacement: `${fileURLToPath(new URL("./registry/blocks/", import.meta.url))}$1`,

@@ -228,6 +228,21 @@ const EXPECTED_CONTENT: Record<
     },
     { file: "components/signup-form.tsx", includes: ["export function SignupForm("] },
   ],
+  // Five component files side by side: app-sidebar imports the other four relatively.
+  "sidebar-07": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { NavMain } from "./nav-main"'],
+    },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain("] },
+    { file: "components/nav-projects.tsx", includes: ["export function NavProjects("] },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+    { file: "components/team-switcher.tsx", includes: ["export function TeamSwitcher("] },
+  ],
   // Hooks: registry:hook with `target: "@hooks/<name>.ts"`, stock source with the header.
   "use-mobile": [
     {

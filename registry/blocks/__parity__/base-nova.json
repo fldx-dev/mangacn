@@ -38,6 +38,51 @@
       "dependencies": [],
       "registryDependencies": ["button", "card", "input", "label"],
       "sha1": "0601d88af9726c341278d81be72465b5da503044"
+    },
+    "sidebar-07": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/nav-main.tsx",
+          "type": "registry:component",
+          "exports": ["NavMain"]
+        },
+        {
+          "path": "components/nav-projects.tsx",
+          "type": "registry:component",
+          "exports": ["NavProjects"]
+        },
+        {
+          "path": "components/nav-user.tsx",
+          "type": "registry:component",
+          "exports": ["NavUser"]
+        },
+        {
+          "path": "components/team-switcher.tsx",
+          "type": "registry:component",
+          "exports": ["TeamSwitcher"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "collapsible",
+        "dropdown-menu",
+        "separator",
+        "sidebar"
+      ],
+      "sha1": "f0dd28bce2ec20894f4b0a94de7b838904c63673"
     }
   }
 }

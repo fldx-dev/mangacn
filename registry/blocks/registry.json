@@ -204,6 +204,58 @@
           "target": "@components/signup-form.tsx"
         }
       ]
+    },
+    {
+      "name": "sidebar-07",
+      "type": "registry:block",
+      "title": "Sidebar 07",
+      "description": "An app shell whose sidebar collapses to icons: a studio switcher, collapsible sections, series with their menus and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-07 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-07/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-07/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-07/components/nav-main.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-main.tsx"
+        },
+        {
+          "path": "sidebar-07/components/nav-projects.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-projects.tsx"
+        },
+        {
+          "path": "sidebar-07/components/nav-user.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-user.tsx"
+        },
+        {
+          "path": "sidebar-07/components/team-switcher.tsx",
+          "type": "registry:component",
+          "target": "@components/team-switcher.tsx"
+        }
+      ]
     }
   ]
 }

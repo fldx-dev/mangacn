@@ -54,6 +54,16 @@
       "@/components/ui/field": ["./registry/ui/field/field.tsx"],
       "@/components/login-form": ["./registry/blocks/login-01/components/login-form.tsx"],
       "@/components/signup-form": ["./registry/blocks/signup-01/components/signup-form.tsx"],
+      "@/components/ui/sidebar": ["./registry/ui/sidebar/sidebar.tsx"],
+      "@/components/ui/breadcrumb": ["./registry/ui/breadcrumb/breadcrumb.tsx"],
+      "@/components/ui/collapsible": ["./registry/ui/collapsible/collapsible.tsx"],
+      "@/components/ui/avatar": ["./registry/ui/avatar/avatar.tsx"],
+      "@/components/panel": ["./registry/ui/panel/panel.tsx"],
+      "@/components/app-sidebar": ["./registry/blocks/sidebar-07/components/app-sidebar.tsx"],
+      "@/components/nav-main": ["./registry/blocks/sidebar-07/components/nav-main.tsx"],
+      "@/components/nav-projects": ["./registry/blocks/sidebar-07/components/nav-projects.tsx"],
+      "@/components/nav-user": ["./registry/blocks/sidebar-07/components/nav-user.tsx"],
+      "@/components/team-switcher": ["./registry/blocks/sidebar-07/components/team-switcher.tsx"],
       "@/*": ["./*"]
     }
   },
