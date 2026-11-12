@@ -8,7 +8,9 @@ item: chart-tones
 
 <CopyPrompt item="chart-tones" />
 
-Screentone fills for data: render `<ChartTones />` once on the page and any SVG shape takes `fill="url(#tone-dots-2)"`, so series are told apart by tone density instead of hue. The ids are plain exported strings (`CHART_TONE_IDS`, `chartToneFill`), so a server page or a Chart config can name them; the patterns draw in the text colour where `<ChartTones />` sits, and `prefix` defines a second set in another colour.
+Screentone fills for data, so series are told apart by tone instead of hue: render `<ChartTones />` once on the page and any SVG shape takes `fill="url(#tone-dots-2)"`. The patterns draw in the text colour where `<ChartTones />` sits, and `prefix` defines a second set in another colour.
+
+The ids are plain exported strings (`CHART_TONE_IDS`, and `chartToneFill(tone, prefix)` for the `url(…)`), so a server page or a [Chart](/docs/components/chart) config can name them without a client boundary.
 
 ## Examples
 
@@ -16,7 +18,7 @@ The six tones as swatches, from sparse dots to a cross-hatch.
 
 <DemoFrame item="chart-tones" demo="default" />
 
-A plain SVG bar set with no chart library, each bar in its own tone, with the numbers in its caption for screen readers.
+A plain SVG bar set with no chart library, each bar in its own tone with a legend under it; the drawing is hidden from assistive technology, and a visually hidden list in the caption gives screen readers the numbers.
 
 <DemoFrame item="chart-tones" demo="bars" />
 

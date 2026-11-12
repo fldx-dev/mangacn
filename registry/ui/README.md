@@ -13,7 +13,7 @@ npx shadcn@latest add @mangacn/<name> --overwrite
 every install line on the site, in the skill and in the MCP with those flags.)
 
 This file is the contributor guide. You should not need the specs to add an item; if
-something here is unclear or wrong, fix this file in the same PR.
+something here is unclear or wrong, fix this file on the same branch.
 
 ## Conventions
 
@@ -156,8 +156,8 @@ git push -u origin HEAD:refs/heads/feat/add-page-turn
 ```
 
 Commit subjects carry the matching prefix (`feat:`, `fix:`, `chore:`, `docs:`, `test:`), one
-change per commit, baselines in the same commit as the change that moved them. Branches are
-merged into `main` with a merge commit and deleted afterwards.
+change per commit. Baselines land on `main`, from the wave's update run (see "Run the checks").
+Branches are merged into `main` with a merge commit and deleted afterwards.
 
 ## Recipe 1: restyle a stock primitive
 
@@ -452,9 +452,10 @@ announcements. Props are data in, callbacks out. `chapter-list` is the reference
    `<PropsTable item="<name>" name="<Type>" />` so readers see its fields. `pnpm gen:skill`
    adds the block to the skill catalog's Blocks group; `list_items` and `get_item` (with the
    Files line) pick it up from the catalog.
-5. **Smoke it once:** `pnpm registry:build && pnpm registry:smoke --only=<name>` installs the
-   block with its items, checks every file in `files[]` landed at its target, then typechecks
-   and builds the fresh app. `--changed` selects a block whose folder changed.
+5. **The smoke** on `main` (`pnpm registry:smoke`, in main's CI run) installs the block with
+   its items, checks every file in `files[]` landed at its target, then typechecks and builds
+   the fresh app. Locally, `pnpm registry:build && pnpm registry:smoke --only=<name>` does the
+   same when an install needs debugging; `--changed` selects a block whose folder changed.
 
 ## Recipe 4: add a hook
 
@@ -511,132 +512,116 @@ index card**, and installs with the item that declares it. `use-mobile` is the r
    `<ItemFiles>`, `get_item`) names `hooks/<name>.ts` among what its dependencies add.
 4. **Test, catalogs, smoke.** A unit test beside the hook (`registry/hooks/<name>.test.ts`,
    stubbing what jsdom lacks, such as `matchMedia`). `pnpm gen:skill` lists it in the skill
-   catalog's Hooks group; `list_items` lists it as `registry:hook` (filter `hook`). Smoke it once:
-   `pnpm registry:build && pnpm registry:smoke --only=<name>` checks that `hooks/<name>.ts`
-   landed with its header, then typechecks and builds the fresh app; `--changed` selects a
-   hook whose `registry/hooks/<name>.*` files changed.
+   catalog's Hooks group; `list_items` lists it as `registry:hook` (filter `hook`). Main's
+   smoke checks that `hooks/<name>.ts` landed with its header, then typechecks and builds the
+   fresh app; locally, `pnpm registry:build && pnpm registry:smoke --only=<name>` does the same
+   when an install needs debugging, and `--changed` selects a hook whose
+   `registry/hooks/<name>.*` files changed.
 
 ## Run the checks
 
-Every check runs on what your branch changed; main runs everything on each push, so nothing
-here weakens the gate, it only stops a branch from paying for the whole of it. One dispatch
-per task: the `update-snapshots` run is the verification, so the session reviews its
-artifact, commits the PNGs and stops. The loop, in order, for a branch that adds or changes
-items (batch 4, SPEC-components-4 §8.1):
+Task branches get no CI. A task session checks its own work locally and pushes; the
+orchestrator merges every push into `main` at once; CI runs on `main` once per wave of tasks,
+and whatever that run finds is fixed on `main`. The gate is not weaker for it: main's run is
+the full one (every shot, every item smoked), and the loop only stops each branch from waiting
+for it. The loop, in order, for a branch that adds or changes items:
 
 ```bash
 pnpm gen:theme                                       # once, in a fresh worktree
-pnpm check:changed                                   # while you work: Biome on changed files, demo map, typecheck, related tests
-pnpm dev                                             # then look at each new demo at 360 px, light and dark (below)
-pnpm check:catalog                                   # once: the catalog suites, a build, the component index pass
-pnpm registry:build && pnpm registry:smoke --only=<items>   # once: install just these (+ ink-frame, deps)
-git push -u origin HEAD:refs/heads/<type>/<slug>
-gh workflow run ci.yml --ref <type>/<slug> -f update-snapshots=true   # the one dispatch; no -f when no shot may move
-gh run watch <id> --exit-status
-gh run download <id> -n playwright-baselines -D e2e/__screenshots__   # look at every PNG, commit, push, stop
+pnpm check:changed                                   # while you work and before the push: Biome on changed files, demo map, typecheck, related tests
+pnpm dev                                             # then look at every new or changed demo, light and dark, at 360 px and desktop width (below)
+git push -u origin HEAD:refs/heads/<type>/<slug>     # then message the orchestrator: the branch and its last commit
 ```
 
-**Each new demo at 360 px, before the dispatch.** Four of five second dispatches in batch 3
-came from a PNG that was wrong at 360 px. With `pnpm dev` running, open
-`http://localhost:3000/demo/<item>/<demo>` (and `?mode=dark`) in a window 360 px wide, or shoot
-it (`playwright screenshot` has no viewport option, so a short script; one URL and file each):
+A task session does not dispatch `ci.yml` or wait for a run, and does not run `pnpm build`,
+`pnpm registry:smoke`, `pnpm check:catalog` or a full `pnpm run ci`; it commits no baseline
+PNG. When the catalog, a props interface or a page's description changed, it runs
+`pnpm gen:docs`, `pnpm gen:props` and `pnpm gen:skill` and commits what they write (each
+takes `--check` to see whether it is needed).
+
+**Every new or changed demo, by eye, before the push.** With `pnpm dev` running, open
+`http://localhost:3000/demo/<item>/<demo>` (and `?mode=dark`) in a window 360 px wide and in
+a desktop-wide one, or shoot it (`playwright screenshot` has no viewport option, so a short
+script; one URL and file each):
 
 ```bash
 pnpm exec node -e "const{chromium}=require('@playwright/test');(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:360,height:800}});await p.goto(process.argv[1]);await p.waitForTimeout(2000);await p.screenshot({path:process.argv[2],fullPage:true});await b.close()})()" "http://localhost:3000/demo/<item>/<demo>?mode=dark" <scratch>/<item>-<demo>-dark-w360.png
 ```
 
 The file is for your eyes, not a baseline (Windows fonts differ from the runner's); write it
-outside the repo.
+outside the repo. In batch 3, four of five second CI runs came from a PNG that was wrong at
+360 px.
 
-**`pnpm check:catalog`** runs what `check:changed` does not reach, and is what batch 3
-learned: the catalog suites (`vitest run lib/mcp lib/docs lib/registry components`) read the
-catalog from disk and pin item strings (a description in `lib/mcp/tools.test.ts`), so Vitest's
-`--changed` does not select them; and only the component index checks a default demo against
-its 20rem stage and its `h2` outline (axe `heading-order`). It then runs `pnpm build` and the
-index's Playwright pass (`E2E_ITEMS=site`, `-g docs/components`; no pixels off Linux), stopping
-at the first failure with that step's exit code (`scripts/check-catalog.ts`). Each of those
-checks would have kept a red run of batch 3 from dispatching.
+**The orchestrator, on each push**, merges the branch into `main` (appended catalog entries
+are the usual conflict), then runs on the merged tree the generator checks
+(`pnpm gen:docs --check`, `gen:props --check`, `gen:skill --check`), whole-tree Biome
+(`pnpm exec biome check .`), `pnpm typecheck` and the unit suite (`pnpm test`), and pushes
+`main`. There is no per-branch run and no per-task go-ahead.
 
-A task whose only config change is a path alias (`tsconfig.json`, `vitest.config.mts`) or a
-name appended to `PARITY_PRIMITIVES` runs `visual` on its own items, not on every shot; a task
-that adds a dependency changes `pnpm-lock.yaml` and re-shoots everything, which is right.
+**Once per wave, on `main`.** Main's push run checks, smokes every item and takes every shot;
+a new demo has no baseline, so its `visual` job is red until the wave's one dispatch writes
+them, which is expected between waves:
 
-Never run a full local `pnpm run ci` or a full `pnpm registry:smoke` on a branch (25–40 min on
-Windows for the full smoke, timed when the catalog had 60 items; `public/r/registry.json` holds
-75 now, so expect the top of that range or more); main's push run does both after the merge.
+```bash
+gh workflow run ci.yml --ref main -f update-snapshots=true   # the wave's one dispatch
+gh run watch <id> --exit-status
+gh run download <id> -n playwright-baselines -D e2e/__screenshots__   # look at every PNG, commit them on main
+```
+
+With `update-snapshots=true` the `visual` job runs every non-pixel assertion (status, console
+errors, overflow, axe) and rewrites only the baselines that are missing or fail the
+comparison (`--update-snapshots=changed`); the `baselines` job merges the four shards' parts
+into one `playwright-baselines` artifact holding exactly those, so the download is a straight
+copy. Playwright's `changed` mode turns only a failed `toHaveScreenshot` into a write; any
+other failure still fails the test, and a red shard uploads nothing. Look at the PNGs (the run
+summary lists them): every one must belong to an item the wave added or changed, or one that
+uses it; anything else is a regression to fix on `main`, not a baseline. An update run that
+rewrote nothing has passed the visual suite as is. `update-snapshots=all` is the exact mode,
+used in a batch's proof (with `full=true`, so the landing's full-page shot, taken only under
+`SITE_FULL=1`, is in it): every shot is taken without comparing and written when its bytes
+differ, under `maxDiffPixelRatio` too, so a baseline a small change left stale is caught;
+byte-identical PNGs do not change in git, so the diff (and the artifact) is the stale set.
 
 1. **`pnpm check:changed`** is the gate while you work: about 75 s on Windows for a one-item
-   change (Biome on your files, `gen:demos`, typecheck, the 9 or so test files that import what
-   you touched) against about 6 min for `pnpm check` (every file, all 841 tests). Vitest reruns
-   every test when `package.json` or its config changed. `pnpm check` stays the full local gate;
-   run it when you changed shared code (`lib/registry`, the theme, `ink-frame`) or before handing
-   over a large change.
-2. **`registry:smoke --only=<items>`** installs your items into a fresh Next app (3–5 min),
-   once, when the item is ready; `registry:smoke:changed` picks them from the diff instead.
-3. **Push and dispatch once.** With `update-snapshots=true` the run is the verification: its
-   `checks` job (lint, docs, skill, typecheck, tests with coverage, validate, build) and its
-   `smoke` job (the changed items) run in parallel, and its `visual` job runs every non-pixel assertion (status,
-   console errors, overflow, axe) and rewrites only the baselines that are missing or fail the
-   comparison (`--update-snapshots=changed`), uploading exactly those, so the artifact is a
-   straight copy, no comparison or sifting. Playwright's `changed` mode turns only a failed
-   `toHaveScreenshot` into a write; any other failure still fails the test, and a red `visual`
-   job uploads nothing. Look at the PNGs (the run summary lists them): every one must belong
-   to an item you changed or one that uses it; anything else is a regression to fix, not a
-   baseline. Commit them, push and stop: no second dispatch, the PNGs are that run's own
-   render. An update run that rewrote nothing has passed the visual suite as is. Dispatch
-   without `update-snapshots` when no shot should change (a refactor, a fix that must not move
-   pixels); a diff then fails the run. A task that changes the landing dispatches with
-   `full=true` as well, so the landing's full-page shot (taken only under `SITE_FULL=1`) is
-   regenerated in that same run; nothing needs a refresh on main after a merge.
-   `update-snapshots=all` is the exact mode, used once at the start of a batch and once in its
-   proof (with `full=true`): every shot is taken without comparing and written when its bytes
-   differ, under `maxDiffPixelRatio` too, so a baseline a small change left stale is caught;
-   byte-identical PNGs do not change in git, so the diff (and the artifact) is the stale set.
-4. The orchestrator merges on green; main's push run then checks every shot and smokes every
-   item.
+   change (Biome on your files, `gen:demos`, typecheck, the test files that import what you
+   touched) against several minutes for `pnpm check` (every file, about 1,270 tests). Vitest
+   reruns every test when `package.json` or its config changed. Run `pnpm check` when you
+   changed shared code (`lib/registry`, the theme, `ink-frame`).
+2. **The catalog suites** (`vitest run lib/mcp lib/docs lib/registry components`) read the
+   catalog from disk and pin item strings (a description in `lib/mcp/tools.test.ts`), so
+   Vitest's `--changed` does not select them; the orchestrator's unit suite on the merged tree
+   runs them. Run them yourself when you changed a description or a page.
+3. **Optional, when a demo misbehaves** and you want the non-pixel checks before pushing:
+   `pnpm build && pnpm test:e2e:changed` (the demo stage is a production build, about 3 min
+   on Windows; then the visual set your diff needs, without pixels: errors, overflow, axe), or
+   `pnpm check:catalog`, which adds the catalog suites and the component index's Playwright
+   pass (each default demo against its 20rem stage and its `h2` outline) and stops at the
+   first failure with that step's exit code (`scripts/check-catalog.ts`).
 
-Optional, when a demo misbehaves and you want the non-pixel checks before pushing:
-`pnpm build && pnpm test:e2e:changed` (the demo stage is a production build, about 3 min on
-Windows; then the visual set your diff needs, without pixels: errors, overflow, axe). The
-dispatch runs the same checks on Linux, with pixels.
+A full local `pnpm run ci` or `pnpm registry:smoke` costs 25–40 min on Windows (timed when the
+catalog had 60 items; it holds 89 now, so expect more); main's run does both.
 
-What a dispatch costs (GitHub runner, from the dispatch to the last job done):
+What CI costs (GitHub runner), from batch 4:
 
-| Branch run                                                                                                 | checks                              | smoke                   | visual                         | wall time                                  |
-| ---------------------------------------------------------------------------------------------------------- | ----------------------------------- | ----------------------- | ------------------------------ | ------------------------------------------ |
-| batch 2, before Task 64: every shot, every item                                                            | `ci` ≈ 8 min, serial with the smoke | (in `ci`)               | ≈ 8 min (every shot)           | ≈ 8 min, two dispatches a task             |
-| Task 64: filtered visual, `--changed` smoke (`items=slider`)                                               | `ci` 1m57s, serial with the smoke   | (in `ci`)               | 1m08s (no `site`)              | ≈ 2 min, two dispatches a task in practice |
-| Task 67: one demo changed (`slider,site`, `update-snapshots`), 42614884824                                 | 1m29s                               | 43s (2 items)           | 2m49s (79 tests, build 36s)    | **2m52s, one dispatch**                    |
-| Task 67: `full=true` (main's path, `SITE_FULL=1`), 42615415543, 42616777121                                | 1m45s, 1m33s                        | 3m26s, 2m54s (60 items) | 8m02s, 6m27s (876 tests)       | 8m06s, 6m30s                               |
-| Task 71: four items, three dispatches (index-only checks red twice), 42645878070, 42646789254, 42648472658 | 1m43s, 1m46s, 1m57s                 | 3m39s, 4m36s, 3m40s     | 4m33s red, 3m27s red, 3m59s    | 4m36s, 4m41s, 4m05s                        |
-| Task 72: two items, 42651712997                                                                            | 1m51s                               | 3m15s                   | 6m57s                          | **7m01s, one dispatch**                    |
-| Task 73: two items and three changed, 42646213492                                                          | 1m17s                               | 4m45s                   | 9m06s                          | **9m09s, one dispatch**                    |
-| Task 74: two items, 42655586126                                                                            | 1m32s                               | 4m50s                   | 8m56s                          | **9m00s, one dispatch**                    |
-| Task 75: two items, two dispatches (a wrong PNG), 42646112383, 42648427631                                 | 1m21s, 1m18s                        | 3m35s, 3m41s            | 11m09s, 11m04s (every shot)    | 11m14s, 11m07s                             |
-| Task 76: polish, two dispatches (a red checks job), 42654365452, 42655764651                               | 1m28s red, 1m47s                    | 4m43s, 3m37s            | 3m57s, 6m35s                   | 4m47s, 6m40s                               |
-| Task 77: polish, every shot (demo spec changed), 42658994671                                               | 1m34s                               | 3m25s                   | 12m38s                         | **12m42s, one dispatch**                   |
-| Task 78: block, two dispatches (a wrong PNG), 42796685117, 42798714923                                     | 1m58s, 1m18s                        | 4m56s, 5m06s            | 8m28s, 11m39s (every shot)     | 8m34s, 11m43s                              |
-| Task 79: block, two dispatches (a wrong PNG), 42802694011, 42804784957                                     | 2m03s, 1m20s                        | 3m53s, 4m05s            | 8m55s, 12m45s (every shot)     | 8m58s, 12m50s                              |
-| Task 81: the e2e filter changed, so every shot (`E2E_ITEMS=all`, plain), 42860863007                       | 1m59s                               | 23s (no items)          | 11m44s (1135 tests, build 44s) | **11m49s, one dispatch**                   |
+| Run                                                                         | Time                                                                                          |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| A wave: the ten item tasks of batch 4 (86 to 95), four sessions in parallel | all ten primitives on `main` after about 1 h 35 min; every task merged after about 2 h 20 min |
+| `visual`, every shot, a plain run in four shards                            | about 5 min wall time (12 to 15 min on one runner before the split)                           |
+| `visual`, an alias-only one-item change (`visual` on that item alone)       | 1 m 48 s                                                                                      |
 
-The alias-only measurement (one item's alias, `visual` on that item alone) follows Task 81's
-merge, on a throwaway branch off the new main.
+`checks`, `smoke` and the four `visual` shards start together, so a run waits for the longest
+of them (usually a `visual` shard), not their sum. Vitest runs on the `vmThreads` pool: the
+unit run fell from 75 s to about 40 s on CI (jsdom set-up from 39 % of the tracked time to
+4 %) and from 72 s to 28 s on Windows.
 
-`checks`, `smoke` and `visual` start together, so a branch waits for the longest of them
-(usually `visual`), not their sum. In batch 3 `visual` ran every shot (9–13 min) whenever a task
-touched `tsconfig.json`, the demo spec or `lib/registry`, against 4–7 min for a filtered set;
-four of nine tasks took one dispatch, and every second run had one of the reasons in the rows. Vitest runs on the `vmThreads` pool: the unit run fell from
-75 s to about 40 s on CI (jsdom set-up from 39 % of the tracked time to 4 %) and from 72 s to
-28 s on Windows.
+What a change needs before the push:
 
-What each change may skip:
-
-| Change                                                     | `check:changed` | smoke                            | the one dispatch                        | its visual set             |
-| ---------------------------------------------------------- | --------------- | -------------------------------- | --------------------------------------- | -------------------------- |
-| item (component, demo, catalog entry)                      | yes             | `--only=<items>`, once           | `update-snapshots=true`                 | items, their users, `site` |
-| docs site (`content/`, `components/`, `app/`, `lib/docs/`) | yes             | skip                             | `update-snapshots=true` if pages change | `site` (+ `mcp`)           |
-| MCP (`lib/mcp/`, `app/api/mcp/`, `skills/`)                | yes             | skip                             | plain                                   | `mcp` (3 tests, no pixels) |
-| Markdown, scripts, CI                                      | yes             | skip (`--changed` finds nothing) | plain, only if CI or a script changed   | `none`                     |
+| Change                                                     | before the push                                    | `test:e2e:changed` selects |
+| ---------------------------------------------------------- | -------------------------------------------------- | -------------------------- |
+| item (component, demo, catalog entry)                      | `check:changed`, every demo by eye, the generators | items, their users, `site` |
+| docs site (`content/`, `components/`, `app/`, `lib/docs/`) | `check:changed`, the docs suites, the page by eye  | `site` (+ `mcp`)           |
+| MCP (`lib/mcp/`, `app/api/mcp/`, `skills/`)                | `check:changed`, the `lib/mcp` suite               | `mcp` (3 tests, no pixels) |
+| Markdown, scripts, CI                                      | `check:changed`                                    | `none`                     |
 
 ### The visual set (`E2E_ITEMS`)
 
@@ -668,14 +653,16 @@ diff against origin/main (`pnpm exec tsx scripts/changed-e2e.ts` prints it and w
   and any path no rule knows;
 - nothing: unit tests, Markdown, `scripts/` (but the demo, theme and docs generators), CI.
 
-CI (`.github/workflows/ci.yml`): a `workflow_dispatch` on a branch runs the `items` input, or
-the computed set when it is empty, and its `smoke` job installs only the changed items
-(`registry:smoke --changed`) while `checks` runs beside it; `full=true` runs what main runs. Push to main and pull requests
-always run every shot and the full smoke. Playwright's browser is cached per version, so apt
-(`install-deps`) runs only on a cache miss.
+CI (`.github/workflows/ci.yml`): push to main and pull requests always run every shot and the
+full smoke, and so does a dispatch on `main`. A `workflow_dispatch` on a branch (not part of
+the fast loop) runs the `items` input, or the computed set when it is empty, and its `smoke`
+job installs only the changed items (`registry:smoke --changed`) while `checks` runs beside
+it; `full=true` runs what main runs. `visual` is four Playwright shards (`--shard=<n>/4`), each
+building the site for its own quarter of the tests. Playwright's browser is cached per
+version, so apt (`install-deps`) runs only on a cache miss.
 
 Coverage and its 90 % threshold are enforced in CI (`pnpm test:coverage`), not in `pnpm test`.
-`pnpm run ci` is the whole CI gate locally (25–40 min on Windows for the 60-item smoke); leave
+`pnpm run ci` is the whole CI gate locally (25–40 min on Windows, timed at 60 items); leave
 it to CI. It is `pnpm run ci:checks` followed by the smoke; CI runs `ci:checks` and `ci:smoke`
 (`registry:build` then `registry:smoke`) as the parallel `checks` and `smoke` jobs.
 
@@ -698,7 +685,7 @@ the output and ignore the code (checked 2026-11-09, shadcn 4.23.0; CI runs Node 
 ### Stock parity
 
 `registry/ui/parity.test.ts` compares every restyled primitive (a `registry:ui` item whose
-name is in `PARITY_PRIMITIVES` in `lib/registry/parity.ts`, 33 so far) with
+name is in `PARITY_PRIMITIVES` in `lib/registry/parity.ts`, 55 since batch 4) with
 `registry/ui/__parity__/base-nova.json`: named exports and `data-slot` values must equal stock; `registryDependencies` must contain
 stock's names and may add only `https://www.mangacn.com/r/<name>.json` entries;
 `dependencies` must contain every stock package (more is fine); every stock `cva` variant
@@ -719,7 +706,8 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   `lib/registry/demo-axe.test.ts` fails when an item with demos has no such call, so a new
   item cannot ship demos without axe. `expectNoA11yViolations(<ui />)` remains for one-off
   states. The rules off everywhere are in `lib/test/axe-rules.ts`: `color-contrast` (no
-  layout in jsdom; theme contrast has its own test), `region` and `page-has-heading-one`
+  layout in jsdom; the theme's contrast has its own test, and the stage pages run the rule
+  on its own, below), `region` and `page-has-heading-one`
   (page-level; a demo is a fragment, shown in an iframe). jsdom cannot evaluate
   `label-content-name-mismatch` (it measures glyphs on a canvas: the "HTMLCanvasElement's
   getContext()" lines in the unit run), so the stage-page pass is where that rule bites.
@@ -729,7 +717,12 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   with the same rule set and Base UI's focus guards excluded (`[data-base-ui-focus-guard]`:
   visually hidden `tabindex="0"` spans with `aria-hidden` that an open select or menu
   portals and that hand focus on at once; Base UI has no option to drop them, as in
-  `e2e/site.spec.ts`), and on Linux compares against
+  `e2e/site.spec.ts`). Then, in both modes and at every width, it runs `color-contrast` on its
+  own: the pen's fills are first painted as CSS (`e2e/ink-fills.ts`) so axe can measure text
+  over them, and text it cannot measure (over a screentone, under an SFX outline) comes back
+  incomplete, not failed. `CONTRAST_EXEMPTIONS` in `lib/test/axe-rules.ts` names text that may
+  stay below AA, by item, demo and selector, with a reason from a short fixed list; it is
+  empty. On Linux the spec compares against
   `e2e/__screenshots__/linux/w<width>/<item>-<demo>-<mode>.png` (`maxDiffPixelRatio` 0.01).
   On Windows and macOS it skips the pixel comparison, because font rendering differs.
 - `e2e/site.spec.ts` shoots each site page whole, except the landing and the component index:
@@ -740,11 +733,19 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   page and its description, no card past the viewport's edges, no page overflow), and every
   demo has its own baseline. The landing is also shot whole (`site-home-<mode>.png`) under
   `SITE_FULL=1`, which CI sets on main (push or dispatch) and on `full` dispatches. New items
-  do not move the landing, so nothing needs a refresh on main after a merge; a task that
-  changes the landing regenerates its full shot in its own update run with `full=true`.
-- A new demo has no baseline, so the `visual` CI job fails until you add one. Baselines are
-  only made on CI: dispatch with `update-snapshots=true` (step 3 of the loop above), which
-  uploads only the missing and changed PNGs, copy them in and commit them with the item.
+  do not move the landing; a change to the landing is regenerated by the wave's update run
+  (or a batch proof's `full=true` run).
+- The overlay item pages and the gallery (`OVERLAY_PAGES` in `e2e/site.spec.ts`: dialog,
+  popover, context-menu, menubar and `/demo/dialog`) embed live stages whose popup opens on
+  load. An embedded stage holds its script-driven focus and `scrollIntoView` until the reader
+  interacts with it (`lib/docs/stage-focus.ts`), so the page keeps the reader's focus and
+  scroll; the suite asserts that and runs its axe pass on each of those pages, stages
+  included, at every width in light mode.
+- A new demo has no baseline, so `visual` on `main` fails until the wave's
+  `update-snapshots=true` dispatch writes it (the loop above); baselines are only made on CI,
+  and the orchestrator commits them on `main`.
+- `visual` runs in four shards; each uploads the PNGs it rewrote, and the `baselines` job
+  merges them into the one `playwright-baselines` artifact.
 - Every `InkFrame` without an explicit `seed` hashes `useId()`, and React ids depend on the
   tree above the component. Changing the demo stage's tree (`app/demo/[item]/[demo]/page.tsx`)
   therefore changes every wobble; such a change selects every shot, and the update run
@@ -772,9 +773,10 @@ one or two sentences on when to use the piece and what it pairs with (see
 `speech-bubble.mdx`); Japanese samples go under `lang="ja"`. The pieces:
 
 - `DemoFrame` renders the demo inline under Preview / Code tabs, with the source as it
-  lands in a consumer project. Overlay items (dialog, sheet, tooltip, popover, dropdown-menu,
-  alert-dialog, hover-card, drawer, sonner) render it as an iframe of the demo stage instead, so open popups
-  never stack on the page.
+  lands in a consumer project. Overlay items (`OVERLAY_ITEMS` in
+  `components/docs/demo-frame.tsx`: the dialogs, sheets, drawers, popups and menus, sonner,
+  sidebar, navigation-menu, combobox and command) render it as an iframe of the demo stage
+  instead, so open popups never stack on the page.
 - `PropsTable` is an `AutoTypeTable` over the item's exported props interface for a
   manga-native piece, and for a restyled primitive a link to shadcn's page plus the table of
   what mangacn adds (`lib/docs/props-delta.ts`: add a row there when you add a variant).
