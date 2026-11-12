@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 92 items in the registry. Each line gives the item's name, what it is, the one
+All 94 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -22,6 +22,12 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
   Docs: https://www.mangacn.com/docs/theming
 - `theme-sepia`: An old tankōbon: warm aged cream paper, brown-black ink and a vermilion spot, with warm grey tones; dark is deep brown-black paper and cream ink.
   Install: `npx shadcn@latest add @mangacn/theme-sepia --yes --overwrite`
+  Docs: https://www.mangacn.com/docs/theming#presets
+- `theme-weekly`: A weekly manga magazine: pale green-grey recycled newsprint, soft black ink and a magenta spot, with greys leaning green; dark is deep green-black paper and pale ink.
+  Install: `npx shadcn@latest add @mangacn/theme-weekly --yes --overwrite`
+  Docs: https://www.mangacn.com/docs/theming#presets
+- `theme-blueline`: A pencil draft before inking: cool white paper, blue-black ink and a non-photo blue spot, with cool grey tones; dark is deep blue-black paper and cool pale ink.
+  Install: `npx shadcn@latest add @mangacn/theme-blueline --yes --overwrite`
   Docs: https://www.mangacn.com/docs/theming#presets
 - `font-display`: Ultra-bold gothic display face for SFX and headings, exposed as --font-display.
   Install: `npx shadcn@latest add @mangacn/font-display --overwrite`
