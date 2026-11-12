@@ -607,7 +607,7 @@ index card**, and installs with the item that declares it. `use-mobile` is the r
    smoke checks that `hooks/<name>.ts` landed with its header, then typechecks and builds the
    fresh app; locally, `pnpm registry:build && pnpm registry:smoke --only=<name>` does the same
    when an install needs debugging, and `--changed` selects a hook whose
-   `registry/hooks/<name>.*` files changed.
+   `registry/hooks/<name>.*` files or a lib file it ships (`registry/hooks/lib/<file>`) changed.
 
 ## Recipe 5: add a theme preset
 

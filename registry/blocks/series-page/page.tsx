@@ -1,8 +1,7 @@
 import { ChapterList } from "@/components/blocks/chapter-list/chapter-list";
 import { CharacterCard } from "@/components/blocks/character-card/character-card";
 import { VolumeGrid } from "@/components/blocks/volume-grid/volume-grid";
-import type { Series } from "@/components/series-header";
-import { SeriesHeader } from "@/components/series-header";
+import { type Series, SeriesHeader } from "@/components/series-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // A manga series' home page: the header, then its volumes, chapters and cast in tabs. Replace

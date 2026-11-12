@@ -108,6 +108,18 @@ export interface PropsTarget {
 const PROPS_TABLE_TAG = /<PropsTable\s+item="([^"]+)"(?:\s+name="([^"]+)")?\s*\/>/g;
 
 /**
+ * Whether `source` declares the interface or type alias `name` at the start of a line
+ * (`interface Series`, `export type Series =`). An import of it (`import { type Series }`,
+ * `import type { Series }`) or a mention in a comment is not a declaration.
+ */
+export function declaresType(source: string, name: string): boolean {
+  return new RegExp(
+    `^[ \\t]*(?:export[ \\t]+)?(?:declare[ \\t]+)?(?:interface|type)[ \\t]+${name}\\b`,
+    "m",
+  ).test(source);
+}
+
+/**
  * Every manga-native table the docs print: `<Pascal>Props` of each `registry:component` and
  * `registry:block` item (a block's from its entry file), plus any other interface a page names
  * (`<PropsTable item="panel-grid" name="PanelGridItemProps" />`). Primitives (`registry:ui`) are
@@ -122,11 +134,10 @@ export function propsTargets(
     const entry = registry.items.find((candidate) => candidate.name === item);
     if (!entry || entry.type === "registry:ui") return;
     // The file that declares the interface (a page block's component), else the entry file.
-    const declares = new RegExp(`\\b(?:interface|type)\\s+${name}\\b`);
     const file =
       entry.files.find((candidate) => {
         const absolute = path.resolve(candidate.path);
-        return existsSync(absolute) && declares.test(readFileSync(absolute, "utf8"));
+        return existsSync(absolute) && declaresType(readFileSync(absolute, "utf8"), name);
       })?.path ?? entry.files[0]?.path;
     if (file) targets.set(`${item}/${name}`, { item, file, name });
   };

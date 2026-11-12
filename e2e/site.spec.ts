@@ -2,7 +2,7 @@ import { resolve } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
 import { DOCUMENT_END_ID } from "../components/docs/page-end";
-import { docItems } from "../lib/docs/catalog";
+import { BLOCKS_CATALOG, type DocItem, docItems } from "../lib/docs/catalog";
 import { demoEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
 import { hydrateAfterReveal, waitForInk } from "./ready";
@@ -11,13 +11,13 @@ import { hydrateAfterReveal, waitForInk } from "./ready";
 // Linux only (CI), and everywhere no overflow, no axe violations and no errors.
 const comparePixels = process.platform === "linux";
 
-// The landing and the component index are shot at their first viewport
-// (`site-<page>-viewport-<mode>.png`), not whole (SPEC-components-3 §8.1). The index is never
+// The landing and the two indexes (components, blocks) are shot at their first viewport
+// (`site-<page>-viewport-<mode>.png`), not whole (SPEC-components-3 §8.1). An index is never
 // shot whole: every new item moved that picture, so its cards are checked structurally below
-// and each demo has its own baseline. The landing is also shot whole (`site-home-<mode>.png`)
+// and each demo (and each page block's view) has its own baseline. The landing is also shot whole (`site-home-<mode>.png`)
 // under `SITE_FULL=1` (main, `full` dispatches); a task that changes the landing regenerates
 // that shot with a `full=true` update run.
-const VIEWPORT_SHOT = new Set(["/", "/docs/components"]);
+const VIEWPORT_SHOT = new Set(["/", "/docs/components", "/docs/blocks"]);
 const FULL_SHOT_UNDER_FLAG = new Set(["/"]);
 const siteFull = process.env.SITE_FULL === "1";
 
@@ -27,8 +27,32 @@ function fullShot(path: string): boolean {
   return siteFull && FULL_SHOT_UNDER_FLAG.has(path);
 }
 
-/** What the index must show: one card per documented item (the catalog items with demos). */
-const indexItems = docItems(loadRegistry(resolve(__dirname, "../registry.json")), demoEntries);
+const registry = loadRegistry(resolve(__dirname, "../registry.json"));
+
+/** An index page: the slot its cards sit in, the items it must show and where each links. */
+interface IndexPage {
+  slot: "component-index" | "block-index";
+  items: DocItem[];
+  section: string;
+  /** Whether every inline demo must fit its fixed stage (a block's preview is clipped). */
+  demosFit: boolean;
+}
+
+/** One card per documented item (the catalog items with demos), on each index. */
+const INDEXES: Record<string, IndexPage> = {
+  "/docs/components": {
+    slot: "component-index",
+    items: docItems(registry, demoEntries),
+    section: "/docs/components",
+    demosFit: true,
+  },
+  "/docs/blocks": {
+    slot: "block-index",
+    items: docItems(registry, demoEntries, BLOCKS_CATALOG),
+    section: "/docs/blocks",
+    demosFit: false,
+  },
+};
 
 const pages = [
   "/",
@@ -37,6 +61,7 @@ const pages = [
   "/docs/theming",
   "/docs/agents",
   "/docs/components",
+  "/docs/blocks",
   "/docs/components/button",
   "/docs/components/speech-bubble",
   "/docs/components/page-turn",
@@ -69,36 +94,34 @@ async function waitForStages(page: Page, mode: "light" | "dark") {
  * The index below the first viewport, without pixels: one card per documented item, each with
  * its title linking to its page and its description, and none reaching past the viewport.
  */
-async function expectIndexCards(page: Page, viewport: number) {
-  const cards = await page
-    .locator('[data-slot="component-index"] [data-item]')
-    .evaluateAll((nodes) =>
-      nodes.map((node) => {
-        const link = node.querySelector<HTMLAnchorElement>('[data-slot="card-title"] a');
-        const box = node.getBoundingClientRect();
-        return {
-          name: (node as HTMLElement).dataset.item ?? "",
-          title: link?.textContent?.trim() ?? "",
-          href: link?.getAttribute("href") ?? "",
-          description:
-            node.querySelector('[data-slot="card-description"]')?.textContent?.trim() ?? "",
-          left: box.left,
-          right: box.right,
-        };
-      }),
-    );
-  expect(cards.length, "one card per documented item").toBe(indexItems.length);
+async function expectIndexCards(page: Page, index: IndexPage, viewport: number) {
+  const cards = await page.locator(`[data-slot="${index.slot}"] [data-item]`).evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const link = node.querySelector<HTMLAnchorElement>('[data-slot="card-title"] a');
+      const box = node.getBoundingClientRect();
+      return {
+        name: (node as HTMLElement).dataset.item ?? "",
+        title: link?.textContent?.trim() ?? "",
+        href: link?.getAttribute("href") ?? "",
+        description:
+          node.querySelector('[data-slot="card-description"]')?.textContent?.trim() ?? "",
+        left: box.left,
+        right: box.right,
+      };
+    }),
+  );
+  expect(cards.length, "one card per documented item").toBe(index.items.length);
   const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name);
   expect(
     cards
       .map(({ name, title, href, description }) => ({ name, title, href, description }))
       .sort(byName),
   ).toEqual(
-    indexItems
+    index.items
       .map((item) => ({
         name: item.name,
         title: item.title,
-        href: `/docs/components/${item.name}`,
+        href: `${index.section}/${item.name}`,
         description: item.description,
       }))
       .sort(byName),
@@ -110,11 +133,12 @@ async function expectIndexCards(page: Page, viewport: number) {
   ).toEqual([]);
 }
 
-const LAZY_DEMOS = '[data-slot="component-index"] [data-slot="lazy-demo"]';
+/** An index's lazy demo boxes. */
+const lazyDemos = (index: IndexPage) => `[data-slot="${index.slot}"] [data-slot="lazy-demo"]`;
 
 /** The index's demo boxes against the first viewport, in page coordinates. */
-function lazyDemoCounts(page: Page) {
-  return page.locator(LAZY_DEMOS).evaluateAll((nodes) => {
+function lazyDemoCounts(page: Page, index: IndexPage) {
+  return page.locator(lazyDemos(index)).evaluateAll((nodes) => {
     const screen = window.innerHeight;
     const boxes = nodes.map((node) => {
       const box = node.getBoundingClientRect();
@@ -140,14 +164,14 @@ function lazyDemoCounts(page: Page) {
  * Lazy cards (SPEC-components-3 §3, §8.2): after load every demo in the first viewport is
  * mounted and none further than one screen below it.
  */
-async function expectLazyDemosOnLoad(page: Page) {
+async function expectLazyDemosOnLoad(page: Page, index: IndexPage) {
   await expect
     .poll(async () => {
-      const { firstViewport, firstViewportMounted } = await lazyDemoCounts(page);
+      const { firstViewport, firstViewportMounted } = await lazyDemoCounts(page, index);
       return firstViewport > 0 && firstViewportMounted === firstViewport;
     }, "every demo in the first viewport mounts")
     .toBe(true);
-  const { mounted, near, total } = await lazyDemoCounts(page);
+  const { mounted, near, total } = await lazyDemoCounts(page, index);
   expect(mounted, `mounted demos after load (${near} near the first viewport)`).toBeLessThanOrEqual(
     near,
   );
@@ -177,8 +201,8 @@ async function expectFocusAndScrollKept(page: Page, top: number) {
  * Scrolls the index screen by screen to the bottom; every demo mounts on the way, and none moves
  * the focus or the scroll position. Returns where the page was put last.
  */
-async function expectLazyDemosOnScroll(page: Page): Promise<number> {
-  const { total } = await lazyDemoCounts(page);
+async function expectLazyDemosOnScroll(page: Page, index: IndexPage): Promise<number> {
+  const { total } = await lazyDemoCounts(page, index);
   const [height, screen] = await page.evaluate(() => [
     document.documentElement.scrollHeight,
     window.innerHeight,
@@ -191,15 +215,18 @@ async function expectLazyDemosOnScroll(page: Page): Promise<number> {
     last = top;
   }
   await expect
-    .poll(async () => (await lazyDemoCounts(page)).mounted, "every demo mounts by the bottom")
+    .poll(
+      async () => (await lazyDemoCounts(page, index)).mounted,
+      "every demo mounts by the bottom",
+    )
     .toBe(total);
   return last;
 }
 
 /** Every inline demo fits its fixed stage (`TALL_STAGES` in the index raises one that does not). */
-async function expectDemosFitStages(page: Page) {
+async function expectDemosFitStages(page: Page, index: IndexPage) {
   const overflowing = await page
-    .locator(`${LAZY_DEMOS} > section`)
+    .locator(`${lazyDemos(index)} > section`)
     .evaluateAll((nodes) =>
       nodes
         .filter((node) => node.scrollHeight > node.clientHeight + 1)
@@ -270,8 +297,10 @@ for (const path of pages) {
     test(`${path} (${mode})`, async ({ page }) => {
       // The component index renders every item's default demo as a card (45 and growing), so
       // loading, inking, screenshotting and axe-checking it takes most of the default 30 s on a
-      // busy machine. Triple the budget for that one page; every other page keeps the default.
-      if (path === "/docs/components") test.slow();
+      // busy machine; the Blocks index loads a page per page block. Triple the budget for the
+      // indexes; every other page keeps the default.
+      const index = INDEXES[path];
+      if (index) test.slow();
       const errors: string[] = [];
       page.on("console", (message) => {
         if (message.type() === "error") errors.push(message.text());
@@ -288,13 +317,13 @@ for (const path of pages) {
       if (mode === "dark") await expect(html).toHaveClass(/\bdark\b/);
       else await expect(html).not.toHaveClass(/\bdark\b/);
       await waitForInk(page);
-      if (path === "/docs/components") {
+      if (index) {
         // The first viewport's demos mount after hydration; then ink them and load their stages.
-        await expectLazyDemosOnLoad(page);
+        await expectLazyDemosOnLoad(page, index);
         await waitForInk(page);
       }
       await waitForStages(page, mode);
-      if (path === "/docs/components") await expectFocusAndScrollKept(page, 0);
+      if (index) await expectFocusAndScrollKept(page, 0);
 
       if (comparePixels) {
         // The whole page first, in the state its baseline was always taken in.
@@ -312,21 +341,21 @@ for (const path of pages) {
         }
       }
 
-      if (path === "/docs/components") {
+      if (index) {
         // Every demo mounted, so the checks below see the whole index.
-        const top = await expectLazyDemosOnScroll(page);
+        const top = await expectLazyDemosOnScroll(page, index);
         await waitForInk(page);
         await waitForStages(page, mode);
         // Late openers too (context-menu opens once its fonts are ready).
         await expectFocusAndScrollKept(page, top);
-        await expectDemosFitStages(page);
+        if (index.demosFit) await expectDemosFitStages(page, index);
       }
 
       const viewport = page.viewportSize()?.width ?? 0;
       const width = await page.evaluate(() => document.documentElement.scrollWidth);
       expect(width, "no horizontal overflow").toBeLessThanOrEqual(viewport);
 
-      if (path === "/docs/components") await expectIndexCards(page, viewport);
+      if (index) await expectIndexCards(page, index, viewport);
       if (path.startsWith("/docs")) await expectPaintsWithPage(page, path);
 
       await expectNoAxeViolations(page);
