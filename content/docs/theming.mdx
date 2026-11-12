@@ -47,6 +47,23 @@ knows `bg-background` still renders ink on paper.
 
 shadcn's `--accent` is a hover surface, so the red is `--spot`, never `--accent`.
 
+## Presets
+
+A preset is the same theme on other paper: it gives the eight tokens other values, in light and
+dark, and changes nothing else. The shadcn variables follow through their `var()` references;
+the radius, fonts, pen and utilities stay, and there is still exactly one spot colour.
+
+<ThemePresets />
+
+Pick a look to see this site in it. The choice stays on every docs page in this browser until you
+pick another.
+
+The command installs the chosen look. A preset item brings `theme` by URL, so it works on a fresh
+project too. Over an installed theme the CLI writes the same CSS variables again: it overwrites
+existing variables in `globals.css` in place whenever a theme is added, and merges the theme's
+values first and the preset's over them. You end with one set of tokens, not two. Add
+`@mangacn/theme` again to go back to the default.
+
 ## Utilities
 
 Screentone, speed lines and ink edges, as Tailwind utilities you can put on any element.

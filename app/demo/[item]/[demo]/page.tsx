@@ -1,15 +1,37 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { type ComponentType, Suspense } from "react";
 import { STAGE_FOCUS_SCRIPT } from "@/lib/docs/stage-focus";
 import { getDemoLoader, listDemos } from "@/lib/registry/demos";
 import { DemoMode } from "./demo-mode";
 
 // Demo stage: one demo, centred on paper, no chrome. Playwright drives it now and
-// docs-site embeds it later (SPEC-components §2). `?mode=dark` renders the night theme.
+// docs-site embeds it later (SPEC-components §2). `?mode=dark` renders the night theme and
+// `?theme=<preset>` a theme preset (Task 99).
+
+/**
+ * Stages that are not an item's demo: the theme specimen, a dozen items' default demos on one
+ * page so one screenshot shows a look. Served here, not by a route of its own, because a static
+ * `demo/theme` segment would appear in every stage's route tree and change its HTML.
+ */
+const EXTRA_STAGES: Record<string, Record<string, () => Promise<{ default: ComponentType }>>> = {
+  theme: { specimen: () => import("./theme-specimen") },
+};
+
+function stageLoader(item: string, demo: string) {
+  const extra = Object.hasOwn(EXTRA_STAGES, item) ? EXTRA_STAGES[item] : undefined;
+  return (
+    getDemoLoader(item, demo) ?? (extra && Object.hasOwn(extra, demo) ? extra[demo] : undefined)
+  );
+}
 
 export function generateStaticParams() {
-  return listDemos().map(({ item, demo }) => ({ item, demo }));
+  return [
+    ...listDemos().map(({ item, demo }) => ({ item, demo })),
+    ...Object.entries(EXTRA_STAGES).flatMap(([item, demos]) =>
+      Object.keys(demos).map((demo) => ({ item, demo })),
+    ),
+  ];
 }
 
 // Static on purpose: with Partial Prefetching the App Shell is shared by every demo URL, and a
@@ -48,7 +70,7 @@ export default function DemoStage({ params }: StageProps) {
 
 async function Demo({ params }: Pick<StageProps, "params">) {
   const { item, demo } = await params;
-  const load = getDemoLoader(item, demo);
+  const load = stageLoader(item, demo);
   // Inside the boundary the shell has already streamed, so an unknown demo shows the
   // not-found page with a 200 (`dynamicParams = false` is not allowed with cacheComponents).
   if (!load) notFound();

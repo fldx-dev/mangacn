@@ -11,6 +11,7 @@ import { ItemFiles } from "./item-files";
 import { McpConfig } from "./mcp-config";
 import { PropsTable } from "./props-table";
 import { ThemePlayground } from "./theme-playground";
+import { ThemePresets } from "./theme-presets";
 import { TokenSwatches } from "./token-swatches";
 
 /** The text of a React tree, as the code block will show it. */
@@ -48,6 +49,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     McpConfig,
     PropsTable,
     ThemePlayground,
+    ThemePresets,
     TokenSwatches,
     ...components,
   };
