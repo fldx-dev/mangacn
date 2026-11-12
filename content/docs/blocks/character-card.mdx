@@ -14,7 +14,7 @@ A cast entry for a series page: the character's portrait, name and reading, the 
 
 It is a server component that composes card, manga-frame, caption-box, speech-bubble, power-gauge and stamp and draws nothing of its own. The portrait sits in a 3:4 manga-frame with the `status` word stamped on its top-left corner; the name is in the display face, with `reading` set as ruby over it under `lang="ja"`; `castRole`, the part they play, is in a caption box, the quote in a speech bubble whose tail points back at the speaker, and each stat is a segmented power gauge. The card is a container: wider than 24 rem it puts the portrait beside the text, narrower it stacks them, whatever the viewport.
 
-The card is an `article` named by `name` (the reading is not part of the name). The stats are a description list whose values are text ("80 of 100"), so they never rest on the gauges, which draw the same label and value for the eye and are hidden from assistive technology. With `href` the name is one link whose hit area covers the card, and the card shows a focus ring while the link has keyboard focus.
+The card is an `article` named by `name` (the reading is not part of the name). The stats are a description list whose values are text ("80 of 100"), so they never rest on the gauges, which draw the same label and value for the eye and are hidden from assistive technology. With `href` the name is one link, named by its content (the name and, when there is one, its reading, so the label holds the words a reader sees), whose hit area covers the card, and the card shows a focus ring while the link has keyboard focus.
 
 ## Examples
 

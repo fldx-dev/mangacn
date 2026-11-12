@@ -8,16 +8,18 @@ item: trace
 
 <CopyPrompt item="trace" />
 
-An agent's steps hung off one hand-drawn ink line, each with a drawn dot: solid when done, pulsing while `running` (still under reduced motion), hollow while `pending` and spot on `error`. A step can open on its details with [Collapsible](/docs/components/collapsible), and a trace sits in a [Message](/docs/components/message) above the answer.
+An agent's steps hung off one hand-drawn ink line, each with a drawn dot: solid when done, pulsing while `running` (it holds still under reduced motion), hollow while `pending` and spot on `error`. A step can open on its details with [Collapsible](/docs/components/collapsible), and a trace sits in a [Message](/docs/components/message) above the answer.
 
 ## Examples
 
 Two finished steps with their times, one running and one still to come.
 
 <DemoFrame item="trace" demo="default" />
+
 An assistant's reply in a conversation: the trace of what it read and searched, the search step open on its two hits, and the answer below in a `ghost` bubble.
 
 <DemoFrame item="trace" demo="in-a-message" />
+
 A step that failed: its dot and text in spot, the one spot on the surface, and the next step left pending.
 
 <DemoFrame item="trace" demo="error" />

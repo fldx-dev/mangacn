@@ -13,6 +13,8 @@ skipDemos: ["default"]
 
 A series' home page made of blocks: the cover with a <span lang="ja">連載中</span> (ongoing) stamp, the title and its reading, credits, synopsis, Start reading and Follow, then tabs of [Volume Grid](/docs/blocks/volume-grid), [Chapter List](/docs/blocks/chapter-list) and [Character Card](/docs/blocks/character-card)s. One add writes `app/series/page.tsx` and `components/series-header.tsx`; replace the typed `series` object at the top of the page with your fetch and nothing else changes, then link each chapter to a [Reader](/docs/blocks/reader) page.
 
+The page is a server component. `series-header.tsx` is a client component, because Follow keeps its pressed state (`defaultFollowing`, or `following` with `onFollowingChange` to control it); the page passes it the series without its volumes, chapters and cast.
+
 ## Preview
 
 <BlockPreview item="series-page" />
