@@ -372,6 +372,357 @@
       }
     ]
   },
+  "chat-thread": {
+    "ChatAttachment": [
+      {
+        "id": "chat-thread.tsx-ChatAttachment",
+        "name": "ChatAttachment",
+        "description": "A file sent with a message.",
+        "entries": [
+          {
+            "name": "id",
+            "description": "A stable id, for React's key; the name and position are used without one.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "The file's name, as the card's title.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "url",
+            "description": "Where the file opens: the card becomes a link to it.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "type",
+            "description": "Its MIME type (`image/png`); the card's description shows the subtype, `PNG`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "Its size in bytes; the description shows it as `1.1 MB`.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "thumbnail",
+            "description": "A small picture of it (an image URL), shown in place of the file icon.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "ChatAuthor": [
+      {
+        "id": "chat-thread.tsx-ChatAuthor",
+        "name": "ChatAuthor",
+        "description": "Who wrote a message.",
+        "entries": [
+          {
+            "name": "id",
+            "description": "The author's id; the thread's `me` names one of these.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "The name shown over their messages and read out when one arrives.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "avatar",
+            "description": "A picture URL for their avatar; their initials are shown without one.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "ChatMessage": [
+      {
+        "id": "chat-thread.tsx-ChatMessage",
+        "name": "ChatMessage",
+        "description": "One message of the thread, in the shape a chat backend usually sends.",
+        "entries": [
+          {
+            "name": "id",
+            "description": "A stable id: React's key, and what `unreadFrom` names.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "author",
+            "description": "Who wrote it.",
+            "type": "ChatAuthor",
+            "simplifiedType": "ChatAuthor",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "text",
+            "description": "The message's text; line breaks are kept. May be empty when it carries attachments.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "at",
+            "description": "When it was sent: an ISO 8601 string (`2026-11-11T21:04:00+09:00`) or a Date. A string's\ndate and time are shown as written in it; a Date's in UTC, unless the thread has a\n`timeZone`.",
+            "type": "string | Date",
+            "simplifiedType": "string | Date",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "attachments",
+            "description": "Files sent with it, shown as cards inside the bubble.",
+            "type": "ChatAttachment[] | undefined",
+            "simplifiedType": "ChatAttachment[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "reactions",
+            "description": "Reactions to it, in a chip on the bubble's edge.",
+            "type": "ChatReaction[] | undefined",
+            "simplifiedType": "ChatReaction[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "ChatReaction": [
+      {
+        "id": "use-chat-thread.ts-ChatReaction",
+        "name": "ChatReaction",
+        "description": "A reaction to a message and how many people gave it.",
+        "entries": [
+          {
+            "name": "emoji",
+            "description": "The reaction, usually an emoji.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "count",
+            "description": "How many people reacted with it.",
+            "type": "number",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "ChatThreadProps": [
+      {
+        "id": "chat-thread.tsx-ChatThreadProps",
+        "name": "ChatThreadProps",
+        "entries": [
+          {
+            "name": "messages",
+            "description": "The conversation, oldest first. Keep it in your store, or in `useChatThread`.",
+            "type": "ChatMessage[]",
+            "simplifiedType": "ChatMessage[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "me",
+            "description": "The id of the author whose messages are yours: they sit at the end, filled with ink.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "onSend",
+            "description": "Called with the trimmed text when the reader sends a message (Enter, or the Send button).\nAdd the message to `messages` yourself; the field is cleared and keeps the focus. Leave\nit out for a thread that is only read: there is no composer then.",
+            "type": "((text: string) => void) | undefined",
+            "simplifiedType": "(text: string) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "placeholder",
+            "description": "The composer's placeholder.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Write a message…\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "label",
+            "description": "The thread's accessible name: the scrolling region's label.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Conversation\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "unreadFrom",
+            "description": "The id of the first message the reader has not seen: a \"New messages\" line goes above it.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "timeZone",
+            "description": "An IANA time zone (`Asia/Tokyo`) to show every `at` in. Without it, an ISO string's time is\nshown as written in it and a Date's in UTC. Pass the reader's zone from their profile (not\nthe browser's, which the server cannot know) so the page hydrates.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "ChatThreadState": [
+      {
+        "id": "use-chat-thread.ts-ChatThreadState",
+        "name": "ChatThreadState",
+        "entries": [
+          {
+            "name": "messages",
+            "description": "The thread's messages, oldest first: what the block's `messages` takes.",
+            "type": "ChatMessage[]",
+            "simplifiedType": "ChatMessage[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "me",
+            "description": "The id of the author who writes: what the block's `me` takes.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "send",
+            "description": "Adds a message from `me` with the trimmed text, sent now (in the browser's own offset), and\nreturns it; an empty text adds nothing. What the block's `onSend` takes.",
+            "type": "(text: string, attachments?: ChatAttachment[]) => ChatMessage | undefined",
+            "simplifiedType": "(text: string, attachments?: ChatAttachment[]) => ChatMessage | undefined",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "receive",
+            "description": "Adds a message from anyone (a reply from your socket); one whose id is there is skipped.",
+            "type": "(message: ChatMessage) => void",
+            "simplifiedType": "(message: ChatMessage) => void",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "setMessages",
+            "description": "Replaces the messages, as React's state setter does.",
+            "type": "React.Dispatch<React.SetStateAction<ChatMessage[]>>",
+            "simplifiedType": "React.Dispatch<React.SetStateAction<ChatMessage[]>>",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "UseChatThreadOptions": [
+      {
+        "id": "use-chat-thread.ts-UseChatThreadOptions",
+        "name": "UseChatThreadOptions",
+        "entries": [
+          {
+            "name": "initial",
+            "description": "The messages the thread opens with, oldest first.",
+            "type": "ChatMessage[] | undefined",
+            "simplifiedType": "ChatMessage[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "me",
+            "description": "Who is writing: an author, or the id of one who wrote in `initial` (an unknown id becomes\nan author named \"You\"). `send` writes as them.",
+            "type": "string | ChatAuthor",
+            "simplifiedType": "string | ChatAuthor",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "emanata": {
     "EmanataProps": [
       {

@@ -71,7 +71,12 @@
       "@/components/continue-reading": [
         "./registry/blocks/library-page/components/continue-reading.tsx"
       ],
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@/components/ui/message-scroller": ["./registry/ui/message-scroller/message-scroller.tsx"],
+      "@/components/ui/message": ["./registry/ui/message/message.tsx"],
+      "@/components/ui/bubble": ["./registry/ui/bubble/bubble.tsx"],
+      "@/components/ui/marker": ["./registry/ui/marker/marker.tsx"],
+      "@/components/ui/attachment": ["./registry/ui/attachment/attachment.tsx"]
     }
   },
   "include": [

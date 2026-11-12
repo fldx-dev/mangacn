@@ -279,6 +279,31 @@ export default defineConfig({
           ),
         ),
       },
+      // chat-thread (Task 108): the chat items it composes.
+      {
+        find: /^@\/components\/ui\/message-scroller$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/message-scroller/message-scroller.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/message$/,
+        replacement: fileURLToPath(new URL("./registry/ui/message/message.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/bubble$/,
+        replacement: fileURLToPath(new URL("./registry/ui/bubble/bubble.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/marker$/,
+        replacement: fileURLToPath(new URL("./registry/ui/marker/marker.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/attachment$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/attachment/attachment.tsx", import.meta.url),
+        ),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,

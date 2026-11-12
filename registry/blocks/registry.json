@@ -296,6 +296,39 @@
           "target": "@components/continue-reading.tsx"
         }
       ]
+    },
+    {
+      "name": "chat-thread",
+      "type": "registry:block",
+      "title": "Chat Thread",
+      "description": "A conversation: speech bubbles grouped by author, date and unread lines, attachments, reactions, a composer and a jump-to-latest button; new messages announced once; state through use-chat-thread.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/message-scroller.json",
+        "https://www.mangacn.com/r/message.json",
+        "https://www.mangacn.com/r/bubble.json",
+        "https://www.mangacn.com/r/marker.json",
+        "https://www.mangacn.com/r/attachment.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/input-group.json",
+        "https://www.mangacn.com/r/empty.json"
+      ],
+      "files": [
+        {
+          "path": "chat-thread/chat-thread.tsx",
+          "type": "registry:block",
+          "target": "@components/blocks/chat-thread/chat-thread.tsx"
+        },
+        {
+          "path": "chat-thread/use-chat-thread.ts",
+          "type": "registry:block",
+          "target": "@components/blocks/chat-thread/use-chat-thread.ts"
+        }
+      ]
     }
   ]
 }
