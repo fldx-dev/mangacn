@@ -60,6 +60,7 @@
     "chart",
     "message-scroller",
     "questionnaire",
+    "code-block",
     "---Layout---",
     "panel",
     "panel-grid",

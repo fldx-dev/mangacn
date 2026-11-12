@@ -1550,6 +1550,29 @@
           "target": "@ui/questionnaire.tsx"
         }
       ]
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui",
+      "title": "Code Block",
+      "description": "Stock code block in the docs' ink: a heavy outline, a hand-drawn rule under a mono title, numbered lines, an outlined copy button.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "class-variance-authority", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/use-highlighted-code.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "code-block/code-block.tsx",
+          "type": "registry:ui",
+          "target": "@ui/code-block.tsx"
+        }
+      ]
     }
   ]
 }

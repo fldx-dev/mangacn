@@ -19,6 +19,19 @@ describe("ItemFiles", () => {
     );
   });
 
+  it("names a hook and its lib file among what an item's dependencies add", () => {
+    const { container } = render(<ItemFiles item="code-block" />);
+    const codes = [...container.querySelectorAll("code")].map((code) => code.textContent);
+    expect(codes[0]).toBe("components/ui/code-block.tsx");
+    expect(codes).toEqual(
+      expect.arrayContaining([
+        "components/ui/button.tsx",
+        "hooks/use-highlighted-code.ts",
+        "lib/highlighter.tsx",
+      ]),
+    );
+  });
+
   it("says only its own files when it has no mangacn dependencies", () => {
     const { container } = render(<ItemFiles item="ink-frame" />);
     expect(container.textContent).toBe("Files: components/ink-frame.tsx.");

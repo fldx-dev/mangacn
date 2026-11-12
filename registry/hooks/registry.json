@@ -17,6 +17,29 @@
           "target": "@hooks/use-mobile.ts"
         }
       ]
+    },
+    {
+      "name": "use-highlighted-code",
+      "type": "registry:hook",
+      "title": "Use Highlighted Code",
+      "description": "Stock hook useHighlightedCode: shiki-highlighted lines that keep up with streaming code; ships lib/highlighter.tsx with it.",
+      "categories": ["hook"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["shiki"],
+      "files": [
+        {
+          "path": "use-highlighted-code.ts",
+          "type": "registry:hook",
+          "target": "@hooks/use-highlighted-code.ts"
+        },
+        {
+          "path": "lib/highlighter.tsx",
+          "type": "registry:lib",
+          "target": "@lib/highlighter.tsx"
+        }
+      ]
     }
   ]
 }

@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { findHookProblems, HOOKS_CATALOG, hookTarget, isHook } from "./hooks";
+import {
+  findHookProblems,
+  HOOKS_CATALOG,
+  hookLibSpecifiers,
+  hookLibTarget,
+  hookTarget,
+  isHook,
+} from "./hooks";
 import type { LoadedRegistry, LoadedRegistryItem } from "./index";
 
 function hook(overrides: Partial<LoadedRegistryItem> = {}): LoadedRegistryItem {
@@ -29,6 +36,46 @@ describe("hookTarget", () => {
   });
 });
 
+describe("hook lib companions", () => {
+  const files = [
+    {
+      path: "registry/hooks/use-highlighted-code.ts",
+      type: "registry:hook",
+      target: "@hooks/use-highlighted-code.ts",
+    },
+    {
+      path: "registry/hooks/lib/highlighter.tsx",
+      type: "registry:lib",
+      target: "@lib/highlighter.tsx",
+    },
+  ];
+
+  it("lands a companion in the user's lib folder, where stock's copy does", () => {
+    expect(hookLibTarget("lib/highlighter.tsx")).toBe("@lib/highlighter.tsx");
+    expect(hookLibSpecifiers({ files })).toEqual(["@/lib/highlighter"]);
+  });
+
+  it("accepts a hook file followed by its registry:lib companions", () => {
+    expect(findHookProblems(registry(hook({ name: "use-highlighted-code", files })))).toEqual([]);
+  });
+
+  it("refuses a companion outside registry/hooks/lib/ or at another target", () => {
+    const [first, lib] = files;
+    const wrong = hook({
+      name: "use-highlighted-code",
+      files: [
+        first,
+        { ...lib, target: "@/lib/highlighter.tsx" },
+        { path: "registry/hooks/highlighter.tsx", type: "registry:lib" },
+      ] as typeof files,
+    });
+    expect(findHookProblems(registry(wrong))).toEqual([
+      'use-highlighted-code: registry/hooks/lib/highlighter.tsx has target "@/lib/highlighter.tsx"; expected "@lib/highlighter.tsx"',
+      "use-highlighted-code: registry/hooks/highlighter.tsx (registry:lib) is not a registry:lib companion in registry/hooks/lib/",
+    ]);
+  });
+});
+
 describe("findHookProblems", () => {
   it("accepts a well-formed hook", () => {
     expect(isHook(hook())).toBe(true);
@@ -52,12 +99,11 @@ describe("findHookProblems", () => {
     expect(findHookProblems(registry(broken))).toEqual([
       'use-mobile: type is "registry:lib"; expected "registry:hook"',
       'use-mobile: first category is "data"; expected "hook"',
-      "use-mobile: ships 2 files; expected one, registry/hooks/use-mobile.ts",
-      "use-mobile: ships registry/hooks/use-mobile/use-mobile.ts; expected registry/hooks/use-mobile.ts",
+      "use-mobile: ships registry/hooks/use-mobile/use-mobile.ts first; expected registry/hooks/use-mobile.ts",
       'use-mobile: registry/hooks/use-mobile/use-mobile.ts has type "registry:lib"',
       'use-mobile: registry/hooks/use-mobile/use-mobile.ts has target "@/hooks/use-mobile.ts"; expected "@hooks/use-mobile.ts"',
-      'use-mobile: registry/hooks/use-mobile.ts has target undefined; expected "@hooks/use-mobile.ts"',
-      'use-mobile: depends on "https://www.mangacn.com/r/ink-frame.json" (a hook imports React and the platform only)',
+      "use-mobile: registry/hooks/use-mobile.ts (registry:hook) is not a registry:lib companion in registry/hooks/lib/",
+      'use-mobile: depends on "https://www.mangacn.com/r/ink-frame.json" (a hook imports React, its packages and its own lib only)',
     ]);
   });
 
@@ -70,7 +116,7 @@ describe("findHookProblems", () => {
         ),
       ),
     ).toEqual([
-      "use-mobile: ships 0 files; expected one, registry/hooks/use-mobile.ts",
+      "use-mobile: ships no file; expected registry/hooks/use-mobile.ts first",
       "use-stray: hooks belong in registry/hooks/registry.json",
     ]);
   });

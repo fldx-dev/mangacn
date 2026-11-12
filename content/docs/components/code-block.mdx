@@ -1,0 +1,29 @@
+---
+title: Code Block
+description: "Stock code block in the docs' ink: a heavy outline, a hand-drawn rule under a mono title, numbered lines, an outlined copy button."
+item: code-block
+---
+
+<InstallCommand item="code-block" />
+
+<CopyPrompt item="code-block" />
+
+<ItemFiles item="code-block" />
+
+A file, a diff or a command set the way these docs set code: a heavy ink outline, a mono title over a hand-drawn rule, numbered lines and an outlined copy button. Pass it highlighted lines, from `await highlightCode(code, lang)` on the server or `useHighlightedCode(code, lang)` for code that streams; both come from stock's `use-highlighted-code` hook, which installs with it unchanged (GitHub's colours, set in `lib/highlighter.tsx`), while the examples here use the docs' ink themes.
+
+## Examples
+
+A file with its name, a copy button and numbered lines, highlighted on the server so it never shows plain first.
+
+<DemoFrame item="code-block" demo="default" />
+An install command at the small size; the copy button floats in the corner and shows on hover or focus, always on touch screens.
+
+<DemoFrame item="code-block" demo="command" />
+A change in context: from line 18, a removed line with a spot minus, the added one with a plus, a highlighted line and a footer.
+
+<DemoFrame item="code-block" demo="diff" />
+
+## Props
+
+<PropsTable item="code-block" />

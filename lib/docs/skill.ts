@@ -116,7 +116,9 @@ export function renderSkillCatalog(
       "",
       "A hook installs with the item that needs it: that item declares it by URL, so its one add",
       "writes the hook to the project's hooks folder (`hooks/<name>.ts`) and the item imports it from",
-      "`@/hooks/<name>`. Add a hook alone only to call it from your own components.",
+      "`@/hooks/<name>`. A hook that needs a helper brings it as a lib file, where stock puts it",
+      "(`use-highlighted-code` writes `lib/highlighter.tsx` too). Add a hook alone only to call it",
+      "from your own components.",
       "",
     );
     for (const item of hooks) {
