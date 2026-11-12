@@ -1,0 +1,85 @@
+---
+title: Chat Thread
+description: "A conversation: speech bubbles grouped by author, date and unread lines, attachments, reactions, a composer and a jump-to-latest button; new messages announced once; state through use-chat-thread."
+item: chat-thread
+---
+
+<InstallCommand item="chat-thread" />
+
+<ItemFiles item="chat-thread" />
+
+<CopyPrompt item="chat-thread" />
+
+A conversation to drop into an app: an artist and an editor, a reader and a community, a support desk. Give it the messages and a callback for sending; it lays them out as speech bubbles and keeps the scroll where a reader expects it.
+
+It is a client component that composes [Message Scroller](/docs/components/message-scroller), [Message](/docs/components/message), [Bubble](/docs/components/bubble), [Marker](/docs/components/marker), [Attachment](/docs/components/attachment), avatar, input-group and empty, and draws nothing of its own. Consecutive messages from one author share one bubble group, so the tail is drawn once, under the last. Your messages (`me`) sit at the end, filled with ink; everyone else's are paper, with their name and avatar. A date line separates the days and a "New messages" line, in the spot colour, goes above `unreadFrom`. Files sit inside their bubble as attachment cards (a link when they have a `url`) and reactions in a chip on the bubble's edge. Line breaks in a message are kept.
+
+The thread opens at its latest message and follows new ones while the reader is at the end. A reader who has scrolled up stays where they are when someone writes, and the "jump to latest" button appears; sending a message brings the thread back to its end. The scrolling region is named by `label`. Each new message from someone else is read out once, as "Hana Mori: See you at six", by a polite live region that holds only that line: nothing on the first render, and nothing for your own messages.
+
+In the composer, Enter sends and Shift+Enter breaks the line. Enter during an IME composition (Japanese, Chinese or Korean input) only commits the text, as it should. An empty or blank message is not sent. A send calls `onSend` with the trimmed text, clears the field and keeps the focus in it; add the message to `messages` yourself.
+
+## Examples
+
+Two days of a conversation between an artist and her editor, with reactions and a working composer: write something and send it. The messages live in `useChatThread`'s state.
+
+<DemoFrame item="chat-thread" demo="default" />
+
+Files with their messages, a thumbnail where there is one, and the last two messages unread. There is no `onSend`, so the thread is read-only and has no composer.
+
+<DemoFrame item="chat-thread" demo="attachments" />
+
+A thread with no messages yet shows an empty state until the first one is sent.
+
+<DemoFrame item="chat-thread" demo="empty" />
+
+## Messages and times
+
+A message is `{ id, author: { id, name, avatar? }, text, at, attachments?, reactions? }`, the shape most chat backends send, so their messages go in as they are. The block is controlled: it shows `messages` and calls `onSend`; it keeps nothing but the draft.
+
+`at` is an ISO 8601 string or a Date. A string's date and time are shown as written in it (`2026-11-11T21:04:00+09:00` is 21:04 on 11 November), a Date's in UTC, and the date line reads "Wednesday 11 November 2026" in English. Server and browser format them the same way, whatever their own time zones, so the page hydrates without a mismatch. To show every time in the reader's zone, pass `timeZone` (`"Asia/Tokyo"`) from their profile, which the server knows too.
+
+## State without a store
+
+`useChatThread`, from `use-chat-thread.ts` (also re-exported by the entry file), keeps the messages in React state for an app that has no store yet. `send` adds a message from `me`, sent now in the browser's own offset; `receive` adds anyone's, from a socket or a poll, and skips an id it already has.
+
+```tsx
+"use client";
+
+const thread = useChatThread({ initial: messages, me: "ren" });
+
+useEffect(() => socket.on("message", thread.receive), [thread.receive]);
+
+<ChatThread messages={thread.messages} me={thread.me} onSend={thread.send} className="h-[32rem]" />;
+```
+
+With a store or a server, keep the messages there and pass them to the block instead. The thread fills its container's height: give it one, or a parent with one.
+
+## Props
+
+<PropsTable item="chat-thread" />
+
+### ChatMessage
+
+<PropsTable item="chat-thread" name="ChatMessage" />
+
+### ChatAuthor
+
+<PropsTable item="chat-thread" name="ChatAuthor" />
+
+### ChatAttachment
+
+<PropsTable item="chat-thread" name="ChatAttachment" />
+
+### ChatReaction
+
+<PropsTable item="chat-thread" name="ChatReaction" />
+
+### useChatThread
+
+`useChatThread(options)` takes:
+
+<PropsTable item="chat-thread" name="UseChatThreadOptions" />
+
+and returns:
+
+<PropsTable item="chat-thread" name="ChatThreadState" />

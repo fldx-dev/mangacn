@@ -66,6 +66,12 @@
       "@/components/nav-projects": ["./registry/blocks/sidebar-07/components/nav-projects.tsx"],
       "@/components/nav-user": ["./registry/blocks/sidebar-07/components/nav-user.tsx"],
       "@/components/team-switcher": ["./registry/blocks/sidebar-07/components/team-switcher.tsx"],
+      "@/components/ui/message-scroller": ["./registry/ui/message-scroller/message-scroller.tsx"],
+      "@/components/ui/message": ["./registry/ui/message/message.tsx"],
+      "@/components/ui/bubble": ["./registry/ui/bubble/bubble.tsx"],
+      "@/components/ui/marker": ["./registry/ui/marker/marker.tsx"],
+      "@/components/ui/attachment": ["./registry/ui/attachment/attachment.tsx"],
+      "@/components/ui/empty": ["./registry/ui/empty/empty.tsx"],
       "@/*": ["./*"]
     }
   },
