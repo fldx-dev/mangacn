@@ -8,7 +8,7 @@ item: input-otp
 
 <CopyPrompt item="input-otp" />
 
-A field for a short one-time code, a PIN or a verification number, typed into a row of paper slots: the active slot is traced at the heavy width with an ink caret, and groups are parted by a hand-drawn dash. Put it in a `field` with a label, pass `pattern` (`REGEXP_ONLY_DIGITS` from `input-otp`) to limit what it takes, and set `aria-invalid` to ink every slot in the spot colour.
+A row of paper slots for a one-time code, a PIN or a verification number: the active slot is traced at the heavy width with an ink caret, and groups are parted by a hand-drawn dash. Name it with a label (or `aria-label`), limit what it takes with `pattern` (`REGEXP_ONLY_DIGITS` from `input-otp`), and set `aria-invalid` to ink every slot in the spot colour.
 
 ## Examples
 
@@ -16,11 +16,11 @@ Six digits in two groups of three, parted by a dash.
 
 <DemoFrame item="input-otp" demo="default" />
 
-A controlled four-digit PIN that takes digits only and reads the value back.
+A controlled four-digit PIN that takes digits only, with a line under it that reads the value back.
 
 <DemoFrame item="input-otp" demo="controlled" />
 
-An expired code: `aria-invalid` on the field inks every slot in the spot colour.
+An expired code: `aria-invalid` on `InputOTP` inks every slot in the spot colour, and `aria-describedby` points at the error under it.
 
 <DemoFrame item="input-otp" demo="invalid" />
 

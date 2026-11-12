@@ -8,11 +8,11 @@ item: direction
 
 <CopyPrompt item="direction" />
 
-Wrap a right-to-left page or section in `DirectionProvider` so Base UI's components (slider, tabs, menus) step, open and fill in the reading direction. It draws nothing: set `dir="rtl"` on the element too, which turns the text and mangacn's ink marks.
+Wrap a right-to-left page or section in `DirectionProvider` so Base UI's components (slider, tabs, menus) step, open and fill in the reading direction. It draws nothing, so set `dir="rtl"` on the element too: the attribute turns the text and mangacn's ink marks.
 
 ## Examples
 
-An Arabic line with an ink underline, and a slider that fills from the right and steps the other way under the arrow keys.
+An Arabic line with an ink underline under `dir="rtl"`, and a slider inside the provider that fills from the right and steps the other way under the arrow keys.
 
 <DemoFrame item="direction" demo="default" />
 

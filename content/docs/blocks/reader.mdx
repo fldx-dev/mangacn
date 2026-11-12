@@ -12,7 +12,7 @@ item: reader
 
 A chapter page in one block: the series and chapter, the pages as a two-page spread, how far the reader is, and a drawer with every chapter of the series. Put it on each chapter's page, with [Volume Grid](/docs/blocks/volume-grid) and [Chapter List](/docs/blocks/chapter-list) on the series page.
 
-It is the first block made of blocks: it composes [Spread Viewer](/docs/blocks/spread-viewer) and [Chapter List](/docs/blocks/chapter-list), declared by URL like any item, with drawer, progress, button and kbd, and draws nothing of its own. The header holds the series and the chapter's number and title, with a Chapters button that opens a drawer from the bottom edge; the drawer lists the series' chapters with chapter-list and says where you are. Under the spread a progress bar fills up through the chapter. `direction` and `single` go to the spread viewer as they are.
+It is a client component and the first block made of blocks: it composes [Spread Viewer](/docs/blocks/spread-viewer) and [Chapter List](/docs/blocks/chapter-list), declared by URL like any item, with drawer, progress, button and kbd, and draws nothing of its own. The header holds the series and the chapter's number and title, with a Chapters button that opens a drawer from the bottom edge; the drawer lists the series' chapters with chapter-list and says where you are. Under the spread a progress bar fills up through the chapter. `direction` and `single` go to the spread viewer as they are.
 
 The reader is the page's one `main` region by default, named by its heading; inside a page that already has a main (as these demos do, on a docs page), pass `as="section"` and it becomes a region with an `h2`. Only the spread takes the arrow keys, and only while it has focus: the header, the drawer and the rest of the page keep theirs. The progress bar's value text is the same words it shows, "Page 5 of 24", counting the last page on screen. The drawer is drawer's dialog: it traps focus while open, closes on Escape, and returns focus to the Chapters button.
 
@@ -26,7 +26,7 @@ A chapter opened at pages 4 and 5, right to left. The address follows the page: 
 
 <DemoFrame item="reader" demo="ltr" />
 
-`single` shows one page at a time for phones; pass it from a media query in your app. The reader keeps the same page when it changes.
+`single` shows one page at a time for phones, opening here at the cover with no `page` passed, so the reader keeps its own. Pass `single` from a media query in your app; the reader stays on the same page when it changes.
 
 <DemoFrame item="reader" demo="single" />
 
