@@ -3,16 +3,8 @@
 import { cn } from "cn";
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { Button } from "@/registry/ui/button/button";
+import { PREVIEW_WIDTHS, type PreviewWidth } from "./preview-widths";
 import { StageFrame } from "./stage-frame";
-
-/** The widths a page block is previewed at, in CSS pixels: a phone, a tablet, a desktop. */
-export const PREVIEW_WIDTHS = [
-  { id: "phone", label: "Phone", width: 375 },
-  { id: "tablet", label: "Tablet", width: 768 },
-  { id: "desktop", label: "Desktop", width: 1280 },
-] as const;
-
-export type PreviewWidth = (typeof PREVIEW_WIDTHS)[number]["id"];
 
 export interface ScaledViewProps extends Omit<ComponentProps<"div">, "children"> {
   /** The page block, shown from `/view/<item>`. */

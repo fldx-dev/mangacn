@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { BlockPreview, PREVIEW_WIDTHS, ScaledView } from "./block-preview";
+import { BlockPreview, ScaledView } from "./block-preview";
+import { PREVIEW_WIDTHS } from "./preview-widths";
 
 afterEach(cleanup);
 

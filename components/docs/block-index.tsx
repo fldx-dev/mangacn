@@ -4,9 +4,10 @@ import { BLOCKS_CATALOG, type DocItem, docItems } from "@/lib/docs/catalog";
 import { loadRegistry } from "@/lib/registry";
 import { listDemos } from "@/lib/registry/demos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/registry/ui/card/card";
-import { PREVIEW_WIDTHS, ScaledView } from "./block-preview";
+import { ScaledView } from "./block-preview";
 import { DemoPreview } from "./demo-frame";
 import { LazyDemo } from "./lazy-demo";
+import { PREVIEW_WIDTHS } from "./preview-widths";
 
 /**
  * Every card's preview box is this tall, before and after it mounts, so nothing moves when a
