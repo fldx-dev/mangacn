@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 94 items in the registry. Each line gives the item's name, what it is, the one
+All 97 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
