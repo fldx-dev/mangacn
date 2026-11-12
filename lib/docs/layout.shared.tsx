@@ -36,6 +36,7 @@ export function baseOptions(): BaseLayoutProps {
     links: [
       { text: "Docs", url: "/docs" },
       { text: "Components", url: "/docs/components" },
+      { text: "Create", url: "/create" },
       { text: "Theme", url: "/docs/theming" },
     ],
     githubUrl: "https://github.com/fldx-dev/mangacn",

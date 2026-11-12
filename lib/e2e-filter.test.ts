@@ -116,6 +116,15 @@ describe("selectE2e", () => {
     expect(pick(["e2e/annotations.spec.ts"])).toBe("annotations");
   });
 
+  it("selects the create suite for the Create page's files (Task C4)", () => {
+    expect(pick(["e2e/create.spec.ts"])).toBe("create");
+    expect(pick(["lib/create/state.ts"])).toBe("create");
+    expect(pick(["lib/create/state.test.ts"])).toBe("none");
+    expect(pick(["components/create/create-page.tsx"])).toBe("site,create");
+    expect(pick(["app/(site)/create/page.tsx"])).toBe("site,create");
+    expect(pick(["e2e/__screenshots__/linux/w360/create-default-light.png"])).toBe("create");
+  });
+
   it("runs everything for shared inputs and unknown paths", () => {
     for (const path of [
       "e2e/playwright.config.ts",
@@ -141,7 +150,7 @@ describe("selectE2e", () => {
   });
 
   it("selects the presets suite for anything under registry/theme/ (Task 99)", () => {
-    expect(pick(["registry/theme/presets/sepia.json"])).toBe("presets");
+    expect(pick(["registry/theme/presets/sepia.json"])).toBe("presets,create");
     expect(pick(["e2e/presets.spec.ts"])).toBe("presets");
     expect(pick(["components/docs/theme-preset-switch.tsx"])).toBe("site,presets");
     // The stage's mode component reads the preset names: like all of lib/registry/, everything.

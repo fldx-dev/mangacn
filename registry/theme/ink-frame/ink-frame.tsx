@@ -86,6 +86,25 @@ function readNumber(style: CSSStyleDeclaration, name: string, fallback: number):
   return Number.isFinite(value) ? value : fallback;
 }
 
+/**
+ * Dispatch this event on an element after changing the pen variables (`--outline-width`,
+ * `--ink-roughness`, …) or `--ink-seed` on it at run time, and every frame inside draws again
+ * with the new values, without remounting:
+ * `element.dispatchEvent(new Event(INK_REDRAW_EVENT, { bubbles: true }))`.
+ */
+export const INK_REDRAW_EVENT = "mangacn:ink-redraw";
+
+/**
+ * A seed shifted by the whole number in `--ink-seed` (0 when unset), so a region can reroll the
+ * wobble of every drawing in it at once. Stays a positive 31-bit seed (rough.js reads 0 as random).
+ */
+function shiftSeed(seed: number, style: CSSStyleDeclaration): number {
+  const shift = Math.trunc(readNumber(style, "--ink-seed", 0));
+  if (shift === 0) return seed;
+  const span = 2147483646;
+  return ((((seed - 1 + shift) % span) + span) % span) + 1;
+}
+
 /** rough.js writes colours as presentation attributes, which cannot hold `var()`. */
 function moveColorsToStyle(svg: SVGSVGElement) {
   for (const node of svg.querySelectorAll<SVGElement>("[fill], [stroke]")) {
@@ -108,13 +127,14 @@ function draw(
     shape,
     fill,
     shadow,
-    seed,
+    seed: givenSeed,
     outline,
     dashed,
   }: Required<Pick<InkFrameProps, "shape" | "fill" | "shadow" | "seed" | "dashed">> &
     Pick<InkFrameProps, "outline">,
 ) {
   const style = getComputedStyle(host);
+  const seed = shiftSeed(givenSeed, style);
   const strokeWidth = readNumber(style, "--outline-width", 1.5);
   // A 16 px radio or thought dot turns lumpy at the theme's pen settings, so ellipses under
   // 32 px scale both pen numbers down (never below half); a 16 px dot then strays, relative
@@ -237,6 +257,26 @@ export function InkFrame({
     const host = hostRef.current;
     const svg = svgRef.current;
     if (!host || !svg || typeof ResizeObserver === "undefined") return;
+    let drawn: [number, number] | undefined;
+    const paint = (width: number, height: number) => {
+      draw(svg, host, width, height, {
+        shape,
+        fill,
+        shadow,
+        seed: resolvedSeed,
+        outline,
+        dashed,
+      });
+      drawn = [width, height];
+      host.dataset.inked = "true";
+      // What the drawing was measured against, so a test can wait until it matches the box.
+      host.dataset.inkSize = `${width}x${height}`;
+    };
+    // A region retuned its pen (INK_REDRAW_EVENT): draw again at the measured size.
+    const redraw = (event: Event) => {
+      if (drawn && event.target instanceof Node && event.target.contains(host)) paint(...drawn);
+    };
+    document.addEventListener(INK_REDRAW_EVENT, redraw);
     const observer = new ResizeObserver(([entry]) => {
       // The border box from the entry is fractional and ignores transforms (the pressed
       // translate); offsetWidth rounds, and a rounded viewBox over a fractional box scales the
@@ -250,20 +290,13 @@ export function InkFrame({
       const height =
         (vertical ? inline : block) || host.offsetHeight || entry?.contentRect.height || 0;
       if (width === 0 && height === 0) return;
-      draw(svg, host, width, height, {
-        shape,
-        fill,
-        shadow,
-        seed: resolvedSeed,
-        outline,
-        dashed,
-      });
-      host.dataset.inked = "true";
-      // What the drawing was measured against, so a test can wait until it matches the box.
-      host.dataset.inkSize = `${width}x${height}`;
+      paint(width, height);
     });
     observer.observe(host, { box: "border-box" });
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      document.removeEventListener(INK_REDRAW_EVENT, redraw);
+    };
   }, [shape, fill, shadow, resolvedSeed, outline, dashed]);
 
   const Tag = as as React.ElementType;

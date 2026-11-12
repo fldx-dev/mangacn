@@ -175,6 +175,23 @@ describe("Stamp", () => {
     }
   });
 
+  it("reads the pen and --ink-seed again on InkFrame's redraw event", () => {
+    const { container } = render(
+      <div>
+        <Stamp seed={9}>OK</Stamp>
+      </div>,
+    );
+    const region = container.firstElementChild as HTMLElement;
+    region.style.setProperty("--ink-roughness", "2.5");
+    region.style.setProperty("--ink-seed", "3");
+    calls.length = 0;
+    act(() => {
+      region.dispatchEvent(new Event("mangacn:ink-redraw", { bubbles: true }));
+    });
+    expect(calls.at(-2)?.options).toMatchObject({ seed: 12, roughness: 2.5 });
+    expect(calls.at(-1)?.options).toMatchObject({ seed: 13 });
+  });
+
   it("draws the same path commands for the same seed", () => {
     const first = paths(render(<Stamp seed={7}>OK</Stamp>).container);
     cleanup();

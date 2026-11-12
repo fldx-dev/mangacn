@@ -95,6 +95,19 @@ function readNumber(style: CSSStyleDeclaration, name: string, fallback: number):
 }
 
 /**
+ * InkFrame's redraw event (`INK_REDRAW_EVENT` in ink-frame.tsx), spelled out so a stamp needs no
+ * InkFrame: dispatched on an ancestor after its pen or `--ink-seed` changed, it re-reads them.
+ */
+const INK_REDRAW_EVENT = "mangacn:ink-redraw";
+
+/** A seed shifted by `--ink-seed`'s whole number, as InkFrame shifts its own. */
+function shiftSeed(seed: number, shift: number): number {
+  if (shift === 0) return seed;
+  const span = 2147483646;
+  return ((((seed - 1 + shift) % span) + span) % span) + 1;
+}
+
+/**
  * The scale (at most 1) that keeps a `width` × `height` text box, centred, inside the inner
  * ring of a seal drawn `box` px square and laid out `side` px square: inside the circle for a
  * round seal (the box's corners on it), inside the square for a square one.
@@ -180,6 +193,7 @@ export function Stamp({
   const hostRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [pen, setPen] = useState<Pen | null>(null);
+  const [shift, setShift] = useState(0);
   // The text's scale. The server and the first client render use 1, so hydration matches; the
   // seal's box never changes, only the text inside it (`scale` takes no layout room).
   const [fit, setFit] = useState(1);
@@ -193,9 +207,10 @@ export function Stamp({
     const text = textRef.current;
     if (!host || !text) return;
     const style = getComputedStyle(host);
-    const ring = readNumber(style, "--outline-width", 1.5);
-    const measure = () =>
+    const measure = () => {
+      const ring = readNumber(style, "--outline-width", 1.5);
       setFit(fitScale(shape, box, host.offsetWidth, text.offsetWidth, text.offsetHeight, ring));
+    };
     let active = true;
     const settle = () => {
       if (!active) return;
@@ -205,7 +220,13 @@ export function Stamp({
         bowing: readNumber(style, "--ink-bowing", DEFAULT_PEN.bowing),
         maxRandomnessOffset: readNumber(style, "--ink-offset", DEFAULT_PEN.maxRandomnessOffset),
       });
+      setShift(Math.trunc(readNumber(style, "--ink-seed", 0)));
     };
+    // A region retuned its pen: read it again.
+    const redraw = (event: Event) => {
+      if (event.target instanceof Node && event.target.contains(host)) settle();
+    };
+    document.addEventListener(INK_REDRAW_EVENT, redraw);
     const fonts = typeof document === "undefined" ? undefined : document.fonts;
     if (!fonts || fonts.status === "loaded") settle();
     else fonts.ready.then(settle, settle);
@@ -216,10 +237,16 @@ export function Stamp({
     return () => {
       active = false;
       observer?.disconnect();
+      document.removeEventListener(INK_REDRAW_EVENT, redraw);
     };
   }, [shape, box]);
 
-  const { outline, ring } = drawSeal(shape, box, resolvedSeed, pen ?? DEFAULT_PEN);
+  const { outline, ring } = drawSeal(
+    shape,
+    box,
+    shiftSeed(resolvedSeed, shift),
+    pen ?? DEFAULT_PEN,
+  );
   const rounding = shape === "round" ? "rounded-full" : "rounded-[2px]";
   const a11y = label ? { role: "img", "aria-label": label } : {};
   return (
