@@ -63,6 +63,8 @@
     "marker",
     "attachment",
     "trace",
+    "message-scroller",
+    "questionnaire",
     "---Layout---",
     "panel",
     "panel-grid",
@@ -91,8 +93,6 @@
     "manga-frame",
     "power-gauge",
     "page-number",
-    "chart-tones",
-    "message-scroller",
-    "questionnaire"
+    "chart-tones"
   ]
 }

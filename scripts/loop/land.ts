@@ -166,14 +166,18 @@ function land(loop: Loop, branch: string, subject: string): number {
   const merge = loop.git(["merge", "--no-ff", ref, "-F", messageFile]);
   writeFileSync(path.join(loop.logs, "merge.log"), `${merge.stdout}${merge.stderr}`);
   if (merge.status === 0) {
-    // A merge with no conflict can still leave the skill catalog behind: two branches' entries
-    // merge line by line, but its item count is generated (Tasks 106 and 100 in batch 5). So
-    // it is regenerated after every merge and any change folded into the merge commit.
-    loop.pnpm(["gen:skill"], "gen-skill.log");
-    if (loop.git(["status", "--porcelain", "--", "skills"]).stdout.trim() !== "") {
-      loop.git(["add", "--", "skills"]);
+    // A merge with no conflict can still leave generated files behind: two branches' entries
+    // merge line by line, but the skill catalog's item count and the docs metas' page order
+    // are generated (Tasks 106, 100 and 102 in batch 5). So the generators run after every
+    // merge and any change is folded into the merge commit.
+    const generated = ["skills", "content/docs", "lib/docs/props.generated.json"];
+    for (const generator of ["gen:docs", "gen:props", "gen:skill"]) {
+      loop.pnpm([generator], `${generator.replace(":", "-")}.log`);
+    }
+    if (loop.git(["status", "--porcelain", "--", ...generated]).stdout.trim() !== "") {
+      loop.git(["add", "--", ...generated]);
       loop.git(["commit", "-q", "--amend", "--no-edit"]);
-      console.log("   regenerated the skill catalog into the merge commit");
+      console.log("   regenerated the docs metas, props and skill catalog into the merge commit");
     }
     return EXIT.ok;
   }
