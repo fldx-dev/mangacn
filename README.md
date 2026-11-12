@@ -8,7 +8,7 @@ Manga-styled React components, distributed as a shadcn registry.
 **Site and docs:** https://www.mangacn.com · **Gallery:** https://www.mangacn.com/demo · **Agents:** https://www.mangacn.com/docs/agents
 
 Every item is drawn like a printed manga page: ink outlines from a rough.js pen, screentone
-greys, one spot red, speech bubbles, panels and sound effects. Every item is a shadcn registry
+greys, one spot colour (red by default), speech bubbles, panels and sound effects. Every item is a shadcn registry
 item, so the source lands in your project and stays yours to edit. The restyled primitives keep
 shadcn's exports and props, so `@mangacn/button` replaces `button` with no call-site changes.
 
@@ -54,42 +54,51 @@ After that any item is one `add` away. Each component page on the site shows its
 command. The CLI also installs straight from this repository without the registry entry:
 `npx shadcn@latest add fldx-dev/mangacn/speech-bubble --overwrite`.
 
-| What lands                                        | Where                                                        |
-| ------------------------------------------------- | ------------------------------------------------------------ |
-| Restyled primitives (`button`, `dialog`, …)       | `components/ui/<item>.tsx`, replacing the stock file         |
-| Manga-native pieces (`speech-bubble`, `panel`, …) | `components/<item>.tsx`                                      |
-| Blocks (`chapter-list`, `reader`, …)              | `components/blocks/<block>/`, every file of the block        |
-| Hooks (`use-mobile`)                              | `hooks/<hook>.ts`, with the item that declares the hook      |
-| The ink frame                                     | `components/ink-frame.tsx` (and `roughjs` in `package.json`) |
-| Tokens, utilities and keyframes                   | your `globals.css`                                           |
-| Font loaders                                      | your root `layout.tsx`                                       |
+| What lands                                        | Where                                                                                  |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Restyled primitives (`button`, `dialog`, …)       | `components/ui/<item>.tsx`, replacing the stock file                                   |
+| Manga-native pieces (`speech-bubble`, `panel`, …) | `components/<item>.tsx`                                                                |
+| Blocks (`chapter-list`, `chat-thread`, …)         | `components/blocks/<block>/`, every file of the block                                  |
+| Page blocks (`login-01`, `series-page`, …)        | `app/<route>/page.tsx` and `components/<file>.tsx`, where stock's page blocks put them |
+| Hooks (`use-mobile`, `use-highlighted-code`)      | `hooks/<hook>.ts`, plus a hook's own lib file at `lib/<file>` (`lib/highlighter.tsx`)  |
+| The ink frame                                     | `components/ink-frame.tsx` (and `roughjs` in `package.json`)                           |
+| Tokens, utilities and keyframes                   | your `globals.css`                                                                     |
+| Theme presets (`theme-sepia`, …)                  | your `globals.css`, the theme's colour variables replaced in place                     |
+| Font loaders                                      | your root `layout.tsx`                                                                 |
 
 ## What is in the registry
 
-Eighty-nine items, all listed at https://www.mangacn.com/docs/components (the hook in the
-skill catalog and `list_items`: it has no page of its own).
+107 items. The components are listed at https://www.mangacn.com/docs/components, the blocks
+at https://www.mangacn.com/docs/blocks and the presets on the
+[Theming](https://www.mangacn.com/docs/theming#presets) page; the two hooks have no page of
+their own and are in the skill catalog and `list_items`.
 
 | Group                    | Items                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Foundation               | `theme`, `font-display`, `font-dialogue`, `font-dialogue-ja`, `ink-frame`, `manga-motion`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Theme presets (3)        | `theme-sepia`, `theme-weekly`, `theme-blueline` (each replaces the default theme's colours)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | Restyled primitives (55) | `accordion`, `alert`, `alert-dialog`, `aspect-ratio`, `avatar`, `badge`, `breadcrumb`, `button`, `button-group`, `calendar`, `card`, `carousel`, `chart`, `checkbox`, `collapsible`, `combobox`, `command`, `context-menu`, `dialog`, `direction`, `drawer`, `dropdown-menu`, `empty`, `field`, `hover-card`, `input`, `input-group`, `input-otp`, `item`, `kbd`, `label`, `menubar`, `native-select`, `navigation-menu`, `pagination`, `popover`, `progress`, `radio-group`, `resizable`, `scroll-area`, `select`, `separator`, `sheet`, `sidebar`, `skeleton`, `slider`, `sonner`, `spinner`, `switch`, `table`, `tabs`, `textarea`, `toggle`, `toggle-group`, `tooltip` |
+| Restyled chat set (8)    | `bubble`, `message`, `marker`, `attachment`, `trace`, `message-scroller`, `questionnaire`, `code-block`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | Text                     | `speech-bubble`, `thought-bubble`, `sfx-text`, `vertical-text`, `ink-mark`, `caption-box`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | Layout and data          | `panel`, `panel-grid`, `manga-frame`, `power-gauge`, `page-number`, `chart-tones`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | Backgrounds              | `speed-lines`, `focus-lines`, `halftone-background`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | Decoration               | `emanata`, `ink-arrow`, `stamp`, `ink-splatter`, `sfx-ticker`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | Motion and feedback      | `page-turn`, `ink-splash-loader`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| Blocks                   | `chapter-list`, `spread-viewer`, `character-card`, `volume-grid`, `reader`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| Hooks                    | `use-mobile` (installs with the item that needs it)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Blocks (6)               | `chapter-list`, `spread-viewer`, `character-card`, `volume-grid`, `reader`, `chat-thread`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Page blocks (5)          | `login-01`, `signup-01`, `sidebar-07` (stock's blocks in ink), `series-page`, `library-page`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Hooks (2)                | `use-mobile`, `use-highlighted-code` (each installs with the item that needs it)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 The look comes from one theme and one pen. The theme is ink on paper with four screentone
 greys and a single spot red, exposed as CSS variables and Tailwind utilities; dark mode swaps
-ink and paper. The pen is `InkFrame`, a client component that draws a rough.js outline, fill
-and optional shadow behind its children and shows a CSS border until the first drawing, so
-server-rendered pages look right before hydration. Every outlined item uses it, which is why
-the ink frame comes along with each of them.
+ink and paper. A preset gives those eight colours other values (aged sepia, weekly-magazine
+newsprint, a blue-pencil draft) and changes nothing else. The pen is `InkFrame`, a client
+component that draws a rough.js outline, fill and optional shadow behind its children and
+shows a CSS border until the first drawing, so server-rendered pages look right before
+hydration. Every outlined item uses it, which is why the ink frame comes along with each of
+them.
 
 Design rules the items follow, and that the docs ask you to keep: hand-drawn edges and no
-drop shadows or gradients, spot red at most once per surface, primitives inherit your font
+drop shadows or gradients, the spot colour at most once per surface, primitives inherit your font
 while manga-native pieces set the display or dialogue face, motion opt-in and reduced-motion
 safe, accessibility stock or better, and Japanese text under `lang="ja"`.
 
@@ -124,27 +133,31 @@ pnpm dev
 demos, then starts the docs site on http://localhost:3000. The site reads the same source
 as the registry, so a change to an item shows in its docs page and the gallery at once.
 
-| Command                              | What it does                                                                   |
-| ------------------------------------ | ------------------------------------------------------------------------------ |
-| `pnpm check:changed`                 | Biome on changed files, demo map, typecheck and the tests related to your diff |
-| `pnpm check`                         | The same over every file: the full local gate                                  |
-| `pnpm test:e2e:changed`              | The Playwright set your diff needs (after `pnpm build`)                        |
-| `pnpm registry:smoke --only=<items>` | Installs items into a fresh Next app and builds it                             |
-| `pnpm run ci`                        | Everything CI runs on `main`                                                   |
+| Command                               | What it does                                                                         |
+| ------------------------------------- | ------------------------------------------------------------------------------------ |
+| `pnpm check:changed`                  | Biome on changed files, demo map, typecheck and the tests related to your diff       |
+| `pnpm check`                          | The same over every file: the full local gate                                        |
+| `pnpm test:e2e:changed`               | The Playwright set your diff needs (after `pnpm build`)                              |
+| `pnpm registry:smoke --only=<items>`  | Installs items into a fresh Next app and builds it                                   |
+| `pnpm run ci`                         | Everything CI runs on `main`                                                         |
+| `pnpm loop:land <branch> "<subject>"` | Merges a pushed branch into `main`, regenerates, checks, and pushes only if all pass |
+| `pnpm loop:check`                     | The same checks and push, after a merge conflict resolved by hand                    |
+| `pnpm e2e:noise <dirA> <dirB>`        | Sorts two CI runs' rewritten screenshots into stale baselines and run-to-run noise   |
 
 Visual baselines are captured on Linux and live under `e2e/__screenshots__/linux`; new and
 moved shots are written on `main` by the `ci.yml` workflow dispatch with `update-snapshots`.
 [registry/ui/README.md](registry/ui/README.md) is the contributor guide:
-conventions, the recipes for restyling a primitive and adding a manga-native piece, the import
-rules a shipped file must follow, branch naming and the full check loop.
+conventions, the recipes (restyle a primitive, add a manga-native piece, a block or page block,
+a hook, a theme preset), the import rules a shipped file must follow, branch naming and the
+full check loop.
 
 ```
-registry/        the catalogs: theme/ (theme, fonts, ink-frame, manga-motion), ui/<item>/, blocks/<block>/
-app/, components/, content/   the docs site (Next.js App Router, Fumadocs), the landing and /demo
+registry/        the catalogs: theme/ (theme, presets, fonts, ink-frame, manga-motion), ui/<item>/, blocks/<block>/, hooks/
+app/, components/, content/   the docs site (Next.js App Router, Fumadocs), the landing, /demo and /view
 lib/             registry loading, docs rendering, the MCP tools, the e2e filter
 skills/mangacn/  the Agent Skill and its references
-scripts/         registry build, generators (demos, docs, props, skill, theme CSS), smoke install
-e2e/             Playwright visual and MCP suites with their baselines
+scripts/         registry build, generators (demos, docs, props, skill, theme CSS), smoke install, the loop's land
+e2e/             Playwright suites (demos, site, blocks, presets, annotations, MCP) with their baselines
 ```
 
 ## Built with
