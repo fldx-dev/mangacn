@@ -51,8 +51,9 @@ describe("snap and the screentone clamp", () => {
     for (let i = 0; i <= 10; i++) {
       const size = 3 + i * 0.5;
       const dot = maxDot(size);
-      expect(screentoneProblem({ "halftone-size": size, "halftone-dot": dot, "speed-line-width": 2 }))
-        .toBeNull();
+      expect(
+        screentoneProblem({ "halftone-size": size, "halftone-dot": dot, "speed-line-width": 2 }),
+      ).toBeNull();
       const next = Number((dot + 0.1).toFixed(1));
       if (next <= SCREENTONE_RANGES["halftone-dot"].max) {
         expect(
@@ -87,7 +88,12 @@ describe("the reducer", () => {
     const config = run({ type: "look-preset", preset: "sepia" }, { type: "look-custom" });
     expect(config.look).toEqual({ custom: CUSTOM_STARTS.sepia });
     // Choosing Custom again keeps the values.
-    const tuned = createReducer(config, { type: "look-value", part: "spot", key: "hue", value: 200 });
+    const tuned = createReducer(config, {
+      type: "look-value",
+      part: "spot",
+      key: "hue",
+      value: 200,
+    });
     expect(createReducer(tuned, { type: "look-custom" })).toBe(tuned);
   });
 
@@ -109,7 +115,9 @@ describe("the reducer", () => {
 
   it("every custom start is a valid look", () => {
     for (const preset of LOOK_PRESETS) {
-      expect(configProblem({ ...DEFAULT_CONFIG, look: { custom: CUSTOM_STARTS[preset] } })).toBeNull();
+      expect(
+        configProblem({ ...DEFAULT_CONFIG, look: { custom: CUSTOM_STARTS[preset] } }),
+      ).toBeNull();
     }
   });
 
@@ -150,7 +158,12 @@ describe("the reducer", () => {
             ? createReducer(config, { type: "pen-value", token: tokens[i % 6], value: value / 50 })
             : r < 0.8
               ? createReducer(config, { type: "look-value", part: "paper", key: "hue", value })
-              : createReducer(config, { type: "look-value", part: "spot", key: "vividness", value });
+              : createReducer(config, {
+                  type: "look-value",
+                  part: "spot",
+                  key: "vividness",
+                  value,
+                });
       expect(configProblem(config)).toBeNull();
     }
   });

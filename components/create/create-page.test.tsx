@@ -99,7 +99,13 @@ describe("CreatePage", () => {
     window.history.replaceState(null, "", "/create?c=134FyJ8s12");
     renderPage();
     expect(screen.getByRole("group", { name: "Look" })).toBeTruthy();
-    const look = { custom: { paper: { hue: 84, strength: 9 }, ink: { hue: 50, strength: 6 }, spot: { hue: 37, vividness: 6 } } };
+    const look = {
+      custom: {
+        paper: { hue: 84, strength: 9 },
+        ink: { hue: 50, strength: 6 },
+        spot: { hue: 37, vividness: 6 },
+      },
+    };
     expect(surface().style.getPropertyValue("--paper")).toBe(baseValues(look).light.paper);
     expect(surface().style.getPropertyValue("--spot")).toBe(baseValues(look).light.spot);
     fireEvent.click(screen.getByRole("button", { name: "Dark" }));
@@ -112,7 +118,9 @@ describe("CreatePage", () => {
     document.documentElement.classList.add("dark");
     renderPage();
     expect(surface().dataset.mode).toBe("dark");
-    expect(surface().style.getPropertyValue("--paper")).toBe(baseValues({ preset: "default" }).dark.paper);
+    expect(surface().style.getPropertyValue("--paper")).toBe(
+      baseValues({ preset: "default" }).dark.paper,
+    );
     fireEvent.click(screen.getByRole("button", { name: "Light" }));
     expect(surface().dataset.mode).toBe("light");
   });
@@ -194,7 +202,9 @@ describe("CreatePage", () => {
     expect(within(drawer).getByRole("button", { name: "Sepia" })).toBeTruthy();
     fireEvent.click(within(drawer).getByRole("button", { name: "Weekly" }));
     expect(within(drawer).getByRole("textbox", { name: "Code" })).toHaveProperty("value", "112");
-    expect(surface().style.getPropertyValue("--paper")).toBe(baseValues({ preset: "weekly" }).light.paper);
+    expect(surface().style.getPropertyValue("--paper")).toBe(
+      baseValues({ preset: "weekly" }).light.paper,
+    );
     fireEvent.keyDown(drawer, { key: "Escape" });
     await waitFor(() => expect(screen.queryByRole("dialog", { name: "Choices" })).toBeNull());
     await waitFor(() => expect(document.activeElement).toBe(trigger));

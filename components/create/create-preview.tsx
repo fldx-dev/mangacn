@@ -11,6 +11,9 @@ import { Button } from "@/registry/ui/button/button";
 import { ToggleGroup, ToggleGroupItem } from "@/registry/ui/toggle-group/toggle-group";
 import { CREATE_FONT_CLASSES } from "./create-fonts";
 
+/** The shortest time between two redraws of the preview's drawings while a value moves. */
+export const REDRAW_INTERVAL = 120;
+
 export interface CreatePreviewProps {
   config: CreateConfig;
   /** The preview's mode, or null before the page knows the site's (the server render). */
@@ -42,7 +45,8 @@ export function CreatePreview({
   children,
 }: CreatePreviewProps) {
   const surface = useRef<HTMLElement>(null);
-  const frame = useRef<number | undefined>(undefined);
+  const pending = useRef<{ timer?: number; frame?: number }>({});
+  const lastRedraw = useRef(0);
 
   // Before the site's mode is known, inherit the page's look rather than guess (no flash).
   const style = useMemo(
@@ -53,19 +57,32 @@ export function CreatePreview({
     [config, mode, seed],
   );
 
-  // The pen and the seed reach the drawings only when they draw: ask them to, once a frame.
+  // The pen and the seed reach the drawings only when they draw: ask them to, on an animation
+  // frame and at most once per REDRAW_INTERVAL while a slider moves (a redraw of the specimen
+  // costs about as much as the restyle itself), always once more after the last change. A
+  // scheduled redraw reads the values current when it runs.
   const penKey = `${JSON.stringify(config.pen)} ${seed}`;
   useLayoutEffect(() => {
     void penKey;
-    if (frame.current !== undefined) return;
-    frame.current = requestAnimationFrame(() => {
-      frame.current = undefined;
-      surface.current?.dispatchEvent(new Event(INK_REDRAW_EVENT, { bubbles: true }));
-    });
+    const queue = pending.current;
+    if (queue.timer !== undefined || queue.frame !== undefined) return;
+    const wait = Math.max(0, lastRedraw.current + REDRAW_INTERVAL - performance.now());
+    queue.timer = window.setTimeout(() => {
+      queue.timer = undefined;
+      queue.frame = requestAnimationFrame(() => {
+        queue.frame = undefined;
+        lastRedraw.current = performance.now();
+        surface.current?.dispatchEvent(new Event(INK_REDRAW_EVENT, { bubbles: true }));
+      });
+    }, wait);
   }, [penKey]);
   useLayoutEffect(
     () => () => {
-      if (frame.current !== undefined) cancelAnimationFrame(frame.current);
+      const queue = pending.current;
+      window.clearTimeout(queue.timer);
+      if (queue.frame !== undefined) cancelAnimationFrame(queue.frame);
+      queue.timer = undefined;
+      queue.frame = undefined;
     },
     [],
   );

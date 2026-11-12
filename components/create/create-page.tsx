@@ -120,13 +120,12 @@ export function CreatePage({ children }: { children: ReactNode }) {
           Choices
           <span className="font-mono text-xs opacity-80">{code}</span>
         </DrawerTrigger>
-        <DrawerContent
-          data-create="drawer"
-          className="h-[62dvh] lg:hidden"
-        >
+        <DrawerContent data-create="drawer" className="h-[62dvh] lg:hidden">
           <DrawerHeader className="flex-row items-baseline justify-between gap-3 px-4 pb-2 group-data-[swipe-axis=y]/drawer-popup:text-left">
             <DrawerTitle className="font-display tracking-wide">Choices</DrawerTitle>
-            <DrawerDescription className="text-xs">The preview follows every change.</DrawerDescription>
+            <DrawerDescription className="text-xs">
+              The preview follows every change.
+            </DrawerDescription>
           </DrawerHeader>
           <ScrollArea label="Choices" className={FILL_SCROLL_AREA}>
             <div className="px-4 pb-4">{sections}</div>

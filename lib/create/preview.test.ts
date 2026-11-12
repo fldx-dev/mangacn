@@ -20,7 +20,8 @@ describe("the preview's variables", () => {
       "chart-5": "var(--spot)",
     });
     expect(Object.keys(DERIVED_TOKENS).length).toBeGreaterThanOrEqual(30);
-    for (const value of Object.values(DERIVED_TOKENS)) expect(value).toMatch(/^var\(--[a-z0-9-]+\)$/);
+    for (const value of Object.values(DERIVED_TOKENS))
+      expect(value).toMatch(/^var\(--[a-z0-9-]+\)$/);
   });
 
   it("sets a shipped look's exact base values in each mode", () => {

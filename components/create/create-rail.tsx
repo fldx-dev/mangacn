@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useId } from "react";
+import { memo, type ReactNode, useId } from "react";
 import type { BaseColours } from "@/lib/create/colours";
 import { baseValues } from "@/lib/create/colours";
 import {
@@ -214,17 +214,17 @@ const CUSTOM_PARTS: {
   },
 ];
 
-function LookSection({
-  config,
+const LookSection = memo(function LookSection({
+  look,
   dispatch,
   mode,
 }: {
-  config: CreateConfig;
+  look: CreateConfig["look"];
   dispatch: (action: CreateAction) => void;
   mode: Mode;
 }) {
-  const custom = "custom" in config.look ? config.look.custom : null;
-  const current = custom ? "custom" : (config.look as { preset: LookPreset }).preset;
+  const custom = "custom" in look ? look.custom : null;
+  const current = custom ? "custom" : (look as { preset: LookPreset }).preset;
   const customColours = baseValues({
     custom: custom ?? CUSTOM_STARTS[current === "custom" ? "default" : current],
   })[mode];
@@ -286,16 +286,16 @@ function LookSection({
       )}
     </RailSection>
   );
-}
+});
 
-function PenSection({
-  config,
+const PenSection = memo(function PenSection({
+  pen,
   dispatch,
 }: {
-  config: CreateConfig;
+  pen: CreateConfig["pen"];
   dispatch: (action: CreateAction) => void;
 }) {
-  const name = penName(config.pen);
+  const name = penName(pen);
   return (
     <RailSection title="Pen" description="How the outlines are drawn.">
       <div className="grid gap-1.5">
@@ -325,22 +325,22 @@ function PenSection({
           key={token}
           label={PEN_LABELS[token]}
           range={PEN_RANGES[token]}
-          value={config.pen[token]}
+          value={pen[token]}
           onChange={(value) => dispatch({ type: "pen-value", token, value })}
         />
       ))}
     </RailSection>
   );
-}
+});
 
-function ScreentoneSection({
-  config,
+const ScreentoneSection = memo(function ScreentoneSection({
+  screentone,
   dispatch,
 }: {
-  config: CreateConfig;
+  screentone: CreateConfig["screentone"];
   dispatch: (action: CreateAction) => void;
 }) {
-  const size = config.screentone["halftone-size"];
+  const size = screentone["halftone-size"];
   const dotMax = maxDot(size);
   return (
     <RailSection title="Screentone" description="The halftone dots and speed lines.">
@@ -349,7 +349,7 @@ function ScreentoneSection({
           key={token}
           label={SCREENTONE_LABELS[token]}
           range={SCREENTONE_RANGES[token]}
-          value={config.screentone[token]}
+          value={screentone[token]}
           max={token === "halftone-dot" ? dotMax : undefined}
           hint={
             token === "halftone-dot"
@@ -361,13 +361,13 @@ function ScreentoneSection({
       ))}
     </RailSection>
   );
-}
+});
 
-function FontsSection({
-  config,
+const FontsSection = memo(function FontsSection({
+  fonts,
   dispatch,
 }: {
-  config: CreateConfig;
+  fonts: CreateConfig["fonts"];
   dispatch: (action: CreateAction) => void;
 }) {
   const id = useId();
@@ -377,7 +377,7 @@ function FontsSection({
         <FieldLabel htmlFor={`${id}-display`}>Display (titles and sound effects)</FieldLabel>
         <NativeSelect
           id={`${id}-display`}
-          value={config.fonts.display}
+          value={fonts.display}
           onChange={(event) =>
             dispatch({ type: "display-font", font: event.target.value as DisplayFont })
           }
@@ -393,7 +393,7 @@ function FontsSection({
         <FieldLabel htmlFor={`${id}-dialogue`}>Dialogue (speech and captions)</FieldLabel>
         <NativeSelect
           id={`${id}-dialogue`}
-          value={config.fonts.dialogue}
+          value={fonts.dialogue}
           onChange={(event) =>
             dispatch({ type: "dialogue-font", font: event.target.value as DialogueFont })
           }
@@ -407,33 +407,33 @@ function FontsSection({
       </Field>
     </RailSection>
   );
-}
+});
 
 /** The value a custom kit (only ever from a code) has in the radio group. */
 const CUSTOM_KIT = "custom";
 
-function KitSection({
-  config,
+const KitSection = memo(function KitSection({
+  kit,
   dispatch,
 }: {
-  config: CreateConfig;
+  kit: CreateConfig["kit"];
   dispatch: (action: CreateAction) => void;
 }) {
   const id = useId();
-  const current = "preset" in config.kit ? config.kit.preset : CUSTOM_KIT;
+  const current = "preset" in kit ? kit.preset : CUSTOM_KIT;
   const options: { value: string; title: string; description: string; items: string[] }[] = [
     ...KIT_NAMES.map((kit) => ({
       value: kit,
       ...KIT_LABELS[kit],
       items: kitItems({ preset: kit }),
     })),
-    ...("custom" in config.kit
+    ...("custom" in kit
       ? [
           {
             value: CUSTOM_KIT,
             title: "From the code",
             description: "The items this code lists.",
-            items: kitItems(config.kit),
+            items: kitItems(kit),
           },
         ]
       : []),
@@ -466,7 +466,7 @@ function KitSection({
       </RadioGroup>
     </RailSection>
   );
-}
+});
 
 /**
  * The Create page's choices: look, pen, screentone, fonts and a starter kit, each a labelled
@@ -486,15 +486,15 @@ export function CreateRailSections({
 }) {
   return (
     <div data-slot="create-rail-sections" className={cn("grid gap-6", className)}>
-      <LookSection config={config} dispatch={dispatch} mode={mode} />
+      <LookSection look={config.look} dispatch={dispatch} mode={mode} />
       <Separator />
-      <PenSection config={config} dispatch={dispatch} />
+      <PenSection pen={config.pen} dispatch={dispatch} />
       <Separator />
-      <ScreentoneSection config={config} dispatch={dispatch} />
+      <ScreentoneSection screentone={config.screentone} dispatch={dispatch} />
       <Separator />
-      <FontsSection config={config} dispatch={dispatch} />
+      <FontsSection fonts={config.fonts} dispatch={dispatch} />
       <Separator />
-      <KitSection config={config} dispatch={dispatch} />
+      <KitSection kit={config.kit} dispatch={dispatch} />
     </div>
   );
 }
