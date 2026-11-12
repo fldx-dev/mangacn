@@ -10,9 +10,11 @@ item: questionnaire
 
 Questions asked one at a time, for a reader survey, a sign-up step or an agent waiting on a choice: each answer is an outlined paper row that turns ink once chosen, under an inked progress track. Navigation and the keyboard are stock's from `@shadcn/react` (arrows move between answers, letters or numbers choose, Enter goes on), and Previous, Skip, Next and Submit are Button.
 
+`QuestionnaireInput`, the free-text answer, is restyled and tested but left out of the examples: with `@shadcn/react` 0.3.1 a questionnaire that holds one stops with "Maximum update depth exceeded" under `next dev`, with stock's own file too. A production build runs it without error.
+
 ## Examples
 
-Three questions with a progress track and letter shortcuts: a required single choice with descriptions and a field for another answer, an optional multiple choice, and a last required question.
+Three questions with a progress track and letter shortcuts: a required single choice with descriptions, an optional multiple choice, and a last required question.
 
 <DemoFrame item="questionnaire" demo="default" />
 One optional question that takes any number of answers, two chosen to start, with number shortcuts and Skip.
