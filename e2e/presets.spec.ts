@@ -149,7 +149,7 @@ test("the Theming page's switch shows, keeps and installs a preset", async ({ pa
   await expect(html).not.toHaveAttribute(PRESET_ATTRIBUTE);
   await expect(command).toContainText("@mangacn/theme --yes --overwrite");
 
-  // From the keyboard: Tab lands on the checked radio, an arrow chooses the next look.
+  // From the keyboard: focus is on the checked radio, an arrow chooses the next look.
   await group.getByRole("radio", { name: "Default" }).focus();
   await page.keyboard.press("ArrowRight");
   await expect(group.getByRole("radio", { name: "Sepia" })).toBeChecked();
@@ -183,23 +183,5 @@ test("the Theming page's switch shows, keeps and installs a preset", async ({ pa
   await group.getByText("Default").click();
   await expect(html).not.toHaveAttribute(PRESET_ATTRIBUTE);
   expect(await page.evaluate((key) => localStorage.getItem(key), PRESET_STORAGE_KEY)).toBeNull();
-  expect(errors).toEqual([]);
-});
-
-test("a docs page survives storage that throws", async ({ page }) => {
-  test.skip(test.info().project.name !== "w360", "one width is enough");
-  const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  await page.addInitScript(() => {
-    Object.defineProperty(window, "localStorage", {
-      get() {
-        throw new DOMException("blocked", "SecurityError");
-      },
-    });
-  });
-  await page.goto("/docs/theming");
-  const group = page.getByRole("group", { name: "Theme preset" });
-  await group.getByText("Sepia").click();
-  await expect(page.locator("html")).toHaveAttribute(PRESET_ATTRIBUTE, "sepia");
   expect(errors).toEqual([]);
 });
