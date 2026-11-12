@@ -4,7 +4,7 @@ import { expect, type Page, test } from "@playwright/test";
 import { docItems } from "../lib/docs/catalog";
 import { demoEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
-import { waitForInk } from "./ready";
+import { hydrateAfterReveal, waitForInk } from "./ready";
 
 // The site pages (SPEC-docs-site §11), light and dark, at each project's width: pixels on
 // Linux only (CI), and everywhere no overflow, no axe violations and no errors.
@@ -262,6 +262,8 @@ for (const path of pages) {
 
       // next-themes reads the stored theme before hydration; set it before any page script.
       await page.addInitScript((theme) => localStorage.setItem("theme", theme), mode);
+      // The docs content hydrates, never renders anew on the client: one wobble per shot.
+      await hydrateAfterReveal(page);
       const response = await page.goto(path);
       expect(response?.status()).toBe(200);
       const html = page.locator("html");

@@ -763,6 +763,13 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   edges); that is within the threshold, so `--update-snapshots=changed` leaves them alone, but
   `--update-snapshots=all` (the `all` dispatch, `pnpm test:e2e:update`) rewrites them, since it
   writes every shot whose bytes differ: expect those few dozen in every exact regeneration.
+- A docs page streams its content as a Suspense boundary that React reveals up to 300 ms late
+  when the browser painted while parsing. Hydrating inside that window, the layout's providers
+  update the boundary before it is revealed, React renders it anew on the client, and every
+  `InkFrame` there takes a counter `useId`, so another seed: a second wobble of the same page,
+  and a sidebar scrolled differently. `e2e/site.spec.ts` therefore calls `hydrateAfterReveal`
+  (`e2e/ready.ts`), which holds the page's scripts until the HTML is parsed and revealed, so
+  every shot is of the hydrated page.
 
 ## Docs page per item
 

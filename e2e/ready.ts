@@ -1,5 +1,40 @@
 import { expect, type Frame, type Page } from "@playwright/test";
 
+/**
+ * Holds the page's scripts until the server HTML is parsed and every streamed Suspense boundary
+ * is revealed, so the app always hydrates that HTML instead of rendering part of it anew.
+ *
+ * A docs page streams its content as a Suspense boundary that React's inline script reveals,
+ * and React delays that reveal by up to 300 ms when the browser painted a frame while parsing
+ * (a slow runner does, a fast machine does not). If the app hydrates inside that window, the
+ * providers above the content (next-themes, the Fumadocs sidebar) update after mount, and an
+ * update reaching a boundary still waiting for its reveal makes React render the boundary on the
+ * client. Client-rendered components get `useId` values from a counter instead of their place
+ * in the tree, so every InkFrame on the page gets another seed and another wobble (two states
+ * of one docs shot between runs of one commit, Task 97). Both are finished drawings a reader may
+ * get; a shot needs the one that hydration gives. Call it before `page.goto`.
+ */
+export async function hydrateAfterReveal(page: Page): Promise<void> {
+  let revealed: Promise<unknown> | undefined;
+  await page.route(
+    (url) => url.pathname.startsWith("/_next/static/") && url.pathname.endsWith(".js"),
+    async (route) => {
+      // One wait per document: the frame navigates once per test.
+      revealed ??= page
+        .waitForFunction(
+          () =>
+            document.readyState !== "loading" &&
+            document.querySelector('template[id^="B:"], div[hidden][id^="S:"]') === null,
+          undefined,
+          { polling: 10 },
+        )
+        .catch(() => undefined);
+      await revealed;
+      await route.continue();
+    },
+  );
+}
+
 /** Everything rough.js draws after hydration, stamping `data-inked="true"` when it has. */
 const INKED_SLOTS = ["ink-frame", "ink-mark", "ink-arrow", "stamp", "ink-splatter"];
 
