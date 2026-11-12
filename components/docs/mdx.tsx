@@ -3,6 +3,8 @@ import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import { type HTMLAttributes, isValidElement, type ReactNode } from "react";
 import { AgentsSnippet } from "./agents-snippet";
+import { BlockIndex } from "./block-index";
+import { BlockPreview } from "./block-preview";
 import { ComponentIndex } from "./component-index";
 import { CopyPrompt } from "./copy-prompt";
 import { DemoFrame } from "./demo-frame";
@@ -40,6 +42,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ...defaultMdxComponents,
     pre: CodeFence,
     AgentsSnippet,
+    BlockIndex,
+    BlockPreview,
     ComponentIndex,
     CopyPrompt,
     DemoFrame,

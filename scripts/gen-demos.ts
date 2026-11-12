@@ -7,7 +7,7 @@
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { collectDemos, DEMO_MAP_PATH, renderDemoMap } from "../lib/registry/demo-map";
+import { collectDemos, collectPages, DEMO_MAP_PATH, renderDemoMap } from "../lib/registry/demo-map";
 import { loadRegistry } from "../lib/registry/index";
 
 // pnpm runs package scripts from the repo root.
@@ -15,7 +15,8 @@ const target = path.resolve(DEMO_MAP_PATH);
 
 let source: string;
 try {
-  source = renderDemoMap(collectDemos(loadRegistry()));
+  const registry = loadRegistry();
+  source = renderDemoMap(collectDemos(registry), collectPages(registry));
 } catch (error) {
   console.error(`✗ ${(error as Error).message}`);
   process.exit(1);

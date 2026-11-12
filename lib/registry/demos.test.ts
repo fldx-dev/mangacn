@@ -2,7 +2,13 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { collectDemos, DEMO_MAP_HEADER, DEMO_MAP_PATH, renderDemoMap } from "./demo-map";
+import {
+  collectDemos,
+  collectPages,
+  DEMO_MAP_HEADER,
+  DEMO_MAP_PATH,
+  renderDemoMap,
+} from "./demo-map";
 import { type LoadedRegistry, loadRegistry } from "./index";
 
 const tempDirs: string[] = [];
@@ -107,6 +113,15 @@ describe("renderDemoMap", () => {
     );
     expect(source).not.toContain("\\");
   });
+
+  it("renders the page blocks' routes with a lazy loader each", () => {
+    const source = renderDemoMap(
+      [{ item: "login", demo: "default", path: "registry/blocks/login/demos/default.tsx" }],
+      [{ block: "login", path: "registry/blocks/login/page.tsx" }],
+    );
+    expect(source).toContain('  { block: "login", path: "registry/blocks/login/page.tsx" },');
+    expect(source).toContain('  "login": () => import("@/registry/blocks/login/page"),');
+  });
 });
 
 describe(`${DEMO_MAP_PATH} staleness`, () => {
@@ -114,7 +129,18 @@ describe(`${DEMO_MAP_PATH} staleness`, () => {
   const present = existsSync(file);
 
   it.skipIf(!present)("matches the filesystem (run `pnpm gen:demos`)", () => {
-    expect(readFileSync(file, "utf8")).toBe(renderDemoMap(collectDemos(loadRegistry())));
+    const registry = loadRegistry();
+    expect(readFileSync(file, "utf8")).toBe(
+      renderDemoMap(collectDemos(registry), collectPages(registry)),
+    );
+  });
+
+  it.skipIf(!present)("resolves each page block's route and nothing else", async () => {
+    const { getPageLoader, listPages } = await import("./demos");
+    expect(listPages().map((page) => page.block)).toContain("login-01");
+    for (const { block } of listPages()) expect(getPageLoader(block)).toBeTypeOf("function");
+    expect(getPageLoader("reader")).toBeUndefined();
+    expect(getPageLoader("toString")).toBeUndefined();
   });
 
   it.skipIf(!present)("resolves known demos and rejects unknown ones", async () => {

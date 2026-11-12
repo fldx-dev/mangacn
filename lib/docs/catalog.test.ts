@@ -4,6 +4,7 @@ import {
   BLOCKS_CATALOG,
   COMPONENTS_CATALOG,
   DOCS_SECTIONS,
+  type DocItem,
   docItems,
   itemPagePath,
   PROSE_PLACEHOLDER,
@@ -99,6 +100,23 @@ describe("block pages", () => {
       '<InstallCommand item="shelf" />\n\n<ItemFiles item="shelf" />\n\n<CopyPrompt item="shelf" />',
     );
     expect(renderItemPage(docItems(registry, demos)[0])).not.toContain("ItemFiles");
+  });
+
+  it("show a page block's whole page instead of its demos, with no props table of their own", () => {
+    const login: DocItem = {
+      name: "login-01",
+      title: "Login 01",
+      description: "A login page.",
+      category: "block",
+      demos: ["default"],
+      page: true,
+    };
+    const scaffold = renderItemPage(login);
+    expect(parseFrontmatter(scaffold).skipDemos).toEqual(["default"]);
+    expect(scaffold).toContain('<ItemFiles item="login-01" />');
+    expect(scaffold).toContain('## Preview\n\n<BlockPreview item="login-01" />');
+    expect(scaffold).not.toContain("DemoFrame");
+    expect(scaffold).not.toContain("PropsTable");
   });
 
   it("sit in the Blocks section, in catalog order", () => {

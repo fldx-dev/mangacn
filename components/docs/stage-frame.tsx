@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "cn";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 
 // The site theme is `.dark` on <html>, set by next-themes; the stage takes `?mode=dark`.
@@ -25,10 +26,12 @@ export interface StageFrameProps {
    * popup is no content of this page, for a screen reader or for the axe pass.
    */
   inert?: boolean;
+  /** Classes for the iframe, merged over its paper box (a framed block preview drops the border). */
+  className?: string;
 }
 
 /** An iframe of a demo stage that follows the docs site's light or dark theme. */
-export function StageFrame({ src, title, height, inert }: StageFrameProps) {
+export function StageFrame({ src, title, height, inert, className }: StageFrameProps) {
   const dark = useSyncExternalStore(subscribe, isDark, () => false);
   const ref = useRef<HTMLIFrameElement>(null);
 
@@ -68,7 +71,7 @@ export function StageFrame({ src, title, height, inert }: StageFrameProps) {
       title={title}
       inert={inert}
       style={{ height }}
-      className="block w-full rounded-sm border bg-paper"
+      className={cn("block w-full rounded-sm border bg-paper", className)}
     />
   );
 }

@@ -3,7 +3,7 @@ import type { DocEntry } from "fumadocs-typescript";
 import type { MDXComponents } from "mdx/types";
 import type { ReactNode } from "react";
 import { agentsSnippet, MCP_CLIENTS } from "@/lib/docs/agents";
-import { CATEGORY_LABELS, docItems, groupByCategory } from "@/lib/docs/catalog";
+import { BLOCKS_CATALOG, CATEGORY_LABELS, docItems, groupByCategory } from "@/lib/docs/catalog";
 import { getDemoSource } from "@/lib/docs/demo-source";
 import {
   commandFor,
@@ -123,6 +123,21 @@ export function ComponentIndexMarkdown() {
     .join("");
 }
 
+/** Every block as a link with its description, in catalog order. */
+export function BlockIndexMarkdown() {
+  asMarkdown();
+  const items = docItems(loadRegistry(), listDemos(), BLOCKS_CATALOG);
+  return `\n${items
+    .map((item) => `- [${item.title}](/docs/blocks/${item.name}.md): ${item.description}`)
+    .join("\n")}\n\n`;
+}
+
+/** A page block's preview is the page itself, at its own URL. */
+export function BlockPreviewMarkdown({ item }: { item: string }) {
+  asMarkdown();
+  return `\nThe whole page, on its own: [/view/${item}](/view/${item}).\n\n`;
+}
+
 /** The playground is interactive; the pen table above it in the page holds the defaults. */
 export function ThemePlaygroundMarkdown() {
   asMarkdown();
@@ -172,6 +187,8 @@ export function getMarkdownComponents(): MDXComponents {
     InstallCommand: InstallCommandMarkdown,
     McpConfig: McpConfigMarkdown,
     AgentsSnippet: AgentsSnippetMarkdown,
+    BlockIndex: BlockIndexMarkdown,
+    BlockPreview: BlockPreviewMarkdown,
     CopyPrompt: CopyPromptMarkdown,
     DemoFrame: DemoFrameMarkdown,
     ItemFiles: ItemFilesMarkdown,
