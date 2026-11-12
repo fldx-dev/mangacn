@@ -10,17 +10,17 @@ item: chat-thread
 
 <CopyPrompt item="chat-thread" />
 
-A conversation to drop into an app: an artist and an editor, a reader and a community, a support desk. Give it the messages and a callback for sending; it lays them out as speech bubbles and keeps the scroll where a reader expects it.
+A conversation to drop into an app: an artist and an editor, a reader and a community, a support desk. Give it the messages, and an `onSend` callback when the reader may write; it lays them out as speech bubbles and keeps the scroll where a reader expects it.
 
 It is a client component that composes [Message Scroller](/docs/components/message-scroller), [Message](/docs/components/message), [Bubble](/docs/components/bubble), [Marker](/docs/components/marker), [Attachment](/docs/components/attachment), avatar, input-group and empty, and draws nothing of its own. Consecutive messages from one author share one bubble group, so the tail is drawn once, under the last. Your messages (`me`) sit at the end, filled with ink; everyone else's are paper, with their name and avatar. A date line separates the days and a "New messages" line, in the spot colour, goes above `unreadFrom`. Files sit inside their bubble as attachment cards (a link when they have a `url`) and reactions in a chip on the bubble's edge. Line breaks in a message are kept.
 
 The thread opens at its latest message and follows new ones while the reader is at the end. A reader who has scrolled up stays where they are when someone writes, and the "jump to latest" button appears; sending a message brings the thread back to its end. The scrolling region is named by `label`. Each new message from someone else is read out once, as "Hana Mori: See you at six", by a polite live region that holds only that line: nothing on the first render, and nothing for your own messages.
 
-In the composer, Enter sends and Shift+Enter breaks the line. Enter during an IME composition (Japanese, Chinese or Korean input) only commits the text, as it should. An empty or blank message is not sent. A send calls `onSend` with the trimmed text, clears the field and keeps the focus in it; add the message to `messages` yourself.
+The composer is there only with `onSend`; without it the thread is read-only. In the composer, Enter sends and Shift+Enter breaks the line. Enter during an IME composition (Japanese, Chinese or Korean input) only commits the text, as it should. An empty or blank message is not sent. A send calls `onSend` with the trimmed text, clears the field and keeps the focus in it; add the message to `messages` yourself.
 
 ## Examples
 
-Two days of a conversation between an artist and her editor, with reactions and a working composer: write something and send it. The messages live in `useChatThread`'s state.
+Two days of a conversation between an artist and an editor, with reactions and a working composer: write something and send it. The messages live in `useChatThread`'s state.
 
 <DemoFrame item="chat-thread" demo="default" />
 

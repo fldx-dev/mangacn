@@ -474,7 +474,7 @@
       "name": "theme-weekly",
       "type": "registry:theme",
       "title": "mangacn theme: Weekly",
-      "description": "A weekly manga magazine: pale green-grey recycled newsprint, soft black ink and a magenta spot, with greys leaning green; dark is deep green-black paper and pale ink.",
+      "description": "A weekly manga magazine: pale green-grey recycled newsprint, green-black ink and a magenta spot, with greys leaning green; dark is deep green-black paper and pale ink.",
       "categories": ["decoration"],
       "meta": {
         "since": "0.2.0",
@@ -596,7 +596,7 @@
       "name": "theme-blueline",
       "type": "registry:theme",
       "title": "mangacn theme: Blueline",
-      "description": "A pencil draft before inking: cool white paper, blue-black ink and a non-photo blue spot, with cool grey tones; dark is deep blue-black paper and cool pale ink.",
+      "description": "A pencil draft before inking: cool white paper, blue-black ink and a deep blue spot (non-photo blue darkened to read as text), with cool grey tones; dark is deep blue-black paper, cool pale ink and the pale pencil blue as its spot.",
       "categories": ["decoration"],
       "meta": {
         "since": "0.2.0",

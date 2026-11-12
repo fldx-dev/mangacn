@@ -14,7 +14,8 @@
  *                       install (theme, ink-frame, speech-bubble) when
  *                       lib/docs/install-command.ts changed
  * Blocks (`registry:block`) and hooks (`registry:hook`, in `hooks/`) must leave every file of
- * their `files[]` at its target; `--changed` selects a hook when `registry/hooks/<name>.*` changed.
+ * their `files[]` at its target; `--changed` selects a hook when `registry/hooks/<name>.*` changed,
+ * or a lib file it ships (`registry/hooks/lib/<file>`).
  * The stock pre-install + overwrite check runs only when button, card and dialog are all
  * in the set. Each one-command check (a fresh project per command, ONE_COMMANDS) runs with
  * every item, or when the set names all of its items (`--only=pagination`).
@@ -87,7 +88,7 @@ function landingProblems(project: string, items: CatalogItem[]): string[] {
 }
 
 /** What an installed item must leave in the temp project, keyed by item name. */
-const EXPECTED_CONTENT: Record<
+export const EXPECTED_CONTENT: Record<
   string,
   { file: string; attribution?: string; includes?: string[]; excludes?: string[] }[]
 > = {
@@ -253,7 +254,7 @@ const EXPECTED_CONTENT: Record<
     {
       file: "app/series/page.tsx",
       includes: [
-        'import { SeriesHeader } from "@/components/series-header"',
+        'import { type Series, SeriesHeader } from "@/components/series-header"',
         'from "@/components/blocks/volume-grid/volume-grid"',
       ],
     },
@@ -265,6 +266,19 @@ const EXPECTED_CONTENT: Record<
       file: "hooks/use-mobile.ts",
       attribution: attribution("use-mobile"),
       includes: ["export function useIsMobile("],
+    },
+  ],
+  // A hook with its registry:lib companion at `@lib/highlighter.tsx`, which the hook imports.
+  "use-highlighted-code": [
+    {
+      file: "hooks/use-highlighted-code.ts",
+      attribution: attribution("use-highlighted-code"),
+      includes: ["export function useHighlightedCode(", 'from "@/lib/highlighter"'],
+    },
+    {
+      file: "lib/highlighter.tsx",
+      attribution: attribution("use-highlighted-code's highlighter"),
+      includes: ["export async function loadHighlighter(", "export async function highlightCode("],
     },
   ],
 };
@@ -368,13 +382,25 @@ function changedPaths(): string[] {
   ];
 }
 
+/** A catalog entry with the files `--changed` maps a path to. */
+export interface ChangedCatalogItem {
+  name: string;
+  files?: { path: string }[];
+}
+
 /**
  * Items whose folders changed; `undefined` means "every item" because something that affects
- * all of them changed (a catalog file, this script, the registry library).
+ * all of them changed (a catalog file, this script, the registry library). `hooks` is the hook
+ * catalog (registry/hooks/registry.json): a lib file in `registry/hooks/lib/` selects every hook
+ * that ships it.
  */
-function changedItems(listed: string[]): string[] | undefined {
+export function itemsForChangedPaths(
+  paths: string[],
+  listed: string[],
+  hooks: ChangedCatalogItem[],
+): string[] | undefined {
   const items = new Set<string>();
-  for (const file of changedPaths()) {
+  for (const file of paths) {
     const posix = file.split(path.sep).join("/");
     if (
       posix === "scripts/registry-smoke.ts" ||
@@ -388,6 +414,16 @@ function changedItems(listed: string[]): string[] | undefined {
     if (posix === "lib/docs/install-command.ts") {
       for (const name of SETUP_ITEMS) items.add(name);
     }
+    // A hook's lib file (registry/hooks/lib/highlighter.tsx): the hooks that list it.
+    const lib = /^registry\/hooks\/(lib\/[^/]+)$/.exec(posix);
+    if (lib) {
+      for (const hook of hooks) {
+        if (hook.files?.some((shipped) => shipped.path === lib[1]) && listed.includes(hook.name)) {
+          items.add(hook.name);
+        }
+      }
+      continue;
+    }
     // An item's folder (registry/ui/<name>/…), or a hook's file (registry/hooks/<name>.ts and
     // its test), since a hook has no folder of its own.
     const match =
@@ -395,6 +431,14 @@ function changedItems(listed: string[]): string[] | undefined {
     if (match && listed.includes(match[1])) items.add(match[1]);
   }
   return [...items];
+}
+
+/** `itemsForChangedPaths` over this checkout's diff and its hook catalog. */
+function changedItems(listed: string[]): string[] | undefined {
+  const hooks = JSON.parse(readFileSync(path.resolve("registry/hooks/registry.json"), "utf8")) as {
+    items: ChangedCatalogItem[];
+  };
+  return itemsForChangedPaths(changedPaths(), listed, hooks.items);
 }
 
 /**
@@ -980,22 +1024,26 @@ function itemCount(): number {
   }
 }
 
-// Each one-command check builds a project of its own: setup budget again per command.
-const timeoutMs = (1 + ONE_COMMANDS.length) * BASE_TIMEOUT_MS + PER_ITEM_TIMEOUT_MS * itemCount();
-const timer = setTimeout(() => {
-  if (currentChild) killTree(currentChild);
-  console.error(`✗ registry smoke timed out after ${timeoutMs / 60000} min`);
-  if (projectDir) console.error(`Temp project kept for inspection: ${projectDir}`);
-  process.exit(1);
-}, timeoutMs);
-
-main()
-  .then(() => {
-    clearTimeout(timer);
-  })
-  .catch((error: unknown) => {
-    clearTimeout(timer);
-    if (error instanceof SmokeError && error.output) console.error(error.output.trimEnd());
-    console.error(`✗ ${error instanceof Error ? error.message : String(error)}`);
+// Run only as a script (`pnpm registry:smoke`), so a test can import the tables above.
+const invoked = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename);
+if (invoked) {
+  // Each one-command check builds a project of its own: setup budget again per command.
+  const timeoutMs = (1 + ONE_COMMANDS.length) * BASE_TIMEOUT_MS + PER_ITEM_TIMEOUT_MS * itemCount();
+  const timer = setTimeout(() => {
+    if (currentChild) killTree(currentChild);
+    console.error(`✗ registry smoke timed out after ${timeoutMs / 60000} min`);
+    if (projectDir) console.error(`Temp project kept for inspection: ${projectDir}`);
     process.exit(1);
-  });
+  }, timeoutMs);
+
+  main()
+    .then(() => {
+      clearTimeout(timer);
+    })
+    .catch((error: unknown) => {
+      clearTimeout(timer);
+      if (error instanceof SmokeError && error.output) console.error(error.output.trimEnd());
+      console.error(`✗ ${error instanceof Error ? error.message : String(error)}`);
+      process.exit(1);
+    });
+}

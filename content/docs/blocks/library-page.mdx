@@ -13,6 +13,8 @@ skipDemos: ["default"]
 
 A reader's library route, `app/library/page.tsx`, inside [Sidebar 07](/docs/blocks/sidebar-07)'s app shell: the add brings that block too, so its `app/dashboard/page.tsx` and its five sidebar components arrive with `shelf` and `continue-reading`. Everything on the page comes from the typed `library` object at the top of `page.tsx`; replace it with your fetch and the [Card](/docs/components/card)s, [Progress](/docs/components/progress) bars, [Volume Grid](/docs/blocks/volume-grid) shelves and [Empty](/docs/components/empty) state follow.
 
+The page, `shelf` and `continue-reading` are server components. The covers of the chapters in progress load at once; a shelf passes `eager={0}` to volume-grid, so every shelf cover loads lazily, since the shelves start below the first screen.
+
 ## Preview
 
 <BlockPreview item="library-page" />

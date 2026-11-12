@@ -11,6 +11,7 @@ import {
 } from "./props";
 import {
   createPropsGenerator,
+  declaresType,
   generateOwnProps,
   propsInterfaceName,
   propsTargets,
@@ -66,6 +67,32 @@ describe("propsTargets", () => {
     expect(targets).toContain("ink-frame/InkFrameProps");
     expect(targets).toContain("panel-grid/PanelGridItemProps");
     expect(targets.some((target) => target.startsWith("card/"))).toBe(false);
+  });
+});
+
+describe("declaresType", () => {
+  it("finds an interface or type alias declared at the start of a line", () => {
+    expect(declaresType("export interface Series {\n  title: string;\n}", "Series")).toBe(true);
+    expect(declaresType("type Series = { title: string };", "Series")).toBe(true);
+    expect(declaresType("  export declare type Series = string;", "Series")).toBe(true);
+  });
+
+  it("does not take an import or a mention for a declaration (Task 109's page)", () => {
+    const page = [
+      'import { type Series, SeriesHeader } from "@/components/series-header";',
+      'import type { Series as Data } from "@/components/series-header";',
+      "// the type Series is declared in the header",
+      "const series: Series = { title: 'Lantern Keepers' };",
+    ].join("\n");
+    expect(declaresType(page, "Series")).toBe(false);
+    expect(declaresType("export interface SeriesInfo {}", "Series")).toBe(false);
+  });
+
+  it("reads series-page's Series from the header that declares it, not the page", () => {
+    const series = propsTargets(registry).find(
+      (target) => target.item === "series-page" && target.name === "Series",
+    );
+    expect(series?.file).toBe("registry/blocks/series-page/components/series-header.tsx");
   });
 });
 

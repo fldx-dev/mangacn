@@ -8,17 +8,19 @@ item: bubble
 
 <CopyPrompt item="bubble" />
 
-A chat bubble drawn with [Speech Bubble](/docs/components/speech-bubble)'s pen: your own messages in solid ink with paper text, everyone else's outlined on paper, and one tail per group, on its last bubble, pointing to the side the bubble is aligned to. Put bubbles in a [Message](/docs/components/message) for the avatar, name and time, and divide the days with a [Marker](/docs/components/marker).
+A chat bubble drawn with [Speech Bubble](/docs/components/speech-bubble)'s pen: `default` in solid ink with paper text for your own messages, `secondary` outlined on paper for everyone else's, and one tail per group, on its last bubble, pointing to the side the bubble is aligned to. Put bubbles in a [Message](/docs/components/message) for the avatar, name and time, and divide the days with a [Marker](/docs/components/marker).
 
 ## Examples
 
-A received bubble and a sent one (`align="end"`). Each stands alone, so each draws its tail.
+A received `secondary` bubble and a sent one (`align="end"`). Each stands alone, so each draws its tail.
 
 <DemoFrame item="bubble" demo="default" />
+
 A conversation: a date marker, two received bubbles in a `BubbleGroup` with one tail and a `BubbleReactions` chip, and two sent bubbles with a read time.
 
 <DemoFrame item="bubble" demo="conversation" />
-The other variants in a review thread: `ghost` (no outline), `tinted` (light halftone), `outline` (the heavy pen), `destructive` (spot), `muted` (tone-1) for a notice, and a `secondary` bubble rendered as a button, which takes an outline button's hover.
+
+The other variants in a review thread: `ghost` (no outline), `tinted` (light halftone), `outline` (the heavy pen), `destructive` (outlined in spot), then `muted` (tone-1) for a notice and a `secondary` bubble rendered as a button, which takes an outline button's hover.
 
 <DemoFrame item="bubble" demo="variants" />
 

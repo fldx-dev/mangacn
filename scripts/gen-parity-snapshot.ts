@@ -21,6 +21,7 @@ import {
   STOCK_ITEM_URL,
   sha1,
 } from "../lib/registry/parity";
+import { formatJson } from "../lib/registry/theme-preset-items";
 
 interface StockItem {
   name: string;
@@ -41,7 +42,13 @@ async function fetchStock(name: string): Promise<StockItem> {
 
 function write(file: string, snapshot: object, count: number) {
   mkdirSync(path.dirname(path.resolve(file)), { recursive: true });
-  writeFileSync(path.resolve(file), `${JSON.stringify(snapshot, null, 2)}\n`);
+  // Each file as its check reads it, so a refresh that changes nothing upstream changes no byte:
+  // the block snapshot is under Biome, which keeps short arrays on one line (formatJson does
+  // the same; JSON.stringify broke each onto many lines); the primitives' snapshot is outside
+  // Biome (biome.json) and has always been JSON.stringify's.
+  const text =
+    file === BLOCK_PARITY_SNAPSHOT_PATH ? formatJson(snapshot) : JSON.stringify(snapshot, null, 2);
+  writeFileSync(path.resolve(file), `${text}\n`);
   console.log(`✓ wrote ${file} (${count} items)`);
 }
 
