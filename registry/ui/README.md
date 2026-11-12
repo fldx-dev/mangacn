@@ -40,6 +40,7 @@ registry/ui/<name>/
 | Folder                    | Item type                                                        | Installs to                                               |
 | ------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------- |
 | `registry/theme/`         | `registry:theme`, `registry:font`, `registry:lib`, `ink-frame`   | css, `app/layout.tsx`, `@/lib/<name>.ts`, `@/components/` |
+| `registry/theme/presets/` | `registry:theme` presets (recipe 5), generated from a JSON file  | the theme's colour variables in css, replaced in place    |
 | `registry/ui/<name>/`     | `registry:ui` (primitive) or `registry:component` (manga-native) | `@/components/ui/<name>.tsx` or `@/components/<name>.tsx` |
 | `registry/blocks/<name>/` | `registry:block` (recipe 3)                                      | `@/components/blocks/<name>/…`                            |
 | (a page block)            | `registry:block` with `registry:page` + `registry:component`     | `app/<route>/page.tsx` and `@/components/<file>.tsx`      |
@@ -488,6 +489,17 @@ registry/blocks/<name>/
   own file's install path only where a relative path would miss after install. Map each
   component's install path in `tsconfig.json` `paths` and the `vitest.config.mts` aliases
   (`"@/components/login-form": ["./registry/blocks/login-01/components/login-form.tsx"]`).
+- **A page block inside another page block's shell.** `library-page` sits in `sidebar-07`'s
+  app shell without copying a file of it: it declares
+  `https://www.mangacn.com/r/sidebar-07.json` and imports `AppSidebar` from that block's
+  install path, `@/components/app-sidebar`. The import rule allows the install path of every
+  file of a declared item, and the dependency check counts an import of a page block's
+  component as a use of that page block. The add then writes the other block's route too
+  (`app/dashboard/page.tsx`), and the Files line says so.
+- **Server or client.** The page is a server component, as stock's are; a component file says
+  `"use client"` only when it holds state (sidebar-07's five files, as stock's;
+  `series-header.tsx`, for Follow's pressed state). The install line's client-component note
+  reads the page, so say on the docs page which component files are client components.
 - **Stock parity.** Append the stock name to `PARITY_BLOCKS` (`lib/registry/parity.ts`) and run
   `pnpm gen:parity`: `registry/blocks/parity.test.ts` then holds the block to stock's file list,
   page target, exports per file (`default` for the page) and registry dependencies, mangacn's
@@ -499,15 +511,26 @@ registry/blocks/<name>/
   with axe's page rules on. `pnpm gen:docs` scaffolds the docs page with `<BlockPreview>`
   (the page framed at phone, tablet and desktop widths) in place of the demos, which its
   frontmatter skips, and no props table: add `<PropsTable item="<name>" name="<Interface>" />`
-  for a component that has props of its own. The Blocks index shows the page on its card.
+  for a component that has props of its own, or for the data a project replaces (series-page's
+  `## Data` prints `Series` and `SeriesHeaderProps`); `gen:props` reads the table from the
+  file that declares the type. The Blocks index shows the page on its card.
 - **Smoke.** Add the route and each component to `EXPECTED_CONTENT` in
   `scripts/registry-smoke.ts` (the page's import of its component as an `includes`); the build
   of the fresh app proves the import resolves.
 
+The next page block, in short: a folder with `page.tsx` (`registry:page`, stock's
+`app/<route>/page.tsx` target) and `components/<file>.tsx` (`registry:component`, target
+`@components/<file>.tsx`), a default demo and a test with `expectDemosAccessible`; a catalog
+entry with its dependencies by URL; an alias per component install path; `PARITY_BLOCKS` and
+`pnpm gen:parity` when it is stock's; `pnpm gen:demos && pnpm gen:docs`, two sentences on the
+page, and the files in the smoke's `EXPECTED_CONTENT`. `/view/<name>` and its shots come with
+the demo map.
+
 ## Recipe 4: add a hook
 
 A hook is a stock React hook that a restyled primitive needs (`use-mobile`, which `sidebar`
-reads). It ships unchanged but for the attribution header, has **no demo, no docs page and no
+reads) or hands to its users (`use-highlighted-code`, which `code-block` declares, with its
+`lib/highlighter.tsx`). It ships unchanged but for the attribution header, has **no demo, no docs page and no
 index card**, and installs with the item that declares it. `use-mobile` is the reference.
 
 1. **Fetch the stock source** as in recipe 1, at the hooks path:
@@ -586,6 +609,27 @@ index card**, and installs with the item that declares it. `use-mobile` is the r
    when an install needs debugging, and `--changed` selects a hook whose
    `registry/hooks/<name>.*` files changed.
 
+## Recipe 5: add a theme preset
+
+A preset is the default theme on other paper: a `registry:theme` item that gives the eight
+base colours (`ink`, `paper`, `spot`, `spot-foreground`, `tone-1` to `tone-4`) other values in
+light and dark and changes nothing else; every shadcn variable follows through its `var()`.
+`theme-sepia` is the reference. The item is generated, never written by hand:
+
+1. Copy `registry/theme/presets/sepia.json` to `registry/theme/presets/<name>.json` and set
+   `name`, `title`, `description` and the sixteen `oklch()` values (`spot-foreground` equals
+   `paper`; every colour but the spot keeps chroma at 0.04 or under).
+2. Add `"<name>"` to `THEME_PRESETS` in `lib/registry/theme-presets.ts`.
+3. Run `pnpm gen:theme`: it appends `theme-<name>` to `registry/theme/registry.json` and
+   writes the site's preset stylesheet. Then `pnpm test registry/theme` (contrast in both
+   modes, ink at 60 % on paper and on muted included; the key set; the catalog in sync with
+   the values files) and `pnpm gen:skill`, and commit the catalog and the skill catalog.
+
+The Theming page's switch, its install line, the MCP and `e2e/presets.spec.ts` (the specimen in
+every look) pick the preset up by themselves; add one line for it to the Presets section of
+`content/docs/theming.mdx`. A running `pnpm dev` keeps the registry it loaded: restart it after
+`pnpm gen:theme`, or the new look's install line fails on the Theming page.
+
 ## Run the checks
 
 Task branches get no CI. A task session checks its own work locally and pushes; the
@@ -629,8 +673,13 @@ are the usual conflict), then runs on the merged tree the generator checks
 `pnpm loop:land <branch> "<subject>"` (`scripts/loop/land.ts`, run on a clean `main`) does that
 in one go: `--no-ff` merge of `origin/<branch>` with the subject as message (`LOOP_TRAILER`
 adds a trailer line), the catalog, list and generated-file conflicts resolved
-(`scripts/loop/resolve-catalogs.ts`), the checks above plus `install --frozen-lockfile`,
-`registry:validate` and one rerun of failed test files, and the push only when all pass. Exit
+(`scripts/loop/resolve-catalogs.ts`, which retries a write Windows refuses for a moment while
+an indexer holds the file), the checks above plus `install --frozen-lockfile`,
+`registry:validate` and one rerun of failed test files, and the push only when all pass. After
+every merge, a clean one too, it runs `gen:docs`, `gen:props` and `gen:skill` and folds what
+they change into the merge commit: two branches' catalog entries merge line by line without a
+conflict, but the docs metas, the props file and the skill catalog's count are generated, and
+three clean merges of batch 5 left them stale. Exit
 10 leaves another conflict to resolve by hand; commit it, then `pnpm loop:check` checks `HEAD`
 and pushes. Exit 20 is a failed check, with the merge commit left local. `--dry-run` prints
 the plan and changes nothing; logs go to a temporary folder named at the start.
@@ -667,7 +716,7 @@ baseline are printed); one written by a single run, or differently by the two, i
 
 1. **`pnpm check:changed`** is the gate while you work: about 75 s on Windows for a one-item
    change (Biome on your files, `gen:demos`, typecheck, the test files that import what you
-   touched) against several minutes for `pnpm check` (every file, about 1,270 tests). Vitest
+   touched) against several minutes for `pnpm check` (every file, about 1,670 tests). Vitest
    reruns every test when `package.json` or its config changed. Run `pnpm check` when you
    changed shared code (`lib/registry`, the theme, `ink-frame`).
 2. **The catalog suites** (`vitest run lib/mcp lib/docs lib/registry components`) read the
@@ -682,15 +731,17 @@ baseline are printed); one written by a single run, or differently by the two, i
    first failure with that step's exit code (`scripts/check-catalog.ts`).
 
 A full local `pnpm run ci` or `pnpm registry:smoke` costs 25–40 min on Windows (timed when the
-catalog had 60 items; it holds 89 now, so expect more); main's run does both.
+catalog had 60 items; it holds 107 now, so expect more); main's run does both.
 
-What CI costs (GitHub runner), from batch 4:
+What the loop and CI cost (GitHub runner), from batches 4 and 5:
 
-| Run                                                                         | Time                                                                                          |
-| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| A wave: the ten item tasks of batch 4 (86 to 95), four sessions in parallel | all ten primitives on `main` after about 1 h 35 min; every task merged after about 2 h 20 min |
-| `visual`, every shot, a plain run in four shards                            | about 5 min wall time (12 to 15 min on one runner before the split)                           |
-| `visual`, an alias-only one-item change (`visual` on that item alone)       | 1 m 48 s                                                                                      |
+| Run                                                                                 | Time                                                                                          |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Batch 5: three waves, 14 item tasks (97 to 110), three or four sessions in parallel | about 3 h 40 min from the first session's start to the last baseline commit                   |
+| Batch 5's second wave: eight tasks                                                  | all eight on `main` about 1 h 50 min after the wave started                                   |
+| Batch 4's wave: the ten item tasks (86 to 95), four sessions in parallel            | all ten primitives on `main` after about 1 h 35 min; every task merged after about 2 h 20 min |
+| `visual`, every shot, a plain run in four shards                                    | about 5 min wall time (12 to 15 min on one runner before the split)                           |
+| `visual`, an alias-only one-item change (`visual` on that item alone)               | 1 m 48 s                                                                                      |
 
 `checks`, `smoke` and the four `visual` shards start together, so a run waits for the longest
 of them (usually a `visual` shard), not their sum. Vitest runs on the `vmThreads` pool: the
@@ -708,8 +759,9 @@ What a change needs before the push:
 
 ### The visual set (`E2E_ITEMS`)
 
-`E2E_ITEMS` is a comma-separated list of item names (their demos) and the suites `site`,
-`mcp` and `annotations`; unset or `all` runs everything, `none` nothing. The Playwright run
+`E2E_ITEMS` is a comma-separated list of item names (their demos, and a page block's
+`/view/` page) and the suites `site`, `mcp`, `annotations` and `presets`; unset or `all` runs
+everything, `none` nothing. The Playwright run
 prints the filter on its first line, and a name with no demos is an error. Set it by hand
 (`E2E_ITEMS=slider,site pnpm test:e2e`) or let `scripts/changed-e2e.ts` compute it from the
 diff against origin/main (`pnpm exec tsx scripts/changed-e2e.ts` prints it and why;
@@ -718,7 +770,11 @@ diff against origin/main (`pnpm exec tsx scripts/changed-e2e.ts` prints it and w
 - an item's folder or catalog entry → that item, every item that uses it (its
   `registryDependencies` or an import in its folder, transitively), and `site`, whose component
   index renders every default demo; `ink-mark` and `ink-arrow` add `annotations`;
-- a baseline PNG → its item (or `site` for `site-*.png`);
+- a baseline PNG → its item (a page block for `<block>-view-<mode>.png`, `site` for
+  `site-*.png`, `presets` for `presets-*.png`);
+- `app/view/` or `e2e/blocks.spec.ts` → every page block and `site`; anything under
+  `registry/theme/` but Markdown → `presets` as well; the values files
+  (`registry/theme/presets/`), `e2e/presets.spec.ts` and the Theming page → `presets`;
 - `lib/mcp/`, `app/api/mcp/`, `skills/`, `e2e/mcp.spec.ts` → `mcp`; `content/`, `lib/docs/`
   and `scripts/gen-props.ts` → `mcp` and `site` (the MCP serves the pages and props tables);
   other `app/`, `components/`, `e2e/site.spec.ts` → `site`;
@@ -768,15 +824,20 @@ the output and ignore the code (checked 2026-11-09, shadcn 4.23.0; CI runs Node 
 ### Stock parity
 
 `registry/ui/parity.test.ts` compares every restyled primitive (a `registry:ui` item whose
-name is in `PARITY_PRIMITIVES` in `lib/registry/parity.ts`, 55 since batch 4) with
+name is in `PARITY_PRIMITIVES` in `lib/registry/parity.ts`, 63 since batch 5) with
 `registry/ui/__parity__/base-nova.json`: named exports and `data-slot` values must equal stock; `registryDependencies` must contain
 stock's names and may add only `https://www.mangacn.com/r/<name>.json` entries;
 `dependencies` must contain every stock package (more is fine); every stock `cva` variant
 group and key must still exist (added keys such as `variant="sfx"` are fine).
 A failure lists what is missing or unexpected. Primitives not restyled yet show as `todo`.
 
-The snapshot is refreshed only on purpose, after a shadcn release, with maintainer
-sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
+`registry/blocks/parity.test.ts` does the same for the stock page blocks in `PARITY_BLOCKS`
+(`login-01`, `signup-01`, `sidebar-07`) against `registry/blocks/__parity__/base-nova.json`:
+the file list by path and type, the page's target, the exports of each file and the registry
+dependencies (recipe 3).
+
+The snapshots are refreshed only on purpose, after a shadcn release, with maintainer
+sign-off: `pnpm gen:parity` (network; never runs in CI) writes both, then review the diff.
 
 ### Accessibility and visual snapshots
 
@@ -843,7 +904,25 @@ sign-off: `pnpm gen:parity` (network; never runs in CI), then review the diff.
   `InkFrame` there takes a counter `useId`, so another seed: a second wobble of the same page,
   and a sidebar scrolled differently. `e2e/site.spec.ts` therefore calls `hydrateAfterReveal`
   (`e2e/ready.ts`), which holds the page's scripts until the HTML is parsed and revealed, so
-  every shot is of the hydrated page.
+  every shot is of the hydrated page. The page itself holds its first frame until the document
+  is parsed (`components/docs/page-end.tsx`, a `rel="expect"` link to an id no element has);
+  the site suite checks the served HTML has that link once and the reveal script.
+- `waitForInk` (`e2e/ready.ts`) waits for every drawing a reader can see, and leaves out
+  drawings in content the browser is skipping: stock's message-scroller items are
+  `content-visibility: auto`, so a message scrolled out of its thread is not rendered and its
+  frame is never drawn.
+- `e2e/blocks.spec.ts` opens each page block's `/view/<block>` at 360, 768 and 1280 px, light
+  and dark, with the stage waits and axe with the page rules on (`region`,
+  `page-has-heading-one`: one `main`, one `h1`), contrast in both modes, no overflow and no
+  console error (`<block>-view-<mode>.png`); it also checks the Blocks index and a page block's
+  framed preview.
+- `e2e/presets.spec.ts` shoots the theme specimen (`/demo/theme/specimen?theme=<look>`) in
+  every look and mode at each width, with axe and contrast, and drives the Theming page's
+  switch (keyboard, install line, storage, the look kept across docs pages and set before the
+  article is parsed).
+- The full smoke installs every theme item in catalog order, so each preset over the one
+  before; it checks the look installed last: `globals.css` holds that preset's paper and spot,
+  light and dark, and no longer the default's papers.
 
 ## Docs page per item
 
