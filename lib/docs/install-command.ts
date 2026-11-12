@@ -10,10 +10,9 @@ import { clientNote, isClientItem } from "@/lib/registry/client";
 import { extractImports } from "@/lib/registry/imports";
 import { dependencyFiles, installTarget } from "@/lib/registry/install-target";
 import { itemPagePath } from "./catalog";
+import { PACKAGE_MANAGERS, type PackageManager, RUNNERS } from "./package-managers";
 
-export type PackageManager = "pnpm" | "npm" | "yarn" | "bun";
-
-export const PACKAGE_MANAGERS: PackageManager[] = ["pnpm", "npm", "yarn", "bun"];
+export { PACKAGE_MANAGERS, type PackageManager };
 
 export const SITE_URL = "https://www.mangacn.com";
 
@@ -22,13 +21,6 @@ export const MCP_URL = `${SITE_URL}/api/mcp`;
 
 /** The skills CLI line that installs the mangacn Agent Skill. */
 export const SKILL_INSTALL_COMMAND = "npx skills add fldx-dev/mangacn";
-
-const RUNNERS: Record<PackageManager, string> = {
-  pnpm: "pnpm dlx",
-  npm: "npx",
-  yarn: "yarn dlx",
-  bun: "bunx --bun",
-};
 
 const INK_FRAME = "ink-frame";
 const INK_FRAME_IMPORT = "@/components/ink-frame";
