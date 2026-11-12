@@ -1,0 +1,25 @@
+{
+  "name": "weekly",
+  "title": "Weekly",
+  "description": "A weekly manga magazine: pale green-grey recycled newsprint, soft black ink and a magenta spot, with greys leaning green; dark is deep green-black paper and pale ink.",
+  "light": {
+    "ink": "oklch(0.17 0.012 150)",
+    "paper": "oklch(0.945 0.022 135)",
+    "spot": "oklch(0.52 0.21 350)",
+    "spot-foreground": "oklch(0.945 0.022 135)",
+    "tone-1": "oklch(0.9 0.022 138)",
+    "tone-2": "oklch(0.77 0.022 142)",
+    "tone-3": "oklch(0.52 0.02 148)",
+    "tone-4": "oklch(0.42 0.02 150)"
+  },
+  "dark": {
+    "ink": "oklch(0.91 0.022 135)",
+    "paper": "oklch(0.215 0.02 155)",
+    "spot": "oklch(0.7 0.18 350)",
+    "spot-foreground": "oklch(0.215 0.02 155)",
+    "tone-1": "oklch(0.285 0.02 152)",
+    "tone-2": "oklch(0.39 0.02 148)",
+    "tone-3": "oklch(0.62 0.022 142)",
+    "tone-4": "oklch(0.72 0.022 138)"
+  }
+}

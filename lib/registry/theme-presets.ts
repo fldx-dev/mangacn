@@ -15,7 +15,7 @@
  */
 
 /** Every preset, in the order the Theming page's switch lists them after the default. */
-export const THEME_PRESETS = ["sepia"] as const;
+export const THEME_PRESETS = ["sepia", "weekly"] as const;
 
 export type ThemePreset = (typeof THEME_PRESETS)[number];
 
