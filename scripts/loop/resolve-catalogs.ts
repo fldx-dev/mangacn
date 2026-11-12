@@ -315,6 +315,25 @@ export function unmergedFiles(root: string): string[] {
  * Resolves the merge in progress in `root`: writes and stages every file it can, and leaves the
  * rest. Returns one outcome per unmerged file.
  */
+/**
+ * Writes a resolved file, trying again when Windows refuses the open: a file git has just
+ * rewritten with conflict markers is often still held by an indexer or a virus scanner for a
+ * moment (seen landing Task 103 of batch 5, and with the script this one replaced).
+ */
+export function writeResolved(file: string, text: string, attempts = 5): void {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      writeFileSync(file, text);
+      return;
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code ?? "";
+      if (attempt >= attempts || !["EBUSY", "EPERM", "EACCES", "UNKNOWN"].includes(code))
+        throw error;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 200 * attempt);
+    }
+  }
+}
+
 export function resolveConflicts(root: string): Outcome[] {
   const outcomes = unmergedFiles(root).map((file) =>
     resolveFile(file, {
@@ -325,7 +344,7 @@ export function resolveConflicts(root: string): Outcome[] {
   );
   for (const outcome of outcomes) {
     if (!outcome.resolved) continue;
-    writeFileSync(path.join(root, outcome.file), outcome.text);
+    writeResolved(path.join(root, outcome.file), outcome.text);
     git(root, ["add", "--", outcome.file]);
   }
   return outcomes;
