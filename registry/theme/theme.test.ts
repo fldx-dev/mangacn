@@ -123,6 +123,8 @@ describe("font items", () => {
       variable: "--font-dialogue-ja",
       weight: ["400"],
       subsets: ["latin"],
+      // The Fontsource package a Vite project loads the face from (Task C3).
+      dependency: "@fontsource/yusei-magic",
     });
     // The CLI prints an item's docs on install: the reader of `subsets: ['latin']` learns why.
     expect((ja as { docs?: string } | undefined)?.docs).toMatch(/only latin and latin-ext/);
