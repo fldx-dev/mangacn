@@ -31,6 +31,26 @@ describe("InstallCommand", () => {
     expect(visibleCode()).toBe(installCommand("speech-bubble", "pnpm"));
   });
 
+  it("still renders and switches where storage is blocked, without remembering", () => {
+    const blocked = {
+      getItem: () => {
+        throw new DOMException("blocked", "SecurityError");
+      },
+      setItem: () => {
+        throw new DOMException("blocked", "SecurityError");
+      },
+      removeItem: () => {},
+      clear: () => {},
+    };
+    vi.stubGlobal("localStorage", blocked);
+    vi.stubGlobal("sessionStorage", blocked);
+    render(<InstallCommand item="speech-bubble" />);
+    expect(visibleCode()).toBe(installCommand("speech-bubble", "pnpm"));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "bun" }));
+    expect(visibleCode()).toBe(installCommand("speech-bubble", "bun"));
+    vi.unstubAllGlobals();
+  });
+
   it("switches the command with the tab and remembers the choice for the group", () => {
     render(<InstallCommand item="speech-bubble" />);
     fireEvent.mouseDown(screen.getByRole("tab", { name: "bun" }));

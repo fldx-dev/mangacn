@@ -1,13 +1,13 @@
 import {
   CodeBlock,
   CodeBlockTab,
-  CodeBlockTabs,
   CodeBlockTabsList,
   CodeBlockTabsTrigger,
   Pre,
 } from "fumadocs-ui/components/codeblock";
 import { Fragment, type ReactNode } from "react";
 import { MCP_CLIENTS } from "@/lib/docs/agents";
+import { PersistedTabs } from "./persisted-tabs";
 
 /** Code as shiki-style `.line` spans joined by newlines, so copy gives back the exact text. */
 export function codeLines(code: string): ReactNode {
@@ -27,12 +27,7 @@ export function codeLines(code: string): ReactNode {
  */
 export function McpConfig() {
   return (
-    <CodeBlockTabs
-      defaultValue={MCP_CLIENTS[0].id}
-      groupId="mcp-client"
-      persist
-      data-slot="mcp-config"
-    >
+    <PersistedTabs defaultValue={MCP_CLIENTS[0].id} groupId="mcp-client" data-slot="mcp-config">
       <CodeBlockTabsList>
         {MCP_CLIENTS.map((client) => (
           <CodeBlockTabsTrigger key={client.id} value={client.id}>
@@ -58,6 +53,6 @@ export function McpConfig() {
           ))}
         </CodeBlockTab>
       ))}
-    </CodeBlockTabs>
+    </PersistedTabs>
   );
 }
