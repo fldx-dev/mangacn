@@ -173,6 +173,37 @@
           "target": "@components/login-form.tsx"
         }
       ]
+    },
+    {
+      "name": "signup-01",
+      "type": "registry:block",
+      "title": "Signup 01",
+      "description": "A sign-up page: name, email and two passwords on a paper card with a heavy ink outline, the title in the display face and a registration stamp; stock's signup-01 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/stamp.json"
+      ],
+      "files": [
+        {
+          "path": "signup-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-01/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
     }
   ]
 }
