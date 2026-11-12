@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 92 items in the registry. Each line gives the item's name, what it is, the one
+All 93 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -317,6 +317,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `signup-01`: A sign-up page: name, email and two passwords on a paper card with a heavy ink outline, the title in the display face and a registration stamp; stock's signup-01 in ink.
   Install: `npx shadcn@latest add @mangacn/signup-01 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/signup-01 (Markdown: https://www.mangacn.com/docs/blocks/signup-01.md)
+- `sidebar-07`: An app shell whose sidebar collapses to icons: a studio switcher, collapsible sections, series with their menus and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-07 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-07 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-07 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-07.md)
 
 ## Hooks
 
