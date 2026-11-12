@@ -15,10 +15,11 @@ const nextConfig: NextConfig = {
   },
   // The registry (`public/r`, built by `pnpm registry:build`): a short browser cache, a longer
   // CDN cache, and open CORS so any tool can fetch the items (lib/registry/headers.ts). Next
-  // sets the JSON content type. The Create routes under /r/create set their own.
+  // sets the JSON content type. The Create routes under /r/create/ (app/r/create) set their own:
+  // the same on success, but no caching on a 404, which a rule here would override.
   async headers() {
     return [
-      { source: "/r/:path*", headers: REGISTRY_HEADERS },
+      { source: "/r/:path((?!create/).*)", headers: REGISTRY_HEADERS },
       // The docs MCP server (app/api/mcp): open CORS for browser-based clients, with the
       // headers the streamable HTTP transport reads and writes.
       {
