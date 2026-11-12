@@ -1,0 +1,27 @@
+---
+title: Marker
+description: "Stock chat marker: hand-drawn rules either side of a caption-boxed label, or a rule under it, for dates and unread lines."
+item: marker
+---
+
+<InstallCommand item="marker" />
+
+<CopyPrompt item="marker" />
+
+A line of muted text inside a conversation, for a date, an event or where the unread messages start. `variant="separator"` boxes the label like a [Caption Box](/docs/components/caption-box) between two hand-drawn rules, and `border` draws one rule under it.
+
+## Examples
+
+A default marker with an icon, for an event in the chat, and a `border` marker over its rule.
+
+<DemoFrame item="marker" demo="default" />
+Date markers between bubbles: each day's label boxed between two rules.
+
+<DemoFrame item="marker" demo="date" />
+An unread marker: `text-spot [--ink:var(--spot)]` turns its rules, box and label spot, the one spot on the surface.
+
+<DemoFrame item="marker" demo="unread" />
+
+## Props
+
+<PropsTable item="marker" />
