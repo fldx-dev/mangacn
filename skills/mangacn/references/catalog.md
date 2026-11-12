@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 89 items in the registry. Each line gives the item's name, what it is, the one
+All 90 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -307,6 +307,9 @@ The theme, its fonts, the pen and the motion presets. Install the theme once per
 - `reader`: A chapter page: the spread viewer, a drawer with the series' chapter list, progress as text, the page kept in the address through use-reader; made of two blocks.
   Install: `npx shadcn@latest add @mangacn/reader --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/reader (Markdown: https://www.mangacn.com/docs/blocks/reader.md)
+- `login-01`: A login page: email and password on a paper card with a heavy ink outline, the title in the display face and a reception stamp; stock's login-01 in ink.
+  Install: `npx shadcn@latest add @mangacn/login-01 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/login-01 (Markdown: https://www.mangacn.com/docs/blocks/login-01.md)
 
 ## Hooks
 

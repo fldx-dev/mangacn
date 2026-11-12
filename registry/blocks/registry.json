@@ -142,6 +142,37 @@
           "target": "@components/blocks/reader/use-reader.ts"
         }
       ]
+    },
+    {
+      "name": "login-01",
+      "type": "registry:block",
+      "title": "Login 01",
+      "description": "A login page: email and password on a paper card with a heavy ink outline, the title in the display face and a reception stamp; stock's login-01 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/stamp.json"
+      ],
+      "files": [
+        {
+          "path": "login-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "login-01/components/login-form.tsx",
+          "type": "registry:component",
+          "target": "@components/login-form.tsx"
+        }
+      ]
     }
   ]
 }

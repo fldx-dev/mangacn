@@ -171,6 +171,17 @@ export default defineConfig({
         find: /^@\/components\/ui\/progress$/,
         replacement: fileURLToPath(new URL("./registry/ui/progress/progress.tsx", import.meta.url)),
       },
+      // login-01 (Task 98): field, and the page's own form at its install path.
+      {
+        find: /^@\/components\/ui\/field$/,
+        replacement: fileURLToPath(new URL("./registry/ui/field/field.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/login-form$/,
+        replacement: fileURLToPath(
+          new URL("./registry/blocks/login-01/components/login-form.tsx", import.meta.url),
+        ),
+      },
       {
         find: /^@\/components\/blocks\/(.+)$/,
         replacement: `${fileURLToPath(new URL("./registry/blocks/", import.meta.url))}$1`,
