@@ -46,6 +46,13 @@ describe("installCommand", () => {
     );
   });
 
+  it("names a preset alone with --yes, which answers its theme question too (Task 99)", () => {
+    expect(installCommand("theme-sepia", "npm")).toBe(
+      "npx shadcn@latest add @mangacn/theme-sepia --yes --overwrite",
+    );
+    expect(promptFor("theme-sepia")).toContain("Keep both flags");
+  });
+
   it("derives the prefix for every catalog item from its shipped files", () => {
     const items = loadRegistry().items.filter((item) => item.type !== "registry:theme");
     const drawn = items.filter((item) =>
@@ -171,6 +178,7 @@ describe("promptFor", () => {
 
   it("points the theme at the theming guide", () => {
     expect(docsUrl("theme")).toBe("https://www.mangacn.com/docs/theming");
+    expect(docsUrl("theme-sepia")).toBe("https://www.mangacn.com/docs/theming#presets");
     expect(promptFor("theme")).toContain(
       "Install it with: npx shadcn@latest add @mangacn/theme --yes --overwrite\n",
     );

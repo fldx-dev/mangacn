@@ -15,9 +15,11 @@ import { generatedProps, propsInterfaceName, typeTableToMarkdown } from "@/lib/d
 import { PROPS_DELTA, shadcnDocsUrl } from "@/lib/docs/props-delta";
 import { loadRegistry } from "@/lib/registry";
 import { listDemos } from "@/lib/registry/demos";
+import { presetItemName } from "@/lib/registry/theme-presets";
 import type { DemoFrameProps } from "./demo-frame";
 import { itemFilesMarkdown } from "./item-files";
 import type { PropsTableProps } from "./props-table";
+import { themeLooks } from "./theme-presets";
 import { TOKENS, tokenValues } from "./token-swatches";
 
 // The Markdown form of every site component a docs page uses, for `getText("processed")`
@@ -155,6 +157,16 @@ export function TokenSwatchesMarkdown() {
   return `\n| Token | Light | Dark |\n|---|---|---|\n${rows.join("\n")}\n\n`;
 }
 
+/** The preset switch as a table: each look, the item that installs it and its npm line. */
+export function ThemePresetsMarkdown() {
+  asMarkdown();
+  const rows = themeLooks().map(
+    ({ look, label }) =>
+      `| ${label} | \`${presetItemName(look)}\` | \`${commandFor({ item: presetItemName(look) }, "npm")}\` |`,
+  );
+  return `\n| Look | Item | Install |\n|---|---|---|\n${rows.join("\n")}\n\n`;
+}
+
 /** A block's Files line, the paths as code. */
 export function ItemFilesMarkdown({ item }: { item: string }) {
   asMarkdown();
@@ -196,6 +208,7 @@ export function getMarkdownComponents(): MDXComponents {
     ComponentIndex: ComponentIndexMarkdown,
     ThemePlayground: ThemePlaygroundMarkdown,
     TokenSwatches: TokenSwatchesMarkdown,
+    ThemePresets: ThemePresetsMarkdown,
     Callout: CalloutMarkdown,
     Steps: StepsMarkdown,
     Step: StepsMarkdown,

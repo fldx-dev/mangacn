@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 90 items in the registry. Each line gives the item's name, what it is, the one
+All 91 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -14,11 +14,15 @@ read it, or the MCP's `get_item`, before using a prop.
 
 ## Foundation
 
-The theme, its fonts, the pen and the motion presets. Install the theme once per project.
+The theme, its presets, its fonts, the pen and the motion presets. Install the theme once per
+project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink and spot.
 
 - `theme`: Ink-on-paper tokens, screentone utilities and impact keyframes for manga-styled UIs.
   Install: `npx shadcn@latest add @mangacn/theme --yes --overwrite`
   Docs: https://www.mangacn.com/docs/theming
+- `theme-sepia`: An old tankōbon: warm aged cream paper, brown-black ink and a vermilion spot, with warm grey tones; dark is deep brown-black paper and cream ink.
+  Install: `npx shadcn@latest add @mangacn/theme-sepia --yes --overwrite`
+  Docs: https://www.mangacn.com/docs/theming#presets
 - `font-display`: Ultra-bold gothic display face for SFX and headings, exposed as --font-display.
   Install: `npx shadcn@latest add @mangacn/font-display --overwrite`
   Docs: https://www.mangacn.com/docs/theming#fonts

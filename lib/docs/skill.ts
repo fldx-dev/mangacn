@@ -30,6 +30,12 @@ const FOUNDATION_ORDER = [
   "manga-motion",
 ];
 
+/** An item's place in the foundation section: the theme presets (`theme-sepia`) follow the theme. */
+function foundationRank(item: LoadedRegistryItem): number {
+  if (item.type === "registry:theme" && item.name !== "theme") return 0.5;
+  return FOUNDATION_ORDER.indexOf(item.name);
+}
+
 /**
  * Where an agent reads about a theme-catalog item: the theme and its fonts on the theming
  * guide, the ink frame under its pen. An item with no page links its registry JSON.
@@ -66,9 +72,9 @@ export function renderSkillCatalog(
       (item) =>
         item.source !== COMPONENTS_CATALOG &&
         item.source !== BLOCKS_CATALOG &&
-        FOUNDATION_ORDER.includes(item.name),
+        foundationRank(item) !== -1,
     )
-    .sort((a, b) => FOUNDATION_ORDER.indexOf(a.name) - FOUNDATION_ORDER.indexOf(b.name));
+    .sort((a, b) => foundationRank(a) - foundationRank(b));
   // Blocks carry the one category `block`, so they group under "Blocks" after the components.
   const components = [...docItems(registry, demos), ...docItems(registry, demos, BLOCKS_CATALOG)];
   // Hooks have no demos and no page, so they come from their catalog, not from docItems.
@@ -92,7 +98,8 @@ export function renderSkillCatalog(
     "",
     "## Foundation",
     "",
-    "The theme, its fonts, the pen and the motion presets. Install the theme once per project.",
+    "The theme, its presets, its fonts, the pen and the motion presets. Install the theme once per",
+    "project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink and spot.",
     "",
     ...foundation.flatMap((item) => entry(item.name, item.description ?? "", foundationDocs(item))),
   ];

@@ -5,6 +5,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "./mangacn-theme.css";
+/* Theme presets under [data-theme-preset] (docs site only; the registry ships them as items). */
+@import "./mangacn-presets.css";
 
 @custom-variant dark (&:is(.dark *));
 

@@ -7,7 +7,7 @@ import { mangacnItemName } from "./registry/index";
  * `E2E_ITEMS` is a comma-separated list of item names (their demos, `e2e/demos.spec.ts`) and the
  * suites below; unset, empty or `all` runs everything; `none` runs nothing.
  */
-export const E2E_SUITES = ["site", "mcp", "annotations"] as const;
+export const E2E_SUITES = ["site", "mcp", "annotations", "presets"] as const;
 export type E2eSuite = (typeof E2E_SUITES)[number];
 
 export function isE2eSuite(name: string): name is E2eSuite {
@@ -118,6 +118,17 @@ const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
     ],
   },
   { suite: "annotations", paths: ["e2e/annotations.spec.ts"] },
+  // The theme presets (Task 99): the specimen stage per preset and the Theming page's switch.
+  // `registry/theme/` as a whole is added in selectE2e; these are the rest of the path.
+  {
+    suite: "presets",
+    paths: [
+      /^registry\/theme\/presets\//,
+      "e2e/presets.spec.ts",
+      "content/docs/theming.mdx",
+      /^components\/docs\/theme-preset/,
+    ],
+  },
   {
     suite: "site",
     paths: [
@@ -132,6 +143,9 @@ const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
     ],
   },
 ];
+
+/** The theme's folder: a change there selects the presets suite as well as its own rules. */
+const PRESETS_SOURCE = /^registry\/theme\//;
 
 /** Unit tests and their data, anywhere: checked before every other rule. */
 const TEST_ONLY: RegExp[] = [
@@ -305,9 +319,11 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  * - an item's folder (`registry/<cat>/<item>/`, tests aside) or catalog entry → that item, every
  *   item that uses it (registryDependencies or an import, transitively), and `site`, whose
  *   component index renders every item's default demo; `ink-mark`/`ink-arrow` add `annotations`
- * - a baseline PNG → its item (`<block>-view-<mode>.png` is a page block's view shot), or `site`
- *   for `site-*.png`
+ * - a baseline PNG → its item (`<block>-view-<mode>.png` is a page block's view shot), `site`
+ *   for `site-*.png`, `presets` for `presets-*.png`
  * - the `/view/<block>` route or e2e/blocks.spec.ts → every page block and `site`
+ * - anything under `registry/theme/` (Markdown aside) → `presets` too; its values files
+ *   (`registry/theme/presets/`), the presets spec, the Theming page and its switch → `presets`
  * - `lib/mcp/`, `app/api/mcp/`, `skills/`, the MCP spec → `mcp`; `content/`, `lib/docs/` and the
  *   props generator → `mcp` and `site` (the MCP serves pages and props tables)
  * - other `app/`, `components/`, the site spec → `site`
@@ -354,10 +370,20 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
   for (const path of [...new Set(paths)].sort()) {
     if (matches(path, TEST_ONLY)) continue;
 
+    // Anything the theme ships reaches the presets, which restyle it (Markdown aside).
+    if (PRESETS_SOURCE.test(path) && !path.endsWith(".md")) {
+      selected.add("presets");
+      reasons.push(`${path} → presets`);
+    }
+
     const baseline = /^e2e\/__screenshots__\/linux\/w\d+\/(.+)\.png$/.exec(path);
     if (baseline) {
       const file = baseline[1];
-      const owner = file.startsWith("site-") ? "site" : itemOfBaseline(file, sources.items);
+      const owner = file.startsWith("site-")
+        ? "site"
+        : file.startsWith("presets-")
+          ? "presets"
+          : itemOfBaseline(file, sources.items);
       if (owner) {
         selected.add(owner);
         reasons.push(`${path} → ${owner}`);
