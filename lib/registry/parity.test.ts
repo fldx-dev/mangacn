@@ -2,10 +2,14 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  blockRelativePath,
+  compareBlockParity,
   compareParity,
+  extractBlockParityShape,
   extractCvaVariants,
   extractDataSlots,
   extractExports,
+  extractModuleExports,
   extractParityShape,
   type ParityShape,
   sha1,
@@ -194,6 +198,93 @@ describe("compareParity", () => {
     expect(compareParity(stock, { ...restyled, variants: {} })).toContain(
       "cva sampleVariants: missing",
     );
+  });
+});
+
+describe("block parity", () => {
+  const stockFiles = [
+    {
+      path: "registry/base-nova/blocks/login-01/page.tsx",
+      type: "registry:page",
+      target: "app/login/page.tsx",
+      content:
+        'import { LoginForm } from "@/x"\n\nexport default function Page() {\n  return null\n}\n',
+    },
+    {
+      path: "registry/base-nova/blocks/login-01/components/login-form.tsx",
+      type: "registry:component",
+      content: "export function LoginForm() {\n  return null\n}\n",
+    },
+  ];
+  const stockDeps = { dependencies: ["cn"], registryDependencies: ["button", "card", "label"] };
+  const stock = extractBlockParityShape("login-01", stockFiles, stockDeps);
+  const ownFiles = stockFiles.map((file) => ({
+    ...file,
+    path: file.path.replace("registry/base-nova/blocks/", "registry/blocks/"),
+    ...(file.type === "registry:component" ? { target: "@components/login-form.tsx" } : {}),
+  }));
+  const url = (name: string) => `https://www.mangacn.com/r/${name}.json`;
+  const ownDeps = {
+    dependencies: ["cn"],
+    registryDependencies: [url("button"), url("card"), url("label"), url("stamp")],
+  };
+  const shape = (
+    files = ownFiles,
+    deps: { dependencies?: string[]; registryDependencies?: string[] } = ownDeps,
+  ) => extractBlockParityShape("login-01", files, deps);
+
+  it("reads files by their path inside the block, the page's target and default exports", () => {
+    expect(blockRelativePath("login-01", stockFiles[1].path)).toBe("components/login-form.tsx");
+    expect(blockRelativePath("login-01", ownFiles[1].path)).toBe("components/login-form.tsx");
+    expect(extractModuleExports(stockFiles[0].content)).toEqual(["default"]);
+    expect(stock.files).toEqual([
+      { path: "components/login-form.tsx", type: "registry:component", exports: ["LoginForm"] },
+      {
+        path: "page.tsx",
+        type: "registry:page",
+        target: "app/login/page.tsx",
+        exports: ["default"],
+      },
+    ]);
+  });
+
+  it("passes the same files and exports with mangacn URLs standing in for stock names", () => {
+    expect(compareBlockParity(stock, shape())).toEqual([]);
+  });
+
+  it("fails when a file is removed or changes type", () => {
+    expect(compareBlockParity(stock, shape([ownFiles[0]]))).toEqual([
+      "files: missing components/login-form.tsx (registry:component)",
+    ]);
+    const retyped = [ownFiles[0], { ...ownFiles[1], type: "registry:block" }];
+    expect(compareBlockParity(stock, shape(retyped))).toEqual([
+      "files: missing components/login-form.tsx (registry:component)",
+      "files: unexpected components/login-form.tsx (registry:block)",
+    ]);
+  });
+
+  it("fails when an export is removed or added, or the page moves", () => {
+    const changed = [
+      { ...ownFiles[0], target: "app/sign-in/page.tsx" },
+      { ...ownFiles[1], content: "export function SignInForm() {}\n" },
+    ];
+    expect(compareBlockParity(stock, shape(changed))).toEqual([
+      "components/login-form.tsx exports: missing LoginForm",
+      "components/login-form.tsx exports: unexpected SignInForm",
+      "page.tsx: target app/sign-in/page.tsx; stock's is app/login/page.tsx",
+    ]);
+  });
+
+  it("fails when a dependency is removed or a foreign one added", () => {
+    const deps = {
+      dependencies: [],
+      registryDependencies: [url("button"), url("card"), "https://example.com/r/x.json"],
+    };
+    expect(compareBlockParity(stock, shape(ownFiles, deps))).toEqual([
+      "dependencies: missing cn",
+      "registryDependencies: missing label",
+      "registryDependencies: unexpected https://example.com/r/x.json",
+    ]);
   });
 });
 

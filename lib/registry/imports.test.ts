@@ -237,6 +237,49 @@ describe("blocks", () => {
   });
 });
 
+describe("a page block's own files", () => {
+  // The page lands in app/<route>/ and its components in components/: the page imports them by
+  // install path (a relative path would miss after `shadcn add`), the components each other
+  // relatively (they land side by side).
+  const files = [
+    {
+      path: "registry/blocks/login-01/page.tsx",
+      type: "registry:page",
+      target: "app/login/page.tsx",
+    },
+    {
+      path: "registry/blocks/login-01/components/login-form.tsx",
+      type: "registry:component",
+      target: "@components/login-form.tsx",
+    },
+    {
+      path: "registry/blocks/login-01/components/login-field.tsx",
+      type: "registry:component",
+      target: "@components/login-field.tsx",
+    },
+  ];
+  const item = { dependencies: [], files };
+  const none = new Set<string>();
+  const [page, form] = files.map((file) => file.path);
+
+  it("lets the page import a component by its install path, not relatively", () => {
+    expect(blockImportViolation("@/components/login-form", item, page, none)).toBeNull();
+    expect(blockImportViolation("./components/login-form", item, page, none)).toBe(
+      "relative import that misses after install (registry/blocks/login-01/components/login-form.tsx installs to components/login-form.tsx); import @/components/login-form",
+    );
+  });
+
+  it("lets components import each other relatively, not by install path", () => {
+    expect(blockImportViolation("./login-field", item, form, none)).toBeNull();
+    expect(blockImportViolation("@/components/login-field", item, form, none)).toContain(
+      "alias import",
+    );
+    expect(blockImportViolation("@/components/login-form", item, form, none)).toContain(
+      "alias import",
+    );
+  });
+});
+
 describe("a block made of blocks", () => {
   // SPEC-components-4 §3: a block may compose a block it declares by mangacn URL, importing it
   // from its install path, as it does an item. An undeclared block stays refused.

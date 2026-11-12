@@ -6,10 +6,11 @@ import {
   type LoadedRegistry,
   type LoadedRegistryItem,
   mangacnItemName,
+  type RegistryFile,
   registryItemUrl,
 } from "./index";
 import { importSpecifier, installTarget } from "./install-target";
-import { PARITY_PRIMITIVES } from "./parity";
+import { loadBlockParitySnapshot, PARITY_PRIMITIVES } from "./parity";
 
 export interface ImportSpecifier {
   specifier: string;
@@ -180,7 +181,9 @@ export function blockImportPaths(
  * own part files (relatively), it imports only the install paths of the items it declares by
  * mangacn URL (`blockImportPaths`), a declared block among them. No bare stock names, no
  * `@/lib/<x>` or `@/hooks/<x>` it did not declare, no undeclared block's files, no
- * `@/components/blocks/…` path to its own parts.
+ * `@/components/blocks/…` path to its own parts. Own files are imported relatively where the
+ * relative path holds after install too, and by install path only where it does not: a page
+ * block's `page.tsx` (installed to `app/<route>/`) imports `@/components/login-form`.
  */
 export function blockImportViolation(
   specifier: string,
@@ -188,16 +191,51 @@ export function blockImportViolation(
   file: string,
   allowed: ReadonlySet<string>,
 ): string | null {
+  const self = item.files.find((entry) => entry.path === file);
   if (specifier.startsWith(".")) {
-    return importViolation(specifier, { ...item, registryDependencies: [] }, file)
-      ? "relative import outside this block (import its own part files only)"
-      : null;
+    if (importViolation(specifier, { ...item, registryDependencies: [] }, file)) {
+      return "relative import outside this block (import its own part files only)";
+    }
+    const own = ownFile(specifier, item.files, file);
+    // A page block's route lands in app/, away from its components: the path must hold there too.
+    if (self && own && !relativeSurvivesInstall(self, own)) {
+      return `relative import that misses after install (${own.path} installs to ${installTarget(own)}); import ${importSpecifier(installTarget(own))}`;
+    }
+    return null;
   }
   if (specifier.startsWith("@/")) {
     if (specifier === "@/lib/utils" || allowed.has(specifier)) return null;
+    // An own file by its install path, only where a relative import would not survive install.
+    const own = ownFile(specifier, item.files, file);
+    if (self && own && own !== self && !relativeSurvivesInstall(self, own)) return null;
     return "alias import that is not @/lib/utils or the install path of an item this block declares by mangacn URL";
   }
   return importViolation(specifier, { ...item, registryDependencies: [] }, file);
+}
+
+const withoutExtension = (file: string) => file.replace(/\.[jt]sx?$/, "");
+
+/** The file of `files` a specifier in `file` names, relatively or by its install path. */
+function ownFile(
+  specifier: string,
+  files: readonly RegistryFile[],
+  file: string,
+): RegistryFile | undefined {
+  if (specifier.startsWith(".")) {
+    const target = path.posix.normalize(path.posix.join(path.posix.dirname(file), specifier));
+    return files.find((entry) => withoutExtension(entry.path) === target);
+  }
+  return files.find((entry) => importSpecifier(installTarget(entry)) === specifier);
+}
+
+/**
+ * Whether one relative path from `from` to `to` holds both in this repo and once `shadcn add`
+ * has written them: two part files of a block, or two components of a page block, land side
+ * by side; a page block's route (`app/login/page.tsx`) and its components do not.
+ */
+function relativeSurvivesInstall(from: RegistryFile, to: RegistryFile): boolean {
+  const relative = (a: string, b: string) => path.posix.relative(path.posix.dirname(a), b);
+  return relative(from.path, to.path) === relative(installTarget(from), installTarget(to));
 }
 
 /**
@@ -266,6 +304,11 @@ export function findRegistryDependencyProblems(
   // Restyled primitives keep stock names, so a bare `button` is shadcn's and stays bare.
   const mangacnOnly = (name: string) =>
     catalog.has(name) && !(PARITY_PRIMITIVES as readonly string[]).includes(name);
+  // A stock-derived block keeps every dependency stock declares, imported or not: stock's
+  // login-01 declares `label`, which its form reaches only through `field`.
+  const blockParity = loadBlockParitySnapshot(rootDir);
+  const keptForParity = (item: string, name: string) =>
+    blockParity?.items[item]?.registryDependencies.includes(name) ?? false;
   const problems: string[] = [];
   for (const item of registry.items) {
     const imported = new Set<string>();
@@ -296,7 +339,11 @@ export function findRegistryDependencyProblems(
       } else {
         declared.add(name);
         const type = catalog.get(name)?.type ?? "";
-        if (IMPORTED_TYPES.includes(type) && !imported.has(name)) {
+        if (
+          IMPORTED_TYPES.includes(type) &&
+          !imported.has(name) &&
+          !keptForParity(item.name, name)
+        ) {
           problems.push(`${item.name}: declares ${dep} but no shipped file imports it`);
         }
       }
