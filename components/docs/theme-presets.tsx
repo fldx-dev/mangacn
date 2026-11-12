@@ -14,8 +14,14 @@ export function themeLooks(): LookOption[] {
 
 /** The Theming page's preset switch, with each look's install block rendered here. */
 export function ThemePresets() {
+  const looks = themeLooks();
+  // Named by the look, not the item: the page's first install block is already "theme", and two
+  // code regions with one name fail axe's `landmark-unique`.
   const commands = Object.fromEntries(
-    THEME_LOOKS.map((look) => [look, <InstallCommand key={look} item={presetItemName(look)} />]),
+    looks.map(({ look, label }) => [
+      look,
+      <InstallCommand key={look} item={presetItemName(look)} label={`the ${label} look`} />,
+    ]),
   );
-  return <ThemePresetSwitch looks={themeLooks()} commands={commands} />;
+  return <ThemePresetSwitch looks={looks} commands={commands} />;
 }

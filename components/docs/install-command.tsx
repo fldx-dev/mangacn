@@ -20,7 +20,9 @@ import { PersistedTabs } from "./persisted-tabs";
  * manager picked on one page is selected on every page.
  */
 export function InstallCommand(props: InstallCommandProps) {
-  const label = props.setup ? "the theme, the fonts, the ink frame and speech-bubble" : props.item;
+  const label = props.setup
+    ? "the theme, the fonts, the ink frame and speech-bubble"
+    : (props.label ?? props.item);
   const note = itemClientNote(props);
   return (
     <>

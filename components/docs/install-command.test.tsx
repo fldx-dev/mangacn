@@ -58,6 +58,12 @@ describe("InstallCommand", () => {
     expect(localStorage.getItem("package-manager")).toBe("bun");
   });
 
+  it("names its code regions by `label` when a page prints one item twice", () => {
+    render(<InstallCommand item="theme" label="the Default look" />);
+    const region = screen.getByRole("tabpanel").querySelector("[aria-label]");
+    expect(region?.getAttribute("aria-label")).toBe("Install the Default look with pnpm");
+  });
+
   it("copies the visible command", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     vi.stubGlobal("navigator", { ...navigator, clipboard: { writeText } });

@@ -141,8 +141,14 @@ export function setCommand(names: readonly string[], manager: PackageManager): s
  */
 export const SETUP_ITEMS = [THEME_ITEM, INK_FRAME, "speech-bubble"] as const;
 
-/** What an `<InstallCommand>` prints: one item's page (`item`) or the Installation page's first install (`setup`). */
-export type InstallCommandProps = { item: string; setup?: never } | { setup: true; item?: never };
+/**
+ * What an `<InstallCommand>` prints: one item's page (`item`) or the Installation page's first
+ * install (`setup`). `label` names what is installed in the code regions' accessible names when
+ * a page prints the same item twice (regions are landmarks, and landmarks need unique names).
+ */
+export type InstallCommandProps =
+  | { item: string; label?: string; setup?: never }
+  | { setup: true; item?: never; label?: never };
 
 /** The line an `<InstallCommand>` prints for `manager`. */
 export function commandFor(props: InstallCommandProps, manager: PackageManager): string {
