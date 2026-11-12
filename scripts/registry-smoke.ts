@@ -229,6 +229,24 @@ const EXPECTED_CONTENT: Record<
     { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
     { file: "components/team-switcher.tsx", includes: ["export function TeamSwitcher("] },
   ],
+  // A page block inside another's shell: sidebar-07 arrives as a dependency (its route at
+  // app/dashboard too), and the page reaches its app-sidebar by install path.
+  "library-page": [
+    {
+      file: "app/library/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        'import { Shelf, type ShelfEmpty } from "@/components/shelf"',
+      ],
+    },
+    { file: "components/shelf.tsx", includes: ["export function Shelf("] },
+    {
+      file: "components/continue-reading.tsx",
+      includes: ["export function ContinueReading("],
+    },
+    { file: "components/app-sidebar.tsx", includes: ["export function AppSidebar("] },
+    { file: "app/dashboard/page.tsx", includes: ["export default function Page("] },
+  ],
   // Hooks: registry:hook with `target: "@hooks/<name>.ts"`, stock source with the header.
   "use-mobile": [
     {

@@ -362,6 +362,76 @@ describe("a block made of blocks", () => {
   });
 });
 
+describe("a page block in another page block's shell", () => {
+  // library-page declares sidebar-07 by URL and imports its shell from the install path,
+  // `@/components/app-sidebar`: the import counts as importing sidebar-07, an undeclared one
+  // stays refused.
+  const root = mkdtempSync(path.join(tmpdir(), "mangacn-page-shell-"));
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+  const write = (file: string, content: string) => {
+    mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    writeFileSync(path.join(root, file), content);
+  };
+  const url = (name: string) => `https://www.mangacn.com/r/${name}.json`;
+  const pageBlock = (name: string, components: string[], registryDependencies: string[] = []) => ({
+    name,
+    type: "registry:block",
+    registryDependencies,
+    files: [
+      {
+        path: `registry/blocks/${name}/page.tsx`,
+        type: "registry:page",
+        target: `app/${name}/page.tsx`,
+      },
+      ...components.map((file) => ({
+        path: `registry/blocks/${name}/components/${file}.tsx`,
+        type: "registry:component",
+        target: `@components/${file}.tsx`,
+      })),
+    ],
+  });
+  write(
+    "registry.json",
+    JSON.stringify({
+      items: [
+        pageBlock("shell", ["app-sidebar"]),
+        pageBlock("library", ["shelf"], [url("shell")]),
+        pageBlock("loose", []),
+      ],
+    }),
+  );
+  write(
+    "registry/blocks/shell/page.tsx",
+    'import { AppSidebar } from "@/components/app-sidebar";\n',
+  );
+  write("registry/blocks/shell/components/app-sidebar.tsx", "export const AppSidebar = 1;\n");
+  write(
+    "registry/blocks/library/page.tsx",
+    [
+      'import { AppSidebar } from "@/components/app-sidebar";',
+      'import { Shelf } from "@/components/shelf";',
+    ].join("\n"),
+  );
+  write("registry/blocks/library/components/shelf.tsx", "export const Shelf = 1;\n");
+  write(
+    "registry/blocks/loose/page.tsx",
+    'import { AppSidebar } from "@/components/app-sidebar";\n',
+  );
+  const registry = loadRegistry(path.join(root, "registry.json"));
+
+  it("lets the page import the shell's component it declares, and refuses one it does not", () => {
+    expect(findImportViolations(registry, root).map((v) => [v.item, v.specifier, v.line])).toEqual([
+      ["loose", "@/components/app-sidebar", 1],
+    ]);
+  });
+
+  it("counts the shell's component as the shell: declared and imported, or asked for", () => {
+    expect(findRegistryDependencyProblems(registry, root)).toEqual([
+      "loose: imports shell without declaring https://www.mangacn.com/r/shell.json",
+    ]);
+  });
+});
+
 describe("hooks", () => {
   // A hook imports React and the platform only; an item or a block imports a hook from its
   // install path, @/hooks/<name>, only when it declares the hook by mangacn URL

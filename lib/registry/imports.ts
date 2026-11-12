@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { isBlock } from "./blocks";
+import { isBlock, isPageBlock, PAGE_COMPONENT_TYPE } from "./blocks";
 import { HOOK_LIB_TYPE, HOOKS_CATALOG, hookLibSpecifiers, isHook } from "./hooks";
 import {
   type LoadedRegistry,
@@ -319,6 +319,17 @@ export function findRegistryDependencyProblems(
   const keptForParity = (item: string, name: string) =>
     (blockParity?.items[item]?.registryDependencies.includes(name) ?? false) ||
     (parity?.items[item]?.registryDependencies.includes(name) ?? false);
+  // A page block's component lands at `@/components/<file>`, a name no item has: importing it
+  // imports the page block (library-page reaches sidebar-07's shell through `app-sidebar`).
+  const pageComponentOwners = new Map<string, string>();
+  for (const item of registry.items) {
+    if (!isPageBlock(item)) continue;
+    for (const file of item.files) {
+      if (file.type === PAGE_COMPONENT_TYPE) {
+        pageComponentOwners.set(importSpecifier(installTarget(file)), item.name);
+      }
+    }
+  }
   const problems: string[] = [];
   for (const item of registry.items) {
     const imported = new Set<string>();
@@ -326,7 +337,10 @@ export function findRegistryDependencyProblems(
       const source = readFileSync(path.resolve(rootDir, entry.path), "utf8");
       for (const { specifier } of extractImports(source)) {
         // A block's own parts are imported relatively; its alias path is refused elsewhere.
-        const name = aliasedItemName(specifier) ?? aliasedBlockName(specifier);
+        const name =
+          pageComponentOwners.get(specifier) ??
+          aliasedItemName(specifier) ??
+          aliasedBlockName(specifier);
         if (name && name !== item.name) imported.add(name);
       }
     }

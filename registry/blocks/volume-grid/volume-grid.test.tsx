@@ -104,6 +104,14 @@ describe("VolumeGrid", () => {
     expect(loading()).toEqual([null, null, "lazy", "lazy", "lazy", "lazy"]);
   });
 
+  it("takes how many covers load at once: none for a grid below the first screen", () => {
+    render(<VolumeGrid volumes={volumes} eager={0} />);
+    expect(loading()).toEqual(["lazy", "lazy", "lazy", "lazy", "lazy", "lazy"]);
+    cleanup();
+    render(<VolumeGrid volumes={volumes} eager={1} />);
+    expect(loading()).toEqual([null, "lazy", "lazy", "lazy", "lazy", "lazy"]);
+  });
+
   it("is a server component: no directive", () => {
     const source = readFileSync(
       path.resolve("registry/blocks/volume-grid/volume-grid.tsx"),
