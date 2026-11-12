@@ -256,6 +256,39 @@
           "target": "@components/team-switcher.tsx"
         }
       ]
+    },
+    {
+      "name": "series-page",
+      "type": "registry:block",
+      "title": "Series Page",
+      "description": "A manga series' home page: the cover with a status stamp, title, credits, synopsis, Start reading and Follow, then tabs of volumes, chapters and cast; made of three blocks.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/volume-grid.json",
+        "https://www.mangacn.com/r/chapter-list.json",
+        "https://www.mangacn.com/r/character-card.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/aspect-ratio.json",
+        "https://www.mangacn.com/r/stamp.json",
+        "https://www.mangacn.com/r/tabs.json",
+        "https://www.mangacn.com/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "series-page/page.tsx",
+          "type": "registry:page",
+          "target": "app/series/page.tsx"
+        },
+        {
+          "path": "series-page/components/series-header.tsx",
+          "type": "registry:component",
+          "target": "@components/series-header.tsx"
+        }
+      ]
     }
   ]
 }

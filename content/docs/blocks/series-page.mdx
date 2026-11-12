@@ -1,0 +1,28 @@
+---
+title: Series Page
+description: "A manga series' home page: the cover with a status stamp, title, credits, synopsis, Start reading and Follow, then tabs of volumes, chapters and cast; made of three blocks."
+item: series-page
+skipDemos: ["default"]
+---
+
+<InstallCommand item="series-page" />
+
+<ItemFiles item="series-page" />
+
+<CopyPrompt item="series-page" />
+
+A series' home page made of blocks: the cover with a <span lang="ja">連載中</span> (ongoing) stamp, the title and its reading, credits, synopsis, Start reading and Follow, then tabs of [Volume Grid](/docs/blocks/volume-grid), [Chapter List](/docs/blocks/chapter-list) and [Character Card](/docs/blocks/character-card)s. One add writes `app/series/page.tsx` and `components/series-header.tsx`; replace the typed `series` object at the top of the page with your fetch and nothing else changes, then link each chapter to a [Reader](/docs/blocks/reader) page.
+
+## Preview
+
+<BlockPreview item="series-page" />
+
+## Data
+
+The `Series` the page renders, exported from `series-header.tsx`. `volumes`, `chapters` and `cast` take [Volume](/docs/blocks/volume-grid), [Chapter](/docs/blocks/chapter-list#chapter) and character-card's props.
+
+<PropsTable item="series-page" name="Series" />
+
+### SeriesHeaderProps
+
+<PropsTable item="series-page" name="SeriesHeaderProps" />
