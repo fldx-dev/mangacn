@@ -591,6 +591,12 @@ used in a batch's proof (with `full=true`, so the landing's full-page shot, take
 differ, under `maxDiffPixelRatio` too, so a baseline a small change left stale is caught;
 byte-identical PNGs do not change in git, so the diff (and the artifact) is the stale set.
 
+To tell stale baselines from run-to-run noise, run two exact dispatches on one commit, download
+both artifacts and `pnpm e2e:noise <dirA> <dirB>` (`scripts/e2e-noise.ts`): a file both runs
+wrote with the same bytes is a stale candidate (its pixels and box against the committed
+baseline are printed); one written by a single run, or differently by the two, is noise.
+`--json` prints the same for machines; `--baselines=<dir>` compares with another folder.
+
 1. **`pnpm check:changed`** is the gate while you work: about 75 s on Windows for a one-item
    change (Biome on your files, `gen:demos`, typecheck, the test files that import what you
    touched) against several minutes for `pnpm check` (every file, about 1,270 tests). Vitest
