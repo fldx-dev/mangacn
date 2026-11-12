@@ -1,0 +1,25 @@
+{
+  "name": "sepia",
+  "title": "Sepia",
+  "description": "An old tankōbon: warm aged cream paper, brown-black ink and a vermilion spot, with warm grey tones; dark is deep brown-black paper and cream ink.",
+  "light": {
+    "ink": "oklch(0.17 0.022 50)",
+    "paper": "oklch(0.945 0.03 84)",
+    "spot": "oklch(0.53 0.18 37)",
+    "spot-foreground": "oklch(0.945 0.03 84)",
+    "tone-1": "oklch(0.895 0.03 80)",
+    "tone-2": "oklch(0.78 0.03 74)",
+    "tone-3": "oklch(0.52 0.03 62)",
+    "tone-4": "oklch(0.42 0.03 58)"
+  },
+  "dark": {
+    "ink": "oklch(0.9 0.035 84)",
+    "paper": "oklch(0.215 0.018 55)",
+    "spot": "oklch(0.68 0.16 40)",
+    "spot-foreground": "oklch(0.215 0.018 55)",
+    "tone-1": "oklch(0.285 0.02 58)",
+    "tone-2": "oklch(0.39 0.022 62)",
+    "tone-3": "oklch(0.62 0.028 72)",
+    "tone-4": "oklch(0.72 0.03 78)"
+  }
+}
