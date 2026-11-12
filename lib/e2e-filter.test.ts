@@ -315,6 +315,29 @@ describe("selectE2e on alias and parity diffs", () => {
     );
   });
 
+  it("selects only the blocks appended to PARITY_BLOCKS", () => {
+    const blocks = (names: string[]) =>
+      parity("chart").replace(
+        /(export const PARITY_BLOCKS = \[)[^\]]*(\] as const;)/,
+        `$1${names.map((name) => `"${name}"`).join(", ")}$2`,
+      );
+    const appended = sources({
+      [PARITY]: [blocks(["chapter-list"]), blocks(["chapter-list", "login-01"])],
+    });
+    expect(pick([PARITY], appended)).toBe("login-01");
+    const both = sources({
+      [PARITY]: [
+        blocks(["chapter-list"]),
+        parity("chart", ["label"]).replace('["login-01"]', '["chapter-list", "login-01"]'),
+      ],
+    });
+    expect(pick([PARITY], both)).toBe("label,login-01");
+    const removed = sources({
+      [PARITY]: [blocks(["chapter-list", "login-01"]), blocks(["login-01"])],
+    });
+    expect(pick([PARITY], removed)).toBe("all");
+  });
+
   it("names a page block by its component's install path", () => {
     const form =
       '      "@/components/login-form": ["./registry/blocks/login-01/components/login-form.tsx"],';

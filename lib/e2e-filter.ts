@@ -263,37 +263,33 @@ function addedAliasItems(sources: E2eSources, names: ReadonlySet<string>): strin
 }
 
 const PARITY_PATH = "lib/registry/parity.ts";
-const PARITY_LIST = /(export const PARITY_PRIMITIVES = \[)([^\]]*)(\] as const;)/;
+const PARITY_LISTS = ["PARITY_PRIMITIVES", "PARITY_BLOCKS"].map(
+  (name) => new RegExp(`(export const ${name} = \\[)([^\\]]*)(\\] as const;)`),
+);
 
 /**
- * The names a `lib/registry/parity.ts` diff appends to `PARITY_PRIMITIVES`, or `undefined` when
- * the diff is anything else (another line of the file, a removed or reordered name).
+ * The names a `lib/registry/parity.ts` diff appends to `PARITY_PRIMITIVES` or `PARITY_BLOCKS`, or
+ * `undefined` when the diff is anything else (another line of the file, a removed or reordered
+ * name, anything but quoted names in a list).
  */
 function appendedParityNames(sources: E2eSources): string[] | undefined {
-  const before = sources.before(PARITY_PATH);
-  const after = sources.after(PARITY_PATH);
-  const listBefore = before && PARITY_LIST.exec(before);
-  const listAfter = after && PARITY_LIST.exec(after);
-  if (!before || !after || !listBefore || !listAfter) return undefined;
-  if (before.replace(PARITY_LIST, "$1$3") !== after.replace(PARITY_LIST, "$1$3")) return undefined;
-  const entries = (body: string) =>
-    body
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
-  const namesBefore = entries(listBefore[2]);
-  const namesAfter = entries(listAfter[2]);
-  // The old entries, untouched and first (only the last may gain the comma it was missing).
-  const last = namesBefore.length - 1;
-  for (const [index, line] of namesBefore.entries()) {
-    const now = namesAfter[index];
-    if (now !== line && !(index === last && now === `${line},`)) return undefined;
+  let before = sources.before(PARITY_PATH);
+  let after = sources.after(PARITY_PATH);
+  if (!before || !after) return undefined;
+  const names = (body: string) =>
+    /^[\s",a-z0-9-]*$/.test(body) ? [...body.matchAll(/"([a-z0-9-]+)"/g)].map((m) => m[1]) : null;
+  const appended: string[] = [];
+  for (const list of PARITY_LISTS) {
+    const namesBefore = names(list.exec(before)?.[2] ?? "!");
+    const namesAfter = names(list.exec(after)?.[2] ?? "!");
+    if (!namesBefore || !namesAfter) return undefined;
+    // The old names, untouched and first; the rest are appended.
+    if (namesBefore.some((name, index) => namesAfter[index] !== name)) return undefined;
+    appended.push(...namesAfter.slice(namesBefore.length));
+    before = before.replace(list, "$1$3");
+    after = after.replace(list, "$1$3");
   }
-  const appended = namesAfter.slice(namesBefore.length);
-  if (appended.length === 0) return undefined;
-  const names = appended.map((line) => /^"([a-z0-9-]+)",?$/.exec(line)?.[1]);
-  if (names.some((name) => name === undefined)) return undefined;
-  return names as string[];
+  return before === after && appended.length > 0 ? appended : undefined;
 }
 
 /** The longest item name that `file` (`toggle-group-default-dark`) starts with, plus a dash. */
@@ -396,7 +392,7 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
     if (path === PARITY_PATH) {
       const named = appendedParityNames(sources);
       if (!named || named.some((name) => !byName.has(name))) {
-        return everything(path, "not only names appended to PARITY_PRIMITIVES");
+        return everything(path, "not only names appended to PARITY_PRIMITIVES or PARITY_BLOCKS");
       }
       const withDemos = named.filter((name) => byName.get(name)?.hasDemos).sort();
       for (const name of withDemos) selected.add(name);
