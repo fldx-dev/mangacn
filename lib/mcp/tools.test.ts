@@ -365,7 +365,8 @@ describe("get_item", () => {
     const { text, isError } = await call("get_item", { name: "speach-bubble" });
     expect(isError).toBe(true);
     expect(text).toContain('Unknown mangacn item "speach-bubble"');
-    expect(text).toMatch(/Nearest names: speech-bubble, /);
+    // `bubble` is inside the typo, so it ranks with the closest spelling.
+    expect(text).toMatch(/Nearest names: bubble, speech-bubble, /);
   });
 });
 

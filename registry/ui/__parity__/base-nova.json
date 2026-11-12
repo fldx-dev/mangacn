@@ -1462,6 +1462,99 @@
         "card"
       ],
       "sha1": "f282f95fcc099cae80bd344920f10007cd8dd709"
+    },
+    "bubble": {
+      "exports": [
+        "Bubble",
+        "BubbleContent",
+        "BubbleGroup",
+        "BubbleReactions"
+      ],
+      "dataSlots": [
+        "bubble",
+        "bubble-content",
+        "bubble-group",
+        "bubble-reactions"
+      ],
+      "variants": {
+        "bubbleVariants": {
+          "variant": [
+            "default",
+            "secondary",
+            "muted",
+            "tinted",
+            "outline",
+            "ghost",
+            "destructive"
+          ]
+        },
+        "bubbleReactionsVariants": {
+          "side": [
+            "top",
+            "bottom"
+          ],
+          "align": [
+            "start",
+            "end"
+          ]
+        }
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "sha1": "ae5b21c50ecbe07c28907c95c1a8bf9008cc84ef"
+    },
+    "message": {
+      "exports": [
+        "Message",
+        "MessageAvatar",
+        "MessageContent",
+        "MessageFooter",
+        "MessageGroup",
+        "MessageHeader"
+      ],
+      "dataSlots": [
+        "message",
+        "message-avatar",
+        "message-content",
+        "message-footer",
+        "message-group",
+        "message-header"
+      ],
+      "variants": {},
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "sha1": "1653ec9d80ad43962bdb0b981b12ebdda9ce7427"
+    },
+    "marker": {
+      "exports": [
+        "Marker",
+        "MarkerContent",
+        "MarkerIcon",
+        "markerVariants"
+      ],
+      "dataSlots": [
+        "marker",
+        "marker-content",
+        "marker-icon"
+      ],
+      "variants": {
+        "markerVariants": {
+          "variant": [
+            "default",
+            "separator",
+            "border"
+          ]
+        }
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "sha1": "946811b399f2f5e7fc9c88ddf7b367d808a094f1"
     }
   }
 }

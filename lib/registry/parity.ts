@@ -63,6 +63,9 @@ export const PARITY_PRIMITIVES = [
   "calendar",
   "carousel",
   "chart",
+  "bubble",
+  "message",
+  "marker",
 ] as const;
 
 /**

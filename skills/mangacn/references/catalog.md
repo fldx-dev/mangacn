@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 91 items in the registry. Each line gives the item's name, what it is, the one
+All 94 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -206,6 +206,15 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `chart`: Stock recharts container in ink: ink axes, a tone-3 grid, a small outlined paper tooltip; pairs with chart-tones fills.
   Install: `npx shadcn@latest add @mangacn/chart --overwrite`
   Docs: https://www.mangacn.com/docs/components/chart (Markdown: https://www.mangacn.com/docs/components/chart.md)
+- `bubble`: Stock chat bubble drawn as a speech bubble: ink for your own, outlined paper for others, one tail per group (needs ink-frame).
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/bubble --overwrite`
+  Docs: https://www.mangacn.com/docs/components/bubble (Markdown: https://www.mangacn.com/docs/components/bubble.md)
+- `message`: Stock chat message layout: avatar, display-face header, content and a muted footer; holds mangacn's avatar and bubbles.
+  Install: `npx shadcn@latest add @mangacn/message --overwrite`
+  Docs: https://www.mangacn.com/docs/components/message (Markdown: https://www.mangacn.com/docs/components/message.md)
+- `marker`: Stock chat marker: hand-drawn rules either side of a caption-boxed label, or a rule under it, for dates and unread lines.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/marker --overwrite`
+  Docs: https://www.mangacn.com/docs/components/marker (Markdown: https://www.mangacn.com/docs/components/marker.md)
 
 ## Layout
 

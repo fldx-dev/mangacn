@@ -1509,6 +1509,62 @@
           "target": "@ui/chart.tsx"
         }
       ]
+    },
+    {
+      "name": "bubble",
+      "type": "registry:ui",
+      "title": "Bubble",
+      "description": "Stock chat bubble drawn as a speech bubble: ink for your own, outlined paper for others, one tail per group (needs ink-frame).",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "bubble/bubble.tsx",
+          "type": "registry:ui",
+          "target": "@ui/bubble.tsx"
+        }
+      ]
+    },
+    {
+      "name": "message",
+      "type": "registry:ui",
+      "title": "Message",
+      "description": "Stock chat message layout: avatar, display-face header, content and a muted footer; holds mangacn's avatar and bubbles.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "files": [
+        {
+          "path": "message/message.tsx",
+          "type": "registry:ui",
+          "target": "@ui/message.tsx"
+        }
+      ]
+    },
+    {
+      "name": "marker",
+      "type": "registry:ui",
+      "title": "Marker",
+      "description": "Stock chat marker: hand-drawn rules either side of a caption-boxed label, or a rule under it, for dates and unread lines.",
+      "categories": ["primitive"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "marker/marker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/marker.tsx"
+        }
+      ]
     }
   ]
 }
