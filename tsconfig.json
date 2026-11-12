@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,64 +23,180 @@
       }
     ],
     "paths": {
-      "@/components/ink-frame": ["./registry/theme/ink-frame/ink-frame.tsx"],
-      "@/components/ui/button": ["./registry/ui/button/button.tsx"],
-      "@/components/ui/toggle": ["./registry/ui/toggle/toggle.tsx"],
-      "@/components/ui/input": ["./registry/ui/input/input.tsx"],
-      "@/components/ui/textarea": ["./registry/ui/textarea/textarea.tsx"],
-      "@/components/ui/dropdown-menu": ["./registry/ui/dropdown-menu/dropdown-menu.tsx"],
-      "@/components/sfx-text": ["./registry/ui/sfx-text/sfx-text.tsx"],
-      "@/components/ui/separator": ["./registry/ui/separator/separator.tsx"],
-      "@/components/ui/label": ["./registry/ui/label/label.tsx"],
-      "@/components/ui/item": ["./registry/ui/item/item.tsx"],
-      "@/components/ui/kbd": ["./registry/ui/kbd/kbd.tsx"],
-      "@/components/manga-frame": ["./registry/ui/manga-frame/manga-frame.tsx"],
-      "@/components/page-number": ["./registry/ui/page-number/page-number.tsx"],
-      "@/components/page-turn": ["./registry/ui/page-turn/page-turn.tsx"],
-      "@/components/caption-box": ["./registry/ui/caption-box/caption-box.tsx"],
-      "@/components/ink-mark": ["./registry/ui/ink-mark/ink-mark.tsx"],
-      "@/components/stamp": ["./registry/ui/stamp/stamp.tsx"],
-      "@/components/emanata": ["./registry/ui/emanata/emanata.tsx"],
-      "@/components/ui/sheet": ["./registry/ui/sheet/sheet.tsx"],
-      "@/components/ui/skeleton": ["./registry/ui/skeleton/skeleton.tsx"],
-      "@/components/ui/tooltip": ["./registry/ui/tooltip/tooltip.tsx"],
-      "@/components/ui/card": ["./registry/ui/card/card.tsx"],
-      "@/hooks/use-mobile": ["./registry/hooks/use-mobile.ts"],
-      "@/hooks/use-highlighted-code": ["./registry/hooks/use-highlighted-code.ts"],
-      "@/lib/highlighter": ["./registry/hooks/lib/highlighter.tsx"],
-      "@/components/ui/input-group": ["./registry/ui/input-group/input-group.tsx"],
-      "@/components/ui/dialog": ["./registry/ui/dialog/dialog.tsx"],
-      "@/components/speech-bubble": ["./registry/ui/speech-bubble/speech-bubble.tsx"],
-      "@/components/power-gauge": ["./registry/ui/power-gauge/power-gauge.tsx"],
-      "@/components/panel-grid": ["./registry/ui/panel-grid/panel-grid.tsx"],
-      "@/components/ui/aspect-ratio": ["./registry/ui/aspect-ratio/aspect-ratio.tsx"],
-      "@/components/ui/drawer": ["./registry/ui/drawer/drawer.tsx"],
-      "@/components/ui/progress": ["./registry/ui/progress/progress.tsx"],
-      "@/components/blocks/*": ["./registry/blocks/*"],
-      "@/components/ui/field": ["./registry/ui/field/field.tsx"],
-      "@/components/login-form": ["./registry/blocks/login-01/components/login-form.tsx"],
-      "@/components/signup-form": ["./registry/blocks/signup-01/components/signup-form.tsx"],
-      "@/components/ui/sidebar": ["./registry/ui/sidebar/sidebar.tsx"],
-      "@/components/ui/breadcrumb": ["./registry/ui/breadcrumb/breadcrumb.tsx"],
-      "@/components/ui/collapsible": ["./registry/ui/collapsible/collapsible.tsx"],
-      "@/components/ui/avatar": ["./registry/ui/avatar/avatar.tsx"],
-      "@/components/panel": ["./registry/ui/panel/panel.tsx"],
-      "@/components/app-sidebar": ["./registry/blocks/sidebar-07/components/app-sidebar.tsx"],
-      "@/components/nav-main": ["./registry/blocks/sidebar-07/components/nav-main.tsx"],
-      "@/components/nav-projects": ["./registry/blocks/sidebar-07/components/nav-projects.tsx"],
-      "@/components/nav-user": ["./registry/blocks/sidebar-07/components/nav-user.tsx"],
-      "@/components/team-switcher": ["./registry/blocks/sidebar-07/components/team-switcher.tsx"],
-      "@/components/ui/empty": ["./registry/ui/empty/empty.tsx"],
-      "@/components/shelf": ["./registry/blocks/library-page/components/shelf.tsx"],
+      "@/components/ink-frame": [
+        "./registry/theme/ink-frame/ink-frame.tsx"
+      ],
+      "@/components/ui/button": [
+        "./registry/ui/button/button.tsx"
+      ],
+      "@/components/ui/toggle": [
+        "./registry/ui/toggle/toggle.tsx"
+      ],
+      "@/components/ui/input": [
+        "./registry/ui/input/input.tsx"
+      ],
+      "@/components/ui/textarea": [
+        "./registry/ui/textarea/textarea.tsx"
+      ],
+      "@/components/ui/dropdown-menu": [
+        "./registry/ui/dropdown-menu/dropdown-menu.tsx"
+      ],
+      "@/components/sfx-text": [
+        "./registry/ui/sfx-text/sfx-text.tsx"
+      ],
+      "@/components/ui/separator": [
+        "./registry/ui/separator/separator.tsx"
+      ],
+      "@/components/ui/label": [
+        "./registry/ui/label/label.tsx"
+      ],
+      "@/components/ui/item": [
+        "./registry/ui/item/item.tsx"
+      ],
+      "@/components/ui/kbd": [
+        "./registry/ui/kbd/kbd.tsx"
+      ],
+      "@/components/manga-frame": [
+        "./registry/ui/manga-frame/manga-frame.tsx"
+      ],
+      "@/components/page-number": [
+        "./registry/ui/page-number/page-number.tsx"
+      ],
+      "@/components/page-turn": [
+        "./registry/ui/page-turn/page-turn.tsx"
+      ],
+      "@/components/caption-box": [
+        "./registry/ui/caption-box/caption-box.tsx"
+      ],
+      "@/components/ink-mark": [
+        "./registry/ui/ink-mark/ink-mark.tsx"
+      ],
+      "@/components/stamp": [
+        "./registry/ui/stamp/stamp.tsx"
+      ],
+      "@/components/emanata": [
+        "./registry/ui/emanata/emanata.tsx"
+      ],
+      "@/components/ui/sheet": [
+        "./registry/ui/sheet/sheet.tsx"
+      ],
+      "@/components/ui/skeleton": [
+        "./registry/ui/skeleton/skeleton.tsx"
+      ],
+      "@/components/ui/tooltip": [
+        "./registry/ui/tooltip/tooltip.tsx"
+      ],
+      "@/components/ui/card": [
+        "./registry/ui/card/card.tsx"
+      ],
+      "@/hooks/use-mobile": [
+        "./registry/hooks/use-mobile.ts"
+      ],
+      "@/hooks/use-highlighted-code": [
+        "./registry/hooks/use-highlighted-code.ts"
+      ],
+      "@/lib/highlighter": [
+        "./registry/hooks/lib/highlighter.tsx"
+      ],
+      "@/components/ui/input-group": [
+        "./registry/ui/input-group/input-group.tsx"
+      ],
+      "@/components/ui/dialog": [
+        "./registry/ui/dialog/dialog.tsx"
+      ],
+      "@/components/speech-bubble": [
+        "./registry/ui/speech-bubble/speech-bubble.tsx"
+      ],
+      "@/components/power-gauge": [
+        "./registry/ui/power-gauge/power-gauge.tsx"
+      ],
+      "@/components/panel-grid": [
+        "./registry/ui/panel-grid/panel-grid.tsx"
+      ],
+      "@/components/ui/aspect-ratio": [
+        "./registry/ui/aspect-ratio/aspect-ratio.tsx"
+      ],
+      "@/components/ui/drawer": [
+        "./registry/ui/drawer/drawer.tsx"
+      ],
+      "@/components/ui/progress": [
+        "./registry/ui/progress/progress.tsx"
+      ],
+      "@/components/blocks/*": [
+        "./registry/blocks/*"
+      ],
+      "@/components/ui/field": [
+        "./registry/ui/field/field.tsx"
+      ],
+      "@/components/login-form": [
+        "./registry/blocks/login-01/components/login-form.tsx"
+      ],
+      "@/components/signup-form": [
+        "./registry/blocks/signup-01/components/signup-form.tsx"
+      ],
+      "@/components/ui/sidebar": [
+        "./registry/ui/sidebar/sidebar.tsx"
+      ],
+      "@/components/ui/breadcrumb": [
+        "./registry/ui/breadcrumb/breadcrumb.tsx"
+      ],
+      "@/components/ui/collapsible": [
+        "./registry/ui/collapsible/collapsible.tsx"
+      ],
+      "@/components/ui/avatar": [
+        "./registry/ui/avatar/avatar.tsx"
+      ],
+      "@/components/panel": [
+        "./registry/ui/panel/panel.tsx"
+      ],
+      "@/components/app-sidebar": [
+        "./registry/blocks/sidebar-07/components/app-sidebar.tsx"
+      ],
+      "@/components/nav-main": [
+        "./registry/blocks/sidebar-07/components/nav-main.tsx"
+      ],
+      "@/components/nav-projects": [
+        "./registry/blocks/sidebar-07/components/nav-projects.tsx"
+      ],
+      "@/components/nav-user": [
+        "./registry/blocks/sidebar-07/components/nav-user.tsx"
+      ],
+      "@/components/team-switcher": [
+        "./registry/blocks/sidebar-07/components/team-switcher.tsx"
+      ],
+      "@/components/ui/empty": [
+        "./registry/ui/empty/empty.tsx"
+      ],
+      "@/components/shelf": [
+        "./registry/blocks/library-page/components/shelf.tsx"
+      ],
       "@/components/continue-reading": [
         "./registry/blocks/library-page/components/continue-reading.tsx"
       ],
-      "@/*": ["./*"],
-      "@/components/ui/message-scroller": ["./registry/ui/message-scroller/message-scroller.tsx"],
-      "@/components/ui/message": ["./registry/ui/message/message.tsx"],
-      "@/components/ui/bubble": ["./registry/ui/bubble/bubble.tsx"],
-      "@/components/ui/marker": ["./registry/ui/marker/marker.tsx"],
-      "@/components/ui/attachment": ["./registry/ui/attachment/attachment.tsx"]
+      "@/*": [
+        "./*"
+      ],
+      "@/components/ui/message-scroller": [
+        "./registry/ui/message-scroller/message-scroller.tsx"
+      ],
+      "@/components/ui/message": [
+        "./registry/ui/message/message.tsx"
+      ],
+      "@/components/ui/bubble": [
+        "./registry/ui/bubble/bubble.tsx"
+      ],
+      "@/components/ui/marker": [
+        "./registry/ui/marker/marker.tsx"
+      ],
+      "@/components/ui/attachment": [
+        "./registry/ui/attachment/attachment.tsx"
+      ],
+      "@/components/ui/tabs": [
+        "./registry/ui/tabs/tabs.tsx"
+      ],
+      "@/components/series-header": [
+        "./registry/blocks/series-page/components/series-header.tsx"
+      ]
     }
   },
   "include": [
@@ -87,5 +207,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -304,6 +304,17 @@ export default defineConfig({
           new URL("./registry/ui/attachment/attachment.tsx", import.meta.url),
         ),
       },
+      // series-page (Task 109): tabs, and the page's header at its install path.
+      {
+        find: /^@\/components\/ui\/tabs$/,
+        replacement: fileURLToPath(new URL("./registry/ui/tabs/tabs.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/series-header$/,
+        replacement: fileURLToPath(
+          new URL("./registry/blocks/series-page/components/series-header.tsx", import.meta.url),
+        ),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,

@@ -6,11 +6,15 @@
       "type": "registry:block",
       "title": "Chapter List",
       "description": "Chapter index for a series: one item row per chapter, read titles struck through, the latest stamped; Latin or Japanese numerals.",
-      "categories": ["block"],
+      "categories": [
+        "block"
+      ],
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["cn"],
+      "dependencies": [
+        "cn"
+      ],
       "registryDependencies": [
         "https://www.mangacn.com/r/caption-box.json",
         "https://www.mangacn.com/r/ink-mark.json",
@@ -36,11 +40,17 @@
       "type": "registry:block",
       "title": "Spread Viewer",
       "description": "Two-page manga spread reader: facing pages in ink frames, folios, a page turn, buttons, arrow keys and swipe; right to left by default.",
-      "categories": ["block"],
+      "categories": [
+        "block"
+      ],
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["cn", "lucide-react", "motion"],
+      "dependencies": [
+        "cn",
+        "lucide-react",
+        "motion"
+      ],
       "registryDependencies": [
         "https://www.mangacn.com/r/manga-frame.json",
         "https://www.mangacn.com/r/page-number.json",
@@ -66,11 +76,15 @@
       "type": "registry:block",
       "title": "Character Card",
       "description": "Cast entry: portrait in an ink frame with a status stamp, the name with its reading as ruby, role, a line of dialogue and stats as power gauges, on a card.",
-      "categories": ["block"],
+      "categories": [
+        "block"
+      ],
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["cn"],
+      "dependencies": [
+        "cn"
+      ],
       "registryDependencies": [
         "https://www.mangacn.com/r/card.json",
         "https://www.mangacn.com/r/manga-frame.json",
@@ -92,11 +106,15 @@
       "type": "registry:block",
       "title": "Volume Grid",
       "description": "A series' volumes as covers: 2:3 ink frames on a panel grid, a folio for each volume number, NEW stamps; Latin or Japanese numerals, lazy covers below the first row.",
-      "categories": ["block"],
+      "categories": [
+        "block"
+      ],
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["cn"],
+      "dependencies": [
+        "cn"
+      ],
       "registryDependencies": [
         "https://www.mangacn.com/r/panel-grid.json",
         "https://www.mangacn.com/r/manga-frame.json",
@@ -117,11 +135,16 @@
       "type": "registry:block",
       "title": "Reader",
       "description": "A chapter page: the spread viewer, a drawer with the series' chapter list, progress as text, the page kept in the address through use-reader; made of two blocks.",
-      "categories": ["block"],
+      "categories": [
+        "block"
+      ],
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["cn", "lucide-react"],
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
       "registryDependencies": [
         "https://www.mangacn.com/r/spread-viewer.json",
         "https://www.mangacn.com/r/chapter-list.json",
@@ -148,11 +171,15 @@
       "type": "registry:block",
       "title": "Login 01",
       "description": "A login page: email and password on a paper card with a heavy ink outline, the title in the display face and a reception stamp; stock's login-01 in ink.",
-      "categories": ["block"],
+      "categories": [
+        "block"
+      ],
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["cn"],
+      "dependencies": [
+        "cn"
+      ],
       "registryDependencies": [
         "https://www.mangacn.com/r/button.json",
         "https://www.mangacn.com/r/card.json",
@@ -179,11 +206,15 @@
       "type": "registry:block",
       "title": "Signup 01",
       "description": "A sign-up page: name, email and two passwords on a paper card with a heavy ink outline, the title in the display face and a registration stamp; stock's signup-01 in ink.",
-      "categories": ["block"],
+      "categories": [
+        "block"
+      ],
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["cn"],
+      "dependencies": [
+        "cn"
+      ],
       "registryDependencies": [
         "https://www.mangacn.com/r/button.json",
         "https://www.mangacn.com/r/card.json",
@@ -210,11 +241,15 @@
       "type": "registry:block",
       "title": "Sidebar 07",
       "description": "An app shell whose sidebar collapses to icons: a studio switcher, collapsible sections, series with their menus and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-07 in ink.",
-      "categories": ["block"],
+      "categories": [
+        "block"
+      ],
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["lucide-react"],
+      "dependencies": [
+        "lucide-react"
+      ],
       "registryDependencies": [
         "https://www.mangacn.com/r/sidebar.json",
         "https://www.mangacn.com/r/breadcrumb.json",
@@ -262,11 +297,15 @@
       "type": "registry:block",
       "title": "Library Page",
       "description": "A reader's library inside sidebar-07's app shell: the chapters they have open as cards with a cover, a progress bar and a Resume link, then shelves of volume covers, an empty shelf showing what to do next.",
-      "categories": ["block"],
+      "categories": [
+        "block"
+      ],
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["cn"],
+      "dependencies": [
+        "cn"
+      ],
       "registryDependencies": [
         "https://www.mangacn.com/r/sidebar-07.json",
         "https://www.mangacn.com/r/sidebar.json",
@@ -302,11 +341,16 @@
       "type": "registry:block",
       "title": "Chat Thread",
       "description": "A conversation: speech bubbles grouped by author, date and unread lines, attachments, reactions, a composer and a jump-to-latest button; new messages announced once; state through use-chat-thread.",
-      "categories": ["block"],
+      "categories": [
+        "block"
+      ],
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["cn", "lucide-react"],
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
       "registryDependencies": [
         "https://www.mangacn.com/r/message-scroller.json",
         "https://www.mangacn.com/r/message.json",
@@ -327,6 +371,43 @@
           "path": "chat-thread/use-chat-thread.ts",
           "type": "registry:block",
           "target": "@components/blocks/chat-thread/use-chat-thread.ts"
+        }
+      ]
+    },
+    {
+      "name": "series-page",
+      "type": "registry:block",
+      "title": "Series Page",
+      "description": "A manga series' home page: the cover with a status stamp, title, credits, synopsis, Start reading and Follow, then tabs of volumes, chapters and cast; made of three blocks.",
+      "categories": [
+        "block"
+      ],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/volume-grid.json",
+        "https://www.mangacn.com/r/chapter-list.json",
+        "https://www.mangacn.com/r/character-card.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/aspect-ratio.json",
+        "https://www.mangacn.com/r/stamp.json",
+        "https://www.mangacn.com/r/tabs.json",
+        "https://www.mangacn.com/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "series-page/page.tsx",
+          "type": "registry:page",
+          "target": "app/series/page.tsx"
+        },
+        {
+          "path": "series-page/components/series-header.tsx",
+          "type": "registry:component",
+          "target": "@components/series-header.tsx"
         }
       ]
     }

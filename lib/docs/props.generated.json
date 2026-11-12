@@ -1823,6 +1823,188 @@
       }
     ]
   },
+  "series-page": {
+    "Series": [
+      {
+        "id": "series-header.tsx-Series",
+        "name": "Series",
+        "description": "A manga series: what the page shows, in the shape a fetch would return it.",
+        "entries": [
+          {
+            "name": "title",
+            "description": "The series' title: the page's one `h1`.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "originalTitle",
+            "description": "The title in its original language (灯守り), shown under the `h1` with `titleLang`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "titleLang",
+            "description": "The language of `originalTitle`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ja\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "reading",
+            "description": "How the original title is read (ひもり), set as ruby over it.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "author",
+            "description": "Who writes it.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "artist",
+            "description": "Who draws it, when that is someone else.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "synopsis",
+            "description": "A few sentences about the story.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "status",
+            "description": "Stamped on the cover.",
+            "type": "SeriesStatus | undefined",
+            "simplifiedType": "\"completed\" | \"hiatus\" | \"ongoing\"",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "cover",
+            "description": "The series' cover, in a 2:3 manga-frame.",
+            "type": "{ src: string; alt: string; }",
+            "simplifiedType": "{ src: string; alt: string; }",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "startHref",
+            "description": "Where \"Start reading\" goes: the first chapter's reader page.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "volumes",
+            "description": "The Volumes tab, as volume-grid takes them.",
+            "type": "Volume[]",
+            "simplifiedType": "Volume[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "chapters",
+            "description": "The Chapters tab, as chapter-list takes them.",
+            "type": "Chapter[]",
+            "simplifiedType": "Chapter[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "cast",
+            "description": "The Cast tab, one character-card each.",
+            "type": "SeriesCastMember[]",
+            "simplifiedType": "SeriesCastMember[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SeriesHeaderProps": [
+      {
+        "id": "series-header.tsx-SeriesHeaderProps",
+        "name": "SeriesHeaderProps",
+        "entries": [
+          {
+            "name": "series",
+            "description": "The series: title, credits, synopsis, status, cover and where reading starts.",
+            "type": "SeriesInfo",
+            "simplifiedType": "SeriesInfo",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "following",
+            "description": "Whether the reader follows the series; pass it with `onFollowingChange` to control it.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultFollowing",
+            "description": "Whether the reader follows the series at first, when the header keeps it.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onFollowingChange",
+            "description": "Called with the new state when Follow is pressed.",
+            "type": "((following: boolean) => void) | undefined",
+            "simplifiedType": "(following: boolean) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "sfx-text": {
     "SfxTextProps": [
       {

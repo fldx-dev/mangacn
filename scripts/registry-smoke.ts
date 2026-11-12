@@ -247,6 +247,18 @@ const EXPECTED_CONTENT: Record<
     { file: "components/app-sidebar.tsx", includes: ["export function AppSidebar("] },
     { file: "app/dashboard/page.tsx", includes: ["export default function Page("] },
   ],
+  // A page made of blocks: the route imports its header by install path and the three series
+  // blocks from theirs.
+  "series-page": [
+    {
+      file: "app/series/page.tsx",
+      includes: [
+        'import { SeriesHeader } from "@/components/series-header"',
+        'from "@/components/blocks/volume-grid/volume-grid"',
+      ],
+    },
+    { file: "components/series-header.tsx", includes: ["export function SeriesHeader("] },
+  ],
   // Hooks: registry:hook with `target: "@hooks/<name>.ts"`, stock source with the header.
   "use-mobile": [
     {

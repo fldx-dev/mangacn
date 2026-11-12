@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 106 items in the registry. Each line gives the item's name, what it is, the one
+All 107 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -356,6 +356,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `chat-thread`: A conversation: speech bubbles grouped by author, date and unread lines, attachments, reactions, a composer and a jump-to-latest button; new messages announced once; state through use-chat-thread.
   Install: `npx shadcn@latest add @mangacn/chat-thread --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/chat-thread (Markdown: https://www.mangacn.com/docs/blocks/chat-thread.md)
+- `series-page`: A manga series' home page: the cover with a status stamp, title, credits, synopsis, Start reading and Follow, then tabs of volumes, chapters and cast; made of three blocks.
+  Install: `npx shadcn@latest add @mangacn/series-page --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/series-page (Markdown: https://www.mangacn.com/docs/blocks/series-page.md)
 
 ## Hooks
 
