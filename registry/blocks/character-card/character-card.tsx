@@ -67,7 +67,7 @@ export function CharacterCard({
   className,
   ...props
 }: CharacterCardProps) {
-  // The ruby reads above the name; the name alone names the article and the link.
+  // The ruby reads above the name; the name alone names the article.
   const title = reading ? (
     <ruby lang="ja">
       {name}
@@ -109,10 +109,11 @@ export function CharacterCard({
                 className="font-display text-xl leading-tight wrap-break-word @sm:text-2xl"
               >
                 {href ? (
-                  // Its ::after covers the card, so the whole card is the link's hit area.
+                  // Its ::after covers the card, so the whole card is the link's hit area. Named by
+                  // its content, the name and its reading: an `aria-label` of the name alone left
+                  // the visible reading out and failed WCAG 2.5.3 Label in Name.
                   <a
                     href={href}
-                    aria-label={name}
                     className="outline-none after:absolute after:inset-0 hover:text-spot"
                   >
                     {title}

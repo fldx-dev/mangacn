@@ -94,7 +94,11 @@ describe("CharacterCard", () => {
     render(<CharacterCard name="Mio Amano" reading="みお" portrait={portrait} href="/cast/mio" />);
     const links = screen.getAllByRole("link");
     expect(links).toHaveLength(1);
-    expect(screen.getByRole("link", { name: "Mio Amano" }).getAttribute("href")).toBe("/cast/mio");
+    // Named by its content, the name with its reading: no aria-label that leaves the reading out.
+    expect(links[0].hasAttribute("aria-label")).toBe(false);
+    expect(screen.getByRole("link", { name: /^Mio Amano.*みお/ }).getAttribute("href")).toBe(
+      "/cast/mio",
+    );
     expect(links[0].className).toContain("after:inset-0");
     expect(links[0].querySelector("ruby")).toBeTruthy();
   });
