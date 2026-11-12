@@ -48,6 +48,29 @@ export const PRESET_BASE_TOKENS = [
   "tone-4",
 ] as const;
 
+type Vars = Record<string, string>;
+
+/**
+ * A look's light and dark cssVars: the default theme's for each mode with the look's base
+ * colours in place. Every other token (the shadcn ones are `var()`s of a base colour, the radius)
+ * keeps the default's value, so the tokens follow the base colours through those references. The
+ * preset items (`./theme-preset-items.ts`) and the Create page's theme (`lib/create/items.ts`)
+ * both derive their values here.
+ */
+export function presetCssVars(
+  defaults: { light: Vars; dark: Vars },
+  base: { light: Vars; dark: Vars },
+): { light: Vars; dark: Vars } {
+  const withBase = (mode: Vars, values: Vars) =>
+    Object.fromEntries(
+      Object.entries(mode).map(([key, value]) => [
+        key,
+        Object.hasOwn(values, key) ? values[key] : value,
+      ]),
+    );
+  return { light: withBase(defaults.light, base.light), dark: withBase(defaults.dark, base.dark) };
+}
+
 export function isThemePreset(value: unknown): value is ThemePreset {
   return (THEME_PRESETS as readonly unknown[]).includes(value);
 }

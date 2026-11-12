@@ -4,6 +4,7 @@ import { registryItemUrl } from "./index";
 import {
   PRESET_ATTRIBUTE,
   PRESET_BASE_TOKENS,
+  presetCssVars,
   THEME_PRESETS,
   type ThemeLook,
 } from "./theme-presets";
@@ -97,16 +98,6 @@ export function loadPresets(rootDir = process.cwd()): PresetValues[] {
   );
 }
 
-/** The default theme's cssVars for one mode with the preset's base colours in place. */
-function withBase(defaults: Vars, base: Vars): Vars {
-  return Object.fromEntries(
-    Object.entries(defaults).map(([key, value]) => [
-      key,
-      Object.hasOwn(base, key) ? base[key] : value,
-    ]),
-  );
-}
-
 /**
  * The `registry:theme` item for a preset. It declares the default theme by URL, so one add
  * installs the fonts, utilities and keyframes too, and the CLI merges the default's cssVars
@@ -124,11 +115,7 @@ export function presetItem(theme: DefaultTheme, preset: PresetValues): PresetIte
     docs: `@mangacn/${name} brings @mangacn/theme by URL and gives its ink, paper, spot and tone values (light and dark) the ${preset.title.toLowerCase()} look. Added over an installed theme, the CLI rewrites the same variables in globals.css in place: one set of tokens, nothing duplicated. Add @mangacn/theme to go back.`,
     registryDependencies: [registryItemUrl(theme.name)],
     files: [],
-    cssVars: {
-      theme: { ...theme.cssVars.theme },
-      light: withBase(theme.cssVars.light, preset.light),
-      dark: withBase(theme.cssVars.dark, preset.dark),
-    },
+    cssVars: { theme: { ...theme.cssVars.theme }, ...presetCssVars(theme.cssVars, preset) },
   };
 }
 

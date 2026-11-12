@@ -1,5 +1,6 @@
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
+import { REGISTRY_HEADERS } from "./lib/registry/headers";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -13,20 +14,12 @@ const nextConfig: NextConfig = {
     ];
   },
   // The registry (`public/r`, built by `pnpm registry:build`): a short browser cache, a longer
-  // CDN cache, and open CORS so any tool can fetch the items. Next sets the JSON content type.
+  // CDN cache, and open CORS so any tool can fetch the items (lib/registry/headers.ts). Next
+  // sets the JSON content type. The Create routes under /r/create/ (app/r/create) set their own:
+  // the same on success, but no caching on a 404, which a rule here would override.
   async headers() {
     return [
-      {
-        source: "/r/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
-          },
-          { key: "Access-Control-Allow-Origin", value: "*" },
-          { key: "Access-Control-Allow-Methods", value: "GET" },
-        ],
-      },
+      { source: "/r/:path((?!create/).*)", headers: REGISTRY_HEADERS },
       // The docs MCP server (app/api/mcp): open CORS for browser-based clients, with the
       // headers the streamable HTTP transport reads and writes.
       {

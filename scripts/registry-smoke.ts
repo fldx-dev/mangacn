@@ -19,6 +19,15 @@
  * The stock pre-install + overwrite check runs only when button, card and dialog are all
  * in the set. Each one-command check (a fresh project per command, ONE_COMMANDS) runs with
  * every item, or when the set names all of its items (`--only=pagination`).
+ *
+ * Create codes (Task C3), instead of the items:
+ *   --create=<code>          runs the new Next.js project command exactly as
+ *                            lib/create/commands.ts prints it (the origin pointed at this
+ *                            server, which answers /r/create/* as app/r/create does), checks the
+ *                            look, pen and screentone in globals.css, typechecks and builds; then
+ *                            the existing-project command over a project that has the default
+ *                            theme, and the same checks
+ *   --create=<code> --vite   the new Vite project command instead, then `pnpm run build`
  */
 import { type ChildProcess, execFileSync, type SpawnOptions, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -35,6 +44,19 @@ import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { decode } from "../lib/create/code";
+import { baseValues } from "../lib/create/colours";
+import { createCommands, PROJECT_NAME } from "../lib/create/commands";
+import {
+  type CreateConfig,
+  PEN_RANGES,
+  PEN_TOKENS,
+  SCREENTONE_RANGES,
+  SCREENTONE_TOKENS,
+} from "../lib/create/config";
+import { fontItemNames } from "../lib/create/items";
+import { kitItems } from "../lib/create/kits";
+import { createAnswer } from "../lib/create/serve";
 import { SETUP_ITEMS, setCommand } from "../lib/docs/install-command";
 import { mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
 import { installTarget } from "../lib/registry/install-target";
@@ -348,21 +370,39 @@ function stripImports(source: string): string {
  */
 const INSTALL_FIRST = ["ink-frame"];
 
-/** Parses `--only=a,b` and `--changed`; anything else is an error so typos do not run everything. */
-function parseArgs(argv: string[]): { only?: string[]; changed: boolean } {
-  let only: string[] | undefined;
-  let changed = false;
+interface SmokeArgs {
+  only?: string[];
+  changed: boolean;
+  /** A Create code: smoke its commands instead of the items. */
+  create?: string;
+  /** With `create`: the new Vite project command instead of the Next.js ones. */
+  vite: boolean;
+}
+
+/**
+ * Parses `--only=a,b`, `--changed`, `--create=<code>` and `--vite`; anything else is an error so
+ * typos do not run everything.
+ */
+function parseArgs(argv: string[]): SmokeArgs {
+  const args: SmokeArgs = { changed: false, vite: false };
   for (const arg of argv) {
-    if (arg === "--changed") changed = true;
+    if (arg === "--changed") args.changed = true;
+    else if (arg === "--vite") args.vite = true;
+    else if (arg.startsWith("--create=")) args.create = arg.slice("--create=".length);
     else if (arg.startsWith("--only=")) {
-      only = arg
+      args.only = arg
         .slice("--only=".length)
         .split(",")
         .map((name) => name.trim())
         .filter(Boolean);
-    } else throw new SmokeError(`Unknown argument "${arg}" (expected --changed or --only=a,b)`);
+    } else {
+      throw new SmokeError(
+        `Unknown argument "${arg}" (expected --changed, --only=a,b, --create=<code> or --vite)`,
+      );
+    }
   }
-  return { only, changed };
+  if (args.vite && args.create === undefined) throw new SmokeError("--vite needs --create=<code>");
+  return args;
 }
 
 /** Paths that differ from the base branch, in the index, or untracked. */
@@ -627,6 +667,16 @@ const served: string[] = [];
 function serveRegistry(): Promise<Server> {
   const server = createServer((req, res) => {
     const pathname = decodeURIComponent(new URL(req.url ?? "/", "http://localhost").pathname);
+    // A Create code's items, answered as app/r/create/ answers them, on this server's origin.
+    const create = /^\/r\/create\/([^/]+)(\/theme\.json)?$/.exec(pathname);
+    if (create) {
+      served.push(pathname);
+      const { port } = server.address() as AddressInfo;
+      const kind = create[2] ? "theme" : "bundle";
+      const answer = createAnswer(kind, create[1], `http://127.0.0.1:${port}`);
+      res.writeHead(answer.status, answer.headers).end(JSON.stringify(answer.body, null, 2));
+      return;
+    }
     const relative = pathname.replace(/^\/r\//, "");
     const file = path.join(outputDir, relative);
     if (
@@ -800,11 +850,14 @@ interface OneCommand {
   line?: string;
 }
 
-/** The line's arguments after `pnpm`, with the CLI pinned; throws when it is not a pnpm `shadcn add`. */
-function documentedArgs(line: string): string[] {
+/**
+ * The line's arguments after `pnpm`, with the CLI pinned; throws when it is not a pnpm
+ * `shadcn add` (or one of `verbs`).
+ */
+function documentedArgs(line: string, verbs: readonly string[] = ["add"]): string[] {
   const [runner, dlx, cli, verb, ...rest] = line.split(" ");
-  if (runner !== "pnpm" || dlx !== "dlx" || cli !== "shadcn@latest" || verb !== "add") {
-    throw new SmokeError(`Not a pnpm dlx shadcn@latest add line: ${line}`);
+  if (runner !== "pnpm" || dlx !== "dlx" || cli !== "shadcn@latest" || !verbs.includes(verb)) {
+    throw new SmokeError(`Not a pnpm dlx shadcn@latest ${verbs.join("/")} line: ${line}`);
   }
   return [dlx, `shadcn@${SHADCN_VERSION}`, verb, ...rest];
 }
@@ -892,6 +945,152 @@ async function oneCommandCheck(workDir: string, port: number, command: OneComman
   console.log(`✓ one command installed ${command.installs.join(", ")} and typechecked`);
 }
 
+/** A project file's text, or undefined when the run did not write it. */
+function readProjectFile(project: string, file: string): string | undefined {
+  const full = path.join(project, file);
+  return existsSync(full) ? readFileSync(full, "utf8") : undefined;
+}
+
+/**
+ * What a Create code must have left in a project's stylesheet: its base colours (light and
+ * dark), pen and screentone, the colour mappings the registry:base path needs, the theme's
+ * utilities, and (any look but the default) none of the default's papers.
+ */
+function createCssProblems(
+  css: string | undefined,
+  config: CreateConfig,
+  cssFile: string,
+  vite: boolean,
+): string[] {
+  if (css === undefined) return [`${cssFile} was not written`];
+  const { light, dark } = baseValues(config.look);
+  const needles = [
+    `--ink: ${light.ink};`,
+    `--paper: ${light.paper};`,
+    `--spot: ${light.spot};`,
+    `--ink: ${dark.ink};`,
+    `--paper: ${dark.paper};`,
+    `--spot: ${dark.spot};`,
+    ...PEN_TOKENS.map((t) => `--${t}: ${config.pen[t]}${PEN_RANGES[t].unit};`),
+    ...SCREENTONE_TOKENS.map((t) => `--${t}: ${config.screentone[t]}${SCREENTONE_RANGES[t].unit};`),
+    "--color-background: var(--background);",
+    "--color-border: var(--border);",
+    "@utility halftone",
+    ...(vite ? ['@import "@fontsource/dela-gothic-one"', '@import "@fontsource/yusei-magic"'] : []),
+  ];
+  const problems = needles
+    .filter((needle) => !css.includes(needle))
+    .map((needle) => `${cssFile} lacks "${needle}"`);
+  const isDefault = "preset" in config.look && config.look.preset === "default";
+  if (!isDefault) {
+    for (const needle of DEFAULT_PAPERS) {
+      if (css.includes(needle)) problems.push(`${cssFile} still has the default "${needle}"`);
+    }
+  }
+  return problems;
+}
+
+/**
+ * `--create=<code>`: the Create page's commands for a code, run as lib/create/commands.ts prints
+ * them with the origin pointed at this server (which answers /r/create/* through
+ * lib/create/serve.ts, as the routes do) and the CLI pinned. Next.js: a new project, then the
+ * existing-project command over a project that has the default theme; each must fetch the
+ * code's items from here, carry its look in globals.css, typecheck and build. `--vite`: the new
+ * Vite project command, then the template's own build (`tsc -b && vite build`).
+ */
+async function createSmoke(code: string, vite: boolean) {
+  const decoded = decode(code);
+  if (!decoded.ok) throw new SmokeError(`--create=${code}: ${decoded.reason}`);
+  const { config } = decoded;
+  const workDir = mkdtempSync(path.join(tmpdir(), "mangacn-create-"));
+  const server = await serveRegistry();
+  const { port } = server.address() as AddressInfo;
+  const origin = `http://127.0.0.1:${port}`;
+  const commands = createCommands(config, "pnpm", origin);
+  const fetched = [
+    `/r/create/${commands.code}.json`,
+    `/r/create/${commands.code}/theme.json`,
+    ...[...fontItemNames(config.fonts), ...kitItems(config.kit)].map((name) => `/r/${name}.json`),
+  ];
+  console.log(`Create code ${code} (canonical ${commands.code}), ${vite ? "Vite" : "Next.js"}`);
+
+  const step = async (label: string, args: string[], cwd: string) => {
+    console.log(`→ ${label}`);
+    try {
+      await run("pnpm", args, cwd);
+    } catch (error) {
+      throw new SmokeError(`${label} failed`, error instanceof SmokeError ? error.output : "");
+    }
+  };
+  const verify = (project: string, label: string) => {
+    const cssFile = vite ? "src/index.css" : "app/globals.css";
+    const problems = [
+      ...fetched
+        .filter((url) => !served.includes(url))
+        .map((url) => `${url} was never fetched from the local registry`),
+      ...createCssProblems(readProjectFile(project, cssFile), config, cssFile, vite),
+      ...(vite ? [] : fontVariableProblems(readProjectFile(project, "app/layout.tsx") ?? "")),
+    ];
+    if (problems.length > 0) {
+      throw new SmokeError(`${label}: Create check failed:\n  ${problems.join("\n  ")}`);
+    }
+  };
+  const build = async (project: string) => {
+    if (vite) {
+      await step("pnpm run build (tsc -b && vite build)", ["run", "build"], project);
+    } else {
+      await step("tsc --noEmit", ["exec", "tsc", "--noEmit"], project);
+      await step("next build", ["exec", "next", "build"], project);
+    }
+  };
+
+  let failed = true;
+  try {
+    // A new project, in one command.
+    const line = vite ? commands.viteProject : commands.nextProject;
+    const project = path.join(workDir, PROJECT_NAME);
+    projectDir = project;
+    served.length = 0;
+    await step(`${line} (as printed, CLI pinned)`, documentedArgs(line, ["init"]), workDir);
+    verify(project, "new project");
+    await build(project);
+    console.log(
+      `✓ new ${vite ? "Vite" : "Next.js"} project from code ${code}: installed and built`,
+    );
+
+    if (!vite) {
+      // An existing project that has the default theme, then the existing-project command.
+      const existing = path.join(workDir, "existing");
+      projectDir = existing;
+      const cli = ["dlx", `shadcn@${SHADCN_VERSION}`];
+      await step(
+        "shadcn init -t next -b base -p nova (the existing project)",
+        [...cli, "init", "-t", "next", "-b", "base", "-p", "nova", "-n", "existing", "--yes"],
+        workDir,
+      );
+      await step(
+        "shadcn add theme.json (the default theme)",
+        [...cli, "add", `${origin}/r/theme.json`, "--yes"],
+        existing,
+      );
+      served.length = 0;
+      await step(
+        `${commands.existingProject} (as printed, CLI pinned)`,
+        documentedArgs(commands.existingProject),
+        existing,
+      );
+      verify(existing, "existing project");
+      await build(existing);
+      console.log(`✓ existing project with the default theme took code ${code} and built`);
+    }
+    failed = false;
+  } finally {
+    server.close();
+    if (failed) console.error(`Temp project kept for inspection: ${projectDir}`);
+    else rmSync(workDir, { recursive: true, force: true, maxRetries: 3 });
+  }
+}
+
 async function main() {
   const catalogPath = path.join(outputDir, "registry.json");
   if (!existsSync(catalogPath)) {
@@ -902,7 +1101,11 @@ async function main() {
   for (const name of INSTALL_FIRST) {
     if (!listed.includes(name)) throw new SmokeError(`"${name}" is missing from the catalog`);
   }
-  const { only, changed } = parseArgs(process.argv.slice(2));
+  const { only, changed, create, vite } = parseArgs(process.argv.slice(2));
+  if (create !== undefined) {
+    await createSmoke(create, vite);
+    return;
+  }
   let requested: string[] | undefined;
   if (only) requested = only;
   else if (changed) {
@@ -1027,8 +1230,11 @@ function itemCount(): number {
 // Run only as a script (`pnpm registry:smoke`), so a test can import the tables above.
 const invoked = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename);
 if (invoked) {
-  // Each one-command check builds a project of its own: setup budget again per command.
-  const timeoutMs = (1 + ONE_COMMANDS.length) * BASE_TIMEOUT_MS + PER_ITEM_TIMEOUT_MS * itemCount();
+  // Each one-command check builds a project of its own: setup budget again per command. A
+  // Create run builds two projects, each a setup budget plus its kit.
+  const timeoutMs = process.argv.some((arg) => arg.startsWith("--create="))
+    ? 3 * BASE_TIMEOUT_MS
+    : (1 + ONE_COMMANDS.length) * BASE_TIMEOUT_MS + PER_ITEM_TIMEOUT_MS * itemCount();
   const timer = setTimeout(() => {
     if (currentChild) killTree(currentChild);
     console.error(`✗ registry smoke timed out after ${timeoutMs / 60000} min`);

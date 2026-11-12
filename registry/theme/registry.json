@@ -272,7 +272,8 @@
         "import": "Dela_Gothic_One",
         "variable": "--font-display",
         "weight": ["400"],
-        "subsets": ["latin", "latin-ext"]
+        "subsets": ["latin", "latin-ext"],
+        "dependency": "@fontsource/dela-gothic-one"
       }
     },
     {
@@ -290,7 +291,8 @@
         "provider": "google",
         "import": "Shantell_Sans",
         "variable": "--font-dialogue-latin",
-        "subsets": ["latin", "latin-ext"]
+        "subsets": ["latin", "latin-ext"],
+        "dependency": "@fontsource/shantell-sans"
       }
     },
     {
@@ -310,7 +312,8 @@
         "import": "Yusei_Magic",
         "variable": "--font-dialogue-ja",
         "weight": ["400"],
-        "subsets": ["latin"]
+        "subsets": ["latin"],
+        "dependency": "@fontsource/yusei-magic"
       }
     },
     {
