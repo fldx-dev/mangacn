@@ -4,9 +4,9 @@ import { BLOCKS_CATALOG, type DocItem, docItems } from "@/lib/docs/catalog";
 import { loadRegistry } from "@/lib/registry";
 import { listDemos } from "@/lib/registry/demos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/registry/ui/card/card";
+import { PREVIEW_WIDTHS, ScaledView } from "./block-preview";
 import { DemoPreview } from "./demo-frame";
 import { LazyDemo } from "./lazy-demo";
-import { StageFrame } from "./stage-frame";
 
 /**
  * Every card's preview box is this tall, before and after it mounts, so nothing moves when a
@@ -16,7 +16,7 @@ export const BLOCK_STAGE_HEIGHT = "26rem";
 
 /**
  * Every block as a card with a preview, in catalog order: a page block's whole page from
- * `/view/<name>` (in an iframe, at the card's width, as a phone would show it), any other
+ * `/view/<name>` (in an inert iframe at a phone's width, scaled to the card), any other
  * block's default demo. Previews are inert: a card is a way to the block's page, which its title
  * links to, not a place to use the block. Read from the catalog and the demo map, so a new block
  * shows up without an edit here.
@@ -42,8 +42,15 @@ export async function BlockIndex() {
 
 async function preview(item: DocItem): Promise<ReactNode> {
   if (item.page) {
+    // The page at a phone's width, scaled to the card: never narrower than a real screen.
     return (
-      <StageFrame src={`/view/${item.name}`} title={`${item.title} page`} height="100%" inert />
+      <ScaledView
+        item={item.name}
+        width={PREVIEW_WIDTHS[0].width}
+        title={`${item.title} page`}
+        inert
+        className="h-full rounded-sm border bg-paper"
+      />
     );
   }
   return (

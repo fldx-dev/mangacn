@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { cn } from "cn";
+import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { Button } from "@/registry/ui/button/button";
 import { StageFrame } from "./stage-frame";
 
@@ -13,6 +14,75 @@ export const PREVIEW_WIDTHS = [
 
 export type PreviewWidth = (typeof PREVIEW_WIDTHS)[number]["id"];
 
+export interface ScaledViewProps extends Omit<ComponentProps<"div">, "children"> {
+  /** The page block, shown from `/view/<item>`. */
+  item: string;
+  /** The width the page lays out at, in CSS pixels. */
+  width: number;
+  /** The frame's accessible name. */
+  title: string;
+  /** A preview, not a live page (see StageFrame). */
+  inert?: boolean;
+  /** Called with the box's width each time it is measured. */
+  onMeasure?: (width: number) => void;
+}
+
+/**
+ * `/view/<item>` laid out at `width` and scaled down to its box when the box is narrower, so the
+ * page shows as it would on that screen. Give the box its height (a class or style): the page
+ * fills it at any scale, so nothing around it moves. Narrower than the box, the frame is centred
+ * with its edges ruled. The frame follows the site's light or dark theme (StageFrame).
+ */
+export function ScaledView({
+  item,
+  width,
+  title,
+  inert,
+  onMeasure,
+  className,
+  ...props
+}: ScaledViewProps) {
+  const box = useRef<HTMLDivElement>(null);
+  const [boxWidth, setBoxWidth] = useState<number | null>(null);
+  const measured = useRef(onMeasure);
+  measured.current = onMeasure;
+
+  useEffect(() => {
+    const node = box.current;
+    if (!node || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(([entry]) => {
+      measured.current?.(entry.contentRect.width);
+      setBoxWidth(entry.contentRect.width);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  // Until the box is measured the page fills it unscaled, at the box's own width.
+  const scale = boxWidth ? Math.min(1, boxWidth / width) : 1;
+  return (
+    <div ref={box} inert={inert} className={cn("overflow-hidden", className)} {...props}>
+      <div
+        className="mx-auto"
+        style={{
+          width: boxWidth ? width : "100%",
+          height: `${100 / scale}%`,
+          transform: scale < 1 ? `scale(${scale})` : undefined,
+          transformOrigin: "top left",
+        }}
+      >
+        <StageFrame
+          src={`/view/${item}`}
+          title={title}
+          height="100%"
+          inert={inert}
+          className={cn("rounded-none", boxWidth && boxWidth > width ? "border-y-0" : "border-0")}
+        />
+      </div>
+    </div>
+  );
+}
+
 export interface BlockPreviewProps {
   /** The page block, shown from `/view/<item>`. */
   item: string;
@@ -21,26 +91,23 @@ export interface BlockPreviewProps {
 }
 
 /**
- * A page block's whole page in a frame: `/view/<item>` in an iframe at a phone's, a tablet's or
- * a desktop's width, scaled down to the docs column when it is wider, so the page lays out as it
- * would on that screen. The box keeps its height whatever the width, so nothing below it moves;
- * the frame follows the site's light or dark theme (StageFrame).
+ * A page block's whole page in a frame, at a phone's, a tablet's or a desktop's width (buttons
+ * pick one), scaled down to the docs column when it is wider. A column narrower than a tablet
+ * opens at the phone's width. The box keeps its height whatever the width.
  */
 export function BlockPreview({ item, height = "36rem" }: BlockPreviewProps) {
   const [size, setSize] = useState<PreviewWidth>("desktop");
-  const box = useRef<HTMLDivElement>(null);
   const [boxWidth, setBoxWidth] = useState<number | null>(null);
+  // Whether the width is settled: by the first measurement, or by the reader's pick.
+  const settled = useRef(false);
 
-  useEffect(() => {
-    const node = box.current;
-    if (!node || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(([entry]) => setBoxWidth(entry.contentRect.width));
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+  const onMeasure = (width: number) => {
+    if (!settled.current && width < PREVIEW_WIDTHS[1].width) setSize("phone");
+    settled.current = true;
+    setBoxWidth(width);
+  };
 
   const preset = PREVIEW_WIDTHS.find((candidate) => candidate.id === size) ?? PREVIEW_WIDTHS[2];
-  // Until the box is measured the page fills it unscaled, at the column's own width.
   const scale = boxWidth ? Math.min(1, boxWidth / preset.width) : 1;
   const src = `/view/${item}`;
 
@@ -60,36 +127,25 @@ export function BlockPreview({ item, height = "36rem" }: BlockPreviewProps) {
               size="sm"
               variant={candidate.id === size ? "default" : "outline"}
               aria-pressed={candidate.id === size}
-              onClick={() => setSize(candidate.id)}
+              onClick={() => {
+                settled.current = true;
+                setSize(candidate.id);
+              }}
             >
               {candidate.label}
             </Button>
           ))}
         </div>
       </div>
-      <div
-        ref={box}
+      <ScaledView
+        item={item}
+        width={preset.width}
+        title={`${item} page at ${preset.label.toLowerCase()} width`}
+        onMeasure={onMeasure}
         data-slot="block-preview-box"
-        className="overflow-hidden rounded-sm border bg-paper"
+        className="rounded-sm border bg-paper"
         style={{ height }}
-      >
-        <div
-          style={{
-            width: boxWidth ? preset.width : "100%",
-            height: `calc(${height} / ${scale})`,
-            transform: scale < 1 ? `scale(${scale})` : undefined,
-            transformOrigin: "top left",
-          }}
-          className="mx-auto"
-        >
-          <StageFrame
-            src={src}
-            title={`${item} page at ${preset.label.toLowerCase()} width`}
-            height="100%"
-            className="rounded-none border-0"
-          />
-        </div>
-      </div>
+      />
       <a
         href={src}
         aria-label={`Open the page: ${item}`}
