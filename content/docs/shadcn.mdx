@@ -1,0 +1,70 @@
+---
+title: mangacn vs. shadcn/ui
+description: What mangacn changes about shadcn/ui and what it keeps. The same CLI, exports, props and Base UI behaviour, drawn in ink on paper, plus manga-native components and blocks.
+---
+
+mangacn is built on shadcn/ui, not instead of it. It keeps shadcn's API: the same CLI, the
+same file locations, the same exports and props and the same Base UI behaviour. What it
+changes is the drawing. Every outline is hand-inked, the palette is ink on paper with one spot
+colour, and it adds components shadcn has no equivalent for: speech bubbles, panels,
+screentone and sound effects. A mangacn button is a drop-in replacement for the stock one.
+
+## At a glance
+
+| | shadcn/ui | mangacn |
+|---|---|---|
+| What it is | Copy-in React components and a CLI | A shadcn registry of manga-styled items, installed by the same CLI |
+| Install | `npx shadcn@latest add button` | `npx shadcn@latest add @mangacn/button` |
+| Code ownership | Source in your project | Source in your project |
+| Primitives | Base UI or Radix | Base UI (the `base-nova` style) |
+| Exports and props | Stock | The same as stock: no call-site changes |
+| Borders | Straight CSS borders | Hand-drawn rough.js outlines from the ink frame |
+| Shadows and gradients | Soft shadows on popovers and cards | None; an optional solid or hatched ink shadow on cards |
+| Corners | `--radius` around `0.625rem` | `0.125rem`, close to square |
+| Colour | Neutral greys and a primary | Ink, paper, four screentone greys and one spot colour |
+| Fonts | Your font | Your font on primitives; a display face and a dialogue face on manga pieces |
+| Dark mode | `.dark` class | `.dark` class; a dim night palette, not an inversion |
+| Extra components | None | Speech bubbles, panels, screentone, SFX lettering, speed lines, stamps and more |
+| Blocks | Login, signup, sidebar, dashboard | Login, signup and sidebar in ink, plus series and library pages, a reader and a chapter list |
+| Licence | MIT | MIT |
+
+## What stays the same
+
+- **The CLI and the files.** Items install with `shadcn add`, restyled primitives land in
+  `components/ui/<item>.tsx` and replace the stock file, and everything is source you edit.
+- **The API.** Each restyled primitive keeps the stock component's exports, props and
+  variants. Code written against shadcn's button, dialog or select runs unchanged.
+- **The behaviour.** The primitives wrap the same Base UI parts, so focus handling, keyboard
+  support and ARIA are stock.
+- **The variables.** The theme sets shadcn's semantic variables (`--background`, `--primary`,
+  `--border`, `--ring` and the rest) from its own tokens, so a stock component you have not
+  replaced still renders ink on paper. See [Theming](/docs/theming#how-they-map-onto-shadcn).
+
+## What changes
+
+- **The outline.** Every drawn item renders inside the ink frame, a client component that draws
+  a rough.js outline, fill and optional shadow. It installs with each outlined item and shows a
+  CSS border until the first drawing, so server-rendered pages look right.
+- **The palette.** One spot colour, red by default, used at most once per surface; the greys are
+  screentone. Three presets swap the whole palette: Sepia, Weekly and Blueline.
+- **Some variants.** A few items add a variant on top of the stock ones, such as the button's
+  `sfx` variant, which letters its label like a sound effect.
+- **New items.** Manga-native components and blocks with no shadcn counterpart, from the
+  [speech bubble](/docs/components/speech-bubble) to the [reader](/docs/blocks/reader).
+
+## When to use which
+
+Use **stock shadcn/ui** for a neutral interface that should look like most modern apps.
+
+Use **mangacn** when the interface itself should feel drawn: a manga or webcomic reader, a fan
+site, a game or anime product, a playful landing page, or any app that wants a hand-made look
+without giving up shadcn's API. You can also mix them: install only the mangacn items you
+want, and the stock components you keep pick up the ink-on-paper palette from the theme.
+
+## Switching an existing project
+
+1. Make sure the project is on the `base-nova` style and Tailwind CSS v4.
+2. Name the registry in `components.json` and install the theme, as in
+   [Installation](/docs/installation).
+3. Add the mangacn version of each component you use, with `--overwrite` to replace the stock
+   file. Your imports and props stay as they are.

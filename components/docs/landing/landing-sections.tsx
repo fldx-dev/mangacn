@@ -1,5 +1,6 @@
 import { AgentStrip } from "./agent-strip";
 import { Bento } from "./bento";
+import { Faq } from "./faq";
 import { Hero } from "./hero";
 import { ModeSplit } from "./mode-split";
 import { SfxBand } from "./sfx-band";
@@ -11,7 +12,7 @@ import { WholePage } from "./whole-page";
 /**
  * The landing's sections, under the Fumadocs navbar (SPEC-docs-site §4.1): the splash hero, a
  * sound-effect band, the swap-an-import toggle, a bento of pieces, the day/night split, the
- * whole page, the three commands, the agent strip and the footer.
+ * whole page, the three commands, the agent strip, the FAQ and the footer.
  */
 export function LandingSections() {
   return (
@@ -24,6 +25,7 @@ export function LandingSections() {
       <WholePage />
       <ThreeCommands />
       <AgentStrip />
+      <Faq />
       <SiteFooter />
     </>
   );

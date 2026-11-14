@@ -3,6 +3,7 @@ import { FrameworkProvider } from "fumadocs-core/framework";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { RootProvider } from "fumadocs-ui/provider/base";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { FAQ } from "@/lib/docs/faq";
 import { baseOptions } from "@/lib/docs/layout.shared";
 import { axe } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
@@ -63,6 +64,7 @@ describe("the landing", () => {
       "whole-page",
       "three-commands",
       "agent-ready",
+      "faq",
       "footer",
     ]);
     expect(sections.at(-1)?.tagName).toBe("FOOTER");
@@ -79,6 +81,7 @@ describe("the landing", () => {
       "landing-page",
       "landing-commands",
       "landing-agents",
+      "landing-faq",
     ]);
     expect(container.querySelector("iframe")).toBeNull();
   });
@@ -100,6 +103,15 @@ describe("the landing", () => {
     const strip = container.querySelector('[data-landing="agent-ready"]');
     expect(strip?.querySelector('a[href="/docs/agents"]')?.textContent).toBe("set up your agent");
     expect(strip?.textContent).not.toContain("soon");
+  });
+
+  it("keeps every FAQ answer in the HTML while the panels are closed", () => {
+    const { container } = renderLanding();
+    const faq = container.querySelector('[data-landing="faq"]');
+    const triggers = faq?.querySelectorAll('[data-slot="accordion-trigger"]') ?? [];
+    expect(triggers.length).toBe(FAQ.length);
+    for (const trigger of triggers) expect(trigger.getAttribute("aria-expanded")).toBe("false");
+    for (const { answer } of FAQ) expect(faq?.textContent).toContain(answer);
   });
 
   it("swaps the stock card for the drawn one", async () => {

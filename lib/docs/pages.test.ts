@@ -144,6 +144,7 @@ describe("content/docs/meta.json", () => {
       "installation",
       "theming",
       "agents",
+      "shadcn",
       ...DOCS_SECTIONS.map((section) => path.posix.basename(section.dir)),
     ]);
   });
