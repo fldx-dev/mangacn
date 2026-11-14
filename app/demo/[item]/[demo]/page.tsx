@@ -36,7 +36,7 @@ export function generateStaticParams() {
 
 // Static on purpose: with Partial Prefetching the App Shell is shared by every demo URL, and a
 // `params` read here (or outside the Suspense below) would tie it to one URL.
-export const metadata: Metadata = { title: "mangacn demo", robots: { index: false } };
+export const metadata: Metadata = { title: "Demo", robots: { index: false } };
 
 type StageProps = PageProps<"/demo/[item]/[demo]">;
 

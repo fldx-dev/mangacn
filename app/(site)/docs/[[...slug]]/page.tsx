@@ -6,15 +6,20 @@ import { CopyMarkdownButton } from "@/components/docs/copy-markdown-button";
 import { SiteDocsPage } from "@/components/docs/docs-page";
 import { getMDXComponents } from "@/components/docs/mdx";
 import { markdownUrl } from "@/lib/docs/llms";
+import { docsJsonLd, docsMetadata, jsonLdHtml } from "@/lib/docs/seo";
 import { source } from "@/lib/docs/source";
 
 export function generateStaticParams() {
   return source.generateParams();
 }
 
-// Static, as on the demo stage: with Partial Prefetching the App Shell is shared by every docs
-// URL, so the page reads `params` only inside the Suspense below.
-export const metadata: Metadata = { title: "mangacn docs" };
+// Each page's own title, description and canonical URL. Every slug is prerendered
+// (generateStaticParams), so reading `params` here resolves at build time.
+export async function generateMetadata({ params }: DocsProps): Promise<Metadata> {
+  const { slug } = await params;
+  const page = source.getPage(slug);
+  return page ? docsMetadata(page) : { title: "Not found", robots: { index: false } };
+}
 
 type DocsProps = PageProps<"/docs/[[...slug]]">;
 
@@ -35,6 +40,11 @@ async function DocsContent({ params }: Pick<DocsProps, "params">) {
   const MDX = page.data.body;
   return (
     <SiteDocsPage toc={page.data.toc} full={page.data.full}>
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD built from our own frontmatter, `<` escaped.
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(docsJsonLd(page)) }}
+      />
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
         <DocsTitle>{page.data.title}</DocsTitle>
         <CopyMarkdownButton markdownUrl={markdownUrl(page.url)} />

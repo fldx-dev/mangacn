@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Dela_Gothic_One, Geist, Geist_Mono, Shantell_Sans, Yusei_Magic } from "next/font/google";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,9 +38,23 @@ const yuseiMagic = Yusei_Magic({
   preload: false,
 });
 
+// Pages set their own title (the template appends the name) and their own canonical URL; a
+// canonical here would leak into every page that sets none. The Open Graph image comes from
+// app/opengraph-image.tsx.
 export const metadata: Metadata = {
-  title: "mangacn",
-  description: "Manga-styled React components, distributed as a shadcn registry.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_TITLE, template: `%s · ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: "/",
+    locale: "en_US",
+  },
+  twitter: { card: "summary_large_image", title: SITE_TITLE, description: SITE_DESCRIPTION },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

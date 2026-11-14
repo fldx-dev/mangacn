@@ -15,7 +15,7 @@ export function generateStaticParams() {
 
 // Static on purpose, as on the demo stage: with Partial Prefetching the App Shell is shared by
 // every view URL, and a `params` read here (or outside the Suspense below) would tie it to one.
-export const metadata: Metadata = { title: "mangacn block view", robots: { index: false } };
+export const metadata: Metadata = { title: "Block view", robots: { index: false } };
 
 type ViewProps = PageProps<"/view/[block]">;
 

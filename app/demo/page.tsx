@@ -7,7 +7,7 @@ import { listDemos } from "@/lib/registry/demos";
 // Gallery index: every item that has demos, grouped by catalog category, linking to the
 // per-item page (all demos inline) and to each lone demo stage.
 
-export const metadata: Metadata = { title: "mangacn gallery", robots: { index: false } };
+export const metadata: Metadata = { title: "Gallery", robots: { index: false } };
 
 // The docs' category order, blocks last.
 const CATEGORY_ORDER: readonly string[] = CATEGORIES;

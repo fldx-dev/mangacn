@@ -12,7 +12,7 @@ export function generateStaticParams() {
   return [...new Set(listDemos().map(({ item }) => item))].map((item) => ({ item }));
 }
 
-export const metadata: Metadata = { title: "mangacn gallery", robots: { index: false } };
+export const metadata: Metadata = { title: "Gallery", robots: { index: false } };
 
 type ItemPageProps = PageProps<"/demo/[item]">;
 
