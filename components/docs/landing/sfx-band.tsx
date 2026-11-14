@@ -2,8 +2,8 @@ import { SfxTicker, type SfxTickerWord } from "@/registry/ui/sfx-ticker/sfx-tick
 
 /** Sound effects in both scripts; the ticker repeats them so the loop never shows a seam. */
 const WORDS: SfxTickerWord[] = [
-  { text: "ドン！", lang: "ja" },
-  { text: "DOKAN!" },
+  { text: "東京！", lang: "ja" },
+  { text: "KYOTO!" },
   { text: "バン！", lang: "ja", color: "spot" },
   { text: "ZUDON!" },
   { text: "ゴゴゴ", lang: "ja" },

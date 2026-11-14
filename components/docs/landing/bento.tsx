@@ -63,10 +63,10 @@ export function Bento() {
             <Panel caption="Sound" className="h-full px-5 pb-6">
               <div className="flex flex-1 flex-wrap items-center justify-center gap-x-10 gap-y-6">
                 <SfxText lang="ja" size="sm" rotate={-6}>
-                  ドン！
+                  東京！
                 </SfxText>
                 <SfxText size="md" rotate={4} color="spot">
-                  DOKAN!
+                  KYOTO!
                 </SfxText>
                 <SfxText lang="ja" size="lg" rotate={-3}>
                   バン！

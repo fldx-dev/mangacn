@@ -27,7 +27,7 @@ describe("InkTeaser", () => {
     const { container } = render(<InkTeaser />);
     expect(container.querySelectorAll('[data-slot="slider"]')).toHaveLength(2);
     observer.drawAll();
-    const frame = () => screen.getByText("ドン！");
+    const frame = () => screen.getByText("東京！");
     const before = frame();
     expect(before.parentElement?.style.getPropertyValue("--outline-width")).toBe("1.5px");
 

@@ -13,7 +13,7 @@ export function HeroPage() {
         <Emanata kind="anger" size="sm" color="spot" className="absolute -top-2 -right-1" />
       </div>
       <SfxText lang="ja" size="md" rotate={-8} className="self-end">
-        ドン！
+        東京！
       </SfxText>
     </div>
   );

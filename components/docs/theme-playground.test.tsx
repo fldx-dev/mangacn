@@ -110,7 +110,7 @@ describe("ThemePlayground", () => {
 
   it("marks the Japanese label", () => {
     render(<ThemePlayground />);
-    expect(screen.getByText("ドン！").closest("[lang]")?.getAttribute("lang")).toBe("ja");
+    expect(screen.getByText("東京！").closest("[lang]")?.getAttribute("lang")).toBe("ja");
   });
 
   it("has no axe violations", async () => {

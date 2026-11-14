@@ -48,7 +48,7 @@ describe("manga-motion", () => {
 
   it("renders the default demo", () => {
     const { getByText } = render(createElement(MangaMotionDefaultDemo));
-    expect(getByText("Dokan!")).toBeDefined();
+    expect(getByText("Kyoto!")).toBeDefined();
   });
 
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));

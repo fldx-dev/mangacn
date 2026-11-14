@@ -12,7 +12,7 @@ export default function MangaMotionDefaultDemo() {
       animate="visible"
       className="ink-border ink-shadow inline-block bg-paper px-6 py-4 font-display text-2xl"
     >
-      Dokan!
+      Kyoto!
     </motion.div>
   );
 }

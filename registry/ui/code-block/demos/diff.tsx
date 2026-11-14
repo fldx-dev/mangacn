@@ -12,7 +12,7 @@ const lines = [
   ["default", "<Panel>"],
   ["removed", '  <SpeechBubble shape="round">Who is there?</SpeechBubble>'],
   ["added", '  <SpeechBubble shape="shout">WHO IS THERE?!</SpeechBubble>'],
-  ["highlighted", '  <SfxText size="lg">DOKAN</SfxText>'],
+  ["highlighted", '  <SfxText size="lg">KYOTO</SfxText>'],
   ["default", "</Panel>"],
 ] as const;
 

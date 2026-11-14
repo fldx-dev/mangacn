@@ -8,13 +8,13 @@ export default function SfxTextColorsDemo() {
         Goro goro
       </SfxText>
       <SfxText color="spot" rotate={-10} enter="pop">
-        Don!
+        Kyoto!
       </SfxText>
       <SfxText color="ink" stroke={false} rotate={0}>
         No stroke
       </SfxText>
       <SfxText lang="ja" size="lg" rotate={-4}>
-        ドカン
+        東京
       </SfxText>
     </div>
   );

@@ -7,7 +7,7 @@ const variants = [
   { variant: "ghost", label: "Ghost" },
   { variant: "destructive", label: "Destructive" },
   { variant: "link", label: "Link" },
-  { variant: "sfx", label: "Dokan!" },
+  { variant: "sfx", label: "Kyoto!" },
 ] as const;
 
 export default function ButtonVariantsDemo() {

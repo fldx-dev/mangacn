@@ -377,7 +377,7 @@ Branches are merged into `main` with a merge commit and deleted afterwards.
    import { Thing } from "@/registry/ui/thing/thing";
 
    export default function ThingDefaultDemo() {
-     return <Thing>Dokan!</Thing>;
+     return <Thing>Kyoto!</Thing>;
    }
    ```
 

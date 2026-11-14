@@ -117,7 +117,7 @@ export function ThemePlayground() {
             lang="ja"
             className="px-5 py-3 font-display"
           >
-            ドン！
+            東京！
           </InkFrame>
           <InkFrame
             key={`${drawKey}-heavy`}

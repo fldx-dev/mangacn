@@ -67,7 +67,7 @@ export function StoryPage() {
       <PanelGridItem>
         <Panel tone="halftone" className="min-h-56 items-center justify-center">
           <SfxText size="lg" color="spot" rotate={-6} enter="slam">
-            Dokan!
+            Kyoto!
           </SfxText>
         </Panel>
       </PanelGridItem>

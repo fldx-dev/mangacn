@@ -69,7 +69,7 @@ export function InkTeaser() {
       </fieldset>
       <div style={style} className="flex justify-center p-3">
         <InkFrame key={drawKey} seed={12} lang="ja" className="px-6 py-4 font-display text-2xl">
-          ドン！
+          東京！
         </InkFrame>
       </div>
     </div>

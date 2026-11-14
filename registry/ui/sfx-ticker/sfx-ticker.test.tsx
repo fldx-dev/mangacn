@@ -32,7 +32,7 @@ const animationOf = (track: HTMLElement) =>
 describe("SfxTicker", () => {
   it("renders the words twice, as sfx-text, for a seamless loop", () => {
     stubReducedMotion(false);
-    const { container } = render(<SfxTicker className="custom-class" words={["DON!", "BAM!"]} />);
+    const { container } = render(<SfxTicker className="custom-class" words={["KYOTO!", "BAM!"]} />);
     const ticker = tickerOf(container);
     expect(ticker.classList.contains("custom-class")).toBe(true);
     expect(ticker.classList.contains("overflow-hidden")).toBe(true);
@@ -40,7 +40,7 @@ describe("SfxTicker", () => {
     expect(groups).toHaveLength(2);
     for (const group of groups) {
       const words = [...group.querySelectorAll<HTMLElement>('[data-slot="sfx-text"]')];
-      expect(words.map((word) => word.textContent)).toEqual(["DON!", "BAM!"]);
+      expect(words.map((word) => word.textContent)).toEqual(["KYOTO!", "BAM!"]);
     }
     expect(groups[0].innerHTML).toBe(groups[1].innerHTML);
   });
@@ -59,7 +59,7 @@ describe("SfxTicker", () => {
     stubReducedMotion(false);
     const { container } = render(
       <SfxTicker
-        words={["DON!", { text: "BAM!", color: "spot" }, { text: "ドン", lang: "ja" }]}
+        words={["KYOTO!", { text: "BAM!", color: "spot" }, { text: "東京", lang: "ja" }]}
         color="paper"
       />,
     );
@@ -73,7 +73,7 @@ describe("SfxTicker", () => {
 
   it("defaults to ink words, normal speed, travelling left", () => {
     stubReducedMotion(false);
-    const { container } = render(<SfxTicker words={["DON!"]} />);
+    const { container } = render(<SfxTicker words={["KYOTO!"]} />);
     const ticker = tickerOf(container);
     expect(ticker.dataset.speed).toBe("normal");
     expect(ticker.dataset.direction).toBe("left");
@@ -92,14 +92,14 @@ describe("SfxTicker", () => {
     ["fast", "20s"],
   ] as const)("sets the %s speed", (speed, duration) => {
     stubReducedMotion(false);
-    const { container } = render(<SfxTicker words={["DON!"]} speed={speed} />);
+    const { container } = render(<SfxTicker words={["KYOTO!"]} speed={speed} />);
     expect(tickerOf(container).dataset.speed).toBe(speed);
     expect(trackOf(container).classList.contains(`[--sfx-ticker-duration:${duration}]`)).toBe(true);
   });
 
   it("sets the words at the md size by default", () => {
     stubReducedMotion(false);
-    const { container } = render(<SfxTicker words={["DON!", "BAM!"]} />);
+    const { container } = render(<SfxTicker words={["KYOTO!", "BAM!"]} />);
     expect(tickerOf(container).dataset.size).toBe("md");
     const words = [...container.querySelectorAll<HTMLElement>('[data-slot="sfx-text"]')];
     expect(words.map((word) => word.dataset.size)).toEqual(["md", "md", "md", "md"]);
@@ -111,7 +111,7 @@ describe("SfxTicker", () => {
     ["lg", "text-5xl"],
   ] as const)("maps size %s to sfx-text's size, each group still a viewport wide", (size, text) => {
     stubReducedMotion(false);
-    const { container } = render(<SfxTicker words={["DON!"]} size={size} />);
+    const { container } = render(<SfxTicker words={["KYOTO!"]} size={size} />);
     expect(tickerOf(container).dataset.size).toBe(size);
     for (const word of container.querySelectorAll<HTMLElement>('[data-slot="sfx-text"]')) {
       expect(word.dataset.size).toBe(size);
@@ -124,14 +124,14 @@ describe("SfxTicker", () => {
 
   it("reverses the animation for direction right", () => {
     stubReducedMotion(false);
-    const { container } = render(<SfxTicker words={["DON!"]} direction="right" />);
+    const { container } = render(<SfxTicker words={["KYOTO!"]} direction="right" />);
     expect(tickerOf(container).dataset.direction).toBe("right");
     expect(animationOf(trackOf(container))).toMatch(/_linear_infinite_reverse\]$/);
   });
 
   it("hides the whole band from assistive tech without a label", () => {
     stubReducedMotion(false);
-    const { container } = render(<SfxTicker words={["DON!"]} />);
+    const { container } = render(<SfxTicker words={["KYOTO!"]} />);
     expect(tickerOf(container).getAttribute("aria-hidden")).toBe("true");
     expect(container.querySelector('[data-slot="sfx-ticker-label"]')).toBeNull();
   });
@@ -139,7 +139,7 @@ describe("SfxTicker", () => {
   it("with a label, reads the label and the words once, still hiding the moving track", () => {
     stubReducedMotion(false);
     const { container } = render(
-      <SfxTicker label="Fight sounds" words={["POW!", { text: "ドン", lang: "ja" }]} />,
+      <SfxTicker label="Fight sounds" words={["POW!", { text: "東京", lang: "ja" }]} />,
     );
     const ticker = tickerOf(container);
     expect(ticker.hasAttribute("aria-hidden")).toBe(false);
@@ -147,12 +147,12 @@ describe("SfxTicker", () => {
     const label = screen.getByText(/Fight sounds/);
     expect(label.dataset.slot).toBe("sfx-ticker-label");
     expect(label.classList.contains("sr-only")).toBe(true);
-    expect(label.textContent).toBe("Fight sounds: POW!, ドン");
-    expect(label.querySelector('[lang="ja"]')?.textContent).toBe("ドン");
+    expect(label.textContent).toBe("Fight sounds: POW!, 東京");
+    expect(label.querySelector('[lang="ja"]')?.textContent).toBe("東京");
   });
 
   it("server-renders the motion-safe animation class (CSS holds it still under reduced motion)", () => {
-    const html = renderToString(<SfxTicker words={["DON!"]} />);
+    const html = renderToString(<SfxTicker words={["KYOTO!"]} />);
     expect(html).toContain("motion-safe:animate-[mangacn-marquee");
     expect(html).toContain('data-animated="true"');
   });
@@ -175,7 +175,7 @@ describe("SfxTicker", () => {
 describe("SfxTicker under reduced motion", () => {
   it("drops the animation class while the user prefers reduced motion", () => {
     stubReducedMotion(true);
-    const { container } = render(<SfxTicker words={["DON!", "BAM!"]} direction="right" />);
+    const { container } = render(<SfxTicker words={["KYOTO!", "BAM!"]} direction="right" />);
     const track = trackOf(container);
     expect(animationOf(track)).toBeUndefined();
     expect([...track.classList].some((name) => name.includes("animate"))).toBe(false);

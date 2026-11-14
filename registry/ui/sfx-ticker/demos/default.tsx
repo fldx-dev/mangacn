@@ -5,8 +5,8 @@ export default function SfxTickerDefaultDemo() {
     <SfxTicker
       className="w-full"
       words={[
-        { text: "ドン！", lang: "ja" },
-        "DOKAN!",
+        { text: "東京！", lang: "ja" },
+        "KYOTO!",
         { text: "バン！", lang: "ja" },
         "ZUDON!",
         { text: "ゴゴゴ", lang: "ja" },

@@ -66,10 +66,10 @@ Sound effects are lettering, not body text: the display face, heavy, tilted. Kat
 native script for them.
 
 ```tsx
-<SfxText lang="ja" size="lg" rotate={-4}>ドカン</SfxText>
+<SfxText lang="ja" size="lg" rotate={-4}>東京</SfxText>
 
 <SfxTicker
-  words={["BOOM", { text: "ドン！", lang: "ja" }, "BAM", { text: "ゴゴゴ", lang: "ja" }]}
+  words={["BOOM", { text: "東京！", lang: "ja" }, "BAM", { text: "ゴゴゴ", lang: "ja" }]}
 />
 ```
 

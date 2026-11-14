@@ -81,7 +81,7 @@ describe("Button", () => {
   });
 
   it("maps the sfx variant to display type with a paper fill", () => {
-    render(<Button variant="sfx">Dokan!</Button>);
+    render(<Button variant="sfx">Kyoto!</Button>);
     const classes = screen.getByRole("button").classList;
     for (const name of ["font-display", "uppercase", "bg-paper", "text-ink"]) {
       expect(classes.contains(name), name).toBe(true);
