@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render } from "@testing-library/react";
 import { FrameworkProvider } from "fumadocs-core/framework";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { RootProvider } from "fumadocs-ui/provider/base";
@@ -58,7 +58,7 @@ describe("the landing", () => {
     expect(sections.map((section) => section.dataset.landing)).toEqual([
       "hero",
       "sfx-band",
-      "swap-import",
+      "stages",
       "bento",
       "mode-split",
       "whole-page",
@@ -114,13 +114,18 @@ describe("the landing", () => {
     for (const { answer } of FAQ) expect(faq?.textContent).toContain(answer);
   });
 
-  it("swaps the stock card for the drawn one", async () => {
+  it("draws the swap as four stages over a pencil card that is hidden from assistive tech", () => {
     const { container } = renderLanding();
-    const toggle = container.querySelector('[data-slot="swap-toggle"]');
-    const stock = toggle?.querySelector('[data-slot="stock-card"]')?.parentElement;
-    expect(stock?.hidden).toBe(true);
-    screen.getByRole("switch", { name: "Draw with mangacn" }).click();
-    await vi.waitFor(() => expect(stock?.hidden).toBe(false));
+    const stages = container.querySelector('[data-landing="stages"]');
+    expect([...(stages?.querySelectorAll("ol > li") ?? [])].map((li) => li.textContent)).toEqual([
+      expect.stringContaining("Pencils"),
+      expect.stringContaining("Inks"),
+      expect.stringContaining("Tone"),
+      expect.stringContaining("Lettering"),
+    ]);
+    const pencil = stages?.querySelector('[data-slot="stock-card"]')?.parentElement;
+    expect(pencil?.getAttribute("aria-hidden")).toBe("true");
+    expect(pencil?.hasAttribute("inert")).toBe(true);
   });
 
   it("has no axe violations", async () => {

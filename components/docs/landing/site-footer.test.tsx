@@ -19,11 +19,14 @@ const hrefs = (name: string) =>
     .map((link) => link.getAttribute("href"));
 
 describe("SiteFooter", () => {
-  it("opens with a hand-drawn rule and carries the licence and the Pro line", () => {
-    const { container } = render(<SiteFooter />);
-    expect(container.querySelector('footer > div > [data-slot="separator"]')).not.toBeNull();
+  it("closes the chapter on a stamped last page that points at the docs, with the licence", () => {
+    render(<SiteFooter />);
+    expect(screen.getByRole("heading", { level: 2, name: "End of chapter one." })).not.toBeNull();
+    expect(screen.getByRole("link", { name: "Turn to the docs" }).getAttribute("href")).toBe(
+      "/docs",
+    );
+    expect(screen.getByText("完").closest("[lang='ja']")).not.toBeNull();
     expect(screen.getByText(/distributed as a shadcn registry\. MIT\./)).not.toBeNull();
-    expect(screen.getByText("Pro: blocks and templates, later.")).not.toBeNull();
   });
 
   it("links three columns to real pages", () => {

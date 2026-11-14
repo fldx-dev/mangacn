@@ -5,13 +5,13 @@ import { Hero } from "./hero";
 import { ModeSplit } from "./mode-split";
 import { SfxBand } from "./sfx-band";
 import { SiteFooter } from "./site-footer";
-import { SwapImport } from "./swap-import";
+import { Stages } from "./stages";
 import { ThreeCommands } from "./three-commands";
 import { WholePage } from "./whole-page";
 
 /**
  * The landing's sections, under the Fumadocs navbar (SPEC-docs-site §4.1): the splash hero, a
- * sound-effect band, the swap-an-import toggle, a bento of pieces, the day/night split, the
+ * sound-effect band, the four stages (pencils to lettering), a bento of pieces, the day/night split, the
  * whole page, the three commands, the agent strip, the FAQ and the footer.
  */
 export function LandingSections() {
@@ -19,7 +19,7 @@ export function LandingSections() {
     <>
       <Hero />
       <SfxBand />
-      <SwapImport />
+      <Stages />
       <Bento />
       <ModeSplit />
       <WholePage />

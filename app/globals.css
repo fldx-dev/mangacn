@@ -69,9 +69,178 @@
   -webkit-box-decoration-break: clone;
 }
 
+/* Fumadocs chrome answers the pointer in ink, like the site's own buttons: search, the theme
+   toggle and a code block's copy button invert to an ink fill; the package-manager tabs of an
+   install command take a tone fill and an ink underline. Stock Fumadocs only tints them (or,
+   with accent = ink, changes nothing). Unlayered so it beats the utilities. Colours only, so
+   reduced motion needs nothing. */
+[data-search-full]:hover,
+[data-search]:hover,
+[data-theme-toggle] > :hover,
+figure.shiki button[aria-live="polite"]:hover {
+  background-color: var(--ink);
+  color: var(--paper);
+}
+[data-search-full]:hover kbd {
+  border-color: var(--paper);
+  color: var(--paper);
+}
+[data-slot="install-command"] [role="tab"]:hover {
+  background-color: var(--tone-1);
+  box-shadow: inset 0 -2px 0 var(--ink);
+}
+
 /* The theme's own base layer (border, outline, body colours) comes from the import above. */
 @layer base {
   html {
     @apply font-sans;
+  }
+}
+
+/* ── The landing (DESIGN.md): pencils, ink, tone, lettering ─────────────────────────────────
+   One desk colour beyond the theme: non-photo blue, the pencil a mangaka draws the page in
+   before inking (scanners drop it). Only the "not inked yet" state uses it. */
+:root {
+  --pencil: oklch(0.7 0.11 235);
+  /* The same blue, dark enough to read at 4.5:1 on paper, for pencil text. */
+  --pencil-text: oklch(0.5 0.12 240);
+  --landing-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dark {
+  --pencil: oklch(0.6 0.1 235);
+  --pencil-text: oklch(0.76 0.1 235);
+}
+
+/* The stages' driver: one number, 0 (pencils) to 4 (lettered), set from scroll. */
+@property --p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* A block drawn in pencil: every ink and tone token of the theme becomes the blue. */
+.landing-pencil {
+  --ink: var(--pencil);
+  --tone-1: color-mix(in oklab, var(--pencil) 14%, var(--paper));
+  --tone-2: color-mix(in oklab, var(--pencil) 55%, var(--paper));
+  --tone-3: var(--pencil);
+  --tone-4: var(--pencil);
+  --border: var(--pencil);
+  --primary: var(--pencil);
+  color: var(--pencil);
+}
+
+/* Hero: each line of the headline is inked over its own pencil line, left to right. */
+@keyframes landing-ink-in {
+  from {
+    clip-path: inset(-20% 100% -20% 0);
+  }
+  to {
+    clip-path: inset(-20% -5% -20% 0);
+  }
+}
+.landing-ink-line {
+  animation: landing-ink-in 760ms var(--landing-ease) both;
+  animation-delay: calc(180ms + var(--i, 0) * 170ms);
+}
+/* The underdrawing rides a little off the ink, as pencils always do. */
+.landing-pencil-under {
+  translate: 0.06em 0.08em;
+  rotate: -0.6deg;
+  opacity: 0.85;
+}
+
+/* Idle: the hero's focus lines turn, one turn every two minutes. */
+@keyframes landing-turn {
+  to {
+    rotate: 360deg;
+  }
+}
+.landing-turn {
+  animation: landing-turn 120s linear infinite;
+}
+
+/* Stages: everything below reads --p. */
+.landing-stage {
+  --pencils: clamp(0, var(--p) + 1, 1);
+  --inks: clamp(0, var(--p) - 1, 1);
+  --tone: clamp(0, var(--p) - 2, 1);
+  --letters: clamp(0, var(--p) - 3, 1);
+}
+.landing-stage-ink {
+  clip-path: inset(-6% calc((1 - var(--inks)) * 108% - 4%) -6% -4%);
+}
+/* Pencils are erased once inked, as on a real page: wherever the ink has passed. */
+.landing-stage-erase {
+  clip-path: inset(-6% -4% -6% calc(var(--inks) * 108% - 4%));
+}
+/* The nib's box spans the card, so a translate in its own percent is a move across the card:
+   a transform, not a layout shift. */
+.landing-stage-nib {
+  translate: calc(var(--inks) * 100%) 0;
+  opacity: calc(min(var(--inks) * 12, (1 - var(--inks)) * 12, 1));
+}
+.landing-stage-tone {
+  clip-path: polygon(0 0, calc(var(--tone) * 220%) 0, calc(var(--tone) * 220% - 100%) 100%, 0 100%);
+}
+.landing-stage-letter {
+  scale: calc(0.6 + var(--letters) * 0.4);
+  opacity: clamp(0, var(--letters) * 3, 1);
+}
+.landing-stage-item {
+  --on: clamp(0, (var(--p) - var(--i) + 0.35) * 3, 1);
+  color: color-mix(in oklab, var(--ink) calc(var(--on) * 100%), var(--pencil-text));
+}
+/* The description is reading text: it stays at the theme's muted tone in every state. */
+.landing-stage-item [data-desc] {
+  color: var(--tone-4);
+}
+.landing-stage-item [data-rule] {
+  scale: var(--on) 1;
+  transform-origin: left;
+  background: var(--ink);
+}
+@keyframes landing-nib-bob {
+  50% {
+    translate: 0 -6px;
+  }
+}
+.landing-stage-nib [data-bob] {
+  animation: landing-nib-bob 1.6s var(--landing-ease) infinite;
+}
+
+/* Page to page: the next page is laid over this one from the right edge, like a turned page in
+   a book read right to left. */
+@keyframes landing-page-in {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes landing-page-out {
+  to {
+    translate: -3% 0;
+  }
+}
+/* The new page is opaque paper, so only one page can be read at any frame. */
+::view-transition-new(.page-turn) {
+  animation: landing-page-in 520ms var(--landing-ease) both;
+  background: var(--paper);
+}
+::view-transition-old(.page-turn) {
+  animation: landing-page-out 520ms var(--landing-ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-ink-line,
+  .landing-turn,
+  .landing-stage-nib [data-bob] {
+    animation: none;
+  }
+  ::view-transition-old(.page-turn),
+  ::view-transition-new(.page-turn) {
+    animation: none;
   }
 }
