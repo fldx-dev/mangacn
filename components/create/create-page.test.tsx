@@ -210,13 +210,14 @@ describe("CreatePage", () => {
     await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
 
-  it("explains Get code until the command ships", async () => {
+  it("opens Get code on the page's code", async () => {
+    window.history.replaceState(null, "", "/create?c=111");
     renderPage();
     fireEvent.click(within(rail()).getByRole("button", { name: "Get code" }));
     const dialog = await screen.findByRole("dialog", { name: "Get code" });
-    expect(dialog.textContent).toContain("arrives with the next update");
-    expect(within(dialog).getByRole("link", { name: "Installation" }).getAttribute("href")).toBe(
-      "/docs/installation",
+    expect(dialog.querySelector('[data-slot="create-dialog-code"]')?.textContent).toBe("111");
+    expect(dialog.querySelector('[data-slot="create-command-new"]')?.textContent).toContain(
+      "/r/create/111.json",
     );
   });
 
