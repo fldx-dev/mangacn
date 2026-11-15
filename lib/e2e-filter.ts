@@ -13,6 +13,7 @@ export const E2E_SUITES = [
   "annotations",
   "presets",
   "create",
+  "create-code",
   "create-fonts",
 ] as const;
 export type E2eSuite = (typeof E2E_SUITES)[number];
@@ -146,6 +147,19 @@ const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
       /^lib\/create\//,
       "e2e/create.spec.ts",
       /^registry\/theme\/presets\//,
+    ],
+  },
+  // Get code (Task C6): the dialog, the commands and files it prints, `/create.md`, and the
+  // docs pages that link to Create.
+  {
+    suite: "create-code",
+    paths: [
+      /^components\/create\//,
+      /^lib\/create\//,
+      /^app\/create\.md\//,
+      "e2e/create-code.spec.ts",
+      "content/docs/installation.mdx",
+      "content/docs/theming.mdx",
     ],
   },
   // The Create page's fonts (Task C7): the curated faces, the pickers, the faces the preview
@@ -359,7 +373,8 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  * - `lib/mcp/`, `app/api/mcp/`, `skills/`, the MCP spec → `mcp`; `content/`, `lib/docs/` and the
  *   props generator → `mcp` and `site` (the MCP serves pages and props tables)
  * - the Create page's route, `components/create/`, `lib/create/`, its spec and the preset values
- *   → `create` (the route and components also `site`)
+ *   → `create` (the route and components also `site`); `components/create/`, `lib/create/`,
+ *   `/create.md`, the Get code spec and the Installation and Theming pages → `create-code`
  * - other `app/`, `components/`, the site spec → `site`
  * - `tsconfig.json` that only adds path aliases → the items they name and the items that use
  *   them (no `site`); `lib/registry/parity.ts` that only appends names → those items

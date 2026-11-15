@@ -108,8 +108,8 @@ describe("selectE2e", () => {
 
   it("maps docs, MCP and spec paths to their suites", () => {
     expect(pick(["components/docs/demo-frame.tsx", "app/(site)/page.tsx"])).toBe("site");
-    expect(pick(["content/docs/theming.mdx"])).toBe("site,mcp,presets");
-    expect(pick(["content/docs/installation.mdx"])).toBe("site,mcp");
+    expect(pick(["content/docs/theming.mdx"])).toBe("site,mcp,presets,create-code");
+    expect(pick(["content/docs/installation.mdx"])).toBe("site,mcp,create-code");
     expect(pick(["lib/docs/props.generated.json"])).toBe("site,mcp");
     expect(pick(["lib/mcp/tools.ts", "app/api/mcp/route.ts"])).toBe("mcp");
     expect(pick(["skills/mangacn/SKILL.md"])).toBe("mcp");
@@ -118,19 +118,27 @@ describe("selectE2e", () => {
 
   it("selects the create suite for the Create page's files (Task C4)", () => {
     expect(pick(["e2e/create.spec.ts"])).toBe("create");
-    expect(pick(["lib/create/state.ts"])).toBe("create");
+    expect(pick(["lib/create/state.ts"])).toBe("create,create-code");
     expect(pick(["lib/create/state.test.ts"])).toBe("none");
-    expect(pick(["components/create/create-page.tsx"])).toBe("site,create");
+    expect(pick(["components/create/create-page.tsx"])).toBe("site,create,create-code");
     expect(pick(["app/(site)/create/page.tsx"])).toBe("site,create");
     expect(pick(["e2e/__screenshots__/linux/w360/create-default-light.png"])).toBe("create");
   });
 
+  it("selects the Get code suite for the dialog, /create.md and the docs that link to it (Task C6)", () => {
+    expect(pick(["e2e/create-code.spec.ts"])).toBe("create-code");
+    expect(pick(["app/create.md/route.ts"])).toBe("site,create-code");
+    expect(pick(["components/create/get-code-dialog.tsx"])).toBe("site,create,create-code");
+  });
+
   it("selects the create-fonts suite for the faces, their pickers and routes (Task C7)", () => {
     expect(pick(["e2e/create-fonts.spec.ts"])).toBe("create-fonts");
-    expect(pick(["lib/create/fonts.ts"])).toBe("create,create-fonts");
-    expect(pick(["components/create/create-rail.tsx"])).toBe("site,create,create-fonts");
+    expect(pick(["lib/create/fonts.ts"])).toBe("create,create-code,create-fonts");
+    expect(pick(["components/create/create-rail.tsx"])).toBe(
+      "site,create,create-code,create-fonts",
+    );
     expect(pick(["app/r/create/font/[role]/[id]/route.ts"])).toBe("site,create-fonts");
-    expect(pick(["lib/create/kits.ts"])).toBe("create");
+    expect(pick(["lib/create/kits.ts"])).toBe("create,create-code");
   });
 
   it("runs everything for shared inputs and unknown paths", () => {
