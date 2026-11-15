@@ -1,8 +1,9 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, type Locator, type Page, test } from "@playwright/test";
+import { expect, type Frame, type Locator, type Page, test } from "@playwright/test";
 import { encode } from "../lib/create/code";
 import { baseValues } from "../lib/create/colours";
 import { type CreateConfig, DEFAULT_CONFIG, PENS } from "../lib/create/config";
+import { PREVIEW_PAGES } from "../lib/create/pages";
 import { PRESET_BASE_TOKENS } from "../lib/registry/theme-presets";
 import { AXE_DISABLED_RULES } from "../lib/test/axe-rules";
 import { paintInkFillsAsCss } from "./ink-fills";
@@ -10,7 +11,8 @@ import { waitForInk } from "./ready";
 
 // The Create page (Task C4): the rail or its drawer drives the preview, the code is the URL,
 // a custom look's colours are exactly `baseValues`, axe passes in both modes, and the page is
-// shot at every width in light and dark for two fixed codes. Pixels on Linux only (CI).
+// shot at every width in light and dark for two fixed codes. Pixels on Linux only (CI). Task C5:
+// the preview tabs frame page blocks at the code, and `?c=` styles a stage or a view by itself.
 const comparePixels = process.platform === "linux";
 
 /** A custom look with every part tinted, a fine pen and the second faces. */
@@ -236,3 +238,205 @@ for (const [name, code] of Object.entries(CODES)) {
     });
   }
 }
+
+// Task C5: block previews and `?c=` on the stage and view routes.
+
+/** The colour a variable on a frame's root paints, and `expected`'s, as sRGB pixels. */
+async function rootPixels(frame: Frame, token: string, expected: string) {
+  return frame.evaluate(
+    ([name, colour]) => {
+      const context = document.createElement("canvas").getContext("2d");
+      const pixel = (value: string) => {
+        if (!context) return [];
+        context.clearRect(0, 0, 1, 1);
+        context.fillStyle = value;
+        context.fillRect(0, 0, 1, 1);
+        return [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
+      };
+      const value = getComputedStyle(document.documentElement).getPropertyValue(`--${name}`);
+      return [pixel(value.trim()), pixel(colour)];
+    },
+    [token, expected] as const,
+  );
+}
+
+/** Whether a variable of a frame's root paints as `expected` (polled: a new code is a message). */
+async function expectRootColour(frame: Frame, token: string, expected: string) {
+  await expect
+    .poll(
+      async () => {
+        const [actual, wanted] = await rootPixels(frame, token, expected);
+        return (
+          wanted.length === 3 &&
+          actual.length === 3 &&
+          actual.every((channel, index) => Math.abs(channel - wanted[index]) <= 1)
+        );
+      },
+      { message: `--${token} is ${expected}` },
+    )
+    .toBe(true);
+}
+
+/** The frame of the open page tab, once its view has applied the code and drawn. */
+async function blockFrame(page: Page, block: string): Promise<Frame> {
+  const element = page.locator(`[data-slot="create-block"][data-block="${block}"] iframe`);
+  await expect(element).toBeVisible();
+  const frame = await (await element.elementHandle())?.contentFrame();
+  if (!frame) throw new Error(`no frame for ${block}`);
+  await expect(frame.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await waitForInk(frame);
+  return frame;
+}
+
+/** The first face of a text element whose family matches `pattern`, and whether it loaded. */
+async function loadedFace(frame: Frame, pattern: string) {
+  return frame.evaluate(async (source) => {
+    await document.fonts.ready;
+    const matcher = new RegExp(source, "i");
+    const element = [...document.querySelectorAll<HTMLElement>("body *")].find(
+      (node) =>
+        node.childElementCount === 0 &&
+        Boolean(node.textContent?.trim()) &&
+        matcher.test(getComputedStyle(node).fontFamily),
+    );
+    if (!element) return null;
+    const family = getComputedStyle(element).fontFamily.split(",")[0].trim();
+    await document.fonts.load(`16px ${family}`, element.textContent ?? "");
+    const bare = family.replace(/["']/g, "");
+    return {
+      family: bare,
+      loaded: [...document.fonts].some(
+        (face) => face.family.replace(/["']/g, "") === bare && face.status === "loaded",
+      ),
+    };
+  }, pattern);
+}
+
+/** The frame window's own mark, to tell a restyle from a reload. */
+type Marked = { createKept?: boolean };
+
+test("each page tab frames its block in the custom code's colours and follows a new code", async ({
+  page,
+}) => {
+  test.skip(test.info().project.name === "w768", "a phone and a desktop width are enough");
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await open(page, "light", CODES.custom);
+  const values = baseValues(CUSTOM.look).light;
+  for (const { label, block } of PREVIEW_PAGES) {
+    await page.getByRole("tab", { name: label }).click();
+    const frame = await blockFrame(page, block);
+    await expectRootColour(frame, "paper", values.paper);
+    await expectRootColour(frame, "spot", values.spot);
+  }
+  // The open frame (Chat) follows a new look by message, without loading again.
+  const chat = await blockFrame(page, "chat-thread");
+  await chat.evaluate(() => {
+    (window as Marked).createKept = true;
+  });
+  const rail = await choices(page);
+  await rail.getByRole("group", { name: "Look" }).getByRole("button", { name: "Sepia" }).click();
+  await expectRootColour(chat, "paper", baseValues({ preset: "sepia" }).light.paper);
+  expect(await chat.evaluate(() => (window as Marked).createKept)).toBe(true);
+  // Dark loads the frame again, in dark mode at the current code.
+  const drawer = page.getByRole("dialog", { name: "Choices" });
+  if (await drawer.isVisible()) {
+    await page.keyboard.press("Escape");
+    await expect(drawer).toBeHidden();
+  }
+  await page
+    .getByRole("group", { name: "Preview mode" })
+    .getByRole("button", { name: "Dark" })
+    .click();
+  await expect(page.locator('[data-slot="create-block"] iframe')).toHaveAttribute(
+    "src",
+    /&mode=dark$/,
+  );
+  const dark = await blockFrame(page, "chat-thread");
+  await expect(dark.locator("html")).toHaveClass(/\bdark\b/);
+  await expectRootColour(dark, "paper", baseValues({ preset: "sepia" }).dark.paper);
+  expect(errors).toEqual([]);
+});
+
+test("a code with Reggae One sets the frame's display face in Reggae One", async ({ page }) => {
+  test.skip(test.info().project.name !== "w1280", "fonts do not depend on the width");
+  await open(page, "light", CODES.custom);
+  await page.getByRole("tab", { name: "Login" }).click();
+  const frame = await blockFrame(page, "login-01");
+  const face = await loadedFace(frame, "reggae");
+  expect(face, "an element set in Reggae One").not.toBeNull();
+  expect(face?.family).toMatch(/reggae/i);
+  expect(face?.loaded).toBe(true);
+});
+
+test("opening a page tab neither scrolls the page nor takes the focus", async ({ page }) => {
+  await open(page, "light", CODES.custom);
+  await page.getByRole("tab", { name: "Specimen" }).focus();
+  const scroll = await page.evaluate(() => window.scrollY);
+  for (const { label, block } of PREVIEW_PAGES) {
+    const tab = page.getByRole("tab", { name: label });
+    await page.keyboard.press("ArrowRight");
+    await expect(tab).toBeFocused();
+    if ((await tab.getAttribute("aria-selected")) !== "true") await page.keyboard.press("Enter");
+    await blockFrame(page, block);
+    await expect(tab).toBeFocused();
+    expect(await page.evaluate(() => window.scrollY)).toBe(scroll);
+  }
+  await expectNoOverflow(page);
+});
+
+for (const mode of ["light", "dark"] as const) {
+  test(`axe finds nothing with a page tab open (${mode})`, async ({ page }) => {
+    test.skip(test.info().project.name === "w768", "a phone and a desktop width are enough");
+    await open(page, mode, CODES.custom);
+    await page.getByRole("tab", { name: "Series page" }).click();
+    await blockFrame(page, "series-page");
+    // Contrast inside the frame is measured on the view itself, below.
+    const { violations } = await new AxeBuilder({ page })
+      .disableRules(AXE_DISABLED_RULES)
+      .exclude("[data-base-ui-focus-guard]")
+      .analyze();
+    expect(axeFindings(violations), "axe violations").toEqual([]);
+  });
+
+  for (const path of ["/view/login-01", "/view/series-page"]) {
+    test(`axe finds nothing on ${path} under a custom code (${mode})`, async ({ page }) => {
+      test.skip(test.info().project.name !== "w1280", "the views' own suite covers the widths");
+      const search = new URLSearchParams({ c: CODES.custom });
+      if (mode === "dark") search.set("mode", "dark");
+      const response = await page.goto(`${path}?${search}`);
+      expect(response?.status()).toBe(200);
+      await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+      await waitForInk(page);
+      await expectRootColour(page.mainFrame(), "paper", baseValues(CUSTOM.look)[mode].paper);
+      // A whole page: its page rules apply.
+      const pageRules = AXE_DISABLED_RULES.filter(
+        (rule) => rule !== "region" && rule !== "page-has-heading-one",
+      );
+      const { violations } = await new AxeBuilder({ page })
+        .disableRules(pageRules)
+        .exclude("[data-base-ui-focus-guard]")
+        .analyze();
+      expect(axeFindings(violations), "axe violations").toEqual([]);
+      await paintInkFillsAsCss(page);
+      const contrast = await new AxeBuilder({ page })
+        .withRules(["color-contrast"])
+        .exclude("[data-base-ui-focus-guard]")
+        .analyze();
+      expect(axeFindings(contrast.violations), "color-contrast below WCAG AA").toEqual([]);
+    });
+  }
+}
+
+test("on a stage ?c= wins over ?theme=, and a bad code is the default look", async ({ page }) => {
+  test.skip(test.info().project.name !== "w1280", "the look does not depend on the width");
+  const html = page.locator("html");
+  await page.goto(`/demo/theme/specimen?theme=sepia&c=${CODES.custom}`);
+  await expect(html).toHaveAttribute("data-demo-ready", "true");
+  expect(await html.getAttribute("data-theme-preset")).toBeNull();
+  await expectRootColour(page.mainFrame(), "spot", baseValues(CUSTOM.look).light.spot);
+  await page.goto("/demo/button/default?c=1zz&mode=dark");
+  await expect(html).toHaveAttribute("data-demo-ready", "true");
+  expect((await html.getAttribute("style")) ?? "").toBe("");
+  await expectRootColour(page.mainFrame(), "paper", baseValues({ preset: "default" }).dark.paper);
+});
