@@ -45,13 +45,8 @@ export const FONT_FACE_VARIABLES = {
 const DISPLAY_DEFAULT: DisplayFont = "dela-gothic-one";
 const DIALOGUE_DEFAULT: DialogueFont = "shantell-sans";
 
-/** Display names of the faces, as the rail lists them. */
-export const FONT_LABELS: Record<DisplayFont | DialogueFont, string> = {
-  "dela-gothic-one": "Dela Gothic One",
-  "reggae-one": "Reggae One",
-  "shantell-sans": "Shantell Sans",
-  "patrick-hand-sc": "Patrick Hand SC",
-};
+/** Display names of the faces, as the rail lists them (`./fonts.ts`). */
+export { FONT_LABELS } from "./fonts";
 
 function fontVariable(font: DisplayFont | DialogueFont): string {
   return `var(${FONT_FACE_VARIABLES[font as keyof typeof FONT_FACE_VARIABLES]})`;

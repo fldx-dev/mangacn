@@ -24,3 +24,13 @@ export function bundleUrl(code: string, origin: string = SITE_ORIGIN): string {
 export function themeUrl(code: string, origin: string = SITE_ORIGIN): string {
   return `${origin}/r/create/${code}/theme.json`;
 }
+
+/** The bundle a new Vite project starts from (its body font differs): `…/r/create/<code>/vite.json`. */
+export function viteBundleUrl(code: string, origin: string = SITE_ORIGIN): string {
+  return `${origin}/r/create/${code}/vite.json`;
+}
+
+/** A curated face's `registry:font` item: `…/r/create/font/<role>/<id>.json`. */
+export function fontUrl(role: string, id: string, origin: string = SITE_ORIGIN): string {
+  return `${origin}/r/create/font/${role}/${id}.json`;
+}

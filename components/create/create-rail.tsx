@@ -27,17 +27,18 @@ import {
   STRENGTH_RANGE,
   VIVIDNESS_RANGE,
 } from "@/lib/create/config";
+import { type FontRole, ROLE_VARIABLES } from "@/lib/create/fonts";
 import { kitItems } from "@/lib/create/kits";
-import { FONT_LABELS } from "@/lib/create/preview";
+import { FONT_FACE_VARIABLES, FONT_LABELS } from "@/lib/create/preview";
 import { type CreateAction, CUSTOM_STARTS, maxDot } from "@/lib/create/state";
 import type { Mode } from "@/lib/registry/contrast";
 import { cn } from "@/lib/utils";
 import { Field, FieldContent, FieldDescription, FieldLabel } from "@/registry/ui/field/field";
-import { NativeSelect, NativeSelectOption } from "@/registry/ui/native-select/native-select";
 import { RadioGroup, RadioGroupItem } from "@/registry/ui/radio-group/radio-group";
 import { Separator } from "@/registry/ui/separator/separator";
 import { Slider } from "@/registry/ui/slider/slider";
 import { ToggleGroup, ToggleGroupItem } from "@/registry/ui/toggle-group/toggle-group";
+import { CREATE_FONT_CLASSES } from "./create-fonts";
 
 export const LOOK_LABELS: Record<LookPreset | "custom", string> = {
   default: "Default",
@@ -363,6 +364,75 @@ const ScreentoneSection = memo(function ScreentoneSection({
   );
 });
 
+/** A few words on each face, under its name. */
+const FONT_NOTES: Record<DisplayFont | DialogueFont, string> = {
+  "dela-gothic-one": "Ultra-bold gothic, the default.",
+  "reggae-one": "Brush energy, from boys' magazines.",
+  "shantell-sans": "Hand-drawn, with weights and italics.",
+  "patrick-hand-sc": "Small-caps hand lettering, one weight.",
+};
+
+/**
+ * The family each face's name is drawn in: the site's own variable for a default face, the
+ * Create page's for an alternative (`create-fonts.ts`, not preloaded: its file loads once the
+ * name is shown, which the phone's closed drawer never does).
+ */
+function faceFamily(role: FontRole, font: DisplayFont | DialogueFont): string {
+  const own = FONT_FACE_VARIABLES[font as keyof typeof FONT_FACE_VARIABLES];
+  return `var(${own ?? ROLE_VARIABLES[role]})`;
+}
+
+/** One role's faces as a radio group, each name set in its own face. */
+function FacePicker<Font extends DisplayFont | DialogueFont>({
+  face: role,
+  label,
+  fonts,
+  value,
+  onChange,
+}: {
+  /** The role the faces are for. */
+  face: FontRole;
+  label: string;
+  fonts: readonly Font[];
+  value: Font;
+  onChange: (font: Font) => void;
+}) {
+  const id = useId();
+  return (
+    <div className="grid gap-2" data-slot="create-font-picker" data-role={role}>
+      <span id={`${id}-label`} className="text-sm">
+        {label}
+      </span>
+      <RadioGroup
+        aria-labelledby={`${id}-label`}
+        value={value}
+        onValueChange={(next) => {
+          if (typeof next === "string" && next !== value) onChange(next as Font);
+        }}
+      >
+        {fonts.map((font) => (
+          <FieldLabel key={font} htmlFor={`${id}-${font}`}>
+            <Field orientation="horizontal">
+              <RadioGroupItem value={font} id={`${id}-${font}`} />
+              <FieldContent className="min-w-0">
+                <span
+                  data-slot="create-font-name"
+                  data-font={font}
+                  className="text-lg leading-tight"
+                  style={{ fontFamily: faceFamily(role, font) }}
+                >
+                  {FONT_LABELS[font]}
+                </span>
+                <FieldDescription className="text-xs">{FONT_NOTES[font]}</FieldDescription>
+              </FieldContent>
+            </Field>
+          </FieldLabel>
+        ))}
+      </RadioGroup>
+    </div>
+  );
+}
+
 const FontsSection = memo(function FontsSection({
   fonts,
   dispatch,
@@ -370,41 +440,24 @@ const FontsSection = memo(function FontsSection({
   fonts: CreateConfig["fonts"];
   dispatch: (action: CreateAction) => void;
 }) {
-  const id = useId();
   return (
-    <RailSection title="Fonts">
-      <Field>
-        <FieldLabel htmlFor={`${id}-display`}>Display (titles and sound effects)</FieldLabel>
-        <NativeSelect
-          id={`${id}-display`}
+    <RailSection title="Fonts" description="Each name is set in its own face.">
+      <div className={cn("grid gap-4", CREATE_FONT_CLASSES)}>
+        <FacePicker
+          face="display"
+          label="Display (titles and sound effects)"
+          fonts={DISPLAY_FONTS}
           value={fonts.display}
-          onChange={(event) =>
-            dispatch({ type: "display-font", font: event.target.value as DisplayFont })
-          }
-        >
-          {DISPLAY_FONTS.map((font) => (
-            <NativeSelectOption key={font} value={font}>
-              {FONT_LABELS[font]}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-      </Field>
-      <Field>
-        <FieldLabel htmlFor={`${id}-dialogue`}>Dialogue (speech and captions)</FieldLabel>
-        <NativeSelect
-          id={`${id}-dialogue`}
+          onChange={(font) => dispatch({ type: "display-font", font })}
+        />
+        <FacePicker
+          face="dialogue"
+          label="Dialogue (speech and captions)"
+          fonts={DIALOGUE_FONTS}
           value={fonts.dialogue}
-          onChange={(event) =>
-            dispatch({ type: "dialogue-font", font: event.target.value as DialogueFont })
-          }
-        >
-          {DIALOGUE_FONTS.map((font) => (
-            <NativeSelectOption key={font} value={font}>
-              {FONT_LABELS[font]}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-      </Field>
+          onChange={(font) => dispatch({ type: "dialogue-font", font })}
+        />
+      </div>
     </RailSection>
   );
 });

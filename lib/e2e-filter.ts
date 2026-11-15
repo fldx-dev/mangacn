@@ -7,7 +7,14 @@ import { mangacnItemName } from "./registry/index";
  * `E2E_ITEMS` is a comma-separated list of item names (their demos, `e2e/demos.spec.ts`) and the
  * suites below; unset, empty or `all` runs everything; `none` runs nothing.
  */
-export const E2E_SUITES = ["site", "mcp", "annotations", "presets", "create"] as const;
+export const E2E_SUITES = [
+  "site",
+  "mcp",
+  "annotations",
+  "presets",
+  "create",
+  "create-fonts",
+] as const;
 export type E2eSuite = (typeof E2E_SUITES)[number];
 
 export function isE2eSuite(name: string): name is E2eSuite {
@@ -139,6 +146,19 @@ const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
       /^lib\/create\//,
       "e2e/create.spec.ts",
       /^registry\/theme\/presets\//,
+    ],
+  },
+  // The Create page's fonts (Task C7): the curated faces, the pickers, the faces the preview
+  // loads, and the routes that serve the font items.
+  {
+    suite: "create-fonts",
+    paths: [
+      /^lib\/create\/(?:fonts|items|serve|urls|preview|config)\.ts$/,
+      "components/create/create-rail.tsx",
+      "components/create/create-fonts.ts",
+      "components/create/create-preview.tsx",
+      /^app\/r\/create\//,
+      "e2e/create-fonts.spec.ts",
     ],
   },
   {
