@@ -671,14 +671,16 @@ function serveRegistry(): Promise<Server> {
     // A Create font and a code's items, answered as app/r/create/ answers them, on this
     // server's origin.
     const font = /^\/r\/create\/font\/([^/]+)\/([^/]+)$/.exec(pathname);
-    const create = font ? null : /^\/r\/create\/([^/]+)(?:\/(theme|vite)\.json)?$/.exec(pathname);
+    const create = font
+      ? null
+      : /^\/r\/create\/([^/]+)(?:\/(theme|next|vite)\.json)?$/.exec(pathname);
     if (font || create) {
       served.push(pathname);
       const { port } = server.address() as AddressInfo;
       const answer = font
         ? fontAnswer(font[1], font[2])
         : createAnswer(
-            (create?.[2] as "theme" | "vite" | undefined) ?? "bundle",
+            (create?.[2] as "theme" | "next" | "vite" | undefined) ?? "bundle",
             create?.[1],
             `http://127.0.0.1:${port}`,
           );
@@ -1046,8 +1048,10 @@ async function createSmoke(code: string, vite: boolean) {
   const { port } = server.address() as AddressInfo;
   const origin = `http://127.0.0.1:${port}`;
   const commands = createCommands(config, "pnpm", origin);
-  const fetched = [
-    vite ? `/r/create/${commands.code}/vite.json` : `/r/create/${commands.code}.json`,
+  // The new project's own bundle; the existing-project command's is the plain `<code>.json`.
+  let bundlePath = `/r/create/${commands.code}/${vite ? "vite" : "next"}.json`;
+  const fetched = () => [
+    bundlePath,
     `/r/create/${commands.code}/theme.json`,
     ...fontItemUrls(config.fonts, origin).map((url) => url.slice(origin.length)),
     ...kitItems(config.kit).map((name) => `/r/${name}.json`),
@@ -1065,7 +1069,7 @@ async function createSmoke(code: string, vite: boolean) {
   const verify = (project: string, label: string) => {
     const cssFile = vite ? "src/index.css" : "app/globals.css";
     const problems = [
-      ...fetched
+      ...fetched()
         .filter((url) => !served.includes(url))
         .map((url) => `${url} was never fetched from the local registry`),
       ...createCssProblems(readProjectFile(project, cssFile), config, cssFile, vite),
@@ -1117,6 +1121,7 @@ async function createSmoke(code: string, vite: boolean) {
         existing,
       );
       served.length = 0;
+      bundlePath = `/r/create/${commands.code}.json`;
       await step(
         `${commands.existingProject} (as printed, CLI pinned)`,
         documentedArgs(commands.existingProject),

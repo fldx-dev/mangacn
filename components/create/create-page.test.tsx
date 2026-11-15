@@ -257,7 +257,7 @@ describe("CreatePage", () => {
     const dialog = await screen.findByRole("dialog", { name: "Get code" });
     expect(dialog.querySelector('[data-slot="create-dialog-code"]')?.textContent).toBe("111");
     expect(dialog.querySelector('[data-slot="create-command-new"]')?.textContent).toContain(
-      "/r/create/111.json",
+      "/r/create/111/next.json",
     );
   });
 

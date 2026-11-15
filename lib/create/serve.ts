@@ -1,5 +1,6 @@
 /**
- * What `/r/create/<code>.json`, `/r/create/<code>/vite.json`, `/r/create/<code>/theme.json` and
+ * What `/r/create/<code>.json`, `/r/create/<code>/next.json`, `/r/create/<code>/vite.json`,
+ * `/r/create/<code>/theme.json` and
  * `/r/create/font/<role>/<id>.json` answer (`app/r/create/`), as a
  * pure function the routes and `scripts/registry-smoke.ts` share. A code `decode` accepts gets its
  * item with the registry's cache and CORS headers (a code's answer never changes: a version never
@@ -10,11 +11,11 @@
 
 import { REGISTRY_HEADERS } from "@/lib/registry/headers";
 import { decode } from "./code";
-import { bundleItem, fontItem, themeItem, viteBundleItem } from "./items";
+import { bundleItem, fontItem, nextBundleItem, themeItem, viteBundleItem } from "./items";
 import { CREATE_PAGE_URL } from "./urls";
 
-/** Which of a code's items a route serves: the bundle, the Vite bundle or the theme. */
-export type CreateItemKind = "bundle" | "vite" | "theme";
+/** Which of a code's items a route serves: the bundle, a new project's bundle or the theme. */
+export type CreateItemKind = "bundle" | "next" | "vite" | "theme";
 
 export interface CreateAnswer {
   status: 200 | 404;
@@ -55,11 +56,16 @@ function notFound(reason: string): CreateAnswer {
 }
 
 /** What builds each kind's item. */
-const BUILDERS = { bundle: bundleItem, vite: viteBundleItem, theme: themeItem } as const;
+const BUILDERS = {
+  bundle: bundleItem,
+  next: nextBundleItem,
+  vite: viteBundleItem,
+  theme: themeItem,
+} as const;
 
 /**
  * The answer for one route. `segment` is the dynamic path segment as the router gives it: the
- * bundle's is `<code>.json`, the Vite bundle's and the theme's `<code>`. `origin` is where the
+ * bundle's is `<code>.json`, the project bundles' and the theme's `<code>`. `origin` is where the
  * items' dependencies are fetched from (the site in production, the dev server in development).
  */
 export function createAnswer(kind: CreateItemKind, segment: unknown, origin: string): CreateAnswer {

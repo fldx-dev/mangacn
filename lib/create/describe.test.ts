@@ -50,7 +50,7 @@ describe("agentPrompt", () => {
 
   it("defaults to npm and Next.js", () => {
     expect(agentPrompt(DEFAULT_CONFIG)).toContain(
-      "run: npx shadcn@latest init -t next -b base -n my-manga-app -p https://www.mangacn.com/r/create/10.json --yes",
+      "run: npx shadcn@latest init -t next -b base -n my-manga-app -p https://www.mangacn.com/r/create/10/next.json --yes",
     );
   });
 });
