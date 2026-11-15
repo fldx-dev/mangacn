@@ -97,6 +97,7 @@ export function CreatePage({ children }: { children: ReactNode }) {
       <div className="min-w-0 px-4 pt-6 pb-28 sm:px-6 lg:col-start-2 lg:row-start-2 lg:px-8 lg:pb-10">
         <CreatePreview
           config={config}
+          code={code}
           mode={mode}
           onModeChange={setChosenMode}
           seed={seed}

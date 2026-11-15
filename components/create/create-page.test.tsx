@@ -228,3 +228,90 @@ describe("CreatePage", () => {
     );
   });
 });
+
+describe("CreatePage preview tabs", () => {
+  const frame = () =>
+    document.querySelector<HTMLIFrameElement>('[data-slot="create-block"] iframe');
+
+  it("opens a page block in a frame at the current code and mode, on demand only", async () => {
+    window.history.replaceState(null, "", "/create?c=111");
+    renderPage();
+    expect(screen.getByRole("tablist", { name: "Preview page" })).toBeTruthy();
+    expect(frame()).toBeNull();
+    fireEvent.click(screen.getByRole("tab", { name: "Login" }));
+    expect(frame()?.getAttribute("src")).toBe("/view/login-01?c=111");
+    expect(frame()?.title).toBe("Login page in the chosen look");
+    await waitFor(() => expect(surface()).toBeNull());
+    // The reroll belongs to the specimen.
+    expect(screen.queryByRole("button", { name: "Reroll ink" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Dark" }));
+    expect(frame()?.getAttribute("src")).toBe("/view/login-01?c=111&mode=dark");
+    fireEvent.click(screen.getByRole("tab", { name: "Specimen" }));
+    await waitFor(() => expect(frame()).toBeNull());
+    expect(surface()).toBeTruthy();
+  });
+
+  it("sends a new code to the open frame as a message, without reloading it", async () => {
+    renderPage();
+    fireEvent.click(screen.getByRole("tab", { name: "Chat" }));
+    const target = frame()?.contentWindow;
+    if (!target) throw new Error("no frame window");
+    const post = vi.spyOn(target, "postMessage");
+    fireEvent.click(within(rail()).getByRole("button", { name: "Sepia" }));
+    await waitFor(() =>
+      expect(post).toHaveBeenCalledWith(
+        { type: "mangacn:create-code", code: "111" },
+        window.location.origin,
+      ),
+    );
+    expect(frame()?.getAttribute("src")).toBe("/demo/chat-thread/default?c=10");
+    // The frame says it listens: it gets the current code.
+    post.mockClear();
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: { type: "mangacn:create-ready" },
+          origin: window.location.origin,
+          source: target,
+        }),
+      );
+    });
+    expect(post).toHaveBeenCalledWith(
+      { type: "mangacn:create-code", code: "111" },
+      window.location.origin,
+    );
+  });
+
+  it("offers only the phone's width in a phone's column", () => {
+    const observers = stubResizeObserver();
+    renderPage();
+    fireEvent.click(screen.getByRole("tab", { name: "App shell" }));
+    observers.drawAll(1000, 640);
+    const widths = screen.getByRole("group", { name: "Preview width" });
+    expect(
+      within(widths)
+        .getAllByRole("button")
+        .map((button) => button.textContent),
+    ).toEqual(["Phone", "Tablet", "Desktop"]);
+    observers.drawAll(320, 512);
+    expect(
+      within(widths)
+        .getAllByRole("button")
+        .map((button) => button.textContent),
+    ).toEqual(["Phone"]);
+    expect(screen.getByText(/^Phone, 375 px, scaled to 85%$/)).toBeTruthy();
+  });
+
+  it("has no axe violations with a page tab open", async () => {
+    window.history.replaceState(null, "", "/create");
+    const { container } = renderPage();
+    fireEvent.click(screen.getByRole("tab", { name: "Series page" }));
+    expect(container.querySelector("iframe")).toBeTruthy();
+    cleanup();
+    await expectNoA11yViolations(
+      <CreatePage>
+        <p>Specimen</p>
+      </CreatePage>,
+    );
+  });
+});
