@@ -7,7 +7,14 @@ import { mangacnItemName } from "./registry/index";
  * `E2E_ITEMS` is a comma-separated list of item names (their demos, `e2e/demos.spec.ts`) and the
  * suites below; unset, empty or `all` runs everything; `none` runs nothing.
  */
-export const E2E_SUITES = ["site", "mcp", "annotations", "presets", "create"] as const;
+export const E2E_SUITES = [
+  "site",
+  "mcp",
+  "annotations",
+  "presets",
+  "create",
+  "create-code",
+] as const;
 export type E2eSuite = (typeof E2E_SUITES)[number];
 
 export function isE2eSuite(name: string): name is E2eSuite {
@@ -139,6 +146,19 @@ const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
       /^lib\/create\//,
       "e2e/create.spec.ts",
       /^registry\/theme\/presets\//,
+    ],
+  },
+  // Get code (Task C6): the dialog, the commands and files it prints, `/create.md`, and the
+  // docs pages that link to Create.
+  {
+    suite: "create-code",
+    paths: [
+      /^components\/create\//,
+      /^lib\/create\//,
+      /^app\/create\.md\//,
+      "e2e/create-code.spec.ts",
+      "content/docs/installation.mdx",
+      "content/docs/theming.mdx",
     ],
   },
   {
@@ -339,7 +359,8 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  * - `lib/mcp/`, `app/api/mcp/`, `skills/`, the MCP spec → `mcp`; `content/`, `lib/docs/` and the
  *   props generator → `mcp` and `site` (the MCP serves pages and props tables)
  * - the Create page's route, `components/create/`, `lib/create/`, its spec and the preset values
- *   → `create` (the route and components also `site`)
+ *   → `create` (the route and components also `site`); `components/create/`, `lib/create/`,
+ *   `/create.md`, the Get code spec and the Installation and Theming pages → `create-code`
  * - other `app/`, `components/`, the site spec → `site`
  * - `tsconfig.json` that only adds path aliases → the items they name and the items that use
  *   them (no `site`); `lib/registry/parity.ts` that only appends names → those items
