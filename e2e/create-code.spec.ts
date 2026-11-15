@@ -23,6 +23,16 @@ async function open(page: Page, code: string, mode: "light" | "dark" = "light") 
   await page.addInitScript((theme) => localStorage.setItem("theme", theme), mode);
   const response = await page.goto(`/create?c=${encodeURIComponent(code)}`);
   expect(response?.status()).toBe(200);
+  // The server renders the default code and the page reads `?c=` once it has hydrated. Ink can
+  // be drawn before that render lands; a key pressed on the server HTML is lost, and one pressed
+  // while the page swaps in the code can be undone (MANGA-10). Wait for the rail's code field
+  // (in the DOM at every width) to show the code, or for the note on a refused one, then for
+  // the ink.
+  if (decode(code).ok) {
+    await expect(page.locator('[data-slot="create-code"]').first()).toHaveValue(code);
+  } else {
+    await expect(page.locator('[data-slot="create-refused"]')).toBeVisible();
+  }
   await waitForInk(page);
 }
 
