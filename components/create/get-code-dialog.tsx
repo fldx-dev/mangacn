@@ -34,6 +34,12 @@ export interface GetCodeDialogProps {
 
 const CONFIRM_MS = 2000;
 const FRAMEWORKS: Framework[] = ["next", "vite"];
+const SECTIONS = [
+  ["new", "New project"],
+  ["existing", "Existing project"],
+  ["files", "What you get"],
+  ["agent", "For an agent"],
+] as const;
 
 /** Copies text and reports it through the dialog's one polite status region. */
 function useCopy(announce: (message: string) => void) {
@@ -76,7 +82,7 @@ function CopyBlock({
     <div className="flex items-start gap-1 rounded-lg border bg-muted/40 py-1.5 pr-1 pl-2.5">
       <pre
         data-slot={slot}
-        className="min-w-0 flex-1 py-1 font-mono text-xs leading-relaxed break-all whitespace-pre-wrap"
+        className="min-w-0 flex-1 py-1 font-mono text-xs leading-relaxed whitespace-pre-wrap wrap-anywhere"
       >
         <code>{text}</code>
       </pre>
@@ -136,7 +142,7 @@ function FileList({ items }: { items: InstalledItem[] }) {
       {items.map((item) => (
         <li key={item.name} className="grid gap-0.5">
           <span className="font-medium">{item.title}</span>
-          <span className="font-mono text-xs break-all text-muted-foreground">
+          <span className="font-mono text-xs wrap-anywhere text-muted-foreground">
             {item.files.join(", ") || "no file"}
             {item.skipped.length > 0 && ` (skipped in Vite: ${item.skipped.join(", ")})`}
           </span>
@@ -197,7 +203,7 @@ function WhatYouGet({ config, framework }: { config: CreateConfig; framework: Fr
       )}
       <p className="text-muted-foreground">
         Packages:{" "}
-        <span className="font-mono text-xs break-all text-foreground">
+        <span className="font-mono text-xs wrap-anywhere text-foreground">
           {plan.packages.join(", ") || "none"}
         </span>
       </p>
@@ -224,7 +230,9 @@ export function GetCodeDialog({ code, config }: GetCodeDialogProps) {
       <DialogTrigger render={<Button className="w-full" data-slot="create-get-code" />}>
         Get code
       </DialogTrigger>
-      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-2xl">
+      {/* The outline is drawn a few pixels past the box, so the box itself never scrolls (that
+          would clip the outline and add a sideways scroll); the tabs scroll inside it. */}
+      <DialogContent className="max-h-[calc(100dvh-2rem)] grid-rows-[auto_minmax(0,1fr)] sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Get code</DialogTitle>
           <DialogDescription>
@@ -235,12 +243,21 @@ export function GetCodeDialog({ code, config }: GetCodeDialogProps) {
             : {configSummary(config)}. One shadcn command installs it.
           </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="new" className="min-w-0">
-          <TabsList className="h-auto! w-full flex-wrap justify-start">
-            <TabsTrigger value="new">New project</TabsTrigger>
-            <TabsTrigger value="existing">Existing project</TabsTrigger>
-            <TabsTrigger value="files">What you get</TabsTrigger>
-            <TabsTrigger value="agent">For an agent</TabsTrigger>
+        <Tabs
+          defaultValue="new"
+          className="-mx-1 min-h-0 min-w-0 overflow-x-hidden overflow-y-auto px-1 pb-1"
+          data-slot="create-get-code-body"
+        >
+          {/* Line tabs wrap onto a second row on a phone; the default tabs draw one rule. */}
+          <TabsList
+            variant="line"
+            className="h-auto! w-full flex-wrap justify-start gap-x-2 gap-y-1"
+          >
+            {SECTIONS.map(([value, label]) => (
+              <TabsTrigger key={value} value={value} className="h-8 flex-none">
+                {label}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           <TabsContent value="new" className="grid gap-3 pt-2">

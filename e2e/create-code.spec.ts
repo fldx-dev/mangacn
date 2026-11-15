@@ -55,7 +55,7 @@ for (const code of CODES) {
     await expect(slot(dialog, "create-command-new")).toHaveText(pnpm.nextProject);
     await dialog.getByRole("button", { name: "Vite" }).click();
     await expect(slot(dialog, "create-command-new")).toHaveText(pnpm.viteProject);
-    await dialog.getByRole("tab", { name: "npm" }).click();
+    await dialog.getByRole("tab", { name: "npm", exact: true }).click();
     await expect(slot(dialog, "create-command-new")).toHaveText(
       commandsFor(code, "npm").viteProject,
     );
@@ -93,8 +93,11 @@ test("the dialog works by keyboard and fits the screen", async ({ page }) => {
   const viewport = page.viewportSize();
   const box = await dialog.boundingBox();
   expect(box && viewport && box.x >= 0 && box.x + box.width <= viewport.width).toBe(true);
-  const overflow = await dialog.evaluate((element) => element.scrollWidth - element.clientWidth);
-  expect(overflow, "no horizontal scroll in the dialog").toBeLessThanOrEqual(0);
+  const body = slot(dialog, "create-get-code-body");
+  const overflow = await body.evaluate((element) => element.scrollWidth - element.clientWidth);
+  expect(overflow, "nothing wider than the dialog").toBeLessThanOrEqual(0);
+  const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  expect(pageWidth, "no horizontal overflow").toBeLessThanOrEqual(viewport?.width ?? 0);
 
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
