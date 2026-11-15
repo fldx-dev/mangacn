@@ -25,7 +25,7 @@ describe("SiteFooter", () => {
     expect(screen.getByRole("link", { name: "Turn to the docs" }).getAttribute("href")).toBe(
       "/docs",
     );
-    expect(screen.getByText("完").closest("[lang='ja']")).not.toBeNull();
+    expect(screen.getByRole("img", { name: "完, the end" }).closest("[lang='ja']")).not.toBeNull();
     expect(screen.getByText(/distributed as a shadcn registry\. MIT\./)).not.toBeNull();
   });
 

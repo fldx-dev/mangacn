@@ -244,3 +244,195 @@ figure.shiki button[aria-live="polite"]:hover {
     animation: none;
   }
 }
+
+/* The pieces: each panel is ruled in from the right, the way the page is read, as it scrolls
+   into view. Scroll-driven in CSS where the browser has view timelines; elsewhere, and under
+   reduced motion, the panels are simply there. */
+@keyframes landing-rule-in {
+  from {
+    clip-path: inset(-6% -6% -6% 100%);
+  }
+  to {
+    clip-path: inset(-6% -6% -6% -6%);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .landing-rule {
+      animation: landing-rule-in linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 30%;
+    }
+  }
+}
+
+/* The spread: every use of the item picked in the legend is ringed with a pencil callout that
+   names it, like notes in the margin of a proof. Layered, so the utilities on a part (absolute,
+   inset) still win over the defaults here. */
+@layer components {
+  .landing-part {
+    position: relative;
+    display: inline-block;
+  }
+}
+/* Marked up in the editor's red pencil (赤ペン), the way corrections come back on a proof. */
+.landing-part {
+  outline: 2px solid transparent;
+  outline-offset: 4px;
+  border-radius: 2px;
+  transition: outline-color 200ms var(--landing-ease);
+}
+.landing-part::after {
+  content: attr(data-part);
+  position: absolute;
+  top: -0.85rem;
+  left: -0.4rem;
+  z-index: 5;
+  padding: 0.05rem 0.4rem 0.1rem;
+  background: var(--spot);
+  color: var(--spot-foreground);
+  font-family: var(--font-dialogue);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  rotate: -3deg;
+  white-space: nowrap;
+  opacity: 0;
+  translate: 0 0.25rem;
+  transition:
+    opacity 200ms var(--landing-ease),
+    translate 200ms var(--landing-ease);
+  pointer-events: none;
+}
+.landing-spread[data-active="panel-grid"] [data-part="panel-grid"],
+.landing-spread[data-active="panel"] [data-part="panel"],
+.landing-spread[data-active="focus-lines"] [data-part="focus-lines"],
+.landing-spread[data-active="speed-lines"] [data-part="speed-lines"],
+.landing-spread[data-active="sfx-text"] [data-part="sfx-text"],
+.landing-spread[data-active="speech-bubble"] [data-part="speech-bubble"],
+.landing-spread[data-active="thought-bubble"] [data-part="thought-bubble"],
+.landing-spread[data-active="halftone-background"] [data-part="halftone-background"],
+.landing-spread[data-active="emanata"] [data-part="emanata"],
+.landing-spread[data-active="page-number"] [data-part="page-number"] {
+  outline-color: var(--spot);
+}
+.landing-spread[data-active="panel-grid"] [data-part="panel-grid"]::after,
+.landing-spread[data-active="panel"] [data-part="panel"]::after,
+.landing-spread[data-active="focus-lines"] [data-part="focus-lines"]::after,
+.landing-spread[data-active="speed-lines"] [data-part="speed-lines"]::after,
+.landing-spread[data-active="sfx-text"] [data-part="sfx-text"]::after,
+.landing-spread[data-active="speech-bubble"] [data-part="speech-bubble"]::after,
+.landing-spread[data-active="thought-bubble"] [data-part="thought-bubble"]::after,
+.landing-spread[data-active="halftone-background"] [data-part="halftone-background"]::after,
+.landing-spread[data-active="emanata"] [data-part="emanata"]::after,
+.landing-spread[data-active="page-number"] [data-part="page-number"]::after {
+  opacity: 1;
+  translate: 0 0;
+}
+/* The fold between the two pages: each page darkens toward the spine, which is a hairline of
+   the ground showing through. */
+.landing-fold {
+  background:
+    linear-gradient(var(--ink), var(--ink)) center / 3px 100% no-repeat,
+    linear-gradient(
+      to right,
+      transparent,
+      color-mix(in oklab, var(--ink) 30%, transparent) 46%,
+      color-mix(in oklab, var(--ink) 30%, transparent) 54%,
+      transparent
+    );
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-part,
+  .landing-part::after {
+    transition: none;
+  }
+}
+
+/* An inverted block (the landing's last page): ink becomes the ground and paper the ink. The
+   theme's shadcn aliases are computed on :root, so they are restated here to follow. */
+:root {
+  --landing-ink: var(--ink);
+  --landing-paper: var(--paper);
+  --landing-tone-1: var(--tone-1);
+  --landing-tone-2: var(--tone-2);
+}
+.landing-invert {
+  --ink: var(--landing-paper);
+  --paper: var(--landing-ink);
+  --tone-1: color-mix(in oklab, var(--landing-paper) 12%, var(--landing-ink));
+  --tone-2: color-mix(in oklab, var(--landing-paper) 30%, var(--landing-ink));
+  --tone-3: color-mix(in oklab, var(--landing-paper) 55%, var(--landing-ink));
+  --tone-4: var(--landing-tone-2);
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--tone-1);
+  --secondary-foreground: var(--ink);
+  --muted: var(--tone-1);
+  --muted-foreground: var(--tone-4);
+  --accent: var(--tone-1);
+  --accent-foreground: var(--ink);
+  --border: var(--ink);
+  --input: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+}
+
+/* The scrollbar: a strip of screentone with an ink thumb, framed like a panel edge. Chromium
+   and Safari draw it from the ::-webkit-scrollbar parts (which apply only while scrollbar-color
+   stays auto); Firefox, which has no such parts, takes the two colours. */
+html {
+  scrollbar-color: var(--ink) var(--tone-1);
+}
+@supports selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: auto;
+  }
+  ::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: var(--paper);
+    background-image: radial-gradient(var(--tone-2) 1px, transparent 1.3px);
+    background-size: 5px 5px;
+    border-left: 1.5px solid var(--ink);
+  }
+  ::-webkit-scrollbar-track:horizontal {
+    border-left: 0;
+    border-top: 1.5px solid var(--ink);
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--ink);
+    border: 3px solid transparent;
+    border-left-width: 4px;
+    background-clip: padding-box;
+    border-radius: 1px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--spot);
+  }
+  ::-webkit-scrollbar-thumb:active {
+    border-width: 2px;
+    border-left-width: 3px;
+  }
+  ::-webkit-scrollbar-corner {
+    background: var(--paper);
+  }
+}
+
+/* Display type drawn as an outline in the ink colour, no fill. */
+.landing-outline {
+  color: transparent;
+  -webkit-text-stroke: max(2px, 0.008em) var(--ink);
+}
+
+/* The navbar is solid paper with an ink rule. Fumadocs frosts it, which turns grey and muddy
+   over the landing's ink sections; a printed page has no blur. */
+#nd-nav {
+  background-color: var(--paper);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
