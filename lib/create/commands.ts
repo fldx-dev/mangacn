@@ -2,7 +2,8 @@
  * The commands the Create page prints for a configuration (Task C6 shows them), as measured with
  * shadcn 4.23 in Task C1:
  *
- * - a new Next.js or Vite project in one run: `init -t <template> -b base -n <name> -p <bundle>`.
+ * - a new Next.js or Vite project in one run: `init -t <template> -b base -n <name> -p <bundle>`;
+ *   Vite takes its own bundle (`<code>/vite.json`), which adds the body font Vite lacks.
  *   `-p` takes the bundle as the project's preset because it is a `registry:base` item; a
  *   positional URL would lose to the preset's own values. `--yes` keeps it unattended.
  * - an existing project: `add <bundle> --yes --overwrite`. `--overwrite` answers "already exists.
@@ -16,7 +17,7 @@
 import { type PackageManager, RUNNERS } from "@/lib/docs/package-managers";
 import { encode } from "./code";
 import type { CreateConfig } from "./config";
-import { bundleUrl, SITE_ORIGIN, themeUrl } from "./urls";
+import { bundleUrl, SITE_ORIGIN, themeUrl, viteBundleUrl } from "./urls";
 
 /** The folder a new project is created in. */
 export const PROJECT_NAME = "my-manga-app";
@@ -26,6 +27,8 @@ export interface CreateCommands {
   code: string;
   /** The bundle (`registry:base`): theme, fonts and kit. */
   bundleUrl: string;
+  /** The bundle a new Vite project starts from: the same, with a body font Vite can resolve. */
+  viteBundleUrl: string;
   /** The theme alone (`registry:theme`) with its fonts. */
   themeUrl: string;
   /** A new Next.js project. */
@@ -46,16 +49,18 @@ export function createCommands(
 ): CreateCommands {
   const code = encode(config);
   const bundle = bundleUrl(code, origin);
+  const vite = viteBundleUrl(code, origin);
   const theme = themeUrl(code, origin);
   const shadcn = `${RUNNERS[manager]} shadcn@latest`;
-  const init = (template: "next" | "vite") =>
-    `${shadcn} init -t ${template} -b base -n ${PROJECT_NAME} -p ${bundle} --yes`;
+  const init = (template: "next" | "vite", preset: string) =>
+    `${shadcn} init -t ${template} -b base -n ${PROJECT_NAME} -p ${preset} --yes`;
   return {
     code,
     bundleUrl: bundle,
+    viteBundleUrl: vite,
     themeUrl: theme,
-    nextProject: init("next"),
-    viteProject: init("vite"),
+    nextProject: init("next", bundle),
+    viteProject: init("vite", vite),
     existingProject: `${shadcn} add ${bundle} --yes --overwrite`,
     lookOnly: `${shadcn} add ${theme} --yes`,
   };

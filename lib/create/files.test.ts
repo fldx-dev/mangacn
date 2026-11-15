@@ -57,6 +57,32 @@ describe("installPlan", () => {
     );
   });
 
+  it("lists a code's alternative faces, and their Fontsource packages in Vite (Task C7)", () => {
+    const fonts = { display: "reggae-one", dialogue: "patrick-hand-sc" } as const;
+    const config = { ...DEFAULT_CONFIG, fonts };
+    expect(installPlan(config, "next").fonts).toEqual([
+      "Reggae One",
+      "Patrick Hand SC",
+      "Yusei Magic",
+    ]);
+    const vite = installPlan(config, "vite");
+    expect(vite.fonts).toEqual(["Reggae One", "Patrick Hand SC", "Yusei Magic"]);
+    expect(vite.packages).toEqual(
+      expect.arrayContaining([
+        "@fontsource/reggae-one",
+        "@fontsource/patrick-hand-sc",
+        "@fontsource/yusei-magic",
+      ]),
+    );
+    expect(vite.packages).not.toContain("@fontsource/dela-gothic-one");
+    expect(vite.packages).not.toContain("@fontsource/shantell-sans");
+    // One choice moves only its own role.
+    expect(
+      installPlan({ ...DEFAULT_CONFIG, fonts: { ...DEFAULT_CONFIG.fonts, display: "reggae-one" } })
+        .fonts,
+    ).toEqual(["Reggae One", "Shantell Sans", "Yusei Magic"]);
+  });
+
   it("lists each brought item once, never a kit item, the theme or a font", () => {
     for (const kit of KIT_NAMES) {
       const plan = installPlan({ ...DEFAULT_CONFIG, kit: { preset: kit } });

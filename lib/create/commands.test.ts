@@ -9,11 +9,12 @@ describe("createCommands", () => {
     expect(createCommands(DEFAULT_CONFIG)).toEqual({
       code: "10",
       bundleUrl: "https://www.mangacn.com/r/create/10.json",
+      viteBundleUrl: "https://www.mangacn.com/r/create/10/vite.json",
       themeUrl: "https://www.mangacn.com/r/create/10/theme.json",
       nextProject:
         "npx shadcn@latest init -t next -b base -n my-manga-app -p https://www.mangacn.com/r/create/10.json --yes",
       viteProject:
-        "npx shadcn@latest init -t vite -b base -n my-manga-app -p https://www.mangacn.com/r/create/10.json --yes",
+        "npx shadcn@latest init -t vite -b base -n my-manga-app -p https://www.mangacn.com/r/create/10/vite.json --yes",
       existingProject:
         "npx shadcn@latest add https://www.mangacn.com/r/create/10.json --yes --overwrite",
       lookOnly: "npx shadcn@latest add https://www.mangacn.com/r/create/10/theme.json --yes",
@@ -45,7 +46,7 @@ describe("createCommands", () => {
       `pnpm dlx shadcn@latest add http://127.0.0.1:4873/r/create/${code}/theme.json --yes`,
     );
     expect(commands.viteProject).toContain(
-      `-n ${PROJECT_NAME} -p http://127.0.0.1:4873/r/create/${code}.json`,
+      `-n ${PROJECT_NAME} -p http://127.0.0.1:4873/r/create/${code}/vite.json`,
     );
   });
 

@@ -14,6 +14,7 @@ export const E2E_SUITES = [
   "presets",
   "create",
   "create-code",
+  "create-fonts",
 ] as const;
 export type E2eSuite = (typeof E2E_SUITES)[number];
 
@@ -159,6 +160,19 @@ const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
       "e2e/create-code.spec.ts",
       "content/docs/installation.mdx",
       "content/docs/theming.mdx",
+    ],
+  },
+  // The Create page's fonts (Task C7): the curated faces, the pickers, the faces the preview
+  // loads, and the routes that serve the font items.
+  {
+    suite: "create-fonts",
+    paths: [
+      /^lib\/create\/(?:fonts|items|serve|urls|preview|config)\.ts$/,
+      "components/create/create-rail.tsx",
+      "components/create/create-fonts.ts",
+      "components/create/create-preview.tsx",
+      /^app\/r\/create\//,
+      "e2e/create-fonts.spec.ts",
     ],
   },
   {

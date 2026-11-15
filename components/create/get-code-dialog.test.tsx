@@ -124,6 +124,18 @@ describe("GetCodeDialog", () => {
     }
   });
 
+  it("lists a code's alternative faces under What you get (Task C7)", async () => {
+    // Custom look, brush pen, Reggae One and Patrick Hand SC.
+    const dialog = await open("1R4blt1gX2092");
+    selectTab(dialog, "What you get");
+    await waitFor(() => {
+      if (!dialog.querySelector('[data-slot="create-files"]')) throw new Error("not loaded yet");
+    });
+    expect(dialog.textContent).toContain("Reggae One, Patrick Hand SC, Yusei Magic");
+    expect(dialog.textContent).not.toContain("Dela Gothic One");
+    expect(dialog.textContent).not.toContain("Shantell Sans");
+  });
+
   it("copies a command and says so to assistive tech", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     vi.stubGlobal("navigator", { ...navigator, clipboard: { writeText } });

@@ -14,7 +14,7 @@ import hooksCatalog from "@/registry/hooks/registry.json";
 import themeCatalog from "@/registry/theme/registry.json";
 import uiCatalog from "@/registry/ui/registry.json";
 import type { CreateConfig } from "./config";
-import { bundleItem, themeItem } from "./items";
+import { bundleItem, fontItem, themeItem } from "./items";
 import { SITE_ORIGIN } from "./urls";
 
 /** The two project templates the commands create. */
@@ -43,6 +43,20 @@ const CATALOG = new Map<string, CatalogItem>(
 );
 
 const ITEM_URL = /^https:\/\/www\.mangacn\.com\/r\/([a-z0-9-]+)\.json$/;
+
+const FONT_URL = /^https:\/\/www\.mangacn\.com\/r\/create\/font\/([a-z]+)\/([a-z0-9-]+)\.json$/;
+
+/**
+ * The face a theme dependency installs: a static font item from the catalog (the default faces
+ * and the Japanese one), or a curated alternative served at `/r/create/font/<role>/<id>.json`
+ * (Task C7), read from the builder that route uses. Anything else → null.
+ */
+function themeFont(url: string): { family: string; dependency?: string } | null {
+  const generated = FONT_URL.exec(url);
+  if (generated) return fontItem(generated[1], generated[2])?.font ?? null;
+  const name = itemName(url);
+  return (name && CATALOG.get(name)?.font) || null;
+}
 
 /** `https://www.mangacn.com/r/button.json` → `button`; anything else → null. */
 function itemName(url: string): string | null {
@@ -105,12 +119,13 @@ export function installPlan(config: CreateConfig, framework: Framework = "next")
   const prefix = vite ? "src/" : "";
   const packages = new Set<string>();
 
-  const fontItems = themeItem(config, SITE_ORIGIN)
-    .registryDependencies.map(itemName)
-    .flatMap((name) => (name && CATALOG.get(name)?.font ? [CATALOG.get(name) as CatalogItem] : []));
-  const fonts = fontItems.map((item) => item.font?.family ?? item.name);
+  const faces = themeItem(config, SITE_ORIGIN).registryDependencies.flatMap((url) => {
+    const font = themeFont(url);
+    return font ? [font] : [];
+  });
+  const fonts = faces.map((face) => face.family);
   if (vite) {
-    for (const item of fontItems) if (item.font?.dependency) packages.add(item.font.dependency);
+    for (const face of faces) if (face.dependency) packages.add(face.dependency);
   }
 
   const kitNames = bundleItem(config, SITE_ORIGIN)

@@ -72,8 +72,16 @@ describe("CreatePage", () => {
     for (const name of ["Outline width", "Heavy outline", "Roughness", "Dot pitch", "Dot size"]) {
       expect(slider(choices, name)).toBeTruthy();
     }
-    expect(within(choices).getByRole("combobox", { name: /Display/ })).toBeTruthy();
-    expect(within(choices).getByRole("combobox", { name: /Dialogue/ })).toBeTruthy();
+    for (const [name, faces] of [
+      [/Display/, ["Dela Gothic One", "Reggae One"]],
+      [/Dialogue/, ["Shantell Sans", "Patrick Hand SC"]],
+    ] as const) {
+      const group = within(choices).getByRole("radiogroup", { name });
+      expect(within(group).getAllByRole("radio")).toHaveLength(faces.length);
+      for (const face of faces) {
+        expect(within(group).getByRole("radio", { name: new RegExp(face) })).toBeTruthy();
+      }
+    }
     const kits = within(choices).getByRole("radiogroup", { name: "Starter kit" });
     expect(within(kits).getAllByRole("radio")).toHaveLength(5);
     expect(within(choices).getByRole("textbox", { name: "Code" })).toHaveProperty("value", "10");
@@ -82,6 +90,38 @@ describe("CreatePage", () => {
     }
     expect(screen.getByRole("region", { name: "Preview of the chosen look" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 1, name: "Create" })).toBeTruthy();
+  });
+
+  it("sets each face's name in that face, and a picked face reaches the preview and the code", () => {
+    renderPage();
+    const names = [...rail().querySelectorAll<HTMLElement>('[data-slot="create-font-name"]')];
+    expect(names.map((name) => [name.dataset.font, name.style.fontFamily])).toEqual([
+      ["dela-gothic-one", "var(--font-display)"],
+      ["reggae-one", "var(--font-create-reggae-one)"],
+      ["shantell-sans", "var(--font-dialogue-latin)"],
+      ["patrick-hand-sc", "var(--font-create-patrick-hand-sc)"],
+    ]);
+    // The alternatives' variables are defined around the names.
+    expect(names[1].closest(".create-fonts")).not.toBeNull();
+
+    expect(surface().style.getPropertyValue("--font-display")).toBe("");
+    const display = within(rail()).getByRole("radiogroup", { name: /Display/ });
+    fireEvent.click(within(display).getByRole("radio", { name: /Reggae One/ }));
+    expect(surface().style.getPropertyValue("--font-display")).toBe(
+      "var(--font-create-reggae-one)",
+    );
+    const dialogue = within(rail()).getByRole("radiogroup", { name: /Dialogue/ });
+    fireEvent.click(within(dialogue).getByRole("radio", { name: /Patrick Hand SC/ }));
+    expect(surface().style.getPropertyValue("--font-dialogue-latin")).toBe(
+      "var(--font-create-patrick-hand-sc)",
+    );
+    expect(within(rail()).getByRole("textbox", { name: "Code" })).not.toHaveProperty("value", "10");
+    // Back to the defaults: the site's own faces again.
+    fireEvent.click(within(display).getByRole("radio", { name: /Dela Gothic One/ }));
+    fireEvent.click(within(dialogue).getByRole("radio", { name: /Shantell Sans/ }));
+    expect(surface().style.getPropertyValue("--font-display")).toBe("");
+    expect(surface().style.getPropertyValue("--font-dialogue-latin")).toBe("");
+    expect(within(rail()).getByRole("textbox", { name: "Code" })).toHaveProperty("value", "10");
   });
 
   it("puts a preset's base values and the derived tokens on the preview wrapper", () => {

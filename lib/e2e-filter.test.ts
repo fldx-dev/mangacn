@@ -131,6 +131,16 @@ describe("selectE2e", () => {
     expect(pick(["components/create/get-code-dialog.tsx"])).toBe("site,create,create-code");
   });
 
+  it("selects the create-fonts suite for the faces, their pickers and routes (Task C7)", () => {
+    expect(pick(["e2e/create-fonts.spec.ts"])).toBe("create-fonts");
+    expect(pick(["lib/create/fonts.ts"])).toBe("create,create-code,create-fonts");
+    expect(pick(["components/create/create-rail.tsx"])).toBe(
+      "site,create,create-code,create-fonts",
+    );
+    expect(pick(["app/r/create/font/[role]/[id]/route.ts"])).toBe("site,create-fonts");
+    expect(pick(["lib/create/kits.ts"])).toBe("create,create-code");
+  });
+
   it("runs everything for shared inputs and unknown paths", () => {
     for (const path of [
       "e2e/playwright.config.ts",
