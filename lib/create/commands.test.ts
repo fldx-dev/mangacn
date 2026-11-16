@@ -9,10 +9,11 @@ describe("createCommands", () => {
     expect(createCommands(DEFAULT_CONFIG)).toEqual({
       code: "10",
       bundleUrl: "https://www.mangacn.com/r/create/10.json",
+      nextBundleUrl: "https://www.mangacn.com/r/create/10/next.json",
       viteBundleUrl: "https://www.mangacn.com/r/create/10/vite.json",
       themeUrl: "https://www.mangacn.com/r/create/10/theme.json",
       nextProject:
-        "npx shadcn@latest init -t next -b base -n my-manga-app -p https://www.mangacn.com/r/create/10.json --yes",
+        "npx shadcn@latest init -t next -b base -n my-manga-app -p https://www.mangacn.com/r/create/10/next.json --yes",
       viteProject:
         "npx shadcn@latest init -t vite -b base -n my-manga-app -p https://www.mangacn.com/r/create/10/vite.json --yes",
       existingProject:
@@ -29,7 +30,7 @@ describe("createCommands", () => {
       "bunx --bun shadcn@latest add https://www.mangacn.com/r/create/10.json --yes --overwrite",
     ]);
     expect(createCommands(DEFAULT_CONFIG, "pnpm").nextProject).toBe(
-      "pnpm dlx shadcn@latest init -t next -b base -n my-manga-app -p https://www.mangacn.com/r/create/10.json --yes",
+      "pnpm dlx shadcn@latest init -t next -b base -n my-manga-app -p https://www.mangacn.com/r/create/10/next.json --yes",
     );
   });
 

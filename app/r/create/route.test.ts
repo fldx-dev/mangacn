@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { ALPHABET, MAX_CODE_LENGTH } from "@/lib/create/code";
 import { FAILURE_HEADERS, SUCCESS_HEADERS, UNKNOWN_FONT_MESSAGE } from "@/lib/create/serve";
 import { REGISTRY_CACHE_CONTROL } from "@/lib/registry/headers";
+import { GET as getNext } from "./[code]/next.json/route";
 import { GET as getBundle } from "./[code]/route";
 import { GET as getTheme } from "./[code]/theme.json/route";
 import { GET as getVite } from "./[code]/vite.json/route";
@@ -195,8 +196,31 @@ describe("GET /r/create/<code>/vite.json", () => {
     const bundle = await (await call("bundle", "10.json")).json();
     expect(body.name).toBe("create-10-vite");
     expect(body.registryDependencies).toEqual(bundle.registryDependencies);
-    expect(Object.keys(body.cssVars.theme)).toEqual(["font-sans"]);
+    expect(Object.keys(body.cssVars.theme)).toEqual(["font-sans", "font-heading"]);
     const bad = await getVite(new NextRequest("https://www.mangacn.com/r/create/Z0/vite.json"), {
+      params: Promise.resolve({ code: "Z0" }),
+    } as never);
+    expect(bad.status).toBe(404);
+  });
+});
+
+describe("GET /r/create/<code>/next.json", () => {
+  it("answers the Next.js bundle: the bundle's preset, theme and kit, and the font mappings", async () => {
+    const url = "https://www.mangacn.com/r/create/10/next.json";
+    const ctx = { params: Promise.resolve({ code: "10" }) };
+    const response = await getNext(new NextRequest(url), ctx as never);
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe(REGISTRY_CACHE_CONTROL);
+    const body = await response.json();
+    const bundle = await (await call("bundle", "10.json")).json();
+    expect(body.name).toBe("create-10-next");
+    expect(body.registryDependencies).toEqual(bundle.registryDependencies);
+    expect(body.cssVars.theme).toEqual({
+      "font-sans": "var(--font-sans)",
+      "font-heading": "var(--font-sans)",
+    });
+    expect(bundle.cssVars).toBeUndefined();
+    const bad = await getNext(new NextRequest("https://www.mangacn.com/r/create/Z0/next.json"), {
       params: Promise.resolve({ code: "Z0" }),
     } as never);
     expect(bad.status).toBe(404);

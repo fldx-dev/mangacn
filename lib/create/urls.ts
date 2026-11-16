@@ -25,6 +25,11 @@ export function themeUrl(code: string, origin: string = SITE_ORIGIN): string {
   return `${origin}/r/create/${code}/theme.json`;
 }
 
+/** The bundle a new Next.js project starts from (it maps the body font): `…/r/create/<code>/next.json`. */
+export function nextBundleUrl(code: string, origin: string = SITE_ORIGIN): string {
+  return `${origin}/r/create/${code}/next.json`;
+}
+
 /** The bundle a new Vite project starts from (its body font differs): `…/r/create/<code>/vite.json`. */
 export function viteBundleUrl(code: string, origin: string = SITE_ORIGIN): string {
   return `${origin}/r/create/${code}/vite.json`;
