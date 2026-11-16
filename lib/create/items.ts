@@ -6,11 +6,19 @@
  *   `theme` item with the configuration's base colours, pen and screentone, plus what the CLI
  *   needs when the theme arrives through a `registry:base` item (`init -p <url>` writes no
  *   `--color-*` mappings of its own, so `border-border` would be unknown): `color-<token>` for
- *   every shadcn token, `font-sans`, `font-heading` and `html { @apply font-sans }`. It depends on
+ *   every shadcn token and `html { @apply font-sans }`. It never sets `font-sans` or
+ *   `font-heading`: `add`-ing it to an existing project must keep that project's own body font
+ *   (a `var(--font-sans)` mapping there refers to itself where nothing defines the variable, as in
+ *   Vite, and the body falls back to a serif). It depends on
  *   the font items itself and never on `theme.json`: two font items with one variable in one
  *   install break `app/layout.tsx`.
  * - the **bundle** (`/r/create/<code>.json`): a `registry:base` with base-nova's `config`, which
- *   `shadcn init -p <url>` takes as the project's preset, depending on the theme and the kit.
+ *   `shadcn init -p <url>` takes as the project's preset, depending on the theme and the kit;
+ *   `add <url>` installs the same item into an existing project, so it maps no font either. A new
+ *   project starts from one of two copies that do: `<code>/next.json` maps `font-sans` and
+ *   `font-heading` to the `--font-sans` that `next/font` sets, `<code>/vite.json` gives
+ *   `font-sans` the system sans stack (measured, shadcn 4.23: `add` writes a base item's own
+ *   variables too).
  *
  * Every string here is built from the configuration's numbers and names (which `decode`
  * validated) and from this repo's catalog; nothing is copied from a URL. The code in the names
@@ -23,16 +31,22 @@ import { encode } from "./code";
 import { baseValues } from "./colours";
 import {
   type CreateConfig,
-  type DialogueFont,
-  type DisplayFont,
   PEN_RANGES,
   PEN_TOKENS,
   type Range,
   SCREENTONE_RANGES,
   SCREENTONE_TOKENS,
 } from "./config";
+import {
+  type FontFace,
+  type FontId,
+  type FontRole,
+  familyStack,
+  fontFace,
+  ROLE_VARIABLES,
+} from "./fonts";
 import { kitItems } from "./kits";
-import { CREATE_PAGE_URL, registryUrl, SITE_ORIGIN, themeUrl } from "./urls";
+import { CREATE_PAGE_URL, fontUrl, registryUrl, SITE_ORIGIN, themeUrl } from "./urls";
 
 type Vars = Record<string, string>;
 /** A registry item's `css`: rules and at-rules nested as objects, declarations as strings. */
@@ -91,7 +105,10 @@ export const SEMANTIC_TOKENS = [
   "sidebar-ring",
 ] as const;
 
-/** The `cssVars.theme` entries added for the `registry:base` path, beyond the colour mappings. */
+/**
+ * The font mappings a new project needs. Only the bundles carry them (`-p`, a new project); the
+ * theme, which `add` installs into existing projects, does not.
+ */
 export const FONT_MAPPINGS: Vars = {
   "font-sans": "var(--font-sans)",
   "font-heading": "var(--font-sans)",
@@ -112,30 +129,88 @@ export const BASE_CONFIG = {
 
 // ── Fonts ───────────────────────────────────────────────────────────────────────────────────
 
-/** The font items of the default faces (`registry/theme/registry.json`). */
-const DEFAULT_DISPLAY_ITEM = "font-display";
-const DEFAULT_DIALOGUE_ITEM = "font-dialogue";
 /** The Japanese dialogue face: not a choice, every theme brings it. */
 const JAPANESE_DIALOGUE_ITEM = "font-dialogue-ja";
 
 /**
- * The font item each face installs. A face with no item yet (a reserved alternative another task
- * adds) installs its role's default face, so a code naming it still installs a working theme.
+ * The URL of the font item that installs one role's face: the static item for a default face
+ * (so the default faces install exactly what `theme.json` installs), the generated
+ * `/r/create/font/<role>/<id>.json` for an alternative.
  */
-const DISPLAY_FONT_ITEMS: Partial<Record<DisplayFont, string>> = {
-  "dela-gothic-one": DEFAULT_DISPLAY_ITEM,
-};
-const DIALOGUE_FONT_ITEMS: Partial<Record<DialogueFont, string>> = {
-  "shantell-sans": DEFAULT_DIALOGUE_ITEM,
-};
+function roleFontUrl(role: FontRole, id: FontId, origin: string): string {
+  const face = fontFace(role, id) as FontFace;
+  return face.staticItem ? registryUrl(face.staticItem, origin) : fontUrl(role, id, origin);
+}
 
-/** The font items a configuration's theme depends on: display, dialogue, Japanese dialogue. */
-export function fontItemNames(fonts: CreateConfig["fonts"]): string[] {
+/**
+ * The font items a configuration's theme depends on, at `origin`: display, dialogue, Japanese
+ * dialogue. One item per variable, so no install loads two faces into one variable.
+ */
+export function fontItemUrls(fonts: CreateConfig["fonts"], origin: string = SITE_ORIGIN): string[] {
   return [
-    DISPLAY_FONT_ITEMS[fonts.display] ?? DEFAULT_DISPLAY_ITEM,
-    DIALOGUE_FONT_ITEMS[fonts.dialogue] ?? DEFAULT_DIALOGUE_ITEM,
-    JAPANESE_DIALOGUE_ITEM,
+    roleFontUrl("display", fonts.display, origin),
+    roleFontUrl("dialogue", fonts.dialogue, origin),
+    registryUrl(JAPANESE_DIALOGUE_ITEM, origin),
   ];
+}
+
+/** The font stacks of the theme: each role's chosen face first, worded as the static theme. */
+export function fontStacks(fonts: CreateConfig["fonts"]): Vars {
+  const display = familyStack("display", fonts.display).join(", ");
+  const [dialogue, ...otherDialogue] = familyStack("dialogue", fonts.dialogue);
+  return {
+    "font-display": `var(${ROLE_VARIABLES.display}, ${display}, Impact, "Arial Black", sans-serif)`,
+    "font-dialogue": `var(${ROLE_VARIABLES.dialogue}, ${dialogue}), var(--font-dialogue-ja, "Yusei Magic"), ${[...otherDialogue, '"Comic Neue"', "cursive", "sans-serif"].join(", ")}`,
+  };
+}
+
+export interface CreateFontItem {
+  $schema: string;
+  name: string;
+  type: "registry:font";
+  title: string;
+  description: string;
+  categories: string[];
+  docs: string;
+  files: [];
+  font: {
+    family: string;
+    provider: "google";
+    import: string;
+    variable: string;
+    weight?: string[];
+    subsets: string[];
+    dependency: string;
+  };
+}
+
+/**
+ * The `registry:font` item of a curated face, or undefined for a role or id the list does not
+ * have. A default face's item carries the same `font` as its static item.
+ */
+export function fontItem(role: string, id: string): CreateFontItem | undefined {
+  const face = fontFace(role, id);
+  if (!face) return undefined;
+  const fontRole = role as FontRole;
+  return {
+    $schema: ITEM_SCHEMA,
+    name: `font-${fontRole}-${id}`,
+    type: "registry:font",
+    title: face.family,
+    description: face.description,
+    categories: ["text"],
+    docs: `A ${fontRole} face of the mangacn theme, chosen at ${CREATE_PAGE_URL}. A Create code's theme depends on one face per role; install the theme rather than this item beside another ${fontRole} face.`,
+    files: [],
+    font: {
+      family: face.family,
+      provider: "google",
+      import: face.import,
+      variable: ROLE_VARIABLES[fontRole],
+      ...(face.weight ? { weight: [...face.weight] } : {}),
+      subsets: [...face.subsets],
+      dependency: face.dependency,
+    },
+  };
 }
 
 // ── Items ───────────────────────────────────────────────────────────────────────────────────
@@ -178,6 +253,9 @@ export interface CreateBundleItem {
   files: [];
 }
 
+/** A bundle a new project starts from: a bundle with the font mappings it needs. */
+export type CreateProjectBundleItem = CreateBundleItem & { cssVars: { theme: Vars } };
+
 /** The theme a configuration installs, its dependencies at `origin`. */
 export function themeItem(config: CreateConfig, origin: string = SITE_ORIGIN): CreateThemeItem {
   const code = encode(config);
@@ -187,8 +265,8 @@ export function themeItem(config: CreateConfig, origin: string = SITE_ORIGIN): C
   for (const token of SCREENTONE_TOKENS) {
     tokens[token] = cssValue(config.screentone[token], SCREENTONE_RANGES[token]);
   }
+  Object.assign(tokens, fontStacks(config.fonts));
   for (const token of SEMANTIC_TOKENS) tokens[`color-${token}`] = `var(--${token})`;
-  Object.assign(tokens, FONT_MAPPINGS);
   const base = theme.css["@layer base"] as CssTree;
   return {
     $schema: ITEM_SCHEMA,
@@ -198,7 +276,7 @@ export function themeItem(config: CreateConfig, origin: string = SITE_ORIGIN): C
     description: theme.description,
     categories: theme.categories,
     docs: `The mangacn theme of Create code ${code}: its look, pen and screentone, with its fonts. Change it at ${CREATE_PAGE_URL}.`,
-    registryDependencies: fontItemNames(config.fonts).map((name) => registryUrl(name, origin)),
+    registryDependencies: fontItemUrls(config.fonts, origin),
     files: [],
     cssVars: { theme: tokens, ...presetCssVars(theme.cssVars, baseValues(config.look)) },
     css: { ...theme.css, "@layer base": { ...base, html: { "@apply font-sans": {} } } },
@@ -224,5 +302,51 @@ export function bundleItem(config: CreateConfig, origin: string = SITE_ORIGIN): 
     config: { ...BASE_CONFIG, tailwind: { ...BASE_CONFIG.tailwind } },
     registryDependencies: [themeUrl(code, origin), ...kit.map((name) => registryUrl(name, origin))],
     files: [],
+  };
+}
+
+/**
+ * The bundle a new Next.js project starts from: the same preset, theme and kit as `bundleItem`,
+ * with `font-sans` and `font-heading` on the `--font-sans` its `app/layout.tsx` loads. A base
+ * item's own variables are written after its dependencies' (measured).
+ */
+export function nextBundleItem(
+  config: CreateConfig,
+  origin: string = SITE_ORIGIN,
+): CreateProjectBundleItem {
+  const item = bundleItem(config, origin);
+  return {
+    ...item,
+    name: `${item.name}-next`,
+    title: "mangacn Next.js project (Create)",
+    docs: `${item.docs} For a new Next.js project: its body font is the one next/font loads.`,
+    cssVars: { theme: { ...FONT_MAPPINGS } },
+  };
+}
+
+/**
+ * The body font a new Vite project gets: Tailwind's own sans stack. A Next.js template loads its
+ * body face into `--font-sans` in `app/layout.tsx`, which `nextBundleItem`'s mapping reads;
+ * a Vite project made from a `registry:base` has no such variable (nova would have brought one),
+ * so its `font-sans` would resolve to nothing. No face is downloaded for it.
+ */
+export const VITE_FONT_SANS =
+  'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"';
+
+/**
+ * The bundle a new Vite project starts from: the same preset, theme and kit as `bundleItem`, and
+ * a `font-sans` the project can resolve. `font-heading` reads `--font-sans`, which this sets.
+ */
+export function viteBundleItem(
+  config: CreateConfig,
+  origin: string = SITE_ORIGIN,
+): CreateProjectBundleItem {
+  const item = bundleItem(config, origin);
+  return {
+    ...item,
+    name: `${item.name}-vite`,
+    title: "mangacn Vite project (Create)",
+    docs: `${item.docs} For a new Vite project: its body font is the system sans stack.`,
+    cssVars: { theme: { ...FONT_MAPPINGS, "font-sans": VITE_FONT_SANS } },
   };
 }

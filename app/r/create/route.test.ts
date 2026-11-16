@@ -2,10 +2,13 @@
 import { NextRequest } from "next/server";
 import { describe, expect, it } from "vitest";
 import { ALPHABET, MAX_CODE_LENGTH } from "@/lib/create/code";
-import { FAILURE_HEADERS, SUCCESS_HEADERS } from "@/lib/create/serve";
+import { FAILURE_HEADERS, SUCCESS_HEADERS, UNKNOWN_FONT_MESSAGE } from "@/lib/create/serve";
 import { REGISTRY_CACHE_CONTROL } from "@/lib/registry/headers";
+import { GET as getNext } from "./[code]/next.json/route";
 import { GET as getBundle } from "./[code]/route";
 import { GET as getTheme } from "./[code]/theme.json/route";
+import { GET as getVite } from "./[code]/vite.json/route";
+import { GET as getFont } from "./font/[role]/[id]/route";
 
 type Kind = "bundle" | "theme";
 
@@ -178,4 +181,95 @@ describe("fuzz: hostile path segments", () => {
     }
     expect(found.slice(0, 20)).toEqual([]);
   }, 120_000);
+});
+
+// ── The Vite bundle and the font items (Task C7) ────────────────────────────────────────────
+
+describe("GET /r/create/<code>/vite.json", () => {
+  it("answers the Vite bundle: the bundle's preset, theme and kit, and a body font", async () => {
+    const url = "https://www.mangacn.com/r/create/10/vite.json";
+    const ctx = { params: Promise.resolve({ code: "10" }) };
+    const response = await getVite(new NextRequest(url), ctx as never);
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe(REGISTRY_CACHE_CONTROL);
+    const body = await response.json();
+    const bundle = await (await call("bundle", "10.json")).json();
+    expect(body.name).toBe("create-10-vite");
+    expect(body.registryDependencies).toEqual(bundle.registryDependencies);
+    expect(Object.keys(body.cssVars.theme)).toEqual(["font-sans", "font-heading"]);
+    const bad = await getVite(new NextRequest("https://www.mangacn.com/r/create/Z0/vite.json"), {
+      params: Promise.resolve({ code: "Z0" }),
+    } as never);
+    expect(bad.status).toBe(404);
+  });
+});
+
+describe("GET /r/create/<code>/next.json", () => {
+  it("answers the Next.js bundle: the bundle's preset, theme and kit, and the font mappings", async () => {
+    const url = "https://www.mangacn.com/r/create/10/next.json";
+    const ctx = { params: Promise.resolve({ code: "10" }) };
+    const response = await getNext(new NextRequest(url), ctx as never);
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe(REGISTRY_CACHE_CONTROL);
+    const body = await response.json();
+    const bundle = await (await call("bundle", "10.json")).json();
+    expect(body.name).toBe("create-10-next");
+    expect(body.registryDependencies).toEqual(bundle.registryDependencies);
+    expect(body.cssVars.theme).toEqual({
+      "font-sans": "var(--font-sans)",
+      "font-heading": "var(--font-sans)",
+    });
+    expect(bundle.cssVars).toBeUndefined();
+    const bad = await getNext(new NextRequest("https://www.mangacn.com/r/create/Z0/next.json"), {
+      params: Promise.resolve({ code: "Z0" }),
+    } as never);
+    expect(bad.status).toBe(404);
+  });
+});
+
+describe("GET /r/create/font/<role>/<id>.json", () => {
+  const getFontAt = (role: string, id: string) =>
+    getFont(new Request(`https://www.mangacn.com/r/create/font/${role}/${id}`), {
+      params: Promise.resolve({ role, id }),
+    } as never);
+
+  it("answers a curated face with its registry:font item and the registry's headers", async () => {
+    const response = await getFontAt("display", "reggae-one.json");
+    expect(response.status).toBe(200);
+    expect(headersOf(response)).toEqual({
+      "access-control-allow-methods": "GET",
+      "access-control-allow-origin": "*",
+      "cache-control": REGISTRY_CACHE_CONTROL,
+      "content-type": "application/json",
+    });
+    const body = await response.json();
+    expect(body.type).toBe("registry:font");
+    expect(body.font.import).toBe("Reggae_One");
+  });
+
+  it("answers anything else with 404 and a fixed message, never the request", async () => {
+    const next = random(777);
+    const ids = ["reggae-one", "comic-sans.json", "reggae-one.jsonx", ".json", "", "toString.json"];
+    const roles = ["display", "dialogue", "sans", "__proto__", "constructor", ""];
+    const asked: [string, string][] = [
+      ["dialogue", "reggae-one.json"],
+      ["display", "shantell-sans.json"],
+      ...ids.flatMap((id) => roles.map((role) => [role, id] as [string, string])),
+      ...Array.from(
+        { length: 200 },
+        () =>
+          [
+            HOSTILE[Math.floor(next() * HOSTILE.length)],
+            `${HOSTILE[Math.floor(next() * HOSTILE.length)]}.json`,
+          ] as [string, string],
+      ),
+    ];
+    for (const [role, id] of asked) {
+      const response = await getFontAt(role, id);
+      if (role === "display" && id === "reggae-one.json") continue;
+      expect(response.status, `${role}/${id}`).toBe(404);
+      expect(response.headers.get("cache-control")).toBe("no-store");
+      expect(await response.json()).toEqual({ message: UNKNOWN_FONT_MESSAGE });
+    }
+  });
 });
