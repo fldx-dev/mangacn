@@ -41,6 +41,7 @@ import {
   fontItemUrls,
   fontStacks,
   ITEM_SCHEMA,
+  nextBundleItem,
   SEMANTIC_TOKENS,
   themeItem,
   VITE_FONT_SANS,
@@ -48,7 +49,15 @@ import {
 } from "./items";
 import { KIT_CATALOG_V1, KITS, kitItems } from "./kits";
 import { createAnswer } from "./serve";
-import { bundleUrl, fontUrl, registryUrl, SITE_ORIGIN, themeUrl, viteBundleUrl } from "./urls";
+import {
+  bundleUrl,
+  fontUrl,
+  nextBundleUrl,
+  registryUrl,
+  SITE_ORIGIN,
+  themeUrl,
+  viteBundleUrl,
+} from "./urls";
 
 type Vars = Record<string, string>;
 interface BuiltItem {
@@ -81,10 +90,9 @@ afterAll(() => {
 });
 
 /** What the generated theme adds to the static theme's `cssVars.theme`. */
-const ADDED_THEME_VARS: Vars = {
-  ...Object.fromEntries(SEMANTIC_TOKENS.map((t) => [`color-${t}`, `var(--${t})`])),
-  ...FONT_MAPPINGS,
-};
+const ADDED_THEME_VARS: Vars = Object.fromEntries(
+  SEMANTIC_TOKENS.map((t) => [`color-${t}`, `var(--${t})`]),
+);
 
 describe("the generated theme of a named look", () => {
   it.each(LOOK_PRESETS)("%s: every variable equals the static item's, value for value", (look) => {
@@ -309,11 +317,23 @@ describe("the bundle", () => {
     expect(vite.name).toBe("create-10-vite");
     expect(vite.config).toEqual(plainBundle.config);
     expect(vite.registryDependencies).toEqual(plainBundle.registryDependencies);
-    expect(vite.cssVars).toEqual({ theme: { "font-sans": VITE_FONT_SANS } });
+    expect(vite.cssVars).toEqual({
+      theme: { ...FONT_MAPPINGS, "font-sans": VITE_FONT_SANS },
+    });
     expect(viteBundleUrl("10")).toBe("https://www.mangacn.com/r/create/10/vite.json");
-    // The Next.js bundle and the theme carry no body font of their own.
+    // The bundle `add` installs and the theme map no font of their own.
     expect("cssVars" in plainBundle).toBe(false);
-    expect(themeItem(DEFAULT_CONFIG).cssVars.theme["font-sans"]).toBe("var(--font-sans)");
+    expect(themeItem(DEFAULT_CONFIG).cssVars.theme["font-sans"]).toBeUndefined();
+  });
+
+  it("the Next.js bundle is the same bundle with the fonts on next/font's variable", () => {
+    const plainBundle = bundleItem(DEFAULT_CONFIG);
+    const next = nextBundleItem(DEFAULT_CONFIG);
+    expect(next.name).toBe("create-10-next");
+    expect(next.config).toEqual(plainBundle.config);
+    expect(next.registryDependencies).toEqual(plainBundle.registryDependencies);
+    expect(next.cssVars).toEqual({ theme: FONT_MAPPINGS });
+    expect(nextBundleUrl("10")).toBe("https://www.mangacn.com/r/create/10/next.json");
   });
 
   it("builds its URLs on the origin it is given (a dev server's), and the site's by default", () => {
@@ -347,7 +367,7 @@ describe("schema", () => {
   it.each(looks.map((c) => [encode(c), c] as const))(
     "%s: both items pass the CLI's registry item schema",
     (_, c) => {
-      for (const item of [themeItem(c), bundleItem(c), viteBundleItem(c)]) {
+      for (const item of [themeItem(c), bundleItem(c), nextBundleItem(c), viteBundleItem(c)]) {
         const result = registryItemSchema.safeParse(item);
         expect(result.error?.issues ?? []).toEqual([]);
       }
@@ -420,12 +440,12 @@ const OKLCH = new RegExp(String.raw`^oklch\(${NUMBER} ${NUMBER} ${NUMBER}\)$`);
 const LENGTH = new RegExp(`^${NUMBER}(?:px)?$`);
 const CODE = "[0-9A-Za-z]+";
 const SITE = String.raw`https://www\.mangacn\.com`;
-const NAME = new RegExp(`^create-${CODE}(?:-theme|-vite)?$`);
+const NAME = new RegExp(`^create-${CODE}(?:-theme|-next|-vite)?$`);
 const DOCS = new RegExp(
   `^(?:The mangacn theme of Create code ${CODE}: its look, pen and screentone, with its fonts` +
     `|mangacn Create code ${CODE}: its theme and fonts, and ` +
     String.raw`(?:the (?:${KIT_NAMES.join("|")}) kit|a kit of \d+ hand-picked items?))` +
-    String.raw`\. Change it at ${SITE}/create\.(?: For a new Vite project: its body font is the system sans stack\.)?$`,
+    String.raw`\. Change it at ${SITE}/create\.(?: For a new Vite project: its body font is the system sans stack\.| For a new Next\.js project: its body font is the one next/font loads\.)?$`,
 );
 const FACE_PATHS = [
   ...Object.keys(DISPLAY_FACES).map((id) => `display/${id}`),
@@ -475,6 +495,7 @@ function allowed(at: string[], value: string): boolean {
       return [
         "mangacn theme (Create)",
         "mangacn project (Create)",
+        "mangacn Next.js project (Create)",
         "mangacn Vite project (Create)",
       ].includes(value);
     case "description":
@@ -496,6 +517,7 @@ function allowed(at: string[], value: string): boolean {
         return FONT_STACKS.has(value);
       }
       if (mode === "theme" && key === "font-sans" && value === VITE_FONT_SANS) return true;
+      if (mode === "theme" && FONT_MAPPINGS[key] === value) return true;
       return (defaultTheme.cssVars as Record<string, Vars>)[mode]?.[key] === value;
     case "css":
       return at.slice(1).every((part) => CSS_STRINGS.has(part)) && CSS_STRINGS.has(value);
@@ -530,12 +552,13 @@ describe("fuzz: valid random codes", () => {
       const code = encode(randomConfig(next));
       if (!decode(code).ok) found.push(`${code}: does not decode`);
       const bundle = createAnswer("bundle", `${code}.json`, SITE_ORIGIN);
+      const nextBundle = createAnswer("next", code, SITE_ORIGIN);
       const vite = createAnswer("vite", code, SITE_ORIGIN);
       const theme = createAnswer("theme", code, SITE_ORIGIN);
-      if (bundle.status !== 200 || vite.status !== 200 || theme.status !== 200) {
+      if ([bundle, nextBundle, vite, theme].some((answer) => answer.status !== 200)) {
         found.push(`${code}: not 200`);
       }
-      for (const body of [bundle.body, vite.body, theme.body]) {
+      for (const body of [bundle.body, nextBundle.body, vite.body, theme.body]) {
         for (const problem of problems(body)) found.push(`${code}: ${problem}`);
       }
       const [first] = (bundle.body as { registryDependencies: string[] }).registryDependencies;

@@ -3,7 +3,8 @@
  * shadcn 4.23 in Task C1:
  *
  * - a new Next.js or Vite project in one run: `init -t <template> -b base -n <name> -p <bundle>`;
- *   Vite takes its own bundle (`<code>/vite.json`), which adds the body font Vite lacks.
+ *   each takes its own bundle (`<code>/next.json`, `<code>/vite.json`), which adds the body font
+ *   mapping a new project needs and an existing one must not get (`add` writes it too).
  *   `-p` takes the bundle as the project's preset because it is a `registry:base` item; a
  *   positional URL would lose to the preset's own values. `--yes` keeps it unattended.
  * - an existing project: `add <bundle> --yes --overwrite`. `--overwrite` answers "already exists.
@@ -17,7 +18,7 @@
 import { type PackageManager, RUNNERS } from "@/lib/docs/package-managers";
 import { encode } from "./code";
 import type { CreateConfig } from "./config";
-import { bundleUrl, SITE_ORIGIN, themeUrl, viteBundleUrl } from "./urls";
+import { bundleUrl, nextBundleUrl, SITE_ORIGIN, themeUrl, viteBundleUrl } from "./urls";
 
 /** The folder a new project is created in. */
 export const PROJECT_NAME = "my-manga-app";
@@ -27,6 +28,8 @@ export interface CreateCommands {
   code: string;
   /** The bundle (`registry:base`): theme, fonts and kit. */
   bundleUrl: string;
+  /** The bundle a new Next.js project starts from: the same, with its body font mapped. */
+  nextBundleUrl: string;
   /** The bundle a new Vite project starts from: the same, with a body font Vite can resolve. */
   viteBundleUrl: string;
   /** The theme alone (`registry:theme`) with its fonts. */
@@ -49,6 +52,7 @@ export function createCommands(
 ): CreateCommands {
   const code = encode(config);
   const bundle = bundleUrl(code, origin);
+  const next = nextBundleUrl(code, origin);
   const vite = viteBundleUrl(code, origin);
   const theme = themeUrl(code, origin);
   const shadcn = `${RUNNERS[manager]} shadcn@latest`;
@@ -57,9 +61,10 @@ export function createCommands(
   return {
     code,
     bundleUrl: bundle,
+    nextBundleUrl: next,
     viteBundleUrl: vite,
     themeUrl: theme,
-    nextProject: init("next", bundle),
+    nextProject: init("next", next),
     viteProject: init("vite", vite),
     existingProject: `${shadcn} add ${bundle} --yes --overwrite`,
     lookOnly: `${shadcn} add ${theme} --yes`,

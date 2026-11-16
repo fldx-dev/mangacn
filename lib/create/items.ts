@@ -6,11 +6,19 @@
  *   `theme` item with the configuration's base colours, pen and screentone, plus what the CLI
  *   needs when the theme arrives through a `registry:base` item (`init -p <url>` writes no
  *   `--color-*` mappings of its own, so `border-border` would be unknown): `color-<token>` for
- *   every shadcn token, `font-sans`, `font-heading` and `html { @apply font-sans }`. It depends on
+ *   every shadcn token and `html { @apply font-sans }`. It never sets `font-sans` or
+ *   `font-heading`: `add`-ing it to an existing project must keep that project's own body font
+ *   (a `var(--font-sans)` mapping there refers to itself where nothing defines the variable, as in
+ *   Vite, and the body falls back to a serif). It depends on
  *   the font items itself and never on `theme.json`: two font items with one variable in one
  *   install break `app/layout.tsx`.
  * - the **bundle** (`/r/create/<code>.json`): a `registry:base` with base-nova's `config`, which
- *   `shadcn init -p <url>` takes as the project's preset, depending on the theme and the kit.
+ *   `shadcn init -p <url>` takes as the project's preset, depending on the theme and the kit;
+ *   `add <url>` installs the same item into an existing project, so it maps no font either. A new
+ *   project starts from one of two copies that do: `<code>/next.json` maps `font-sans` and
+ *   `font-heading` to the `--font-sans` that `next/font` sets, `<code>/vite.json` gives
+ *   `font-sans` the system sans stack (measured, shadcn 4.23: `add` writes a base item's own
+ *   variables too).
  *
  * Every string here is built from the configuration's numbers and names (which `decode`
  * validated) and from this repo's catalog; nothing is copied from a URL. The code in the names
@@ -97,7 +105,10 @@ export const SEMANTIC_TOKENS = [
   "sidebar-ring",
 ] as const;
 
-/** The `cssVars.theme` entries added for the `registry:base` path, beyond the colour mappings. */
+/**
+ * The font mappings a new project needs. Only the bundles carry them (`-p`, a new project); the
+ * theme, which `add` installs into existing projects, does not.
+ */
 export const FONT_MAPPINGS: Vars = {
   "font-sans": "var(--font-sans)",
   "font-heading": "var(--font-sans)",
@@ -242,6 +253,9 @@ export interface CreateBundleItem {
   files: [];
 }
 
+/** A bundle a new project starts from: a bundle with the font mappings it needs. */
+export type CreateProjectBundleItem = CreateBundleItem & { cssVars: { theme: Vars } };
+
 /** The theme a configuration installs, its dependencies at `origin`. */
 export function themeItem(config: CreateConfig, origin: string = SITE_ORIGIN): CreateThemeItem {
   const code = encode(config);
@@ -253,7 +267,6 @@ export function themeItem(config: CreateConfig, origin: string = SITE_ORIGIN): C
   }
   Object.assign(tokens, fontStacks(config.fonts));
   for (const token of SEMANTIC_TOKENS) tokens[`color-${token}`] = `var(--${token})`;
-  Object.assign(tokens, FONT_MAPPINGS);
   const base = theme.css["@layer base"] as CssTree;
   return {
     $schema: ITEM_SCHEMA,
@@ -293,8 +306,27 @@ export function bundleItem(config: CreateConfig, origin: string = SITE_ORIGIN): 
 }
 
 /**
+ * The bundle a new Next.js project starts from: the same preset, theme and kit as `bundleItem`,
+ * with `font-sans` and `font-heading` on the `--font-sans` its `app/layout.tsx` loads. A base
+ * item's own variables are written after its dependencies' (measured).
+ */
+export function nextBundleItem(
+  config: CreateConfig,
+  origin: string = SITE_ORIGIN,
+): CreateProjectBundleItem {
+  const item = bundleItem(config, origin);
+  return {
+    ...item,
+    name: `${item.name}-next`,
+    title: "mangacn Next.js project (Create)",
+    docs: `${item.docs} For a new Next.js project: its body font is the one next/font loads.`,
+    cssVars: { theme: { ...FONT_MAPPINGS } },
+  };
+}
+
+/**
  * The body font a new Vite project gets: Tailwind's own sans stack. A Next.js template loads its
- * body face into `--font-sans` in `app/layout.tsx`, which the theme's `font-sans` mapping reads;
+ * body face into `--font-sans` in `app/layout.tsx`, which `nextBundleItem`'s mapping reads;
  * a Vite project made from a `registry:base` has no such variable (nova would have brought one),
  * so its `font-sans` would resolve to nothing. No face is downloaded for it.
  */
@@ -303,19 +335,18 @@ export const VITE_FONT_SANS =
 
 /**
  * The bundle a new Vite project starts from: the same preset, theme and kit as `bundleItem`, and
- * a `font-sans` the project can resolve. Its own variables are written after its dependencies',
- * so they win over the theme's mapping; the Next.js bundle and the theme are unchanged.
+ * a `font-sans` the project can resolve. `font-heading` reads `--font-sans`, which this sets.
  */
 export function viteBundleItem(
   config: CreateConfig,
   origin: string = SITE_ORIGIN,
-): CreateBundleItem & { cssVars: { theme: Vars } } {
+): CreateProjectBundleItem {
   const item = bundleItem(config, origin);
   return {
     ...item,
     name: `${item.name}-vite`,
     title: "mangacn Vite project (Create)",
     docs: `${item.docs} For a new Vite project: its body font is the system sans stack.`,
-    cssVars: { theme: { "font-sans": VITE_FONT_SANS } },
+    cssVars: { theme: { ...FONT_MAPPINGS, "font-sans": VITE_FONT_SANS } },
   };
 }
