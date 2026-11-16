@@ -696,9 +696,11 @@ gh run download <id> -n playwright-baselines -D e2e/__screenshots__   # look at 
 
 CI runs the Playwright suite as two jobs over one set: `e2e (n/4)` with `E2E_PIXELS=off`
 (behaviour, keyboard, axe; `e2e/shoot.ts` takes no shot) and `screenshots (n/4)` with pixel
-comparison. Main, `full=true` and a pull request labelled `full-visual` run every spec; any
-other pull request or dispatch runs the set its diff needs (`lib/e2e-filter.ts`), and a small
-set runs on the first shard alone. An update dispatch runs only the `screenshots` jobs.
+comparison. Main and `full=true` run every spec; a pull request or other dispatch runs the set
+its diff needs (`lib/e2e-filter.ts`), and a small set runs on the first shard alone. A pull
+request skips `screenshots` (shots are compared after the merge, on `main`) unless it carries
+the `full-visual` label or changes `ci.yml`; its required checks are `checks`, `smoke` and
+`e2e (n/4)`. An update dispatch runs only the `screenshots` jobs.
 
 With `update-snapshots=true` the `screenshots` jobs run every non-pixel assertion (status, console
 errors, overflow, axe) and rewrite only the baselines that are missing or fail the

@@ -40,9 +40,9 @@ runs:
         cache: pnpm
     - shell: bash
       run: pnpm install --frozen-lockfile
-    # Main (its push run or a dispatch there), `full=true` and a pull request labelled
-    # `full-visual` run everything; a dispatch's `items` input runs that set; anything else,
-    # pull requests included, runs the set its diff against main needs (lib/e2e-filter.ts has
+    # Main (its push run or a dispatch there) and `full=true` run everything; a dispatch's
+    # `items` input runs that set; anything else, pull requests included (with or without the
+    # `full-visual` label, which only turns their screenshots on), runs the set its diff needs (lib/e2e-filter.ts has
     # the rules; a change to the CI workflow or to this action selects everything).
     - name: Choose the visual set
       id: filter
@@ -50,15 +50,13 @@ runs:
       env:
         ITEMS: ${{ inputs.items }}
         FULL: ${{ inputs.full }}
-        LABELLED: ${{ contains(github.event.pull_request.labels.*.name, 'full-visual') }}
       run: |
         ITEMS="${ITEMS// /}"
         reasons=""
-        if [ "$GITHUB_REF" = "refs/heads/main" ] || [ "$FULL" = "true" ] || [ "$LABELLED" = "true" ]; then
+        if [ "$GITHUB_REF" = "refs/heads/main" ] || [ "$FULL" = "true" ]; then
           items=all
           why="$GITHUB_EVENT_NAME on $GITHUB_REF_NAME"
           if [ "$FULL" = "true" ]; then why="$why, full=true"; fi
-          if [ "$LABELLED" = "true" ]; then why="$why, label full-visual"; fi
           why="$why: every demo and spec"
         elif [ -n "$ITEMS" ]; then
           if ! [[ "$ITEMS" =~ ^[a-z0-9,-]+$ ]]; then echo "::error::items must be names separated by commas"; exit 1; fi

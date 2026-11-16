@@ -76,15 +76,39 @@ jobs:
         run: pnpm run ci:smoke $SMOKE_ARGS
 
   # The Playwright suite runs as two jobs over the same set (.github/actions/e2e-setup chooses
-  # it: everything on main, `full=true` or a PR labelled `full-visual`; otherwise what the diff
-  # needs, lib/e2e-filter.ts):
+  # it: everything on main and `full=true`; otherwise what the diff needs, lib/e2e-filter.ts):
   # - `e2e` checks behaviour, keyboard and axe with `E2E_PIXELS=off` (e2e/shoot.ts takes no
-  #   shot), so a red `e2e` is never a moved pixel;
-  # - `screenshots` runs the suite with pixel comparison, as the `visual` job did.
+  #   shot), so a red `e2e` is never a moved pixel. Required on pull requests.
+  # - `screenshots` runs the suite with pixel comparison, as the `visual` job did. A pull
+  #   request skips it (screenshots are compared after the merge, on main) unless it carries
+  #   the `full-visual` label or changes this workflow (`scope` below). Never required.
   # Four runners share a large set (Playwright's --shard): a run of every demo took 12 to 15
   # minutes on one runner. A small set runs on the first shard alone and the others stop after
   # the plan step, green. The baselines an update run rewrites are merged into one artifact by
   # the `baselines` job, so `gh run download -n playwright-baselines` works as before.
+
+  # Whether a pull request changes this workflow: then its `screenshots` jobs run.
+  scope:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      ci-changed: ${{ steps.diff.outputs.ci-changed }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - id: diff
+        run: |
+          if git diff --name-only origin/main...HEAD | grep -qx '.github/workflows/ci.yml'; then
+            changed=true
+          else
+            changed=false
+          fi
+          echo "ci.yml changed against origin/main: $changed"
+          echo "ci-changed=$changed" >> "$GITHUB_OUTPUT"
+
   e2e:
     name: e2e (${{ matrix.shard }}/4)
     # A baseline-update dispatch runs only the `screenshots` jobs (they run every assertion too).
@@ -124,6 +148,13 @@ jobs:
 
   screenshots:
     name: screenshots (${{ matrix.shard }}/4)
+    needs: scope
+    # Push (main) and dispatches always; a pull request only with the `full-visual` label or a
+    # change to this workflow. `!cancelled()` because `scope` is skipped outside pull requests.
+    if: >-
+      ${{ !cancelled() && (github.event_name != 'pull_request' ||
+      contains(github.event.pull_request.labels.*.name, 'full-visual') ||
+      needs.scope.outputs.ci-changed == 'true') }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

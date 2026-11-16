@@ -503,8 +503,11 @@ for (const reducedMotion of ["reduce", "no-preference"] as const) {
       link?.click();
     });
     await expect(page).not.toHaveURL(/\/docs\/theming$/);
-    // The old page and the new one are both in the DOM for a moment; wait for the new one alone.
-    await expect(page.locator("#nd-page")).toHaveCount(1);
+    // `cacheComponents` keeps the page left behind in the DOM, hidden (React's <Activity>), so
+    // two articles have the id: wait until the shown one is the page navigated to.
+    const shown = page.locator("#nd-page:visible");
+    await expect(shown).toHaveCount(1);
+    await expect(shown.locator("h1").first()).not.toHaveText(/^Theming$/);
     const count = await page.evaluate(
       () => (window as unknown as { viewTransitions?: number }).viewTransitions,
     );
