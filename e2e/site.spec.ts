@@ -6,10 +6,10 @@ import { BLOCKS_CATALOG, type DocItem, docItems } from "../lib/docs/catalog";
 import { demoEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
 import { hydrateAfterReveal, waitForInk } from "./ready";
+import { comparePixels, shoot } from "./shoot";
 
 // The site pages (SPEC-docs-site §11), light and dark, at each project's width: pixels on
 // Linux only (CI), and everywhere no overflow, no axe violations and no errors.
-const comparePixels = process.platform === "linux";
 
 // The landing and the two indexes (components, blocks) are shot at their first viewport
 // (`site-<page>-viewport-<mode>.png`), not whole (SPEC-components-3 §8.1). An index is never
@@ -328,7 +328,7 @@ for (const path of pages) {
       if (comparePixels) {
         // The whole page first, in the state its baseline was always taken in.
         if (fullShot(path)) {
-          await expect(page).toHaveScreenshot(`site-${slug(path)}-${mode}.png`, {
+          await shoot(page, `site-${slug(path)}-${mode}.png`, {
             fullPage: true,
             ...(await shotOptions(page, path)),
           });
@@ -337,7 +337,7 @@ for (const path of pages) {
           // The first viewport is the top of the page (the full shot above may leave it scrolled).
           await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
           await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
-          await expect(page).toHaveScreenshot(`site-${slug(path)}-viewport-${mode}.png`);
+          await shoot(page, `site-${slug(path)}-viewport-${mode}.png`);
         }
       }
 

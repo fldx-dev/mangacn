@@ -685,7 +685,7 @@ and pushes. Exit 20 is a failed check, with the merge commit left local. `--dry-
 the plan and changes nothing; logs go to a temporary folder named at the start.
 
 **Once per wave, on `main`.** Main's push run checks, smokes every item and takes every shot;
-a new demo has no baseline, so its `visual` job is red until the wave's one dispatch writes
+a new demo has no baseline, so its `screenshots` jobs are red until the wave's one dispatch writes
 them, which is expected between waves:
 
 ```bash
@@ -694,8 +694,16 @@ gh run watch <id> --exit-status
 gh run download <id> -n playwright-baselines -D e2e/__screenshots__   # look at every PNG, commit them on main
 ```
 
-With `update-snapshots=true` the `visual` job runs every non-pixel assertion (status, console
-errors, overflow, axe) and rewrites only the baselines that are missing or fail the
+CI runs the Playwright suite as two jobs over one set: `e2e (n/4)` with `E2E_PIXELS=off`
+(behaviour, keyboard, axe; `e2e/shoot.ts` takes no shot) and `screenshots (n/4)` with pixel
+comparison. Main and `full=true` run every spec; a pull request or other dispatch runs the set
+its diff needs (`lib/e2e-filter.ts`), and a small set runs on the first shard alone. A pull
+request skips `screenshots` (shots are compared after the merge, on `main`) unless it carries
+the `full-visual` label or changes `ci.yml`; its required checks are `checks`, `smoke` and
+`e2e (n/4)`. An update dispatch runs only the `screenshots` jobs.
+
+With `update-snapshots=true` the `screenshots` jobs run every non-pixel assertion (status, console
+errors, overflow, axe) and rewrite only the baselines that are missing or fail the
 comparison (`--update-snapshots=changed`); the `baselines` job merges the four shards' parts
 into one `playwright-baselines` artifact holding exactly those, so the download is a straight
 copy. Playwright's `changed` mode turns only a failed `toHaveScreenshot` into a write; any
