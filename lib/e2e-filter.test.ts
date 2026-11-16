@@ -93,17 +93,25 @@ describe("selectE2e", () => {
     expect(pick(["registry/ui/ink-mark/ink-mark.tsx"])).toBe("ink-mark,site,annotations");
   });
 
-  it("ignores unit tests, Markdown, scripts and CI", () => {
+  it("ignores unit tests, Markdown, scripts and the rest of .github", () => {
     expect(
       pick([
         "registry/ui/slider/slider.test.tsx",
         "registry/ui/README.md",
         "lib/registry/index.test.ts",
         "scripts/registry-smoke.ts",
-        ".github/workflows/ci.yml",
+        ".github/dependabot.yml",
+        ".github/workflows/other.yml",
         "SPEC-components.md",
       ]),
     ).toBe("none");
+  });
+
+  it("runs everything when the CI workflow, its e2e setup or the shot helper changes", () => {
+    expect(pick([".github/workflows/ci.yml"])).toBe("all");
+    expect(pick(["README.md", ".github/workflows/ci.yml"])).toBe("all");
+    expect(pick([".github/actions/e2e-setup/action.yml"])).toBe("all");
+    expect(pick(["e2e/shoot.ts"])).toBe("all");
   });
 
   it("maps docs, MCP and spec paths to their suites", () => {

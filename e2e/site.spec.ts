@@ -6,10 +6,10 @@ import { BLOCKS_CATALOG, type DocItem, docItems } from "../lib/docs/catalog";
 import { demoEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
 import { hydrateAfterReveal, waitForInk } from "./ready";
+import { comparePixels, shoot } from "./shoot";
 
 // The site pages (SPEC-docs-site §11), light and dark, at each project's width: pixels on
 // Linux only (CI), and everywhere no overflow, no axe violations and no errors.
-const comparePixels = process.platform === "linux";
 
 // The landing and the two indexes (components, blocks) are shot at their first viewport
 // (`site-<page>-viewport-<mode>.png`), not whole (SPEC-components-3 §8.1). An index is never
@@ -328,7 +328,7 @@ for (const path of pages) {
       if (comparePixels) {
         // The whole page first, in the state its baseline was always taken in.
         if (fullShot(path)) {
-          await expect(page).toHaveScreenshot(`site-${slug(path)}-${mode}.png`, {
+          await shoot(page, `site-${slug(path)}-${mode}.png`, {
             fullPage: true,
             ...(await shotOptions(page, path)),
           });
@@ -337,7 +337,7 @@ for (const path of pages) {
           // The first viewport is the top of the page (the full shot above may leave it scrolled).
           await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
           await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
-          await expect(page).toHaveScreenshot(`site-${slug(path)}-viewport-${mode}.png`);
+          await shoot(page, `site-${slug(path)}-viewport-${mode}.png`);
         }
       }
 
@@ -474,3 +474,40 @@ test("markdown and registry routes", async ({ request }, testInfo) => {
     "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
   );
 });
+
+/**
+ * A navigation turns the page with a view transition, except under reduced motion
+ * (components/docs/page-turn.tsx): there React must not start one at all. A transition in flight
+ * paints only the old page's viewport, and the resize of a full-page screenshot aborts it with a
+ * console error (the `/docs/theming` and `/docs/agents` flakes of MANGA-14).
+ */
+for (const reducedMotion of ["reduce", "no-preference"] as const) {
+  test(`a docs navigation under ${reducedMotion} motion`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion });
+    await page.addInitScript(() => {
+      const start = document.startViewTransition?.bind(document);
+      if (!start) return;
+      Object.assign(window, { viewTransitions: 0 });
+      document.startViewTransition = ((...args: Parameters<typeof start>) => {
+        (window as unknown as { viewTransitions: number }).viewTransitions++;
+        return start(...args);
+      }) as typeof document.startViewTransition;
+    });
+    await page.goto("/docs/theming");
+    await waitForInk(page);
+    // A link to another docs page, followed by Next's router (a client navigation).
+    await page.evaluate(() => {
+      const link = [...document.querySelectorAll<HTMLAnchorElement>('a[href^="/docs/"]')].find(
+        (anchor) => anchor.pathname !== "/docs/theming" && !anchor.hash,
+      );
+      link?.click();
+    });
+    await expect(page).not.toHaveURL(/\/docs\/theming$/);
+    await expect(page.locator("#nd-page")).toBeVisible();
+    const count = await page.evaluate(
+      () => (window as unknown as { viewTransitions?: number }).viewTransitions,
+    );
+    if (reducedMotion === "reduce") expect(count, "view transitions started").toBe(0);
+    else expect(count, "view transitions started").toBeGreaterThan(0);
+  });
+}

@@ -5,6 +5,7 @@ import { demoEntries } from "../lib/registry/demos.generated";
 import { AXE_DISABLED_RULES, CONTRAST_EXEMPTIONS } from "../lib/test/axe-rules";
 import { paintInkFillsAsCss } from "./ink-fills";
 import { waitForInk } from "./ready";
+import { comparePixels, shoot } from "./shoot";
 
 type AxeResults = Awaited<ReturnType<AxeBuilder["analyze"]>>;
 
@@ -25,7 +26,6 @@ function axeFindings(violations: AxeResults["violations"]) {
 
 // Every demo in the generated map, light and dark, at each project's width. Baselines are
 // Linux-only (CI); elsewhere the page is loaded and checked for errors, without pixels.
-const comparePixels = process.platform === "linux";
 
 // Toasts fired on mount by the sonner demos; the snapshot waits until all of them are shown.
 const TOASTS_ON_MOUNT: Record<string, number> = {
@@ -184,7 +184,7 @@ for (const { item, demo } of entries) {
       await waitForInk(page);
 
       if (comparePixels) {
-        await expect(page).toHaveScreenshot(`${item}-${demo}-${mode}.png`, { fullPage: true });
+        await shoot(page, `${item}-${demo}-${mode}.png`, { fullPage: true });
       }
 
       const width = await page.evaluate(() => document.documentElement.scrollWidth);

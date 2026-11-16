@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+    # `labeled`: adding `full-visual` to a pull request reruns it with every shot.
+    types: [opened, synchronize, reopened, labeled]
   workflow_dispatch:
     inputs:
       update-snapshots:
@@ -12,7 +14,7 @@ on:
         options: ["false", "true", "all"]
         default: "false"
       items:
-        description: "Visual set (E2E_ITEMS): items and site/mcp/annotations, comma-separated; empty = computed from the diff against main"
+        description: "Playwright set (E2E_ITEMS) for the e2e and screenshots jobs: items and suites (site, mcp, create, …), comma-separated; empty = computed from the diff against main"
         type: string
         default: ""
       full:
@@ -73,13 +75,20 @@ jobs:
           SMOKE_ARGS: ${{ github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main' && !inputs.full && '--changed' || '' }}
         run: pnpm run ci:smoke $SMOKE_ARGS
 
-  # Four runners share the shots (Playwright's --shard): a run of every demo took 12 to 15
-  # minutes on one runner, most of a task's wait in batch 4's foundation tasks. Each shard
-  # builds the site and serves it for its own quarter of the tests; a small set simply gives
-  # each shard a few tests. The baselines an update run rewrites are merged into one artifact
-  # by the `baselines` job, so `gh run download -n playwright-baselines` works as before.
-  visual:
-    name: visual (${{ matrix.shard }}/4)
+  # The Playwright suite runs as two jobs over the same set (.github/actions/e2e-setup chooses
+  # it: everything on main, `full=true` or a PR labelled `full-visual`; otherwise what the diff
+  # needs, lib/e2e-filter.ts):
+  # - `e2e` checks behaviour, keyboard and axe with `E2E_PIXELS=off` (e2e/shoot.ts takes no
+  #   shot), so a red `e2e` is never a moved pixel;
+  # - `screenshots` runs the suite with pixel comparison, as the `visual` job did.
+  # Four runners share a large set (Playwright's --shard): a run of every demo took 12 to 15
+  # minutes on one runner. A small set runs on the first shard alone and the others stop after
+  # the plan step, green. The baselines an update run rewrites are merged into one artifact by
+  # the `baselines` job, so `gh run download -n playwright-baselines` works as before.
+  e2e:
+    name: e2e (${{ matrix.shard }}/4)
+    # A baseline-update dispatch runs only the `screenshots` jobs (they run every assertion too).
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.update-snapshots == 'false' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -87,6 +96,39 @@ jobs:
         shard: [1, 2, 3, 4]
     # `playwright install --with-deps` waits on the Ubuntu apt mirror, which took 11 minutes on
     # 2026-11-05 (15 MB at 23 kB/s); the full suite needs about 7. A browser cache hit skips apt.
+    timeout-minutes: 30
+    env:
+      E2E_PIXELS: "off"
+      SITE_FULL: ${{ (github.ref == 'refs/heads/main' || inputs.full) && '1' || '' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # scripts/changed-e2e.ts diffs against origin/main: full history, trees only.
+          fetch-depth: 0
+          filter: blob:none
+      - id: setup
+        uses: ./.github/actions/e2e-setup
+        with:
+          items: ${{ inputs.items }}
+          full: ${{ inputs.full }}
+          shard: ${{ matrix.shard }}
+          shards: 4
+      - if: steps.setup.outputs.run == 'true'
+        run: pnpm test:e2e ${{ steps.setup.outputs.shard-args }}
+      - if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results-e2e-${{ matrix.shard }}
+          path: e2e/test-results
+          if-no-files-found: ignore
+
+  screenshots:
+    name: screenshots (${{ matrix.shard }}/4)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     timeout-minutes: 30
     env:
       # Playwright's --update-snapshots mode for the update-snapshots input: `true` is `changed`
@@ -100,125 +142,26 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          # scripts/changed-e2e.ts diffs against origin/main: full history, trees only.
           fetch-depth: 0
           filter: blob:none
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
+      - id: setup
+        uses: ./.github/actions/e2e-setup
         with:
-          node-version-file: .nvmrc
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      # Push, pull requests, main and `full` run every shot; a branch dispatch runs the `items`
-      # input, or the set its diff needs (lib/e2e-filter.ts has the rules).
-      - name: Choose the visual set
-        id: filter
-        env:
-          ITEMS: ${{ inputs.items }}
-          FULL: ${{ inputs.full }}
-        run: |
-          ITEMS="${ITEMS// /}"
-          if [ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ] || [ "$GITHUB_REF" = "refs/heads/main" ] || [ "$FULL" = "true" ]; then
-            items=all; why="$GITHUB_EVENT_NAME on $GITHUB_REF_NAME${FULL:+, full=$FULL}: every demo and spec"
-          elif [ -n "$ITEMS" ]; then
-            if ! [[ "$ITEMS" =~ ^[a-z0-9,-]+$ ]]; then echo "::error::items must be names separated by commas"; exit 1; fi
-            items="$ITEMS"; why="the items input"
-          else
-            items=$(pnpm exec tsx scripts/changed-e2e.ts --base=origin/main); why="computed from the diff against origin/main"
-          fi
-          echo "E2E_ITEMS=$items ($why)"
-          echo "E2E_ITEMS=$items" >> "$GITHUB_ENV"
-          echo "items=$items" >> "$GITHUB_OUTPUT"
-          echo "Visual set: \`E2E_ITEMS=$items\` ($why); \`SITE_FULL=${SITE_FULL:-}\`; \`UPDATE_SNAPSHOTS=${UPDATE_SNAPSHOTS:-}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "SITE_FULL=${SITE_FULL:-} (1: the landing is also shot whole)"
-      - name: Playwright version
-        id: playwright
-        if: steps.filter.outputs.items != 'none'
-        run: echo "version=$(grep -m1 -oP '^  playwright-core@\K[0-9.]+' pnpm-lock.yaml)" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache@v6
-        id: browsers
-        if: steps.filter.outputs.items != 'none'
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
-      - if: steps.filter.outputs.items != 'none'
-        run: pnpm exec playwright install chromium
-      # System libraries come from apt; only a cache miss pays for the mirror.
-      - if: steps.filter.outputs.items != 'none' && steps.browsers.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install-deps chromium
-      # The fonts install-deps would bring (CJK, emoji, Unifont) are needed on every run: without
-      # them Japanese set in a Latin face (Geist) renders blank, and baselines written on a
-      # cache hit differ from those written on a miss (Task 68 found 18 such shots).
-      #
-      # Their .deb files are cached, so a run needs a package mirror only when that cache is
-      # empty: on 2026-11-11 the runners could not resolve any ubuntu.com host for hours
-      # (azure.archive, archive and security alike, while the hosts themselves were up), and
-      # every visual job failed here before a single test ran. With an empty cache and no
-      # ubuntu.com, the files come from kernel.org's mirror of the same archive: apt checks
-      # them against Ubuntu's signed indexes whichever mirror serves them. The cached files
-      # also pin the fonts' versions, so a package update cannot move a glyph under the
-      # baselines.
-      - name: Ubuntu release
-        id: os
-        if: steps.filter.outputs.items != 'none'
-        run: . /etc/os-release && echo "codename=$VERSION_CODENAME" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache@v6
-        id: fonts
-        if: steps.filter.outputs.items != 'none'
-        with:
-          path: ${{ runner.temp }}/font-debs
-          key: font-debs-${{ steps.os.outputs.codename }}-v1
-      - name: Fonts
-        if: steps.filter.outputs.items != 'none'
-        env:
-          FONT_PACKAGES: fonts-ipafont-gothic fonts-wqy-zenhei fonts-freefont-ttf fonts-liberation fonts-noto-color-emoji fonts-unifont fonts-tlwg-loma-otf
-        run: |
-          debs="$RUNNER_TEMP/font-debs"
-          mkdir -p "$debs"
-          # Fetch the packages and whatever they depend on that the image lacks, as files.
-          fetch() {
-            mkdir -p "$debs/partial"
-            sudo apt-get update -qq &&
-              sudo apt-get install -y -qq --no-install-recommends --download-only -o Dir::Cache::archives="$debs" $FONT_PACKAGES
-          }
-          # The runner's mirror list names only ubuntu.com hosts; this one is outside that domain.
-          elsewhere() {
-            echo "::warning::no ubuntu.com mirror; fetching the fonts from mirrors.kernel.org"
-            printf '%s\tpriority:1\n%s\tpriority:2\n' http://mirrors.kernel.org/ubuntu/ http://mirrors.edge.kernel.org/ubuntu/ | sudo tee /etc/apt/apt-mirrors.txt
-          }
-          if ! ls "$debs"/*.deb > /dev/null 2>&1; then
-            # Ask the resolver first: apt takes about eight minutes to give up on a name.
-            if ! getent hosts azure.archive.ubuntu.com > /dev/null; then
-              elsewhere
-              fetch
-            elif ! fetch; then
-              elsewhere
-              sudo rm -f "$debs"/*.deb
-              fetch
-            fi
-            sudo rm -rf "$debs/partial" "$debs/lock"
-            sudo chown -R "$(id -u):$(id -g)" "$debs"
-          fi
-          ls -1 "$debs"
-          # From the files alone, with dpkg: apt would read them as its own user, which may not
-          # enter the runner's temp folder, and would wait on the resolver first (four minutes
-          # in run 43060493756). The fetch above already brought any dependency the image lacks.
-          sudo dpkg -i "$debs"/*.deb
-      - if: steps.filter.outputs.items != 'none'
-        run: pnpm build
-      # Shard 1 always has a test when the set has any, so it keeps Playwright's "no tests
-      # found" failure; a later shard of a small set may be empty, which is not a failure.
-      - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS == '' }}
-        run: pnpm test:e2e --shard=${{ matrix.shard }}/4 ${{ matrix.shard != 1 && '--pass-with-no-tests' || '' }}
+          items: ${{ inputs.items }}
+          full: ${{ inputs.full }}
+          shard: ${{ matrix.shard }}
+          shards: 4
+      - if: ${{ steps.setup.outputs.run == 'true' && env.UPDATE_SNAPSHOTS == '' }}
+        run: pnpm test:e2e ${{ steps.setup.outputs.shard-args }}
       # Either mode writes a baseline only when it is missing or its new bytes differ (Playwright
       # 1.64 skips byte-identical ones under `all`), so git sees exactly the files the run wrote
       # and the artifact holds exactly the PNGs to commit: a straight copy, no sifting.
-      - if: ${{ steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
-        run: pnpm test:e2e --update-snapshots=$UPDATE_SNAPSHOTS --shard=${{ matrix.shard }}/4 ${{ matrix.shard != 1 && '--pass-with-no-tests' || '' }}
+      - if: ${{ steps.setup.outputs.run == 'true' && env.UPDATE_SNAPSHOTS != '' }}
+        run: pnpm test:e2e --update-snapshots=$UPDATE_SNAPSHOTS ${{ steps.setup.outputs.shard-args }}
       # Also after a failed test: the wave's update run on main is expected to fail on the
       # non-pixel checks of a few new demos, and the baselines it wrote are still wanted.
       - name: Collect the rewritten baselines
-        if: ${{ !cancelled() && steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
+        if: ${{ !cancelled() && steps.setup.outputs.run == 'true' && env.UPDATE_SNAPSHOTS != '' }}
         run: |
           out="$RUNNER_TEMP/playwright-baselines"
           mkdir -p "$out"
@@ -232,7 +175,7 @@ jobs:
           echo "$count baseline(s) rewritten (--update-snapshots=$UPDATE_SNAPSHOTS)"
           cat "$RUNNER_TEMP/baselines.txt"
           { echo "**$count baseline(s) rewritten** (\`--update-snapshots=$UPDATE_SNAPSHOTS\`)"; sed 's/^/- /' "$RUNNER_TEMP/baselines.txt"; } >> "$GITHUB_STEP_SUMMARY"
-      - if: ${{ !cancelled() && steps.filter.outputs.items != 'none' && env.UPDATE_SNAPSHOTS != '' }}
+      - if: ${{ !cancelled() && steps.setup.outputs.run == 'true' && env.UPDATE_SNAPSHOTS != '' }}
         uses: actions/upload-artifact@v7
         with:
           name: playwright-baselines-${{ matrix.shard }}
@@ -248,7 +191,7 @@ jobs:
   # One `playwright-baselines` artifact from the shards' parts, for update runs only. No part
   # exists when nothing was rewritten, and then there is nothing to merge.
   baselines:
-    needs: visual
+    needs: screenshots
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.update-snapshots != 'false' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
