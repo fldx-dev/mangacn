@@ -12,10 +12,11 @@ function subscribe(onChange: () => void) {
 
 /**
  * A navigation turns the page: the next one is laid over from the right (globals.css,
- * `.page-turn`). Under reduced motion there is no turn at all, not a still one: with the class
- * `none` React never calls `document.startViewTransition`, so the old page is not captured and
- * laid over the new one while it renders. A transition in flight paints only the captured
- * viewport, and a resize (rotating a phone, a full-page screenshot) aborts it with an error.
+ * `.page-turn`). Under reduced motion there is no turn: with the class `none` an update inside
+ * the site starts no view transition, so the old page is not captured and laid over the new
+ * one while it renders (a transition in flight paints only the captured viewport, and a resize,
+ * such as rotating a phone or a full-page screenshot, aborts it with an error). React still
+ * starts one when a page kept by cacheComponents is shown again; globals.css ends those at once.
  */
 export function PageTurn({ children }: { children: ReactNode }) {
   const reduced = useSyncExternalStore(

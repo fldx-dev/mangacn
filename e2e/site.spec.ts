@@ -476,21 +476,29 @@ test("markdown and registry routes", async ({ request }, testInfo) => {
 });
 
 /**
- * A navigation turns the page with a view transition, except under reduced motion
- * (components/docs/page-turn.tsx): there React must not start one at all. A transition in flight
- * paints only the old page's viewport, and the resize of a full-page screenshot aborts it with a
+ * A navigation turns the page with a view transition (components/docs/page-turn.tsx). Under
+ * reduced motion nothing animates: any transition React still starts (a page kept by
+ * cacheComponents shown again) has no animation and ends at once. A transition in flight paints
+ * only the old page's viewport, and the resize of a full-page screenshot aborts it with a
  * console error (the `/docs/theming` and `/docs/agents` flakes of MANGA-14).
  */
 for (const reducedMotion of ["reduce", "no-preference"] as const) {
   test(`a docs navigation under ${reducedMotion} motion`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion });
+    // Each transition's length, from its start to its `finished` promise.
     await page.addInitScript(() => {
       const start = document.startViewTransition?.bind(document);
       if (!start) return;
-      Object.assign(window, { viewTransitions: 0 });
+      const lengths: number[] = [];
+      Object.assign(window, { viewTransitionLengths: lengths });
       document.startViewTransition = ((...args: Parameters<typeof start>) => {
-        (window as unknown as { viewTransitions: number }).viewTransitions++;
-        return start(...args);
+        const begun = performance.now();
+        const transition = start(...args);
+        const index = lengths.push(-1) - 1;
+        transition.finished.finally(() => {
+          lengths[index] = performance.now() - begun;
+        });
+        return transition;
       }) as typeof document.startViewTransition;
     });
     await page.goto("/docs/theming");
@@ -508,10 +516,18 @@ for (const reducedMotion of ["reduce", "no-preference"] as const) {
     const shown = page.locator("#nd-page:visible");
     await expect(shown).toHaveCount(1);
     await expect(shown.locator("h1").first()).not.toHaveText(/^Theming$/);
-    const count = await page.evaluate(
-      () => (window as unknown as { viewTransitions?: number }).viewTransitions,
-    );
-    if (reducedMotion === "reduce") expect(count, "view transitions started").toBe(0);
-    else expect(count, "view transitions started").toBeGreaterThan(0);
+    const lengths = () =>
+      page.evaluate(
+        () => (window as unknown as { viewTransitionLengths?: number[] }).viewTransitionLengths,
+      );
+    // Every transition has ended (the page turn takes 520 ms).
+    await expect.poll(async () => (await lengths())?.includes(-1)).toBe(false);
+    const ended = (await lengths()) ?? [];
+    if (reducedMotion === "reduce") {
+      for (const length of ended)
+        expect(length, "a transition under reduced motion").toBeLessThan(250);
+    } else {
+      expect(Math.max(0, ...ended), "the page turn").toBeGreaterThan(400);
+    }
   });
 }

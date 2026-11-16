@@ -30,6 +30,12 @@ export async function shoot(
   options?: PageAssertionsToHaveScreenshotOptions,
 ): Promise<void> {
   if (!comparePixels) return;
+  // A view transition in flight paints only the captured viewport, and the resize of a
+  // full-page shot aborts it (MANGA-14): let any running one finish first.
+  const page = "mainFrame" in target ? target : target.page();
+  await page.waitForFunction(
+    () => !(document as Document & { activeViewTransition?: unknown }).activeViewTransition,
+  );
   if ("mainFrame" in target) await expect(target).toHaveScreenshot(name, options);
   else await expect(target).toHaveScreenshot(name, options);
 }
