@@ -239,11 +239,8 @@ figure.shiki button[aria-live="polite"]:hover {
   .landing-stage-nib [data-bob] {
     animation: none;
   }
-  /* Every view transition, the root's default cross-fade included: React still starts one when
-     a cached page is shown again (cacheComponents), and it must end at once (page-turn.tsx). */
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
+  ::view-transition-old(.page-turn),
+  ::view-transition-new(.page-turn) {
     animation: none;
   }
 }
