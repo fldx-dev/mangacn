@@ -101,9 +101,17 @@ runs:
           echo "run=false" >> "$GITHUB_OUTPUT"
           exit 0
         fi
+        # The config imports the demo map, which is generated (gitignored); the build makes it
+        # again later.
+        pnpm gen:demos
         list=$(pnpm exec playwright test -c e2e/playwright.config.ts --list --pass-with-no-tests 2>&1) || true
         total=$(grep -oP '^Total: \K[0-9]+' <<< "$list" || true)
-        if [ -z "$total" ] || [ "$total" = "0" ]; then
+        if [ -z "$total" ]; then
+          echo "$list"
+          echo "::error::playwright --list failed"
+          exit 1
+        fi
+        if [ "$total" = "0" ]; then
           echo "$list"
           echo "::error::E2E_ITEMS=$ITEMS selects no tests"
           exit 1
