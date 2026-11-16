@@ -503,7 +503,8 @@ for (const reducedMotion of ["reduce", "no-preference"] as const) {
       link?.click();
     });
     await expect(page).not.toHaveURL(/\/docs\/theming$/);
-    await expect(page.locator("#nd-page")).toBeVisible();
+    // The old page and the new one are both in the DOM for a moment; wait for the new one alone.
+    await expect(page.locator("#nd-page")).toHaveCount(1);
     const count = await page.evaluate(
       () => (window as unknown as { viewTransitions?: number }).viewTransitions,
     );
