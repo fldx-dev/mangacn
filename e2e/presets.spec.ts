@@ -10,11 +10,11 @@ import { AXE_DISABLED_RULES } from "../lib/test/axe-rules";
 import themeCatalog from "../registry/theme/registry.json";
 import { paintInkFillsAsCss } from "./ink-fills";
 import { waitForInk } from "./ready";
+import { comparePixels, shoot } from "./shoot";
 
 // Theme presets (Task 99): the theme specimen stage in every look and mode at each project's
 // width, with the stage suite's waits and checks, and the Theming page's switch. Pixels on Linux
 // only (CI); everywhere the look is applied, nothing overflows and axe passes, contrast included.
-const comparePixels = process.platform === "linux";
 
 type AxeResults = Awaited<ReturnType<AxeBuilder["analyze"]>>;
 
@@ -95,7 +95,7 @@ for (const look of THEME_LOOKS) {
       await waitForInk(page);
 
       if (comparePixels) {
-        await expect(page).toHaveScreenshot(`presets-${look}-${mode}.png`, { fullPage: true });
+        await shoot(page, `presets-${look}-${mode}.png`, { fullPage: true });
       }
 
       const width = await page.evaluate(() => document.documentElement.scrollWidth);

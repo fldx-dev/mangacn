@@ -82,6 +82,10 @@ const EVERYTHING: (string | RegExp)[] = [
   "e2e/playwright.config.ts",
   "e2e/demos.spec.ts",
   "e2e/ready.ts",
+  "e2e/shoot.ts",
+  // The workflow that runs the suite and its setup: a change there must show it still runs all.
+  ".github/workflows/ci.yml",
+  /^\.github\/actions\/e2e-setup\//,
   // What every demo stage renders inside: the root layout, its CSS, the stage route.
   "app/globals.css",
   "app/layout.tsx",
@@ -381,7 +385,8 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  * - the suite's config, demo spec or readiness wait, the demo stage, root layout and CSS,
  *   `ink-frame`, any other `tsconfig.json` or `lib/registry/` change, the theme catalog or any
  *   item's CSS, a dependency → everything
- * - tests, Markdown, scripts, CI → nothing; any other path → everything
+ * - the CI workflow and its e2e setup action → everything; tests, Markdown, scripts, the rest
+ *   of .github → nothing; any other path → everything
  */
 export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
   const byName = new Map(sources.items.map((item) => [item.name, item]));

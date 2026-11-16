@@ -8,12 +8,12 @@ import { PRESET_BASE_TOKENS } from "../lib/registry/theme-presets";
 import { AXE_DISABLED_RULES } from "../lib/test/axe-rules";
 import { paintInkFillsAsCss } from "./ink-fills";
 import { waitForInk } from "./ready";
+import { comparePixels, shoot } from "./shoot";
 
 // The Create page (Task C4): the rail or its drawer drives the preview, the code is the URL,
 // a custom look's colours are exactly `baseValues`, axe passes in both modes, and the page is
 // shot at every width in light and dark for two fixed codes. Pixels on Linux only (CI). Task C5:
 // the preview tabs frame page blocks at the code, and `?c=` styles a stage or a view by itself.
-const comparePixels = process.platform === "linux";
 
 /** A custom look with every part tinted, a fine pen and the second faces. */
 const CUSTOM: CreateConfig = {
@@ -227,7 +227,7 @@ for (const [name, code] of Object.entries(CODES)) {
       await expect(page.locator('[data-slot="create-code"]').first()).toHaveValue(code);
       await expectNoOverflow(page);
       if (comparePixels) {
-        await expect(page).toHaveScreenshot(`create-${name}-${mode}.png`, { fullPage: true });
+        await shoot(page, `create-${name}-${mode}.png`, { fullPage: true });
       } else if (process.env.CREATE_SHOTS) {
         await page.screenshot({
           path: `${process.env.CREATE_SHOTS}/create-${name}-${mode}-${test.info().project.name}.png`,
