@@ -478,26 +478,36 @@ test("markdown and registry routes", async ({ request }, testInfo) => {
 /**
  * A navigation turns the page with a view transition (components/docs/page-turn.tsx). Under
  * reduced motion nothing animates: any transition React still starts (a page kept by
- * cacheComponents shown again) has no animation and ends at once. A transition in flight paints
+ * cacheComponents shown again) runs no animation on its pseudo-elements. A transition in flight paints
  * only the old page's viewport, and the resize of a full-page screenshot aborts it with a
  * console error (the `/docs/theming` and `/docs/agents` flakes of MANGA-14).
  */
 for (const reducedMotion of ["reduce", "no-preference"] as const) {
   test(`a docs navigation under ${reducedMotion} motion`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion });
-    // Each transition's length, from its start to its `finished` promise.
+    // For each transition, how many animations run on its pseudo-elements once it is ready
+    // (its length would also count React rendering the new page inside the update callback).
     await page.addInitScript(() => {
       const start = document.startViewTransition?.bind(document);
       if (!start) return;
-      const lengths: number[] = [];
-      Object.assign(window, { viewTransitionLengths: lengths });
+      const animated: number[] = [];
+      Object.assign(window, { viewTransitionAnimations: animated });
       document.startViewTransition = ((...args: Parameters<typeof start>) => {
-        const begun = performance.now();
         const transition = start(...args);
-        const index = lengths.push(-1) - 1;
-        transition.finished.finally(() => {
-          lengths[index] = performance.now() - begun;
-        });
+        const index = animated.push(-1) - 1;
+        transition.ready
+          .then(() => {
+            animated[index] = document
+              .getAnimations()
+              .filter((animation) =>
+                (animation.effect as KeyframeEffect | null)?.pseudoElement?.startsWith(
+                  "::view-transition",
+                ),
+              ).length;
+          })
+          .catch(() => {
+            animated[index] = 0;
+          });
         return transition;
       }) as typeof document.startViewTransition;
     });
@@ -516,18 +526,17 @@ for (const reducedMotion of ["reduce", "no-preference"] as const) {
     const shown = page.locator("#nd-page:visible");
     await expect(shown).toHaveCount(1);
     await expect(shown.locator("h1").first()).not.toHaveText(/^Theming$/);
-    const lengths = () =>
+    const animated = () =>
       page.evaluate(
-        () => (window as unknown as { viewTransitionLengths?: number[] }).viewTransitionLengths,
+        () =>
+          (window as unknown as { viewTransitionAnimations?: number[] }).viewTransitionAnimations,
       );
-    // Every transition has ended (the page turn takes 520 ms).
-    await expect.poll(async () => (await lengths())?.includes(-1)).toBe(false);
-    const ended = (await lengths()) ?? [];
+    await expect.poll(async () => (await animated())?.includes(-1)).toBe(false);
+    const counts = (await animated()) ?? [];
     if (reducedMotion === "reduce") {
-      for (const length of ended)
-        expect(length, "a transition under reduced motion").toBeLessThan(250);
+      for (const count of counts) expect(count, "animations under reduced motion").toBe(0);
     } else {
-      expect(Math.max(0, ...ended), "the page turn").toBeGreaterThan(400);
+      expect(Math.max(0, ...counts), "the page turn's animations").toBeGreaterThan(0);
     }
   });
 }
