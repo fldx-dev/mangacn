@@ -1,5 +1,10 @@
 # mangacn home: design notes (awwwards pass, 2026-11-14)
 
+This is the design rationale for the home page as of 2026-11-14, as shipped in `39696ff`. It does
+not cover the 2026-11-15 changes in `0463b81` (the two-page spread, the ink last page and the
+screentone scrollbar). Where these notes and the code on `main` differ, the code is the source of
+truth.
+
 ## Brief
 
 - Subject: mangacn, manga-styled React components shipped as a shadcn registry (MIT).
