@@ -3,37 +3,58 @@
 import { cn } from "cn";
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { Button } from "@/registry/ui/button/button";
-import { PREVIEW_WIDTHS, type PreviewWidth } from "./preview-widths";
+import { PREVIEW_WIDTHS, type PreviewWidth, SHELL_DESKTOP_MIN_BOX } from "./preview-widths";
 import { StageFrame } from "./stage-frame";
 
-export interface ScaledViewProps extends Omit<ComponentProps<"div">, "children"> {
-  /** The page block, shown from `/view/<item>`. */
-  item: string;
+export interface ScaledFrameProps extends Omit<ComponentProps<"div">, "children"> {
+  /** The page or stage the frame loads. */
+  src: string;
   /** The width the page lays out at, in CSS pixels. */
   width: number;
   /** The frame's accessible name. */
   title: string;
   /** A preview, not a live page (see StageFrame). */
   inert?: boolean;
+  /**
+   * A box wider than `width` lays the page out at the box's own width, filling it, rather than
+   * centring a `width`-wide screen in it: `width` is then a minimum.
+   */
+  fill?: boolean;
+  /**
+   * A box narrower than this lays the page out at the box's own width, unscaled, so the page
+   * shows its phone layout instead of a desktop shrunk past reading.
+   */
+  nativeBelow?: number;
   /** Called with the box's width each time it is measured. */
   onMeasure?: (width: number) => void;
 }
 
+/** The width a frame's page lays out at in a box `boxWidth` wide (see ScaledFrameProps). */
+export function layoutWidth(
+  boxWidth: number,
+  { width, fill, nativeBelow }: Pick<ScaledFrameProps, "width" | "fill" | "nativeBelow">,
+): number {
+  if (nativeBelow !== undefined && boxWidth < nativeBelow) return boxWidth;
+  return fill ? Math.max(boxWidth, width) : width;
+}
+
 /**
- * `/view/<item>` laid out at `width` and scaled down to its box when the box is narrower, so the
- * page shows as it would on that screen. Give the box its height (a class or style): the page
- * fills it at any scale, so nothing around it moves. Narrower than the box, the frame is centred
- * with its edges ruled. The frame follows the site's light or dark theme (StageFrame).
+ * A page laid out at `width` and scaled down to its box when the box is narrower, so the page
+ * shows as it would on that screen. Give the box its height (a class or style): the page fills
+ * it at any scale, so nothing around it moves. Narrower than the box, the frame is centred with
+ * its edges ruled (unless `fill`). The frame follows the site's light or dark theme (StageFrame).
  */
-export function ScaledView({
-  item,
+export function ScaledFrame({
+  src,
   width,
   title,
   inert,
+  fill,
+  nativeBelow,
   onMeasure,
   className,
   ...props
-}: ScaledViewProps) {
+}: ScaledFrameProps) {
   const box = useRef<HTMLDivElement>(null);
   const [boxWidth, setBoxWidth] = useState<number | null>(null);
   const measured = useRef(onMeasure);
@@ -51,21 +72,31 @@ export function ScaledView({
   }, []);
 
   // Until the box is measured the page fills it unscaled, at the box's own width.
-  const scale = boxWidth ? Math.min(1, boxWidth / width) : 1;
+  const laidOut = boxWidth ? layoutWidth(boxWidth, { width, fill, nativeBelow }) : null;
+  const scale = boxWidth && laidOut ? Math.min(1, boxWidth / laidOut) : 1;
   return (
-    <div ref={box} inert={inert} className={cn("overflow-hidden", className)} {...props}>
+    <div
+      ref={box}
+      inert={inert}
+      data-layout-width={laidOut ?? undefined}
+      className={cn("overflow-hidden", className)}
+      {...props}
+    >
       <div
         // Narrower than the box, the screen's edges show as an outline, which takes no width.
-        className={cn("mx-auto", boxWidth && boxWidth > width && "outline outline-border")}
+        className={cn(
+          "mx-auto",
+          boxWidth && laidOut && boxWidth > laidOut && "outline outline-border",
+        )}
         style={{
-          width: boxWidth ? width : "100%",
+          width: laidOut ?? "100%",
           height: `${100 / scale}%`,
           transform: scale < 1 ? `scale(${scale})` : undefined,
           transformOrigin: "top left",
         }}
       >
         <StageFrame
-          src={`/view/${item}`}
+          src={src}
           title={title}
           height="100%"
           inert={inert}
@@ -76,26 +107,44 @@ export function ScaledView({
   );
 }
 
+export interface ScaledViewProps extends Omit<ScaledFrameProps, "src" | "fill" | "nativeBelow"> {
+  /** The page block, shown from `/view/<item>`. */
+  item: string;
+}
+
+/** A page block's `/view/<item>` in a ScaledFrame, at `width` and centred in a wider box. */
+export function ScaledView({ item, ...props }: ScaledViewProps) {
+  return <ScaledFrame src={`/view/${item}`} {...props} />;
+}
+
 export interface BlockPreviewProps {
   /** The page block, shown from `/view/<item>`. */
   item: string;
   /** The preview box's height; the page inside is scaled to fill it. */
   height?: string;
+  /**
+   * The page is an app shell whose sidebar turns into a sheet below a tablet's width: it keeps
+   * the desktop width in a docs column down to SHELL_DESKTOP_MIN_BOX, scaled, so the preview
+   * shows the sidebar beside the page. The docs MDX sets it from the registry (DocsBlockPreview).
+   */
+  shell?: boolean;
 }
 
 /**
  * A page block's whole page in a frame, at a phone's, a tablet's or a desktop's width (buttons
  * pick one), scaled down to the docs column when it is wider. A column narrower than a tablet
- * opens at the phone's width. The box keeps its height whatever the width.
+ * opens at the phone's width; an app shell's (`shell`), narrower than SHELL_DESKTOP_MIN_BOX.
+ * The box keeps its height whatever the width.
  */
-export function BlockPreview({ item, height = "36rem" }: BlockPreviewProps) {
+export function BlockPreview({ item, height = "36rem", shell }: BlockPreviewProps) {
   const [size, setSize] = useState<PreviewWidth>("desktop");
   const [boxWidth, setBoxWidth] = useState<number | null>(null);
   // Whether the width is settled: by the first measurement, or by the reader's pick.
   const settled = useRef(false);
 
   const onMeasure = (width: number) => {
-    if (!settled.current && width < PREVIEW_WIDTHS[1].width) setSize("phone");
+    const phoneBelow = shell ? SHELL_DESKTOP_MIN_BOX : PREVIEW_WIDTHS[1].width;
+    if (!settled.current && width < phoneBelow) setSize("phone");
     settled.current = true;
     setBoxWidth(width);
   };

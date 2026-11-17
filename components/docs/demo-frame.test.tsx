@@ -60,6 +60,34 @@ describe("DemoFrame", () => {
     expect(frame.getAttribute("src")).toBe("/demo/sheet/default");
   });
 
+  it("gives the sidebar a desktop-wide stage, scaled to a docs column, and a phone's below", async () => {
+    const observers = stubResizeObserver();
+    const { container, baseElement } = render(
+      await DemoFrame({ item: "sidebar", demo: "default", height: "20rem" }),
+    );
+    const box = container.querySelector<HTMLElement>('[data-slot="demo-stage-box"]');
+    const frame = screen.getByTitle("sidebar / default");
+    expect(frame.getAttribute("src")).toBe("/demo/sidebar/default");
+    expect(box?.style.height).toBe("20rem");
+    const stage = frame.parentElement as HTMLElement;
+
+    // A 1280 px window's docs column: the stage lays out at 768 px, the sidebar's breakpoint.
+    observers.drawAll(646, 320);
+    expect(box?.dataset.layoutWidth).toBe("768");
+    expect(stage.style.width).toBe("768px");
+    expect(stage.style.transform).toBe(`scale(${646 / 768})`);
+    // A wider column: the stage fills it, unscaled.
+    observers.drawAll(802, 320);
+    expect(box?.dataset.layoutWidth).toBe("802");
+    expect(stage.style.transform).toBe("");
+    // A phone's column: the stage is the column, so the sidebar shows its phone layout.
+    observers.drawAll(294, 320);
+    expect(box?.dataset.layoutWidth).toBe("294");
+    expect(stage.style.transform).toBe("");
+
+    expect(await axe(baseElement, { iframes: false })).toHaveNoViolations();
+  });
+
   it("throws on an unknown demo or item", async () => {
     await expect(DemoFrame({ item: "speech-bubble", demo: "nope" })).rejects.toThrow(
       /Unknown demo "nope" for item "speech-bubble"/,
