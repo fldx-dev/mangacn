@@ -5,7 +5,7 @@ import { useHighlightedCode } from "@/hooks/use-highlighted-code";
 import { highlightCode } from "@/lib/highlighter";
 
 // Stock's hook and its highlighter, imported by their install paths (as code-block's users do):
-// plain lines first, shiki's tokens once the language has loaded.
+// plain lines first, shiki's tokens once the language has loaded, in the ink theme by default.
 
 type Token = ReactElement<{ className: string; style: Record<string, string>; children: string }>;
 
@@ -21,8 +21,14 @@ describe("useHighlightedCode", () => {
     const first = tokensOf(result.current[0]);
     expect(first.every(isValidElement)).toBe(true);
     expect(first.map((token) => token.props.children).join("")).toBe("const a = 1;");
-    expect(first[0]?.props.className).toBe("text-(--shiki-light) dark:text-(--shiki-dark)");
-    expect(first[0]?.props.style["--shiki-light"]).toMatch(/^#/);
+    // Stock's colour classes, plus the ink theme's weight and slant.
+    expect(first[0]?.props.className).toMatch(/^text-\(--shiki-light\) /);
+    expect(first[0]?.props.className).toContain("dark:text-(--shiki-dark)");
+    expect(first[0]?.props.className).toContain("font-(--shiki-light-font-weight)");
+    // Ink by default: the theme's own tokens, not GitHub's hex colours.
+    expect(first[0]?.props.style["--shiki-light"]).toBe("var(--foreground)");
+    expect(first[0]?.props.style["--shiki-dark"]).toBe("var(--foreground)");
+    expect(first[0]?.props.style["--shiki-light-font-weight"]).toBe("bold");
   });
 
   it("leaves a language it does not list as plain lines", async () => {

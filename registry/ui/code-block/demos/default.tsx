@@ -1,5 +1,5 @@
 import { FileCodeIcon } from "lucide-react";
-import { highlightInk } from "@/lib/docs/ink-highlight";
+import { highlightCode } from "@/registry/hooks/lib/highlighter";
 import {
   CodeBlock,
   CodeBlockActions,
@@ -18,8 +18,9 @@ export function Opening() {
 }
 `;
 
-// Highlighted once, when the module loads on the server.
-const lines = highlightInk(code, "tsx");
+// Highlighted once, when the module loads on the server, in the highlighter's default ink theme.
+// The trailing newline is left off, so it renders no extra empty line.
+const lines = (await highlightCode(code.trimEnd(), "tsx")) ?? code.trimEnd().split("\n");
 
 export default function CodeBlockDefaultDemo() {
   return (
