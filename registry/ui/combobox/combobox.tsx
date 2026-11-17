@@ -14,7 +14,8 @@ import {
 } from "@/components/ui/input-group";
 
 // Based on shadcn/ui Combobox (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-12.
-// Restyled for mangacn: the control is mangacn's input-group (one hand-drawn outline); the popup
+// Restyled for mangacn: the control is mangacn's input-group (one hand-drawn outline), rendered
+// as Base UI's Combobox.InputGroup so the popup anchors to, and is as wide as, the field; the popup
 // is dropdown-menu's heavy-outlined paper, drawn by an InkFrame on the positioner (the popup
 // clips), with no shadow or ring; the highlighted item is ink with paper text and its check a
 // heavy ink glyph; separators are hand-drawn rules; in multiple mode the chips field is one
@@ -64,7 +65,9 @@ function ComboboxInput({
   showClear?: boolean;
 }) {
   return (
-    <InputGroup className={cn("w-auto", className)}>
+    // Base UI's input group, drawn as mangacn's: the popup anchors to the whole field (outline,
+    // trigger and clear) instead of the bare <input>, so it is exactly as wide as the field.
+    <ComboboxPrimitive.InputGroup render={<InputGroup className={cn("w-auto", className)} />}>
       <ComboboxPrimitive.Input render={<InputGroupInput disabled={disabled} />} {...props} />
       <InputGroupAddon align="inline-end">
         {showTrigger && (
@@ -84,7 +87,7 @@ function ComboboxInput({
         {showClear && <ComboboxClear disabled={disabled} />}
       </InputGroupAddon>
       {children}
-    </InputGroup>
+    </ComboboxPrimitive.InputGroup>
   );
 }
 
@@ -122,7 +125,7 @@ function ComboboxContent({
           data-slot="combobox-content"
           data-chips={!!anchor}
           className={cn(
-            "group/combobox-content relative max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-hidden rounded-lg bg-transparent text-popover-foreground duration-100 data-[chips=true]:min-w-(--anchor-width) data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 *:data-[slot=input-group]:m-1.5 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+            "group/combobox-content relative max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) origin-(--transform-origin) overflow-hidden rounded-lg bg-transparent text-popover-foreground duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 *:data-[slot=input-group]:m-1.5 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             className,
           )}
           {...props}
