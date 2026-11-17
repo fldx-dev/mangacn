@@ -4,7 +4,10 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { cacheLife } from "next/cache";
 import { inkDark, inkLight } from "@/lib/docs/code-theme";
 import { getDemoEntry, getDemoSource } from "@/lib/docs/demo-source";
+import { isSidebarShell } from "@/lib/docs/sidebar-shell";
 import { getDemoLoader } from "@/lib/registry/demos";
+import { ScaledFrame } from "./block-preview";
+import { PREVIEW_WIDTHS, SHELL_DESKTOP_MIN_BOX } from "./preview-widths";
 import { StageFrame } from "./stage-frame";
 
 // Overlay items render their stage in an iframe, so two open dialogs or sheets never stack on
@@ -82,6 +85,24 @@ export async function DemoPreview({
   const load = getDemoLoader(item, demo);
   if (!load) throw new Error(`No loader for demo "${item}/${demo}"; run \`pnpm gen:demos\`.`);
 
+  if (isSidebarShell(item)) {
+    // The sidebar lays itself out by its window, and the docs column is narrower than its
+    // 768 px breakpoint up to about a 1400 px window: the stage gets a tablet-wide window at least,
+    // scaled to the column, and only a phone-narrow column shows the phone layout (MANGA-19).
+    return (
+      <ScaledFrame
+        src={`/demo/${item}/${demo}`}
+        title={title ?? `${item} / ${demo}`}
+        width={PREVIEW_WIDTHS[1].width}
+        fill
+        nativeBelow={SHELL_DESKTOP_MIN_BOX}
+        inert={inert}
+        data-slot="demo-stage-box"
+        className="rounded-sm border bg-paper"
+        style={{ height }}
+      />
+    );
+  }
   if (OVERLAY_ITEMS.has(item)) {
     return (
       <StageFrame
