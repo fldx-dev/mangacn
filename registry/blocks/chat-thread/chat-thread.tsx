@@ -333,6 +333,9 @@ function ChatThreadBody({
     }
   }, [messages, me, scrollToEnd]);
 
+  // Nothing to send while the draft is blank: the button is disabled and Enter does nothing.
+  const blank = draft.trim() === "";
+
   const send = () => {
     const text = draft.trim();
     if (!text || !onSend) return;
@@ -414,7 +417,9 @@ function ChatThreadBody({
             send();
           }}
         >
-          <InputGroup>
+          {/* The group takes its disabled look from any disabled control in it; here only a
+              disabled field gives it, so a disabled Send leaves the field looking writable. */}
+          <InputGroup className="not-has-[[data-slot=input-group-control]:disabled]:bg-none not-has-[[data-slot=input-group-control]:disabled]:text-foreground not-has-[[data-slot=input-group-control]:disabled]:[&>[data-slot=ink-frame]]:[--paper:var(--background)]">
             <InputGroupTextarea
               ref={field}
               rows={1}
@@ -433,10 +438,9 @@ function ChatThreadBody({
               }}
             />
             <InputGroupAddon align="inline-end" className="self-end">
-              {/* Never disabled: a disabled control turns the whole group to its disabled look;
-                  a blank message is simply not sent. */}
               <InputGroupButton
                 type="submit"
+                disabled={blank}
                 variant="default"
                 size="icon-sm"
                 aria-label="Send"
