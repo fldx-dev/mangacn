@@ -63,7 +63,7 @@ import { mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
 import { installTarget } from "../lib/registry/install-target";
 import { loadPresets } from "../lib/registry/theme-preset-items";
 
-const NEXT_VERSION = "16.4.3";
+const NEXT_VERSION = "16.4.6";
 const SHADCN_VERSION = "4.23.0";
 /** Overall budget: setup plus a minute per item (`pnpm dlx shadcn add` takes ~40 s on Windows). */
 const BASE_TIMEOUT_MS = 6 * 60 * 1000;
