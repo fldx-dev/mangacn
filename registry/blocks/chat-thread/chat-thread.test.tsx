@@ -3,6 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { type ChatMessage, ChatThread } from "./chat-thread";
+import ChatThreadDefaultDemo from "./demos/default";
 
 // jsdom lays nothing out, so the scroller's own following cannot be seen here (its tests and
 // the e2e run cover it); the block's part is when it asks the scroller for the end.
@@ -216,8 +217,42 @@ describe("ChatThread", () => {
       fireEvent.keyDown(field(), { key: "Enter" });
       fireEvent.click(sendButton());
       expect(onSend).not.toHaveBeenCalled();
-      // The button stays enabled, so the group keeps its ordinary look.
+      expect(groups().flatMap(bubbleIds)).toEqual(thread.map((message) => message.id));
+    });
+
+    it("disables Send while the draft is empty or blank, and enables it once there is text", () => {
+      render(<ChatThread messages={thread} me="ren" onSend={vi.fn()} />);
+      expect(sendButton().disabled).toBe(true);
+      type("Hi");
       expect(sendButton().disabled).toBe(false);
+      type("   \n  ");
+      expect(sendButton().disabled).toBe(true);
+      type("");
+      expect(sendButton().disabled).toBe(true);
+    });
+
+    it("adds no bubble for Enter on a blank draft with useChatThread, and one for text", () => {
+      render(<ChatThreadDefaultDemo />);
+      const count = () => document.querySelectorAll('[data-slot="bubble"]').length;
+      const before = count();
+      fireEvent.keyDown(field(), { key: "Enter" });
+      type("  \n ");
+      fireEvent.keyDown(field(), { key: "Enter" });
+      expect(count()).toBe(before);
+      type("Pencils by Friday");
+      fireEvent.keyDown(field(), { key: "Enter" });
+      expect(count()).toBe(before + 1);
+    });
+
+    it("disables Send again once a message is sent, and keeps the field writable", () => {
+      const onSend = vi.fn();
+      render(<ChatThread messages={thread} me="ren" onSend={onSend} />);
+      type("See you");
+      fireEvent.keyDown(field(), { key: "Enter" });
+      expect(onSend).toHaveBeenCalledTimes(1);
+      expect(sendButton().disabled).toBe(true);
+      expect(field().disabled).toBe(false);
+      expect(document.activeElement).toBe(field());
     });
   });
 
