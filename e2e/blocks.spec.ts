@@ -1,13 +1,14 @@
 import { resolve } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
+import { DOCUMENT_END_ID } from "../components/docs/page-end";
 import { BLOCKS_CATALOG, docItems } from "../lib/docs/catalog";
 import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
 import { demoEntries, pageEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
 import { AXE_DISABLED_RULES } from "../lib/test/axe-rules";
 import { paintInkFillsAsCss } from "./ink-fills";
-import { waitForInk } from "./ready";
+import { hydrateAfterReveal, waitForInk } from "./ready";
 import { comparePixels, shoot } from "./shoot";
 
 // Page blocks on their own (`/view/<block>`, app/view/[block]) at each project's width, light
@@ -54,6 +55,8 @@ for (const { block } of views) {
   for (const mode of ["light", "dark"] as const) {
     test(`${block} view (${mode})`, async ({ page }) => {
       const errors = collectErrors(page);
+      // The page hydrates, never renders anew on the client: one wobble per shot.
+      await hydrateAfterReveal(page);
       const response = await page.goto(`/view/${block}${mode === "dark" ? "?mode=dark" : ""}`);
       expect(response?.status()).toBe(200);
       await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
@@ -66,6 +69,13 @@ for (const { block } of views) {
       await expectNoOverflow(page);
 
       if (mode === "light") {
+        // The first-frame hold reaches this route too (components/docs/page-end.tsx): the head
+        // as served has the expect link once, so the page streams in before the first frame.
+        const html = await (await page.request.get(`/view/${block}`)).text();
+        const head = html.slice(0, html.indexOf("<body"));
+        const link = `<link rel="expect" href="#${DOCUMENT_END_ID}" blocking="render"/>`;
+        expect(head.split(link).length - 1, "one expect link in the head").toBe(1);
+
         // A whole page: one main, one h1 opening the heading order, every form named.
         await expect(page.getByRole("main")).toHaveCount(1);
         await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
