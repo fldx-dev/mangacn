@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
 import { DOCUMENT_END_ID } from "../components/docs/page-end";
 import { BLOCKS_CATALOG, docItems } from "../lib/docs/catalog";
+import { isSidebarShell } from "../lib/docs/sidebar-shell";
 import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
 import { demoEntries, pageEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
@@ -176,6 +177,11 @@ if (checkIndex) {
       const content = await (await frame.elementHandle())?.contentFrame();
       if (!content) throw new Error(`No frame for /view/${block}`);
       await expect(content.locator("html")).toHaveAttribute("data-demo-ready", "true");
+      // A sidebar shell keeps the desktop width in a 1280 px window's column (MANGA-19).
+      if (isSidebarShell(block) && test.info().project.name === "w1280") {
+        await expect(preview).toHaveAttribute("data-width", "desktop");
+        await expect.poll(() => content.evaluate(() => window.innerWidth)).toBe(1280);
+      }
 
       const box = preview.locator('[data-slot="block-preview-box"]');
       const boxHeight = (await box.boundingBox())?.height;
