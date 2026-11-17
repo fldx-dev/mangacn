@@ -439,6 +439,19 @@ test("an embedded dialog stage works with the pointer from the start", async ({ 
   await expect(field).toHaveValue("Ink");
 });
 
+// The skip link points at content the page has from its first HTML, before any script: axe
+// counts a link to a missing id as content outside a landmark (`region`), which failed docs pages
+// whenever the scan ran before hydration.
+test("the skip link's target is in the server's HTML", async ({ request }, testInfo) => {
+  test.skip(testInfo.project.name !== "w1280", "plain requests; one project is enough");
+  for (const path of ["/", "/docs", "/docs/components/speech-bubble", "/create"]) {
+    const html = await (await request.get(path)).text();
+    const target = html.match(/<a href="#([\w-]+)"[^>]*>Skip to content<\/a>/)?.[1];
+    expect(target, `${path}: the skip link`).toBeTruthy();
+    expect(html, `${path}: #${target} is on the page`).toContain(`id="${target}"`);
+  }
+});
+
 // The Markdown and registry routes (Tasks 43, 44): status, type and headers, once.
 test("markdown and registry routes", async ({ request }, testInfo) => {
   test.skip(testInfo.project.name !== "w1280", "plain requests; one project is enough");
