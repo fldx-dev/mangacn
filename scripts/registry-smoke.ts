@@ -54,9 +54,10 @@ import {
   SCREENTONE_RANGES,
   SCREENTONE_TOKENS,
 } from "../lib/create/config";
-import { fontItemNames } from "../lib/create/items";
+import { DIALOGUE_FACES, DISPLAY_FACES } from "../lib/create/fonts";
+import { fontItemUrls, VITE_FONT_SANS } from "../lib/create/items";
 import { kitItems } from "../lib/create/kits";
-import { createAnswer } from "../lib/create/serve";
+import { createAnswer, fontAnswer } from "../lib/create/serve";
 import { SETUP_ITEMS, setCommand } from "../lib/docs/install-command";
 import { mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
 import { installTarget } from "../lib/registry/install-target";
@@ -667,13 +668,22 @@ const served: string[] = [];
 function serveRegistry(): Promise<Server> {
   const server = createServer((req, res) => {
     const pathname = decodeURIComponent(new URL(req.url ?? "/", "http://localhost").pathname);
-    // A Create code's items, answered as app/r/create/ answers them, on this server's origin.
-    const create = /^\/r\/create\/([^/]+)(\/theme\.json)?$/.exec(pathname);
-    if (create) {
+    // A Create font and a code's items, answered as app/r/create/ answers them, on this
+    // server's origin.
+    const font = /^\/r\/create\/font\/([^/]+)\/([^/]+)$/.exec(pathname);
+    const create = font
+      ? null
+      : /^\/r\/create\/([^/]+)(?:\/(theme|next|vite)\.json)?$/.exec(pathname);
+    if (font || create) {
       served.push(pathname);
       const { port } = server.address() as AddressInfo;
-      const kind = create[2] ? "theme" : "bundle";
-      const answer = createAnswer(kind, create[1], `http://127.0.0.1:${port}`);
+      const answer = font
+        ? fontAnswer(font[1], font[2])
+        : createAnswer(
+            (create?.[2] as "theme" | "next" | "vite" | undefined) ?? "bundle",
+            create?.[1],
+            `http://127.0.0.1:${port}`,
+          );
       res.writeHead(answer.status, answer.headers).end(JSON.stringify(answer.body, null, 2));
       return;
     }
@@ -976,7 +986,15 @@ function createCssProblems(
     "--color-background: var(--background);",
     "--color-border: var(--border);",
     "@utility halftone",
-    ...(vite ? ['@import "@fontsource/dela-gothic-one"', '@import "@fontsource/yusei-magic"'] : []),
+    // The chosen faces: Fontsource imports and the body font in Vite (Task C7).
+    ...(vite
+      ? [
+          `@import "${DISPLAY_FACES[config.fonts.display].dependency}"`,
+          `@import "${DIALOGUE_FACES[config.fonts.dialogue].dependency}"`,
+          '@import "@fontsource/yusei-magic"',
+          `--font-sans: ${VITE_FONT_SANS};`,
+        ]
+      : []),
   ];
   const problems = needles
     .filter((needle) => !css.includes(needle))
@@ -985,6 +1003,29 @@ function createCssProblems(
   if (!isDefault) {
     for (const needle of DEFAULT_PAPERS) {
       if (css.includes(needle)) problems.push(`${cssFile} still has the default "${needle}"`);
+    }
+  }
+  return problems;
+}
+
+/**
+ * A Next.js layout after a Create code: it loads the code's face for each role, and no other face
+ * of that role (one loader per variable; an existing project's old face is replaced).
+ */
+function createLayoutProblems(layout: string, config: CreateConfig): string[] {
+  const problems: string[] = [];
+  for (const [role, faces, chosen] of [
+    ["display", DISPLAY_FACES, config.fonts.display],
+    ["dialogue", DIALOGUE_FACES, config.fonts.dialogue],
+  ] as const) {
+    for (const [id, face] of Object.entries(faces)) {
+      const loads = layout.includes(`${face.import}(`);
+      if (id === chosen && !loads) {
+        problems.push(`app/layout.tsx does not load the ${role} face ${face.family}`);
+      }
+      if (id !== chosen && loads) {
+        problems.push(`app/layout.tsx still loads ${face.family}, not this code's ${role} face`);
+      }
     }
   }
   return problems;
@@ -1007,10 +1048,13 @@ async function createSmoke(code: string, vite: boolean) {
   const { port } = server.address() as AddressInfo;
   const origin = `http://127.0.0.1:${port}`;
   const commands = createCommands(config, "pnpm", origin);
-  const fetched = [
-    `/r/create/${commands.code}.json`,
+  // The new project's own bundle; the existing-project command's is the plain `<code>.json`.
+  let bundlePath = `/r/create/${commands.code}/${vite ? "vite" : "next"}.json`;
+  const fetched = () => [
+    bundlePath,
     `/r/create/${commands.code}/theme.json`,
-    ...[...fontItemNames(config.fonts), ...kitItems(config.kit)].map((name) => `/r/${name}.json`),
+    ...fontItemUrls(config.fonts, origin).map((url) => url.slice(origin.length)),
+    ...kitItems(config.kit).map((name) => `/r/${name}.json`),
   ];
   console.log(`Create code ${code} (canonical ${commands.code}), ${vite ? "Vite" : "Next.js"}`);
 
@@ -1025,11 +1069,14 @@ async function createSmoke(code: string, vite: boolean) {
   const verify = (project: string, label: string) => {
     const cssFile = vite ? "src/index.css" : "app/globals.css";
     const problems = [
-      ...fetched
+      ...fetched()
         .filter((url) => !served.includes(url))
         .map((url) => `${url} was never fetched from the local registry`),
       ...createCssProblems(readProjectFile(project, cssFile), config, cssFile, vite),
       ...(vite ? [] : fontVariableProblems(readProjectFile(project, "app/layout.tsx") ?? "")),
+      ...(vite
+        ? []
+        : createLayoutProblems(readProjectFile(project, "app/layout.tsx") ?? "", config)),
     ];
     if (problems.length > 0) {
       throw new SmokeError(`${label}: Create check failed:\n  ${problems.join("\n  ")}`);
@@ -1074,6 +1121,7 @@ async function createSmoke(code: string, vite: boolean) {
         existing,
       );
       served.length = 0;
+      bundlePath = `/r/create/${commands.code}.json`;
       await step(
         `${commands.existingProject} (as printed, CLI pinned)`,
         documentedArgs(commands.existingProject),

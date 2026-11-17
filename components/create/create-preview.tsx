@@ -1,21 +1,39 @@
 "use client";
 
 import { Dices } from "lucide-react";
-import { type CSSProperties, type ReactNode, useLayoutEffect, useMemo, useRef } from "react";
+import {
+  type CSSProperties,
+  type ReactNode,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { CreateConfig } from "@/lib/create/config";
+import { PREVIEW_PAGES } from "@/lib/create/pages";
 import { previewVariables } from "@/lib/create/preview";
 import type { Mode } from "@/lib/registry/contrast";
 import { cn } from "@/lib/utils";
 import { INK_REDRAW_EVENT, InkFrame } from "@/registry/theme/ink-frame/ink-frame";
 import { Button } from "@/registry/ui/button/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/ui/tabs/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/registry/ui/toggle-group/toggle-group";
+import { CreateBlockFrame } from "./create-block-frame";
 import { CREATE_FONT_CLASSES } from "./create-fonts";
 
 /** The shortest time between two redraws of the preview's drawings while a value moves. */
 export const REDRAW_INTERVAL = 120;
 
+/** Tabs of their own width and height, so a phone's row wraps instead of squeezing them. */
+const TAB_CLASSES = "h-8 flex-none";
+
+/** The tab of the inline specimen; the others are `PREVIEW_PAGES`' ids. */
+export const SPECIMEN_TAB = "specimen";
+
 export interface CreatePreviewProps {
   config: CreateConfig;
+  /** The canonical code of `config`, what the page tabs' frames are sent. */
+  code: string;
   /** The preview's mode, or null before the page knows the site's (the server render). */
   mode: Mode | null;
   onModeChange: (mode: Mode) => void;
@@ -24,7 +42,7 @@ export interface CreatePreviewProps {
   onReroll: () => void;
   /** A note above the preview (a refused code). */
   note?: ReactNode;
-  /** What the preview shows: the specimen today; C5 adds page blocks. */
+  /** The specimen, shown inline on the first tab. */
   children: ReactNode;
 }
 
@@ -33,10 +51,12 @@ export interface CreatePreviewProps {
  * over the shipped components, rendered by their own code inside a wrapper that carries the
  * chosen look, pen, screentone and fonts as CSS variables. A change restyles them in place:
  * colours and screentone by the cascade, outlines by the redraw event (throttled to animation
- * frames), so nothing remounts and nothing shifts.
+ * frames), so nothing remounts and nothing shifts. The other tabs show page blocks, each in a
+ * frame that loads when its tab is first opened and follows the code (CreateBlockFrame).
  */
 export function CreatePreview({
   config,
+  code,
   mode,
   onModeChange,
   seed,
@@ -47,6 +67,7 @@ export function CreatePreview({
   const surface = useRef<HTMLElement>(null);
   const pending = useRef<{ timer?: number; frame?: number }>({});
   const lastRedraw = useRef(0);
+  const [tab, setTab] = useState<string>(SPECIMEN_TAB);
 
   // Before the site's mode is known, inherit the page's look rather than guess (no flash).
   const style = useMemo(
@@ -112,30 +133,57 @@ export function CreatePreview({
             <ToggleGroupItem value="light">Light</ToggleGroupItem>
             <ToggleGroupItem value="dark">Dark</ToggleGroupItem>
           </ToggleGroup>
-          <Button type="button" variant="outline" size="sm" onClick={onReroll}>
-            <Dices aria-hidden />
-            Reroll ink
-          </Button>
+          {/* The seed is the specimen's own; a page frame draws as the site does. */}
+          {tab === SPECIMEN_TAB ? (
+            <Button type="button" variant="outline" size="sm" onClick={onReroll}>
+              <Dices aria-hidden />
+              Reroll ink
+            </Button>
+          ) : null}
         </div>
       </div>
       {note}
-      {/* The frame is drawn in the site's own look, outside the chosen one. */}
-      <InkFrame fill="none" className="min-w-0">
-        <section
-          ref={surface}
-          aria-label="Preview of the chosen look"
-          data-slot="create-preview-surface"
-          data-mode={mode ?? undefined}
-          style={style}
-          className={cn(
-            CREATE_FONT_CLASSES,
-            mode === "dark" && "dark",
-            "flex min-w-0 justify-center rounded-[inherit] bg-background p-4 text-foreground sm:p-6",
-          )}
+      <Tabs value={tab} onValueChange={(value) => setTab(String(value))} className="min-w-0 gap-4">
+        <TabsList
+          aria-label="Preview page"
+          variant="line"
+          className="max-w-full flex-wrap justify-start gap-x-1 gap-y-2 group-data-horizontal/tabs:h-auto"
         >
-          {children}
-        </section>
-      </InkFrame>
+          <TabsTrigger value={SPECIMEN_TAB} className={TAB_CLASSES}>
+            Specimen
+          </TabsTrigger>
+          {PREVIEW_PAGES.map((page) => (
+            <TabsTrigger key={page.id} value={page.id} className={TAB_CLASSES}>
+              {page.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <TabsContent value={SPECIMEN_TAB} className="min-w-0">
+          {/* The frame is drawn in the site's own look, outside the chosen one. */}
+          <InkFrame fill="none" className="min-w-0">
+            <section
+              ref={surface}
+              aria-label="Preview of the chosen look"
+              data-slot="create-preview-surface"
+              data-mode={mode ?? undefined}
+              style={style}
+              className={cn(
+                CREATE_FONT_CLASSES,
+                mode === "dark" && "dark",
+                "flex min-w-0 justify-center rounded-[inherit] bg-background p-4 text-foreground sm:p-6",
+              )}
+            >
+              {children}
+            </section>
+          </InkFrame>
+        </TabsContent>
+        {PREVIEW_PAGES.map((page) => (
+          <TabsContent key={page.id} value={page.id} className="min-w-0">
+            {/* Frames open on demand: a closed tab's panel is not mounted. */}
+            {mode ? <CreateBlockFrame page={page} code={code} mode={mode} /> : null}
+          </TabsContent>
+        ))}
+      </Tabs>
     </section>
   );
 }
