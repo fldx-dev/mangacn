@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import path from "node:path";
 import ts from "typescript";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   entries,
   kindOf,
@@ -17,6 +17,11 @@ import {
 
 // Each case is a real merge conflict in a throwaway repository: a base commit, `main` and
 // `feature` changing the same files, then `git merge feature` on main, as the loop does it.
+
+// A case runs about fifteen git processes one after another. Alone that is 3 to 4 s on Windows;
+// in a full unit run on a busy machine each spawn waits for a core, and a case took 9 to 16 s
+// (MANGA-10). The default 5 s timed them out while the code was right.
+vi.setConfig({ testTimeout: 30_000 });
 
 const roots: string[] = [];
 afterEach(() => {

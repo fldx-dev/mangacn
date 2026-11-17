@@ -7,7 +7,15 @@ import { mangacnItemName } from "./registry/index";
  * `E2E_ITEMS` is a comma-separated list of item names (their demos, `e2e/demos.spec.ts`) and the
  * suites below; unset, empty or `all` runs everything; `none` runs nothing.
  */
-export const E2E_SUITES = ["site", "mcp", "annotations", "presets", "create"] as const;
+export const E2E_SUITES = [
+  "site",
+  "mcp",
+  "annotations",
+  "presets",
+  "create",
+  "create-code",
+  "create-fonts",
+] as const;
 export type E2eSuite = (typeof E2E_SUITES)[number];
 
 export function isE2eSuite(name: string): name is E2eSuite {
@@ -74,6 +82,10 @@ const EVERYTHING: (string | RegExp)[] = [
   "e2e/playwright.config.ts",
   "e2e/demos.spec.ts",
   "e2e/ready.ts",
+  "e2e/shoot.ts",
+  // The workflow that runs the suite and its setup: a change there must show it still runs all.
+  ".github/workflows/ci.yml",
+  /^\.github\/actions\/e2e-setup\//,
   // What every demo stage renders inside: the root layout, its CSS, the stage route.
   "app/globals.css",
   "app/layout.tsx",
@@ -139,6 +151,32 @@ const SUITE_RULES: { suite: E2eSuite; paths: (string | RegExp)[] }[] = [
       /^lib\/create\//,
       "e2e/create.spec.ts",
       /^registry\/theme\/presets\//,
+    ],
+  },
+  // Get code (Task C6): the dialog, the commands and files it prints, `/create.md`, and the
+  // docs pages that link to Create.
+  {
+    suite: "create-code",
+    paths: [
+      /^components\/create\//,
+      /^lib\/create\//,
+      /^app\/create\.md\//,
+      "e2e/create-code.spec.ts",
+      "content/docs/installation.mdx",
+      "content/docs/theming.mdx",
+    ],
+  },
+  // The Create page's fonts (Task C7): the curated faces, the pickers, the faces the preview
+  // loads, and the routes that serve the font items.
+  {
+    suite: "create-fonts",
+    paths: [
+      /^lib\/create\/(?:fonts|items|serve|urls|preview|config)\.ts$/,
+      "components/create/create-rail.tsx",
+      "components/create/create-fonts.ts",
+      "components/create/create-preview.tsx",
+      /^app\/r\/create\//,
+      "e2e/create-fonts.spec.ts",
     ],
   },
   {
@@ -339,14 +377,16 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  * - `lib/mcp/`, `app/api/mcp/`, `skills/`, the MCP spec → `mcp`; `content/`, `lib/docs/` and the
  *   props generator → `mcp` and `site` (the MCP serves pages and props tables)
  * - the Create page's route, `components/create/`, `lib/create/`, its spec and the preset values
- *   → `create` (the route and components also `site`)
+ *   → `create` (the route and components also `site`); `components/create/`, `lib/create/`,
+ *   `/create.md`, the Get code spec and the Installation and Theming pages → `create-code`
  * - other `app/`, `components/`, the site spec → `site`
  * - `tsconfig.json` that only adds path aliases → the items they name and the items that use
  *   them (no `site`); `lib/registry/parity.ts` that only appends names → those items
  * - the suite's config, demo spec or readiness wait, the demo stage, root layout and CSS,
  *   `ink-frame`, any other `tsconfig.json` or `lib/registry/` change, the theme catalog or any
  *   item's CSS, a dependency → everything
- * - tests, Markdown, scripts, CI → nothing; any other path → everything
+ * - the CI workflow and its e2e setup action → everything; tests, Markdown, scripts, the rest
+ *   of .github → nothing; any other path → everything
  */
 export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
   const byName = new Map(sources.items.map((item) => [item.name, item]));

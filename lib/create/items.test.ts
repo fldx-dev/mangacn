@@ -31,19 +31,33 @@ import {
   screentoneProblem,
   VIVIDNESS_RANGE,
 } from "./config";
+import { DIALOGUE_FACES, DISPLAY_FACES, FONT_ROLES } from "./fonts";
 import {
   BASE_CONFIG,
   bundleItem,
   type CssTree,
   FONT_MAPPINGS,
-  fontItemNames,
+  fontItem,
+  fontItemUrls,
+  fontStacks,
   ITEM_SCHEMA,
+  nextBundleItem,
   SEMANTIC_TOKENS,
   themeItem,
+  VITE_FONT_SANS,
+  viteBundleItem,
 } from "./items";
 import { KIT_CATALOG_V1, KITS, kitItems } from "./kits";
 import { createAnswer } from "./serve";
-import { bundleUrl, registryUrl, SITE_ORIGIN, themeUrl } from "./urls";
+import {
+  bundleUrl,
+  fontUrl,
+  nextBundleUrl,
+  registryUrl,
+  SITE_ORIGIN,
+  themeUrl,
+  viteBundleUrl,
+} from "./urls";
 
 type Vars = Record<string, string>;
 interface BuiltItem {
@@ -76,10 +90,9 @@ afterAll(() => {
 });
 
 /** What the generated theme adds to the static theme's `cssVars.theme`. */
-const ADDED_THEME_VARS: Vars = {
-  ...Object.fromEntries(SEMANTIC_TOKENS.map((t) => [`color-${t}`, `var(--${t})`])),
-  ...FONT_MAPPINGS,
-};
+const ADDED_THEME_VARS: Vars = Object.fromEntries(
+  SEMANTIC_TOKENS.map((t) => [`color-${t}`, `var(--${t})`]),
+);
 
 describe("the generated theme of a named look", () => {
   it.each(LOOK_PRESETS)("%s: every variable equals the static item's, value for value", (look) => {
@@ -176,17 +189,98 @@ describe("a configured theme changes what it should and nothing else", () => {
     expect(item.css).toEqual(plain.css);
   });
 
-  it("a reserved font with no item yet installs its role's default font item", () => {
-    expect(fontItemNames(DEFAULT_CONFIG.fonts)).toEqual([
+  it("the default faces keep the static theme's stacks and font items, value for value", () => {
+    const shipped = read("theme");
+    expect(fontStacks(DEFAULT_CONFIG.fonts)).toEqual({
+      "font-display": shipped.cssVars.theme["font-display"],
+      "font-dialogue": shipped.cssVars.theme["font-dialogue"],
+    });
+    expect(fontItemUrls(DEFAULT_CONFIG.fonts)).toEqual(shipped.registryDependencies);
+  });
+
+  it("the alternative faces lead their stacks and install their generated font items", () => {
+    const fonts = { display: "reggae-one", dialogue: "patrick-hand-sc" } as const;
+    const item = themeItem(config({ fonts }));
+    expect(changed(item.cssVars.theme, plain.cssVars.theme)).toEqual([
       "font-display",
       "font-dialogue",
-      "font-dialogue-ja",
     ]);
+    expect(item.cssVars.theme["font-display"]).toBe(
+      'var(--font-display, "Reggae One", "Dela Gothic One", Impact, "Arial Black", sans-serif)',
+    );
+    expect(item.cssVars.theme["font-dialogue"]).toBe(
+      'var(--font-dialogue-latin, "Patrick Hand SC"), var(--font-dialogue-ja, "Yusei Magic"), "Shantell Sans", "Comic Neue", cursive, sans-serif',
+    );
+    expect(item.registryDependencies).toEqual([
+      "https://www.mangacn.com/r/create/font/display/reggae-one.json",
+      "https://www.mangacn.com/r/create/font/dialogue/patrick-hand-sc.json",
+      registryItemUrl("font-dialogue-ja"),
+    ]);
+    expect(item.cssVars.light).toEqual(plain.cssVars.light);
+    expect(item.css).toEqual(plain.css);
+    // One choice moves only its own role.
+    const display = themeItem(
+      config({ fonts: { ...DEFAULT_CONFIG.fonts, display: "reggae-one" } }),
+    );
+    expect(changed(display.cssVars.theme, plain.cssVars.theme)).toEqual(["font-display"]);
+    expect(display.registryDependencies.slice(1)).toEqual(plain.registryDependencies.slice(1));
+  });
+
+  it("every pair of faces gives one font item per variable", () => {
     for (const display of DISPLAY_FONTS) {
       for (const dialogue of DIALOGUE_FONTS) {
-        expect(fontItemNames({ display, dialogue })).toEqual(fontItemNames(DEFAULT_CONFIG.fonts));
+        const urls = fontItemUrls({ display, dialogue });
+        expect(urls).toHaveLength(3);
+        expect(new Set(urls).size).toBe(3);
       }
     }
+  });
+});
+
+describe("the font items", () => {
+  const faces = [
+    ...Object.keys(DISPLAY_FACES).map((id) => ["display", id] as const),
+    ...Object.keys(DIALOGUE_FACES).map((id) => ["dialogue", id] as const),
+  ];
+
+  it.each(faces)("%s %s: a schema-valid registry:font with its Fontsource package", (role, id) => {
+    const item = fontItem(role, id);
+    expect(item).toBeDefined();
+    expect(registryItemSchema.safeParse(item).error?.issues ?? []).toEqual([]);
+    expect(item?.font.variable).toBe(
+      role === "display" ? "--font-display" : "--font-dialogue-latin",
+    );
+    expect(item?.font.dependency).toMatch(/^@fontsource\/[a-z-]+$/);
+  });
+
+  it("a default face's generated item installs exactly what its static item does", () => {
+    expect(fontItem("display", "dela-gothic-one")?.font).toEqual(
+      (read("font-display") as unknown as { font: object }).font,
+    );
+    expect(fontItem("dialogue", "shantell-sans")?.font).toEqual(
+      (read("font-dialogue") as unknown as { font: object }).font,
+    );
+  });
+
+  it("knows only the curated roles and faces, not a face of the other role", () => {
+    expect([...FONT_ROLES]).toEqual(["display", "dialogue"]);
+    for (const [role, id] of [
+      ["display", "shantell-sans"],
+      ["dialogue", "reggae-one"],
+      ["display", "toString"],
+      ["__proto__", "reggae-one"],
+      ["constructor", "name"],
+      ["display", ""],
+      ["sans", "geist"],
+    ]) {
+      expect(fontItem(role, id)).toBeUndefined();
+    }
+  });
+
+  it("an alternative's URL is the font route the theme names", () => {
+    expect(fontUrl("display", "reggae-one")).toBe(
+      "https://www.mangacn.com/r/create/font/display/reggae-one.json",
+    );
   });
 });
 
@@ -215,6 +309,31 @@ describe("the bundle", () => {
     const item = bundleItem(config({ kit: { custom: [...KIT_CATALOG_V1] } }));
     expect(item.registryDependencies).toHaveLength(1 + KIT_CATALOG_V1.length);
     for (const name of KIT_CATALOG_V1) expect(catalog).toContain(name);
+  });
+
+  it("the Vite bundle is the same bundle with a body font Vite can resolve", () => {
+    const plainBundle = bundleItem(DEFAULT_CONFIG);
+    const vite = viteBundleItem(DEFAULT_CONFIG);
+    expect(vite.name).toBe("create-10-vite");
+    expect(vite.config).toEqual(plainBundle.config);
+    expect(vite.registryDependencies).toEqual(plainBundle.registryDependencies);
+    expect(vite.cssVars).toEqual({
+      theme: { ...FONT_MAPPINGS, "font-sans": VITE_FONT_SANS },
+    });
+    expect(viteBundleUrl("10")).toBe("https://www.mangacn.com/r/create/10/vite.json");
+    // The bundle `add` installs and the theme map no font of their own.
+    expect("cssVars" in plainBundle).toBe(false);
+    expect(themeItem(DEFAULT_CONFIG).cssVars.theme["font-sans"]).toBeUndefined();
+  });
+
+  it("the Next.js bundle is the same bundle with the fonts on next/font's variable", () => {
+    const plainBundle = bundleItem(DEFAULT_CONFIG);
+    const next = nextBundleItem(DEFAULT_CONFIG);
+    expect(next.name).toBe("create-10-next");
+    expect(next.config).toEqual(plainBundle.config);
+    expect(next.registryDependencies).toEqual(plainBundle.registryDependencies);
+    expect(next.cssVars).toEqual({ theme: FONT_MAPPINGS });
+    expect(nextBundleUrl("10")).toBe("https://www.mangacn.com/r/create/10/next.json");
   });
 
   it("builds its URLs on the origin it is given (a dev server's), and the site's by default", () => {
@@ -248,15 +367,15 @@ describe("schema", () => {
   it.each(looks.map((c) => [encode(c), c] as const))(
     "%s: both items pass the CLI's registry item schema",
     (_, c) => {
-      for (const item of [themeItem(c), bundleItem(c)]) {
+      for (const item of [themeItem(c), bundleItem(c), nextBundleItem(c), viteBundleItem(c)]) {
         const result = registryItemSchema.safeParse(item);
         expect(result.error?.issues ?? []).toEqual([]);
       }
     },
   );
 
-  it("the font items the theme depends on pass the font item schema with their dependency", () => {
-    for (const name of fontItemNames(DEFAULT_CONFIG.fonts)) {
+  it("the static font items the theme depends on pass the font item schema with their dependency", () => {
+    for (const name of ["font-display", "font-dialogue", "font-dialogue-ja"]) {
       const item = read(name) as unknown as { font: { dependency?: string } };
       expect(registryItemSchema.safeParse(item).success).toBe(true);
       expect(item.font.dependency).toMatch(/^@fontsource\/[a-z-]+$/);
@@ -321,14 +440,26 @@ const OKLCH = new RegExp(String.raw`^oklch\(${NUMBER} ${NUMBER} ${NUMBER}\)$`);
 const LENGTH = new RegExp(`^${NUMBER}(?:px)?$`);
 const CODE = "[0-9A-Za-z]+";
 const SITE = String.raw`https://www\.mangacn\.com`;
-const NAME = new RegExp(`^create-${CODE}(?:-theme)?$`);
+const NAME = new RegExp(`^create-${CODE}(?:-theme|-next|-vite)?$`);
 const DOCS = new RegExp(
   `^(?:The mangacn theme of Create code ${CODE}: its look, pen and screentone, with its fonts` +
     `|mangacn Create code ${CODE}: its theme and fonts, and ` +
     String.raw`(?:the (?:${KIT_NAMES.join("|")}) kit|a kit of \d+ hand-picked items?))` +
-    String.raw`\. Change it at ${SITE}/create\.$`,
+    String.raw`\. Change it at ${SITE}/create\.(?: For a new Vite project: its body font is the system sans stack\.| For a new Next\.js project: its body font is the one next/font loads\.)?$`,
 );
-const DEPENDENCY = new RegExp(String.raw`^${SITE}/r/(?:create/${CODE}/theme|([a-z0-9-]+))\.json$`);
+const FACE_PATHS = [
+  ...Object.keys(DISPLAY_FACES).map((id) => `display/${id}`),
+  ...Object.keys(DIALOGUE_FACES).map((id) => `dialogue/${id}`),
+].join("|");
+const DEPENDENCY = new RegExp(
+  String.raw`^${SITE}/r/(?:create/${CODE}/theme|create/font/(?:${FACE_PATHS})|([a-z0-9-]+))\.json$`,
+);
+/** Every font stack a theme may carry: those of every pair of faces. */
+const FONT_STACKS = new Set(
+  DISPLAY_FONTS.flatMap((display) =>
+    DIALOGUE_FONTS.flatMap((dialogue) => Object.values(fontStacks({ display, dialogue }))),
+  ),
+);
 const CATALOG = new Set(loadRegistry().items.map((item) => item.name));
 
 const defaultTheme = themeItem(DEFAULT_CONFIG);
@@ -361,7 +492,12 @@ function allowed(at: string[], value: string): boolean {
     case "type":
       return value === "registry:theme" || value === "registry:base";
     case "title":
-      return value === "mangacn theme (Create)" || value === "mangacn project (Create)";
+      return [
+        "mangacn theme (Create)",
+        "mangacn project (Create)",
+        "mangacn Next.js project (Create)",
+        "mangacn Vite project (Create)",
+      ].includes(value);
     case "description":
       return DESCRIPTIONS.has(value);
     case "categories":
@@ -377,6 +513,11 @@ function allowed(at: string[], value: string): boolean {
     case "cssVars":
       if (mode !== "theme" && BASE_TOKENS.has(key)) return OKLCH.test(value);
       if (mode === "theme" && VARIABLE_THEME_TOKENS.has(key)) return LENGTH.test(value);
+      if (mode === "theme" && (key === "font-display" || key === "font-dialogue")) {
+        return FONT_STACKS.has(value);
+      }
+      if (mode === "theme" && key === "font-sans" && value === VITE_FONT_SANS) return true;
+      if (mode === "theme" && FONT_MAPPINGS[key] === value) return true;
       return (defaultTheme.cssVars as Record<string, Vars>)[mode]?.[key] === value;
     case "css":
       return at.slice(1).every((part) => CSS_STRINGS.has(part)) && CSS_STRINGS.has(value);
@@ -411,10 +552,14 @@ describe("fuzz: valid random codes", () => {
       const code = encode(randomConfig(next));
       if (!decode(code).ok) found.push(`${code}: does not decode`);
       const bundle = createAnswer("bundle", `${code}.json`, SITE_ORIGIN);
+      const nextBundle = createAnswer("next", code, SITE_ORIGIN);
+      const vite = createAnswer("vite", code, SITE_ORIGIN);
       const theme = createAnswer("theme", code, SITE_ORIGIN);
-      if (bundle.status !== 200 || theme.status !== 200) found.push(`${code}: not 200`);
-      for (const problem of [...problems(bundle.body), ...problems(theme.body)]) {
-        found.push(`${code}: ${problem}`);
+      if ([bundle, nextBundle, vite, theme].some((answer) => answer.status !== 200)) {
+        found.push(`${code}: not 200`);
+      }
+      for (const body of [bundle.body, nextBundle.body, vite.body, theme.body]) {
+        for (const problem of problems(body)) found.push(`${code}: ${problem}`);
       }
       const [first] = (bundle.body as { registryDependencies: string[] }).registryDependencies;
       if (first !== themeUrl(code)) found.push(`${code}: the bundle does not start with its theme`);

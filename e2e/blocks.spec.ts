@@ -8,12 +8,12 @@ import { loadRegistry } from "../lib/registry/index";
 import { AXE_DISABLED_RULES } from "../lib/test/axe-rules";
 import { paintInkFillsAsCss } from "./ink-fills";
 import { waitForInk } from "./ready";
+import { comparePixels, shoot } from "./shoot";
 
 // Page blocks on their own (`/view/<block>`, app/view/[block]) at each project's width, light
 // and dark, with the waits and axe pass of the demo stages (e2e/demos.spec.ts); then the Blocks
 // index and a page block's framed preview. Baselines are Linux-only (CI); elsewhere the pages
 // are loaded and checked without pixels.
-const comparePixels = process.platform === "linux";
 
 type AxeResults = Awaited<ReturnType<AxeBuilder["analyze"]>>;
 
@@ -61,7 +61,7 @@ for (const { block } of views) {
       await waitForInk(page);
 
       if (comparePixels) {
-        await expect(page).toHaveScreenshot(`${block}-view-${mode}.png`, { fullPage: true });
+        await shoot(page, `${block}-view-${mode}.png`, { fullPage: true });
       }
       await expectNoOverflow(page);
 
