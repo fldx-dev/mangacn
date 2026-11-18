@@ -68,7 +68,7 @@ command. The CLI also installs straight from this repository without the registr
 
 ## What is in the registry
 
-119 items. The components are listed at https://www.mangacn.com/docs/components, the blocks
+120 items. The components are listed at https://www.mangacn.com/docs/components, the blocks
 at https://www.mangacn.com/docs/blocks and the presets on the
 [Theming](https://www.mangacn.com/docs/theming#presets) page; the two hooks have no page of
 their own and are in the skill catalog and `list_items`.

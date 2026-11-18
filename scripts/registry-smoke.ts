@@ -389,6 +389,32 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
   ],
+  // sidebar-10 shares the route and app-sidebar, nav-main, nav-secondary and team-switcher.
+  "sidebar-10": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        'import { NavActions } from "@/components/nav-actions"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { NavWorkspaces } from "./nav-workspaces"'],
+    },
+    { file: "components/nav-actions.tsx", includes: ["export function NavActions("] },
+    { file: "components/nav-favorites.tsx", includes: ["export function NavFavorites("] },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain("] },
+    {
+      file: "components/nav-secondary.tsx",
+      includes: ["export function NavSecondary(", "SidebarMenuBadge"],
+    },
+    { file: "components/nav-workspaces.tsx", includes: ["export function NavWorkspaces("] },
+    {
+      file: "components/team-switcher.tsx",
+      includes: ["export function TeamSwitcher(", "ChevronDownIcon"],
+    },
+  ],
   // sidebar-11 shares the route and app-sidebar: the file tree lives in app-sidebar itself.
   "sidebar-11": [
     {

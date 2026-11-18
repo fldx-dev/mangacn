@@ -340,6 +340,61 @@
         "switch"
       ],
       "sha1": "8fb07951e897ca5d3ce3cb43ca90969b3aeb3225"
+    },
+    "sidebar-10": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/nav-actions.tsx",
+          "type": "registry:component",
+          "exports": ["NavActions"]
+        },
+        {
+          "path": "components/nav-favorites.tsx",
+          "type": "registry:component",
+          "exports": ["NavFavorites"]
+        },
+        {
+          "path": "components/nav-main.tsx",
+          "type": "registry:component",
+          "exports": ["NavMain"]
+        },
+        {
+          "path": "components/nav-secondary.tsx",
+          "type": "registry:component",
+          "exports": ["NavSecondary"]
+        },
+        {
+          "path": "components/nav-workspaces.tsx",
+          "type": "registry:component",
+          "exports": ["NavWorkspaces"]
+        },
+        {
+          "path": "components/team-switcher.tsx",
+          "type": "registry:component",
+          "exports": ["TeamSwitcher"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "breadcrumb",
+        "collapsible",
+        "dropdown-menu",
+        "popover",
+        "separator",
+        "sidebar"
+      ],
+      "sha1": "e8c0e826f26f65ae2518ae74d0a1a33197df85be"
     }
   }
 }
