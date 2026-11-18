@@ -129,8 +129,9 @@ export function TreeView({
     onKeyDown?.(event);
     if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
     // The item the key came from: the focused treeitem.
-    const fromId =
-      [...elements.current].find(([, element]) => element === event.target)?.[0] ?? tabStop;
+    // Only keys pressed on a treeitem itself: an input or button inside `renderLabel` keeps its own.
+    const fromId = [...elements.current].find(([, element]) => element === event.target)?.[0];
+    if (fromId === undefined) return;
     const index = visible.findIndex((entry) => entry.node.id === fromId);
     const current = visible[index];
     if (!current) return;
@@ -187,18 +188,19 @@ export function TreeView({
     if (handled) event.preventDefault();
   };
 
-  const domId = (id: string) => `${baseId}-${id.replace(/[^\w-]/g, "_")}`;
-
   // Each treeitem is its row; an open parent owns the group that follows it (`aria-owns`), so
   // its visible text is its label alone. The name comes from the label (`aria-labelledby`):
   // name-from-content would take in the owned children too.
-  const renderNodes = (nodes: TreeNode[], level: number): React.ReactNode =>
+  // DOM ids come from each node's position path ("0-2-1"), unique by construction; a slug of
+  // `node.id` could collide (`a/b` and `a_b`).
+  const renderNodes = (nodes: TreeNode[], level: number, path: string): React.ReactNode =>
     nodes.map((node, index) => {
       const parent = hasChildren(node);
       const isOpen = parent && open.has(node.id);
       const isSelected = selected === node.id;
-      const groupId = `${domId(node.id)}-group`;
-      const labelId = `${domId(node.id)}-label`;
+      const domId = `${baseId}-${path}${index}`;
+      const groupId = `${domId}-group`;
+      const labelId = `${domId}-label`;
       return (
         <React.Fragment key={node.id}>
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: the tree handles the keys */}
@@ -282,7 +284,7 @@ export function TreeView({
               style={{ "--tree-guide": `${level - 1 + 0.75}rem` } as React.CSSProperties}
               className="relative flex flex-col before:pointer-events-none before:absolute before:inset-y-0 before:left-(--tree-guide) before:w-px before:bg-ink"
             >
-              {renderNodes(node.children ?? [], level + 1)}
+              {renderNodes(node.children ?? [], level + 1, `${path}${index}-`)}
             </div>
           )}
         </React.Fragment>
@@ -297,7 +299,7 @@ export function TreeView({
       onKeyDown={handleKeyDown}
       {...props}
     >
-      {renderNodes(items, 1)}
+      {renderNodes(items, 1, "")}
     </div>
   );
 }

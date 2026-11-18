@@ -245,4 +245,54 @@ describe("TreeView", () => {
     expect(item("Alpha").style.paddingLeft).toBe("0.25rem");
     expect(item("Apple").style.paddingLeft).toBe("1.25rem");
   });
+  it("gives ids that differ only in punctuation their own DOM ids", () => {
+    render(
+      <TreeView
+        aria-label="Config"
+        items={[
+          { id: "a/b", label: "Slash", children: [{ id: "a/b/x", label: "Under slash" }] },
+          {
+            id: "a_b",
+            label: "Underscore",
+            children: [{ id: "a_b/x", label: "Under underscore" }],
+          },
+        ]}
+        defaultExpanded={["a/b", "a_b"]}
+      />,
+    );
+    const ids = [...document.querySelectorAll("[id]")].map((element) => element.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const name of ["Slash", "Underscore", "Under slash", "Under underscore"]) {
+      expect(screen.getByRole("treeitem", { name })).not.toBeNull();
+    }
+    const owned = (name: string) =>
+      document.getElementById(item(name).getAttribute("aria-owns") ?? "")?.textContent;
+    expect(owned("Slash")).toBe("Under slash");
+    expect(owned("Underscore")).toBe("Under underscore");
+  });
+
+  it("leaves keys pressed in an input inside renderLabel to the input", () => {
+    const onSelectedChange = vi.fn();
+    renderTree({
+      onSelectedChange,
+      renderLabel: (node) =>
+        node.id === "b" ? (
+          <input aria-label="Rename Bravo" defaultValue={node.label} />
+        ) : (
+          node.label
+        ),
+    });
+    const input = screen.getByRole("textbox", { name: "Rename Bravo" });
+    input.focus();
+    for (const key of ["a", " ", "ArrowDown", "Home", "Enter", "*"]) {
+      const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
+      act(() => {
+        input.dispatchEvent(event);
+      });
+      expect(event.defaultPrevented, key).toBe(false);
+    }
+    expect(document.activeElement).toBe(input);
+    expect(onSelectedChange).not.toHaveBeenCalled();
+    expect(item("Alpha").getAttribute("aria-expanded")).toBe("false");
+  });
 });
