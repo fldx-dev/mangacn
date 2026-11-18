@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 132 items in the registry. Each line gives the item's name, what it is, the one
+All 134 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -239,6 +239,12 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 
 ## Inputs
 
+- `date-range-picker`: An outlined button that opens a popover with presets and a range calendar; posts the two days as yyyy-MM-dd.
+  Install: `npx shadcn@latest add @mangacn/date-range-picker --overwrite`
+  Docs: https://www.mangacn.com/docs/components/date-range-picker (Markdown: https://www.mangacn.com/docs/components/date-range-picker.md)
+- `time-picker`: Hour and minute spinbuttons, and AM/PM in 12-hour mode, in one hand-drawn outline; posts "HH:mm" like a time input.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/time-picker --overwrite`
+  Docs: https://www.mangacn.com/docs/components/time-picker (Markdown: https://www.mangacn.com/docs/components/time-picker.md)
 - `multi-select`: Combobox's multiple mode in one line: an options array in, string values out, as outlined chips with groups and a limit.
   Install: `npx shadcn@latest add @mangacn/multi-select --overwrite`
   Docs: https://www.mangacn.com/docs/components/multi-select (Markdown: https://www.mangacn.com/docs/components/multi-select.md)
