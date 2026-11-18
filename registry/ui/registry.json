@@ -1763,6 +1763,25 @@
           "target": "@ui/color-picker.tsx"
         }
       ]
+    },
+    {
+      "name": "copy-button",
+      "type": "registry:ui",
+      "title": "Copy Button",
+      "description": "An icon button that copies a value, says Copied once in a polite live region and shows failed without the Clipboard API.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/button.json"],
+      "files": [
+        {
+          "path": "copy-button/copy-button.tsx",
+          "type": "registry:ui",
+          "target": "@ui/copy-button.tsx"
+        }
+      ]
     }
   ]
 }

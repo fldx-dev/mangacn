@@ -1,0 +1,24 @@
+---
+title: Copy Button
+description: An icon button that copies a value, says Copied once in a polite live region and shows failed without the Clipboard API.
+item: copy-button
+---
+
+<InstallCommand item="copy-button" />
+
+<CopyPrompt item="copy-button" />
+
+Put it beside anything a reader will paste somewhere else: an install command, a share link, an API key. It is mangacn's Button, icon-only by default, and confirms with a check for two seconds; Code Block keeps its own copy button.
+
+It follows the WAI-ARIA Button pattern: a native `button` whose name follows its state ("Copy", then "Copied" or "Copy failed"), announced once in a polite live region.
+
+- Enter or Space: copies the value.
+
+## Examples
+
+<DemoFrame item="copy-button" demo="default" />
+<DemoFrame item="copy-button" demo="with-label" />
+
+## Props
+
+<PropsTable item="copy-button" />

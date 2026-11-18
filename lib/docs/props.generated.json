@@ -888,6 +888,108 @@
       }
     ]
   },
+  "copy-button": {
+    "CopyButtonProps": [
+      {
+        "id": "copy-button.tsx-CopyButtonProps",
+        "name": "CopyButtonProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The text to copy, or a function that returns it (sync or async) at click time.",
+            "type": "string | (() => string | Promise<string>)",
+            "simplifiedType": "string | (() => string | Promise<string>)",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "timeout",
+            "description": "How long the button stays copied (or failed) before it returns to idle, in milliseconds.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "2000"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onCopy",
+            "description": "Called with the copied text once the clipboard has it.",
+            "type": "((value: string) => void) | undefined",
+            "simplifiedType": "(value: string) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onCopyError",
+            "description": "Called when the copy fails, including when the Clipboard API is missing (insecure context).",
+            "type": "((error: unknown) => void) | undefined",
+            "simplifiedType": "(error: unknown) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The button's name and announcement per state.",
+            "type": "Partial<{ copy: string; copied: string; failed: string; }> | undefined",
+            "simplifiedType": "Partial<{ copy: string; copied: string; failed: string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ copy: \"Copy\", copied: \"Copied\", failed: \"Copy failed\" }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "variant",
+            "description": "The button's look, as mangacn's `button`.",
+            "type": "\"default\" | \"destructive\" | \"ghost\" | \"link\" | \"outline\" | \"secondary\" | \"sfx\" | null | undefined",
+            "simplifiedType": "\"default\" | \"destructive\" | \"ghost\" | \"link\" | \"outline\" | \"secondary\" | \"sfx\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ghost\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "The button's size, as mangacn's `button`. With `children`, pass a text size (`sm`).",
+            "type": "\"default\" | \"icon\" | \"icon-lg\" | \"icon-sm\" | \"icon-xs\" | \"lg\" | \"sm\" | \"xs\" | null | undefined",
+            "simplifiedType": "\"default\" | \"icon\" | \"icon-lg\" | \"icon-sm\" | \"icon-xs\" | \"lg\" | \"sm\" | \"xs\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"icon\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "children",
+            "description": "A visible label beside the icon; without it the button is icon-only, named by `labels`.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "date-range-picker": {
     "DateRangePickerProps": [
       {
