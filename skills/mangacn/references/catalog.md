@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 112 items in the registry. Each line gives the item's name, what it is, the one
+All 113 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -371,6 +371,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `sidebar-04`: A handbook's app shell with a floating sidebar: a heavy-outlined paper card off the page's edge, every section with its pages beneath it, beside a chapter's blank manga panels; stock's sidebar-04 in ink.
   Install: `npx shadcn@latest add @mangacn/sidebar-04 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/sidebar-04 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-04.md)
+- `sidebar-05`: A handbook's app shell with collapsible submenus: a search field and sections that open and close their pages, beside a chapter's blank manga panels; stock's sidebar-05 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-05 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-05 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-05.md)
 - `sidebar-07`: An app shell whose sidebar collapses to icons: a studio switcher, collapsible sections, series with their menus and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-07 in ink.
   Install: `npx shadcn@latest add @mangacn/sidebar-07 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/sidebar-07 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-07.md)

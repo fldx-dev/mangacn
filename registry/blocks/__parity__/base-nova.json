@@ -193,6 +193,29 @@
       "dependencies": [],
       "registryDependencies": ["breadcrumb", "separator", "sidebar"],
       "sha1": "a630d6d7b5b4addfbbd892a0ee78a68d041feb97"
+    },
+    "sidebar-05": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/search-form.tsx",
+          "type": "registry:component",
+          "exports": ["SearchForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "collapsible", "label", "separator", "sidebar"],
+      "sha1": "ee665ae259e419b7312eab9134910fe96949990e"
     }
   }
 }
