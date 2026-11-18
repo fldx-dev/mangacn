@@ -66,6 +66,8 @@
     "message-scroller",
     "questionnaire",
     "code-block",
+    "---Inputs---",
+    "multi-select",
     "---Layout---",
     "panel",
     "panel-grid",

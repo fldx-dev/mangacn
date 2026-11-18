@@ -306,6 +306,11 @@ export default defineConfig({
         find: /^@\/components\/ui\/calendar$/,
         replacement: fileURLToPath(new URL("./registry/ui/calendar/calendar.tsx", import.meta.url)),
       },
+      // multi-select (Task 128) → combobox.
+      {
+        find: /^@\/components\/ui\/combobox$/,
+        replacement: fileURLToPath(new URL("./registry/ui/combobox/combobox.tsx", import.meta.url)),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,

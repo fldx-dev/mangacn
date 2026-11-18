@@ -28,6 +28,7 @@ export const OVERLAY_ITEMS: ReadonlySet<string> = new Set([
   "navigation-menu",
   "combobox",
   "command",
+  "multi-select",
 ]);
 
 export interface DemoFrameProps {

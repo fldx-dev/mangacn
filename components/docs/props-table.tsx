@@ -7,6 +7,7 @@ import { inkDark, inkLight } from "@/lib/docs/code-theme";
 import { generatedProps, propsInterfaceName } from "@/lib/docs/props";
 import { PROPS_DELTA, type PropDelta, shadcnDocsUrl } from "@/lib/docs/props-delta";
 import { loadRegistry } from "@/lib/registry";
+import { isStockPrimitive } from "@/lib/registry/parity";
 
 const SOURCE_URL = "https://github.com/fldx-dev/mangacn/blob/main";
 
@@ -32,7 +33,7 @@ export async function PropsTable({ item, name = propsInterfaceName(item) }: Prop
   const entry = loadRegistry().items.find((candidate) => candidate.name === item);
   if (!entry) throw new Error(`PropsTable: unknown item "${item}" (not in the catalog).`);
 
-  if (entry.type === "registry:ui") return <PrimitiveProps item={item} />;
+  if (isStockPrimitive(entry)) return <PrimitiveProps item={item} />;
 
   const file = entry.files[0]?.path;
   if (!file) return <PropsFallback item={item} name={name} />;

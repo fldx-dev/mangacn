@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 130 items in the registry. Each line gives the item's name, what it is, the one
+All 131 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -236,6 +236,12 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `code-block`: Stock code block in the docs' ink: a heavy outline, a hand-drawn rule under a mono title, numbered lines, an outlined copy button.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/code-block --overwrite`
   Docs: https://www.mangacn.com/docs/components/code-block (Markdown: https://www.mangacn.com/docs/components/code-block.md)
+
+## Inputs
+
+- `multi-select`: Combobox's multiple mode in one line: an options array in, string values out, as outlined chips with groups and a limit.
+  Install: `npx shadcn@latest add @mangacn/multi-select --overwrite`
+  Docs: https://www.mangacn.com/docs/components/multi-select (Markdown: https://www.mangacn.com/docs/components/multi-select.md)
 
 ## Layout
 

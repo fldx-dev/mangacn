@@ -16,6 +16,7 @@ import { PROPS_DELTA, shadcnDocsUrl } from "@/lib/docs/props-delta";
 import { loadRegistry } from "@/lib/registry";
 import { groupBlocks } from "@/lib/registry/blocks";
 import { listDemos } from "@/lib/registry/demos";
+import { isStockPrimitive } from "@/lib/registry/parity";
 import { presetItemName } from "@/lib/registry/theme-presets";
 import type { DemoFrameProps } from "./demo-frame";
 import { itemFilesMarkdown } from "./item-files";
@@ -86,7 +87,7 @@ export async function PropsTableMarkdown({
   const entry = loadRegistry().items.find((candidate) => candidate.name === item);
   if (!entry) throw new Error(`PropsTable: unknown item "${item}" (not in the catalog).`);
 
-  if (entry.type === "registry:ui") {
+  if (isStockPrimitive(entry)) {
     const delta = PROPS_DELTA[item];
     const stock = `Keeps the stock props: see [shadcn's ${item} page](${shadcnDocsUrl(item)})`;
     if (!delta) return `\n${stock}.\n\n`;

@@ -3,6 +3,7 @@ import path from "node:path";
 import { type GeneratedDoc, typeTableToMarkdown as upstreamMarkdown } from "fumadocs-typescript";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { loadRegistry } from "@/lib/registry";
+import { isStockPrimitive } from "@/lib/registry/parity";
 import {
   type GeneratedProps,
   generatedProps,
@@ -67,6 +68,13 @@ describe("propsTargets", () => {
     expect(targets).toContain("ink-frame/InkFrameProps");
     expect(targets).toContain("panel-grid/PanelGridItemProps");
     expect(targets.some((target) => target.startsWith("card/"))).toBe(false);
+  });
+
+  it("covers a registry:ui item of mangacn's own, not only restyled stock (SPEC-components-7 §3)", () => {
+    const targets = propsTargets(registry).map((target) => `${target.item}/${target.name}`);
+    expect(targets).toContain("multi-select/MultiSelectProps");
+    expect(isStockPrimitive({ name: "multi-select", type: "registry:ui" })).toBe(false);
+    expect(isStockPrimitive({ name: "combobox", type: "registry:ui" })).toBe(true);
   });
 });
 

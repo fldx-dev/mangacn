@@ -1673,6 +1673,28 @@
           "target": "@ui/code-block.tsx"
         }
       ]
+    },
+    {
+      "name": "multi-select",
+      "type": "registry:ui",
+      "title": "Multi Select",
+      "description": "Combobox's multiple mode in one line: an options array in, string values out, as outlined chips with groups and a limit.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/combobox.json",
+        "https://www.mangacn.com/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "multi-select/multi-select.tsx",
+          "type": "registry:ui",
+          "target": "@ui/multi-select.tsx"
+        }
+      ]
     }
   ]
 }
