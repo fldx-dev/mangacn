@@ -19,6 +19,11 @@ interface AuthBlock {
 
 const BLOCKS: Record<string, AuthBlock> = {
   "login-03": { form: "Welcome back", social: ["Login with Apple", "Login with Google"] },
+  "login-04": {
+    form: "Welcome back",
+    social: ["Login with Apple", "Login with Google", "Login with Meta"],
+    cover: 768,
+  },
 };
 
 const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));

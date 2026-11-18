@@ -256,6 +256,19 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function LoginForm(", "Login with Apple"],
     },
   ],
+  "login-04": [
+    {
+      file: "app/login/page.tsx",
+      includes: ['import { LoginForm } from "@/components/login-form"'],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: [
+        "export function LoginForm(",
+        'import { MangaFrame } from "@/components/manga-frame"',
+      ],
+    },
+  ],
   "signup-01": [
     {
       file: "app/signup/page.tsx",
