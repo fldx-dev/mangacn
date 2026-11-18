@@ -178,6 +178,19 @@ describe("Banner", () => {
     expect(action?.parentElement?.className).toContain("md:flex-nowrap");
   });
 
+  it("stays open when the close button's onClick prevents the default", () => {
+    const onOpenChange = vi.fn();
+    render(
+      <Banner onOpenChange={onOpenChange}>
+        <BannerContent>News</BannerContent>
+        <BannerClose onClick={(event) => event.preventDefault()} />
+      </Banner>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Dismiss announcement" }));
+    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(region()?.dataset.state).toBe("open");
+  });
+
   it("throws when BannerClose is used outside a Banner", () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     expect(() => render(<BannerClose />)).toThrow(/within a <Banner \/>/);

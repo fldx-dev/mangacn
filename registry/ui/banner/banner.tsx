@@ -217,7 +217,7 @@ export function BannerClose({
       )}
       onClick={(event) => {
         onClick?.(event);
-        close(event);
+        if (!event.defaultPrevented) close(event);
       }}
       {...props}
     >
