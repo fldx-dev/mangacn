@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 135 items in the registry. Each line gives the item's name, what it is, the one
+All 136 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -245,6 +245,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `time-picker`: Hour and minute spinbuttons, and AM/PM in 12-hour mode, in one hand-drawn outline; posts "HH:mm" like a time input.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/time-picker --overwrite`
   Docs: https://www.mangacn.com/docs/components/time-picker (Markdown: https://www.mangacn.com/docs/components/time-picker.md)
+- `number-input`: A number field with − and + steppers in one hand-drawn frame, on Base UI NumberField, formatted through Intl.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/number-input --overwrite`
+  Docs: https://www.mangacn.com/docs/components/number-input (Markdown: https://www.mangacn.com/docs/components/number-input.md)
 - `multi-select`: Combobox's multiple mode in one line: an options array in, string values out, as outlined chips with groups and a limit.
   Install: `npx shadcn@latest add @mangacn/multi-select --overwrite`
   Docs: https://www.mangacn.com/docs/components/multi-select (Markdown: https://www.mangacn.com/docs/components/multi-select.md)

@@ -69,6 +69,7 @@
     "---Inputs---",
     "date-range-picker",
     "time-picker",
+    "number-input",
     "multi-select",
     "color-picker",
     "---Display---",
