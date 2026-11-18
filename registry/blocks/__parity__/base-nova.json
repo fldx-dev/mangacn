@@ -216,6 +216,34 @@
       "dependencies": [],
       "registryDependencies": ["breadcrumb", "collapsible", "label", "separator", "sidebar"],
       "sha1": "ee665ae259e419b7312eab9134910fe96949990e"
+    },
+    "sidebar-06": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/nav-main.tsx",
+          "type": "registry:component",
+          "exports": ["NavMain"]
+        },
+        {
+          "path": "components/sidebar-opt-in-form.tsx",
+          "type": "registry:component",
+          "exports": ["SidebarOptInForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "card", "dropdown-menu", "separator", "sidebar"],
+      "sha1": "46872da16816e5b5cbf897d8dc70986c8335ee9b"
     }
   }
 }

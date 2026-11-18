@@ -319,6 +319,24 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
   ],
+  "sidebar-06": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: [
+        "export function AppSidebar(",
+        'import { SidebarOptInForm } from "./sidebar-opt-in-form"',
+      ],
+    },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain(", "<DropdownMenu"] },
+    {
+      file: "components/sidebar-opt-in-form.tsx",
+      includes: ["export function SidebarOptInForm("],
+    },
+  ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
     {
