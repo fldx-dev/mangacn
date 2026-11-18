@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 121 items in the registry. Each line gives the item's name, what it is, the one
+All 122 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -401,6 +401,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `sidebar-13`: A sidebar inside a settings dialog: a manga reader's settings sections beside the open section's blank manga panels, opened from the page's button; stock's sidebar-13 in ink.
   Install: `npx shadcn@latest add @mangacn/sidebar-13 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/sidebar-13 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-13.md)
+- `sidebar-16`: An app shell under a sticky site header: the header's sidebar toggle, breadcrumb and search stay above a sidebar of collapsible sections, series with their menus, help links and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-16 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-16 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-16 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-16.md)
 
 ## Hooks
 

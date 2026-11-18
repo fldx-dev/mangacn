@@ -436,6 +436,63 @@
         "sidebar"
       ],
       "sha1": "72b3879be8d137f5d3f3d87543029ac02ab53419"
+    },
+    "sidebar-16": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/nav-main.tsx",
+          "type": "registry:component",
+          "exports": ["NavMain"]
+        },
+        {
+          "path": "components/nav-projects.tsx",
+          "type": "registry:component",
+          "exports": ["NavProjects"]
+        },
+        {
+          "path": "components/nav-secondary.tsx",
+          "type": "registry:component",
+          "exports": ["NavSecondary"]
+        },
+        {
+          "path": "components/nav-user.tsx",
+          "type": "registry:component",
+          "exports": ["NavUser"]
+        },
+        {
+          "path": "components/search-form.tsx",
+          "type": "registry:component",
+          "exports": ["SearchForm"]
+        },
+        {
+          "path": "components/site-header.tsx",
+          "type": "registry:component",
+          "exports": ["SiteHeader"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default", "description", "iframeHeight"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "button",
+        "collapsible",
+        "dropdown-menu",
+        "label",
+        "separator",
+        "sidebar"
+      ],
+      "sha1": "2c96cee077b51cf52e333c61becf950ef32bc20a"
     }
   }
 }

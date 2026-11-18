@@ -457,6 +457,29 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
   ],
+  // sidebar-16 shares the route and most component names with the other sidebars.
+  "sidebar-16": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        'import { SiteHeader } from "@/components/site-header"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { NavSecondary } from "./nav-secondary"'],
+    },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain("] },
+    { file: "components/nav-projects.tsx", includes: ["export function NavProjects("] },
+    { file: "components/nav-secondary.tsx", includes: ["export function NavSecondary("] },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+    {
+      file: "components/site-header.tsx",
+      includes: ["export function SiteHeader(", 'import { SearchForm } from "./search-form"'],
+    },
+  ],
   // A page block inside another's shell: sidebar-07 arrives as a dependency (its route at
   // app/dashboard too), and the page reaches its app-sidebar by install path.
   "library-page": [
