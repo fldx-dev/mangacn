@@ -1,0 +1,27 @@
+---
+title: Rating
+description: "Outlined ink stars, full or half filled: a radio group with roving focus when interactive, one named image when read-only."
+item: rating
+---
+
+<InstallCommand item="rating" />
+
+<CopyPrompt item="rating" />
+
+Stars for a review form, or for showing a score in a list of volumes. Interactive, it goes inside Field labelled by a FieldLabel (`aria-labelledby`) and posts its value under `name`; with `readOnly` it is one image, named "Rated 4.5 out of 5". `step={0.5}` adds half stars.
+
+Interactive, it follows the WAI-ARIA Radio Group pattern: one radio per value, one tab stop, and a pointer hover previews a value without choosing it.
+
+- Right / Up: chooses the next value.
+- Left / Down: chooses the previous value.
+- Home / End: chooses the lowest / highest value.
+- Space: chooses the focused value.
+
+## Examples
+
+<DemoFrame item="rating" demo="default" />
+<DemoFrame item="rating" demo="read-only" />
+
+## Props
+
+<PropsTable item="rating" />

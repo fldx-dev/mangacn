@@ -1718,6 +1718,47 @@
       ]
     },
     {
+      "name": "number-input",
+      "type": "registry:ui",
+      "title": "Number Input",
+      "description": "A number field with − and + steppers in one hand-drawn frame, on Base UI NumberField, formatted through Intl.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "number-input/number-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/number-input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tags-input",
+      "type": "registry:ui",
+      "title": "Tags Input",
+      "description": "Free-text tags as badges in one hand-drawn field: Enter or comma adds, Backspace removes, paste splits, every change announced.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/badge.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "tags-input/tags-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/tags-input.tsx"
+        }
+      ]
+    },
+    {
       "name": "multi-select",
       "type": "registry:ui",
       "title": "Multi Select",
@@ -1736,6 +1777,28 @@
           "path": "multi-select/multi-select.tsx",
           "type": "registry:ui",
           "target": "@ui/multi-select.tsx"
+        }
+      ]
+    },
+    {
+      "name": "password-input",
+      "type": "registry:ui",
+      "title": "Password Input",
+      "description": "A password field with a show / hide toggle in one hand-drawn input group and an optional four-segment strength meter.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/input-group.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "password-input/password-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/password-input.tsx"
         }
       ]
     },
@@ -1761,6 +1824,43 @@
           "path": "color-picker/color-picker.tsx",
           "type": "registry:ui",
           "target": "@ui/color-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "rating",
+      "type": "registry:ui",
+      "title": "Rating",
+      "description": "Outlined ink stars, full or half filled: a radio group with roving focus when interactive, one named image when read-only.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "files": [
+        {
+          "path": "rating/rating.tsx",
+          "type": "registry:ui",
+          "target": "@ui/rating.tsx"
+        }
+      ]
+    },
+    {
+      "name": "copy-button",
+      "type": "registry:ui",
+      "title": "Copy Button",
+      "description": "An icon button that copies a value, says Copied once in a polite live region and shows failed without the Clipboard API.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/button.json"],
+      "files": [
+        {
+          "path": "copy-button/copy-button.tsx",
+          "type": "registry:ui",
+          "target": "@ui/copy-button.tsx"
         }
       ]
     }

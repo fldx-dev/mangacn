@@ -1,0 +1,27 @@
+---
+title: Number Input
+description: "A number field with − and + steppers in one hand-drawn frame, on Base UI NumberField, formatted through Intl."
+item: number-input
+---
+
+<InstallCommand item="number-input" />
+
+<CopyPrompt item="number-input" />
+
+For a count, a price or a percentage that people nudge rather than type: copies per order, a page number, a discount. Put it inside Field with a FieldLabel; `format` shows yen or percent through `Intl` while the value stays a plain number.
+
+It follows the WAI-ARIA Spinbutton pattern as Base UI's NumberField implements it. The − and + steppers are named, stay out of the tab order and turn off at the bounds.
+
+- Up / Down: adds or takes away `step`.
+- Shift + Up / Down, PageUp / PageDown: adds or takes away `largeStep`.
+- Home / End: jumps to `min` / `max`.
+
+## Examples
+
+<DemoFrame item="number-input" demo="default" />
+<DemoFrame item="number-input" demo="field" />
+<DemoFrame item="number-input" demo="format" />
+
+## Props
+
+<PropsTable item="number-input" />

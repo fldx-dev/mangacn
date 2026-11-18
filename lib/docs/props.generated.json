@@ -888,6 +888,108 @@
       }
     ]
   },
+  "copy-button": {
+    "CopyButtonProps": [
+      {
+        "id": "copy-button.tsx-CopyButtonProps",
+        "name": "CopyButtonProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The text to copy, or a function that returns it (sync or async) at click time.",
+            "type": "string | (() => string | Promise<string>)",
+            "simplifiedType": "string | (() => string | Promise<string>)",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "timeout",
+            "description": "How long the button stays copied (or failed) before it returns to idle, in milliseconds.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "2000"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onCopy",
+            "description": "Called with the copied text once the clipboard has it.",
+            "type": "((value: string) => void) | undefined",
+            "simplifiedType": "(value: string) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onCopyError",
+            "description": "Called when the copy fails, including when the Clipboard API is missing (insecure context).",
+            "type": "((error: unknown) => void) | undefined",
+            "simplifiedType": "(error: unknown) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The button's name and announcement per state.",
+            "type": "Partial<{ copy: string; copied: string; failed: string; }> | undefined",
+            "simplifiedType": "Partial<{ copy: string; copied: string; failed: string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ copy: \"Copy\", copied: \"Copied\", failed: \"Copy failed\" }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "variant",
+            "description": "The button's look, as mangacn's `button`.",
+            "type": "\"default\" | \"destructive\" | \"ghost\" | \"link\" | \"outline\" | \"secondary\" | \"sfx\" | null | undefined",
+            "simplifiedType": "\"default\" | \"destructive\" | \"ghost\" | \"link\" | \"outline\" | \"secondary\" | \"sfx\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"ghost\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "The button's size, as mangacn's `button`. With `children`, pass a text size (`sm`).",
+            "type": "\"default\" | \"icon\" | \"icon-lg\" | \"icon-sm\" | \"icon-xs\" | \"lg\" | \"sm\" | \"xs\" | null | undefined",
+            "simplifiedType": "\"default\" | \"icon\" | \"icon-lg\" | \"icon-sm\" | \"icon-xs\" | \"lg\" | \"sm\" | \"xs\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"icon\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "children",
+            "description": "A visible label beside the icon; without it the button is icon-only, named by `labels`.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "date-range-picker": {
     "DateRangePickerProps": [
       {
@@ -1867,6 +1969,172 @@
       }
     ]
   },
+  "number-input": {
+    "NumberInputProps": [
+      {
+        "id": "number-input.tsx-NumberInputProps",
+        "name": "NumberInputProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The number, controlled; `null` when the field is empty.",
+            "type": "number | null | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The number it starts with, uncontrolled.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with the new number (or `null` when cleared) on every change.",
+            "type": "((value: number | null) => void) | undefined",
+            "simplifiedType": "(value: number | null) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "min",
+            "description": "The lowest number; Home jumps to it and the − stepper disables there.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "max",
+            "description": "The highest number; End jumps to it and the + stepper disables there.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "step",
+            "description": "What Up / Down and the steppers add or take away.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "1"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "largeStep",
+            "description": "What Shift + Up / Down and PageUp / PageDown add or take away.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "10"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "format",
+            "description": "How the number reads, through `Intl.NumberFormat` (currency, percent, units).",
+            "type": "Intl.NumberFormatOptions | undefined",
+            "simplifiedType": "Intl.NumberFormatOptions",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "locale",
+            "description": "The locale for `format`; the user's by default.",
+            "type": "Intl.LocalesArgument",
+            "simplifiedType": "Intl.LocalesArgument",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "disabled",
+            "description": "Turns the whole field off.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "readOnly",
+            "description": "Shows the number without letting it change.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "required",
+            "description": "Marks the field as required in a form.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "The form field name; the number posts with a plain `<form>`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The steppers' names.",
+            "type": "Partial<{ decrement: string; increment: string; }> | undefined",
+            "simplifiedType": "Partial<{ decrement: string; increment: string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ decrement: \"Decrease\", increment: \"Increase\" }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "page-number": {
     "PageNumberProps": [
       {
@@ -2128,6 +2396,94 @@
       }
     ]
   },
+  "password-input": {
+    "PasswordInputProps": [
+      {
+        "id": "password-input.tsx-PasswordInputProps",
+        "name": "PasswordInputProps",
+        "entries": [
+          {
+            "name": "visible",
+            "description": "Whether the password shows as plain text, controlled.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultVisible",
+            "description": "Whether the password starts shown, uncontrolled.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onVisibleChange",
+            "description": "Called with the new visibility when the toggle is pressed.",
+            "type": "((visible: boolean) => void) | undefined",
+            "simplifiedType": "(visible: boolean) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "showStrength",
+            "description": "Shows the four-segment strength meter and its word under the field.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "strength",
+            "description": "Scores a password from 0 to 4, replacing `getPasswordStrength`.",
+            "type": "((value: string) => Strength) | undefined",
+            "simplifiedType": "(value: string) => Strength",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The toggle's name and title, and the five strength words (0 to 4).",
+            "type": "Partial<{ show: string; hide: string; strength: StrengthLabels; }> | undefined",
+            "simplifiedType": "Partial<{ show: string; hide: string; strength: StrengthLabels; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ show: \"Show password\", hide: \"Hide password\", strength: [\"Too weak\", \"Weak\", \"Fair\", \"Good\", \"Strong\"] }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the root, which fills its container.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "power-gauge": {
     "PowerGaugeProps": [
       {
@@ -2214,6 +2570,150 @@
             "type": "((value: number, max: number) => string) | undefined",
             "simplifiedType": "(value: number, max: number) => string",
             "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "rating": {
+    "RatingProps": [
+      {
+        "id": "rating.tsx-RatingProps",
+        "name": "RatingProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The rating, controlled.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The rating it starts with, uncontrolled.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "0"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with the new rating when a star is chosen.",
+            "type": "((value: number) => void) | undefined",
+            "simplifiedType": "(value: number) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "max",
+            "description": "How many stars.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "5"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "step",
+            "description": "The smallest change: whole stars, or half stars for pointer and keyboard.",
+            "type": "0.5 | 1 | undefined",
+            "simplifiedType": "0.5 | 1",
+            "tags": [
+              {
+                "name": "default",
+                "text": "1"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "readOnly",
+            "description": "Shows the rating as one image, with no focus and no input.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "disabled",
+            "description": "Shows the stars without letting them change.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "The form field name; the rating posts with a plain `<form>`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "The star size; `default` and `lg` keep a 44 px hit area per star.",
+            "type": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "simplifiedType": "\"default\" | \"lg\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"default\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "icon",
+            "description": "The icon drawn for each star; lucide's `Star` by default.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "Each radio's name and the read-only image's name.",
+            "type": "Partial<{ item: (n: number, max: number) => string; readOnly: (value: number, max: number) => string; }> | undefined",
+            "simplifiedType": "Partial<{ item: (n: number, max: number) => string; readOnly: (value: number, max: number) => string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ item: (n, max) => `${n} of ${max} stars`, readOnly: (value, max) => `Rated ${value} out of ${max}` }"
+              }
+            ],
             "required": false,
             "deprecated": false
           }
@@ -3075,6 +3575,163 @@
                 "text": "false"
               }
             ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "tags-input": {
+    "TagsInputProps": [
+      {
+        "id": "tags-input.tsx-TagsInputProps",
+        "name": "TagsInputProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The tags, controlled.",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The tags it starts with, uncontrolled.",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with the new list on every add and removal.",
+            "type": "((tags: string[]) => void) | undefined",
+            "simplifiedType": "(tags: string[]) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "max",
+            "description": "The most tags it takes; one more is refused and announced.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "delimiters",
+            "description": "Keys that add the typed text as a tag; character delimiters also split a paste.",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "[\"Enter\", \",\"]"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "allowDuplicates",
+            "description": "Takes the same tag twice.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "validate",
+            "description": "Checks a tag before it is added: `false` refuses it, a string refuses it with that message.",
+            "type": "((tag: string) => boolean | string) | undefined",
+            "simplifiedType": "(tag: string) => boolean | string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "addOnPaste",
+            "description": "Splits a pasted list by the delimiters (and new lines) into tags.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "addOnBlur",
+            "description": "Adds the typed text when the input loses focus.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "disabled",
+            "description": "Turns the field and its remove buttons off.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "The form field name; one hidden input per tag posts with a plain `<form>`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The remove buttons' names, the announcements and the refusal messages.",
+            "type": "Partial<{ remove: (tag: string) => string; added: (tag: string) => string; removed: (tag: string) => string; duplicate: (tag: string) => string; limit: (max: number) => string; invalid: (tag: string) => string; }> | undefined",
+            "simplifiedType": "Partial<{ remove: (tag: string) => string; added: (tag: string) => string; removed: (tag: string) => string; duplicate: (tag: string) => string; limit: (max: number) => string; invalid: (tag: string) => string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ remove: (tag) => `Remove ${tag}`, added: (tag) => `${tag} added`, removed: (tag) => `${tag} removed`, duplicate: (tag) => `${tag} is already added`, limit: (max) => `Up to ${max} tags`, invalid: (tag) => `${tag} is not valid` }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the root, which fills its container.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
             "required": false,
             "deprecated": false
           }

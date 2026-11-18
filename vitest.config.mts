@@ -23,6 +23,11 @@ export default defineConfig({
         find: /^@\/components\/ui\/toggle$/,
         replacement: fileURLToPath(new URL("./registry/ui/toggle/toggle.tsx", import.meta.url)),
       },
+      // tags-input → badge.
+      {
+        find: /^@\/components\/ui\/badge$/,
+        replacement: fileURLToPath(new URL("./registry/ui/badge/badge.tsx", import.meta.url)),
+      },
       // input-group → input, textarea.
       {
         find: /^@\/components\/ui\/input$/,

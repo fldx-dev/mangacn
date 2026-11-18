@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 134 items in the registry. Each line gives the item's name, what it is, the one
+All 139 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -245,12 +245,30 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `time-picker`: Hour and minute spinbuttons, and AM/PM in 12-hour mode, in one hand-drawn outline; posts "HH:mm" like a time input.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/time-picker --overwrite`
   Docs: https://www.mangacn.com/docs/components/time-picker (Markdown: https://www.mangacn.com/docs/components/time-picker.md)
+- `number-input`: A number field with − and + steppers in one hand-drawn frame, on Base UI NumberField, formatted through Intl.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/number-input --overwrite`
+  Docs: https://www.mangacn.com/docs/components/number-input (Markdown: https://www.mangacn.com/docs/components/number-input.md)
+- `tags-input`: Free-text tags as badges in one hand-drawn field: Enter or comma adds, Backspace removes, paste splits, every change announced.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/tags-input --overwrite`
+  Docs: https://www.mangacn.com/docs/components/tags-input (Markdown: https://www.mangacn.com/docs/components/tags-input.md)
 - `multi-select`: Combobox's multiple mode in one line: an options array in, string values out, as outlined chips with groups and a limit.
   Install: `npx shadcn@latest add @mangacn/multi-select --overwrite`
   Docs: https://www.mangacn.com/docs/components/multi-select (Markdown: https://www.mangacn.com/docs/components/multi-select.md)
+- `password-input`: A password field with a show / hide toggle in one hand-drawn input group and an optional four-segment strength meter.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/password-input --overwrite`
+  Docs: https://www.mangacn.com/docs/components/password-input (Markdown: https://www.mangacn.com/docs/components/password-input.md)
 - `color-picker`: A swatch trigger opening a saturation area, hue and alpha sliders, a hex field and swatches, all in ink around the colours.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/color-picker --overwrite`
   Docs: https://www.mangacn.com/docs/components/color-picker (Markdown: https://www.mangacn.com/docs/components/color-picker.md)
+
+## Display
+
+- `rating`: Outlined ink stars, full or half filled: a radio group with roving focus when interactive, one named image when read-only.
+  Install: `npx shadcn@latest add @mangacn/rating --overwrite`
+  Docs: https://www.mangacn.com/docs/components/rating (Markdown: https://www.mangacn.com/docs/components/rating.md)
+- `copy-button`: An icon button that copies a value, says Copied once in a polite live region and shows failed without the Clipboard API.
+  Install: `npx shadcn@latest add @mangacn/copy-button --overwrite`
+  Docs: https://www.mangacn.com/docs/components/copy-button (Markdown: https://www.mangacn.com/docs/components/copy-button.md)
 
 ## Layout
 
