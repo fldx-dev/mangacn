@@ -1402,6 +1402,309 @@
       }
     ]
   },
+  "file-upload": {
+    "FileUploadItemProps": [
+      {
+        "id": "file-upload.tsx-FileUploadItemProps",
+        "name": "FileUploadItemProps",
+        "entries": [
+          {
+            "name": "file",
+            "description": "The file this row shows.",
+            "type": "File",
+            "simplifiedType": "File",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "progress",
+            "description": "Upload progress, 0–100, drawn with mangacn `progress` and named by the file.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "status",
+            "description": "The row's state: `error` shows `error` in spot in place of the progress.",
+            "type": "\"done\" | \"error\" | \"idle\" | \"uploading\" | undefined",
+            "simplifiedType": "\"done\" | \"error\" | \"idle\" | \"uploading\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"idle\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "error",
+            "description": "Why the upload failed, shown in spot when `status` is \"error\".",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "FileUploadLabels": [
+      {
+        "id": "file-upload.tsx-FileUploadLabels",
+        "name": "FileUploadLabels",
+        "description": "Every word the upload shows or announces.",
+        "entries": [
+          {
+            "name": "dropzone",
+            "description": "The drop zone's instructions, which also name its group.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Drag and drop files here, or choose them.\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "trigger",
+            "description": "The trigger's text when it has no children.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Choose files\" (\"Choose a file\" when `multiple` is false)"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "remove",
+            "description": "Each row's remove button.",
+            "type": "((name: string) => string) | undefined",
+            "simplifiedType": "(name: string) => string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "(name) => `Remove ${name}`"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "added",
+            "description": "Announced after files are added.",
+            "type": "((count: number) => string) | undefined",
+            "simplifiedType": "(count: number) => string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "(n) => `${n} file(s) added`"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "rejected",
+            "description": "Announced for each rejected file; `reason` is one of the three below.",
+            "type": "((name: string, reason: string) => string) | undefined",
+            "simplifiedType": "(name: string, reason: string) => string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "(name, reason) => `${name} was not added: ${reason}`"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "type",
+            "description": "",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"not an accepted file type\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "",
+            "type": "((max: string) => string) | undefined",
+            "simplifiedType": "(max: string) => string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "(max) => `larger than ${max}`"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "count",
+            "description": "",
+            "type": "((max: number) => string) | undefined",
+            "simplifiedType": "(max: number) => string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "(max) => `more than ${max} files`"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "FileUploadProps": [
+      {
+        "id": "file-upload.tsx-FileUploadProps",
+        "name": "FileUploadProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The accepted files. Controlled.",
+            "type": "File[] | undefined",
+            "simplifiedType": "File[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The starting files when uncontrolled.",
+            "type": "File[] | undefined",
+            "simplifiedType": "File[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with the accepted files after each add or remove.",
+            "type": "((files: File[]) => void) | undefined",
+            "simplifiedType": "(files: File[]) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "accept",
+            "description": "The types to accept, as `<input accept>` takes them: \"image/*,.pdf\".",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "multiple",
+            "description": "Accepts several files; when false a new file replaces the current one.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "maxFiles",
+            "description": "The most files the value may hold; extra files are rejected with reason \"count\".",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "maxSize",
+            "description": "The largest file in bytes; larger files are rejected with reason \"size\".",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onReject",
+            "description": "Called with the files a choice or a drop rejected, and why.",
+            "type": "((rejections: FileRejection[]) => void) | undefined",
+            "simplifiedType": "(rejections: FileRejection[]) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "disabled",
+            "description": "Stops choosing, dropping and removing.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "The native input's name, so a plain form posts the files.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "Overrides every word the upload shows or announces.",
+            "type": "FileUploadLabels | undefined",
+            "simplifiedType": "FileUploadLabels",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "locale",
+            "description": "Formats file sizes and the `maxSize` reason (Intl); fixed so server and browser agree.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"en-US\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "focus-lines": {
     "FocusLinesProps": [
       {

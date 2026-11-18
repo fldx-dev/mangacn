@@ -74,6 +74,7 @@
     "multi-select",
     "password-input",
     "color-picker",
+    "file-upload",
     "---Display---",
     "rating",
     "copy-button",

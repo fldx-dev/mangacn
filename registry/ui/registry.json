@@ -1950,6 +1950,29 @@
       ]
     },
     {
+      "name": "file-upload",
+      "type": "registry:ui",
+      "title": "File Upload",
+      "description": "A drop zone with a real file button, rejections with reasons and rows with progress; your app sends the files.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/progress.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "file-upload/file-upload.tsx",
+          "type": "registry:ui",
+          "target": "@ui/file-upload.tsx"
+        }
+      ]
+    },
+    {
       "name": "stepper",
       "type": "registry:ui",
       "title": "Stepper",

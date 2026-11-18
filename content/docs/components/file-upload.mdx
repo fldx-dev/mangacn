@@ -1,0 +1,46 @@
+---
+title: File Upload
+description: "A drop zone with a real file button, rejections with reasons and rows with progress; your app sends the files."
+item: file-upload
+---
+
+<InstallCommand item="file-upload" />
+
+<CopyPrompt item="file-upload" />
+
+For page scans, a cover or an avatar: a dashed ink drop zone with a real file button, a list of the chosen files and a mangacn `progress` per row. It uploads nothing itself: send the files from `onValueChange` and pass each one's `progress` and `status` back to `FileUploadItem`. Put it in a `field` for a label and a description.
+
+There is no WAI-ARIA pattern for file upload; the drop zone is never the only way in:
+
+- the trigger is a `button` that opens the native file dialog through a visually hidden `<input type="file">`, which posts the files with a plain form (`name`);
+- the drop zone is a `role="group"` named by its instructions;
+- each add and each rejection, with its reason, is announced in a polite live region, and rejected files stay listed with the reason in spot;
+- each row's progress is named by the file, and its remove button says "Remove" and the file name.
+
+`labels` holds functions (`remove`, `added`, `rejected`, `size`, `count`), so override them from a client component.
+
+## Examples
+
+Up to five images of 5 MB each. A file of another type, a larger one or a sixth is rejected with its reason.
+
+<DemoFrame item="file-upload" demo="default" />
+
+Rows with progress: done, uploading and an error. The upload is simulated in the demo with `setInterval`; files you add count up ten percent at a time.
+
+<DemoFrame item="file-upload" demo="progress" />
+
+`multiple={false}` in a `field`: a new picture replaces the old one.
+
+<DemoFrame item="file-upload" demo="avatar" />
+
+## Props
+
+<PropsTable item="file-upload" />
+
+`FileUploadItem`:
+
+<PropsTable item="file-upload" name="FileUploadItemProps" />
+
+`FileUploadLabels`:
+
+<PropsTable item="file-upload" name="FileUploadLabels" />
