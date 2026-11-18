@@ -334,6 +334,90 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function SignupForm(", "Continue with Google"],
     },
   ],
+  // The sidebar variants share app/dashboard/page.tsx and components/app-sidebar.tsx (and some a
+  // search-form or nav-main): the full smoke checks each right after its own add.
+  "sidebar-01": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { SearchForm } from "./search-form"'],
+    },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+    {
+      file: "components/version-switcher.tsx",
+      includes: ["export function VersionSwitcher("],
+    },
+  ],
+  "sidebar-02": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"', "sticky top-0"],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "render={<CollapsibleTrigger />}"],
+    },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+    {
+      file: "components/version-switcher.tsx",
+      includes: ["export function VersionSwitcher("],
+    },
+  ],
+  "sidebar-03": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "<SidebarMenuSub>"],
+    },
+  ],
+  "sidebar-04": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        '"--sidebar-width": "19rem"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'variant="floating"'],
+    },
+  ],
+  "sidebar-05": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "defaultOpen={index === 1}"],
+    },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+  ],
+  "sidebar-06": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: [
+        "export function AppSidebar(",
+        'import { SidebarOptInForm } from "./sidebar-opt-in-form"',
+      ],
+    },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain(", "<DropdownMenu"] },
+    {
+      file: "components/sidebar-opt-in-form.tsx",
+      includes: ["export function SidebarOptInForm("],
+    },
+  ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
     {
@@ -436,6 +520,20 @@ export const EXPECTED_CONTENT: Record<
       ],
     },
     { file: "components/settings-dialog.tsx", includes: ["export function SettingsDialog("] },
+  ],
+  // Server-only: neither file has a client directive.
+  "sidebar-14": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        '<AppSidebar side="right" />',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "Table of Contents"],
+    },
   ],
   // sidebar-12 shares sidebar-07's route and app-sidebar, nav-user: checked after its own add.
   "sidebar-12": [

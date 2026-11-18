@@ -1,0 +1,20 @@
+---
+title: Sidebar 06
+description: "A handbook's app shell whose sections open as menus, with the studio letter's sign-up card at the sidebar's foot, beside a chapter's blank manga panels; stock's sidebar-06 in ink."
+item: sidebar-06
+skipDemos: ["default"]
+---
+
+<InstallCommand item="sidebar-06" />
+
+<ItemFiles item="sidebar-06" />
+
+<CopyPrompt item="sidebar-06" />
+
+Stock's documentation shell in ink, with stock's four files and exports: the handbook's mark over the sections, each a button that opens its pages as a [dropdown menu](/docs/components/dropdown-menu), and the studio letter's sign-up [card](/docs/components/card) at the sidebar's foot, beside a chapter's blank [panels](/docs/components/panel). Mangacn's [Sidebar](/docs/components/sidebar) slides away with <kbd>Ctrl</kbd>+<kbd>B</kbd> (<kbd>⌘</kbd>+<kbd>B</kbd> on a Mac) or the trigger and opens as a sheet on phones; it is an alternative to the other sidebar blocks, which write the same `app/dashboard/page.tsx` and `components/app-sidebar.tsx` (and sidebar-07 a `nav-main.tsx`), so adding one replaces the other.
+
+The page is a server component and `app-sidebar.tsx` and `nav-main.tsx` are client components, as in stock's block; `sidebar-opt-in-form.tsx` has no directive of its own and renders inside the client sidebar.
+
+## Preview
+
+<BlockPreview item="sidebar-06" />

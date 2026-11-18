@@ -565,6 +565,167 @@
         "sidebar"
       ],
       "sha1": "2c96cee077b51cf52e333c61becf950ef32bc20a"
+    },
+    "sidebar-01": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/search-form.tsx",
+          "type": "registry:component",
+          "exports": ["SearchForm"]
+        },
+        {
+          "path": "components/version-switcher.tsx",
+          "type": "registry:component",
+          "exports": ["VersionSwitcher"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "dropdown-menu", "label", "separator", "sidebar"],
+      "sha1": "bc9c1fba7d7b8243981152ded5a79aebdb639316"
+    },
+    "sidebar-02": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/search-form.tsx",
+          "type": "registry:component",
+          "exports": ["SearchForm"]
+        },
+        {
+          "path": "components/version-switcher.tsx",
+          "type": "registry:component",
+          "exports": ["VersionSwitcher"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "dropdown-menu", "label", "separator", "sidebar"],
+      "sha1": "edeece05f0831d312a05db2815d06b99f8288a06"
+    },
+    "sidebar-03": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "sidebar"],
+      "sha1": "57c90bab592179238c6464290f8642048eba847b"
+    },
+    "sidebar-04": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "separator", "sidebar"],
+      "sha1": "a630d6d7b5b4addfbbd892a0ee78a68d041feb97"
+    },
+    "sidebar-05": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/search-form.tsx",
+          "type": "registry:component",
+          "exports": ["SearchForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "collapsible", "label", "separator", "sidebar"],
+      "sha1": "ee665ae259e419b7312eab9134910fe96949990e"
+    },
+    "sidebar-06": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/nav-main.tsx",
+          "type": "registry:component",
+          "exports": ["NavMain"]
+        },
+        {
+          "path": "components/sidebar-opt-in-form.tsx",
+          "type": "registry:component",
+          "exports": ["SidebarOptInForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "card", "dropdown-menu", "separator", "sidebar"],
+      "sha1": "46872da16816e5b5cbf897d8dc70986c8335ee9b"
+    },
+    "sidebar-14": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "sidebar"],
+      "sha1": "ccb8c619b7f48b4d26929d6a38125fb83935732a"
     }
   }
 }
