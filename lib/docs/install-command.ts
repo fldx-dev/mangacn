@@ -8,7 +8,11 @@ import {
 } from "@/lib/registry";
 import { clientNote, isClientItem } from "@/lib/registry/client";
 import { extractImports } from "@/lib/registry/imports";
-import { dependencyFiles, installTarget } from "@/lib/registry/install-target";
+import {
+  dependencyFiles,
+  installTarget,
+  sharedInstallTargets,
+} from "@/lib/registry/install-target";
 import { itemPagePath } from "./catalog";
 import { PACKAGE_MANAGERS, type PackageManager, RUNNERS } from "./package-managers";
 
@@ -150,13 +154,20 @@ export function commandFor(props: InstallCommandProps, manager: PackageManager):
 /**
  * What one add of `name` writes, at the default `components.json` aliases: the item's own files
  * (`components/blocks/chapter-list/chapter-list.tsx`, …), then what its mangacn registry
- * dependencies add, transitively. A block's page prints it under the install block.
+ * dependencies add, transitively, and the shipped items whose files it replaces (a variant of a
+ * stock family writes the paths its siblings write). A block's page prints it under the install
+ * block.
  */
-export function itemFiles(name: string): { files: string[]; dependencyFiles: string[] } {
+export function itemFiles(name: string): {
+  files: string[];
+  dependencyFiles: string[];
+  replaces: { item: string; files: string[] }[];
+} {
   const item = catalogItem(name);
   return {
     files: item.files.map(installTarget),
     dependencyFiles: registry ? dependencyFiles(name, registry) : [],
+    replaces: registry ? sharedInstallTargets(name, registry) : [],
   };
 }
 

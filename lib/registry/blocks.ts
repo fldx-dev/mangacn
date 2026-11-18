@@ -1,6 +1,12 @@
 import path from "node:path";
-import { type LoadedRegistry, type LoadedRegistryItem, mangacnItemName } from "./index";
-import { installTarget } from "./install-target";
+import {
+  type LoadedRegistry,
+  type LoadedRegistryItem,
+  mangacnItemName,
+  type RegistryFile,
+} from "./index";
+import { importSpecifier, installTarget } from "./install-target";
+import { type BlockParityShape, loadBlockParitySnapshot, PARITY_BLOCKS } from "./parity";
 
 // Blocks are pages in miniature (SPEC-components-3 §3, §7): `registry:block` items in
 // registry/blocks/registry.json, one folder each, every file installed under
@@ -14,9 +20,17 @@ import { installTarget } from "./install-target";
 // writes an untargeted `registry:component` to the user's components folder at the path after
 // the first `components` segment of the file's registry path (or at its basename when the folder
 // has another name); the catalog states that place as `@components/<file>`, so it does not hang
-// on the folder's name. The page lands in `app/<route>/`, away from its components, so it
-// imports them by install path (`@/components/login-form`), as stock's page does once the CLI
-// has rewritten it; component files import each other relatively, since they land together.
+// on the folder's name. The page lands in `app/<route>/`, away from its components, so once
+// installed it imports them by install path (`@/components/login-form`), as stock's page does;
+// component files import each other relatively, since they land together.
+//
+// Variants of one stock family (SPEC-components-6 §5.1) install the same paths: every login-0N
+// writes `app/login/page.tsx` and `components/login-form.tsx`. So a page imports its own
+// components relatively (`./components/login-form`), which resolves in this repo without a
+// per-path alias, and `pnpm registry:build` rewrites those imports to the install path
+// (`@/components/login-form`) in the emitted JSON (`installPageSource`,
+// scripts/registry-rewrite-pages.ts). Two stock-derived blocks may share a target when stock's
+// own files share it; any other collision is refused.
 
 /** Repo-relative path of the block catalog, included from the root registry.json. */
 export const BLOCKS_CATALOG = "registry/blocks/registry.json";
@@ -166,10 +180,14 @@ function pageBlockProblems(item: LoadedRegistryItem, at: (problem: string) => vo
  * file type `registry:block` and its `@components/blocks/<name>/…` target; a page block has
  * `page.tsx` first (`registry:page`, target `app/<route>/page.tsx`) and its other files in
  * `components/` (`registry:component`, target `@components/<file>`). No block file installs
- * where another item's file does. Items of other types in the block catalog, and blocks outside
+ * where another item's file does, unless both are stock-derived blocks whose stock files share
+ * that target (`sharesStockTarget`): variants of one family are alternatives. Items of other types in the block catalog, and blocks outside
  * it, are problems too.
  */
-export function findBlockProblems(registry: LoadedRegistry): string[] {
+export function findBlockProblems(
+  registry: LoadedRegistry,
+  family: StockFamily = stockParityFamily(),
+): string[] {
   const problems: string[] = [];
   const owners = new Map<string, string>();
   for (const item of registry.items) {
@@ -208,8 +226,9 @@ export function findBlockProblems(registry: LoadedRegistry): string[] {
       }
     }
     for (const file of item.files) {
-      const owner = owners.get(installTarget(file));
-      if (owner && owner !== item.name) {
+      const target = installTarget(file);
+      const owner = owners.get(target);
+      if (owner && owner !== item.name && !sharesStockTarget(family, owner, item.name, target)) {
         at(`${file.path} installs to ${installTarget(file)}, as a file of ${owner} does`);
       }
     }
@@ -220,4 +239,91 @@ export function findBlockProblems(registry: LoadedRegistry): string[] {
     }
   }
   return problems;
+}
+
+/**
+ * The stock-derived blocks and stock's files for each (the block parity snapshot), which decide
+ * the install paths two blocks may share.
+ */
+export interface StockFamily {
+  blocks: readonly string[];
+  stock: Readonly<Record<string, Pick<BlockParityShape, "files">>>;
+}
+
+/** `PARITY_BLOCKS` and the committed snapshot (empty before `pnpm gen:parity` has run). */
+export function stockParityFamily(rootDir = process.cwd()): StockFamily {
+  return { blocks: PARITY_BLOCKS, stock: loadBlockParitySnapshot(rootDir)?.items ?? {} };
+}
+
+/** Where stock's file installs: its target (a page), else its path (`components/login-form.tsx`). */
+function stockTargets(family: StockFamily, name: string): Set<string> {
+  return new Set((family.stock[name]?.files ?? []).map((file) => file.target ?? file.path));
+}
+
+/**
+ * Whether blocks `a` and `b` may both install `target`: both are in `PARITY_BLOCKS` and stock's
+ * own files of both install there (`login-01` and `login-02` both write
+ * `components/login-form.tsx`). Every other collision is refused.
+ */
+export function sharesStockTarget(
+  family: StockFamily,
+  a: string,
+  b: string,
+  target: string,
+): boolean {
+  return (
+    family.blocks.includes(a) &&
+    family.blocks.includes(b) &&
+    stockTargets(family, a).has(target) &&
+    stockTargets(family, b).has(target)
+  );
+}
+
+/** `./components/login-form`, a page's import of one of its own components. */
+const OWN_COMPONENT_IMPORT = /^\.\/components\/[^/]+$/;
+
+/**
+ * Whether `specifier` in `from` is a page's relative import of its own component `to`
+ * (`./components/login-form` in `page.tsx`): the one relative form that does not hold after
+ * install and is still allowed, because `pnpm registry:build` rewrites it (`installPageSource`).
+ */
+export function isOwnComponentImport(
+  specifier: string,
+  from: Pick<RegistryFile, "type">,
+  to: Pick<RegistryFile, "type">,
+): boolean {
+  return (
+    from.type === PAGE_TYPE &&
+    to.type === PAGE_COMPONENT_TYPE &&
+    OWN_COMPONENT_IMPORT.test(specifier)
+  );
+}
+
+/**
+ * A page block's route file as `shadcn add` should write it: each relative import of one of its
+ * own components (`./components/login-form`) becomes that component's install path
+ * (`@/components/login-form`), since the route lands in `app/<route>/`, away from them. Every
+ * other import, and every other byte, is left as it is.
+ */
+export function installPageSource(
+  source: string,
+  item: Pick<LoadedRegistryItem, "name" | "type" | "files">,
+  imports: readonly { specifier: string; start: number }[],
+): string {
+  const page = pageFile(item);
+  if (!page) return source;
+  let out = "";
+  let from = 0;
+  for (const { specifier, start } of imports) {
+    if (!OWN_COMPONENT_IMPORT.test(specifier)) continue;
+    const resolved = path.posix.join(path.posix.dirname(page.path), specifier);
+    const own = item.files.find(
+      (file) =>
+        file.type === PAGE_COMPONENT_TYPE && file.path.replace(/\.[jt]sx?$/, "") === resolved,
+    );
+    if (!own) continue;
+    out += source.slice(from, start) + importSpecifier(installTarget(own));
+    from = start + specifier.length;
+  }
+  return out + source.slice(from);
 }

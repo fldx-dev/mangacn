@@ -482,20 +482,35 @@ registry/blocks/<name>/
   `components/login-form.tsx`, where stock's lands), so an add replaces stock's files in place.
   The catalog states it as `"target": "@components/login-form.tsx"`, so it does not hang on the
   name of the user's components folder. `findBlockProblems` refuses a component that would land
-  on another item's file.
-- **Imports.** The page lands away from its components, so it imports them by install path,
-  `@/components/login-form`, as stock's page does once the CLI has rewritten it; components
-  import each other relatively (`./nav-main`: they land side by side). The import rule allows an
-  own file's install path only where a relative path would miss after install. Map each
-  component's install path in `tsconfig.json` `paths` and the `vitest.config.mts` aliases
-  (`"@/components/login-form": ["./registry/blocks/login-01/components/login-form.tsx"]`).
+  on another item's file, except within a stock family (below).
+- **Imports.** The page imports its own components relatively, `./components/login-form`, and
+  `pnpm registry:build` writes the install path, `@/components/login-form`, into
+  `public/r/<name>.json` (`scripts/registry-rewrite-pages.ts`, chained after `shadcn build`):
+  the page lands in `app/<route>/`, away from its components, and stock's installed page
+  imports them that way. The step rewrites only a page's `./components/<file>` imports of its
+  own files; components import each other relatively (`./nav-main`: they land side by side) and
+  stay as they are. So no `tsconfig.json` or `vitest.config.mts` alias per component. The import
+  rule allows that relative form only for a page's own `components/`; elsewhere an own file's
+  install path only where a relative path would miss after install. Biome sorts a page's
+  `./components/…` imports after its packages and before its aliases (an override in
+  `biome.json`), so the emitted page keeps stock's import order.
+- **Variants of one stock family share paths.** Stock's `login-0N` all install
+  `app/login/page.tsx` and `components/login-form.tsx`; its sidebars all `app/dashboard/page.tsx`
+  and most an `app-sidebar.tsx`. mangacn keeps those paths, so a second variant's add replaces
+  the first's files, as in stock. `findBlockProblems` allows two blocks to share a target only
+  when both are in `PARITY_BLOCKS` and stock's own files of both install there; any other
+  collision is refused. The docs page's Files line names the shipped blocks that write the same
+  paths ("Replaces `app/login/page.tsx` and `components/login-form.tsx` from `login-01`"), read
+  from the catalog. No block imports a sibling's file: each variant ships its own copy.
 - **A page block inside another page block's shell.** `library-page` sits in `sidebar-07`'s
   app shell without copying a file of it: it declares
   `https://www.mangacn.com/r/sidebar-07.json` and imports `AppSidebar` from that block's
-  install path, `@/components/app-sidebar`. The import rule allows the install path of every
-  file of a declared item, and the dependency check counts an import of a page block's
-  component as a use of that page block. The add then writes the other block's route too
-  (`app/dashboard/page.tsx`), and the Files line says so.
+  install path, `@/components/app-sidebar`, mapped to `sidebar-07`'s file in `tsconfig.json`
+  and `vitest.config.mts` (the one cross-block alias). The import rule allows the install path
+  of every file of a declared item, and the dependency check counts an import of a page block's
+  component as a use of the page block it declares (other sidebars write that path too). The
+  add then writes the other block's route too (`app/dashboard/page.tsx`), and the Files line
+  says so.
 - **Server or client.** The page is a server component, as stock's are; a component file says
   `"use client"` only when it holds state (sidebar-07's five files, as stock's;
   `series-header.tsx`, for Follow's pressed state). The install line's client-component note
@@ -515,13 +530,17 @@ registry/blocks/<name>/
   `## Data` prints `Series` and `SeriesHeaderProps`); `gen:props` reads the table from the
   file that declares the type. The Blocks index shows the page on its card.
 - **Smoke.** Add the route and each component to `EXPECTED_CONTENT` in
-  `scripts/registry-smoke.ts` (the page's import of its component as an `includes`); the build
-  of the fresh app proves the import resolves.
+  `scripts/registry-smoke.ts` (the page's installed import of its component,
+  `@/components/login-form`, as an `includes`); the build of the fresh app proves the import
+  resolves. The full smoke installs a family's variants together in name order and checks each
+  variant's `EXPECTED_CONTENT` right after its own add, before a sibling overwrites it; an item
+  that declares a variant (`library-page`) is installed after the family. The build runs once,
+  at the end.
 
 The next page block, in short: a folder with `page.tsx` (`registry:page`, stock's
 `app/<route>/page.tsx` target) and `components/<file>.tsx` (`registry:component`, target
 `@components/<file>.tsx`), a default demo and a test with `expectDemosAccessible`; a catalog
-entry with its dependencies by URL; an alias per component install path; `PARITY_BLOCKS` and
+entry with its dependencies by URL; the page importing its components relatively; `PARITY_BLOCKS` and
 `pnpm gen:parity` when it is stock's; `pnpm gen:demos && pnpm gen:docs`, two sentences on the
 page, and the files in the smoke's `EXPECTED_CONTENT`. `/view/<name>` and its shots come with
 the demo map.
