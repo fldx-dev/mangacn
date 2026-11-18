@@ -1,5 +1,5 @@
 import type { LoadedRegistry } from "@/lib/registry";
-import { BLOCKS_CATALOG, isPageBlock } from "@/lib/registry/blocks";
+import { BLOCKS_CATALOG, groupBlocks, isPageBlock } from "@/lib/registry/blocks";
 
 // The docs document the component catalog (registry/ui/registry.json) and the block catalog
 // (registry/blocks/registry.json): one page per item that has demos, under "Components" and
@@ -94,7 +94,8 @@ function isCategory(value: string | undefined): value is Category {
 /**
  * Every component-catalog item that has demos, in category order and catalog order within a
  * category. Throws naming an item whose first category is not one of `CATEGORIES`. `catalog`
- * picks the section: the components (the default, which the component index lists) or the blocks.
+ * picks the section: the components (the default, which the component index lists) or the blocks,
+ * which come in their groups (`groupBlocks`: Manga, then each stock family by number).
  */
 export function docItems(
   registry: LoadedRegistry,
@@ -123,7 +124,9 @@ export function docItems(
       ...(isPageBlock(entry) ? { page: true as const } : {}),
     });
   }
-  return items.sort((a, b) => CATEGORIES.indexOf(a.category) - CATEGORIES.indexOf(b.category));
+  items.sort((a, b) => CATEGORIES.indexOf(a.category) - CATEGORIES.indexOf(b.category));
+  // Blocks in their index and sidebar groups: Manga, then each stock family by number.
+  return catalog === BLOCKS_CATALOG ? groupBlocks(items).flatMap((group) => group.items) : items;
 }
 
 /** `items` grouped by category in `CATEGORIES` order; empty categories are left out. */
@@ -191,12 +194,14 @@ export function renderComponentsMeta(items: readonly DocItem[]): string {
 const JSON_LINE_WIDTH = 100;
 
 /**
- * `content/docs/blocks/meta.json`: the block pages in catalog order, no separators, laid out as
- * Biome formats it (the page list on one line while it fits), so `gen:docs --check` and
- * `biome check` agree.
+ * `content/docs/blocks/meta.json`: the block pages under one separator per group (Manga, Login,
+ * Signup, Sidebar; `groupBlocks`), laid out as Biome formats it (the page list on one line while
+ * it fits), so `gen:docs --check` and `biome check` agree.
  */
 export function renderBlocksMeta(items: readonly DocItem[]): string {
-  const pages = items.map((item) => JSON.stringify(item.name));
+  const pages = groupBlocks(items)
+    .flatMap((group) => [`---${group.label}---`, ...group.items.map((item) => item.name)])
+    .map((page) => JSON.stringify(page));
   const inline = `  "pages": [${pages.join(", ")}]`;
   const list =
     inline.length <= JSON_LINE_WIDTH

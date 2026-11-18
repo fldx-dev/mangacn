@@ -341,15 +341,6 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `reader`: A chapter page: the spread viewer, a drawer with the series' chapter list, progress as text, the page kept in the address through use-reader; made of two blocks.
   Install: `npx shadcn@latest add @mangacn/reader --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/reader (Markdown: https://www.mangacn.com/docs/blocks/reader.md)
-- `login-01`: A login page: email and password on a paper card with a heavy ink outline, the title in the display face and a reception stamp; stock's login-01 in ink.
-  Install: `npx shadcn@latest add @mangacn/login-01 --overwrite`
-  Docs: https://www.mangacn.com/docs/blocks/login-01 (Markdown: https://www.mangacn.com/docs/blocks/login-01.md)
-- `signup-01`: A sign-up page: name, email and two passwords on a paper card with a heavy ink outline, the title in the display face and a registration stamp; stock's signup-01 in ink.
-  Install: `npx shadcn@latest add @mangacn/signup-01 --overwrite`
-  Docs: https://www.mangacn.com/docs/blocks/signup-01 (Markdown: https://www.mangacn.com/docs/blocks/signup-01.md)
-- `sidebar-07`: An app shell whose sidebar collapses to icons: a studio switcher, collapsible sections, series with their menus and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-07 in ink.
-  Install: `npx shadcn@latest add @mangacn/sidebar-07 --overwrite`
-  Docs: https://www.mangacn.com/docs/blocks/sidebar-07 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-07.md)
 - `library-page`: A reader's library inside sidebar-07's app shell: the chapters they have open as cards with a cover, a progress bar and a Resume link, then shelves of volume covers, an empty shelf showing what to do next.
   Install: `npx shadcn@latest add @mangacn/library-page --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/library-page (Markdown: https://www.mangacn.com/docs/blocks/library-page.md)
@@ -359,6 +350,15 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `series-page`: A manga series' home page: the cover with a status stamp, title, credits, synopsis, Start reading and Follow, then tabs of volumes, chapters and cast; made of three blocks.
   Install: `npx shadcn@latest add @mangacn/series-page --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/series-page (Markdown: https://www.mangacn.com/docs/blocks/series-page.md)
+- `login-01`: A login page: email and password on a paper card with a heavy ink outline, the title in the display face and a reception stamp; stock's login-01 in ink.
+  Install: `npx shadcn@latest add @mangacn/login-01 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/login-01 (Markdown: https://www.mangacn.com/docs/blocks/login-01.md)
+- `signup-01`: A sign-up page: name, email and two passwords on a paper card with a heavy ink outline, the title in the display face and a registration stamp; stock's signup-01 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-01 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-01 (Markdown: https://www.mangacn.com/docs/blocks/signup-01.md)
+- `sidebar-07`: An app shell whose sidebar collapses to icons: a studio switcher, collapsible sections, series with their menus and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-07 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-07 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-07 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-07.md)
 
 ## Hooks
 

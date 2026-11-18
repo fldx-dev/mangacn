@@ -34,6 +34,62 @@ export const PAGE_COMPONENTS_DIR = "components";
 /** `app/<route>/page.tsx`, one or more kebab-case route segments, as stock's pages target. */
 const PAGE_TARGET = /^app\/(?:[a-z0-9-]+\/)+page\.tsx$/;
 
+/**
+ * The groups of the Blocks index and the docs sidebar, in order (SPEC-components-6 §6). A block
+ * named after a stock family (`login-01`, `sidebar-16`) joins that family's group, by number; any
+ * other block is manga-native and joins Manga, in catalog order. A new block lands in its group
+ * by its name alone, so neither the index nor `gen:docs` needs an edit.
+ */
+export const BLOCK_GROUPS = [
+  { id: "manga", label: "Manga" },
+  { id: "login", label: "Login" },
+  { id: "signup", label: "Signup" },
+  { id: "sidebar", label: "Sidebar" },
+] as const;
+
+export type BlockGroupId = (typeof BLOCK_GROUPS)[number]["id"];
+
+export interface BlockGroup<T> {
+  id: BlockGroupId;
+  label: string;
+  items: T[];
+}
+
+/** A stock block's name: its family, then its number (`login-01`, `sidebar-16`). */
+const STOCK_BLOCK_NAME = /^([a-z]+(?:-[a-z]+)*)-(\d+)$/;
+
+function stockFamily(name: string): { family: BlockGroupId; number: number } | null {
+  const match = STOCK_BLOCK_NAME.exec(name);
+  if (!match) return null;
+  const family = BLOCK_GROUPS.find((group) => group.id !== "manga" && group.id === match[1]);
+  if (!family) {
+    throw new Error(
+      `Block "${name}" is named like stock's "${match[1]}" family, which has no group; add one to BLOCK_GROUPS (lib/registry/blocks.ts).`,
+    );
+  }
+  return { family: family.id, number: Number(match[2]) };
+}
+
+/** The group a block joins, from its name; throws for a stock family with no group. */
+export function blockGroup(name: string): BlockGroupId {
+  return stockFamily(name)?.family ?? "manga";
+}
+
+/**
+ * `items` in their groups, in `BLOCK_GROUPS` order: Manga in the order given (the catalog's),
+ * each stock family by number. Empty groups are left out.
+ */
+export function groupBlocks<T extends { name: string }>(items: readonly T[]): BlockGroup<T>[] {
+  const number = (item: T) => stockFamily(item.name)?.number ?? 0;
+  return BLOCK_GROUPS.map(({ id, label }) => ({
+    id,
+    label,
+    items: items
+      .filter((item) => blockGroup(item.name) === id)
+      .sort((a, b) => number(a) - number(b)),
+  })).filter((group) => group.items.length > 0);
+}
+
 /** Whether an item is a block (by its type). */
 export function isBlock(item: Pick<LoadedRegistryItem, "type">): boolean {
   return item.type === BLOCK_TYPE;

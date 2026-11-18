@@ -2,16 +2,20 @@
   "title": "Blocks",
   "defaultOpen": true,
   "pages": [
+    "---Manga---",
     "chapter-list",
     "spread-viewer",
     "character-card",
     "volume-grid",
     "reader",
-    "login-01",
-    "signup-01",
-    "sidebar-07",
     "library-page",
     "chat-thread",
-    "series-page"
+    "series-page",
+    "---Login---",
+    "login-01",
+    "---Signup---",
+    "signup-01",
+    "---Sidebar---",
+    "sidebar-07"
   ]
 }
