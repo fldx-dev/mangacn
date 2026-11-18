@@ -101,6 +101,34 @@
       "dependencies": ["cn"],
       "registryDependencies": ["button", "field", "input", "label"],
       "sha1": "c07a42865d84d1f8ad5030dccaa356498172c334"
+    },
+    "sidebar-01": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/search-form.tsx",
+          "type": "registry:component",
+          "exports": ["SearchForm"]
+        },
+        {
+          "path": "components/version-switcher.tsx",
+          "type": "registry:component",
+          "exports": ["VersionSwitcher"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "dropdown-menu", "label", "separator", "sidebar"],
+      "sha1": "bc9c1fba7d7b8243981152ded5a79aebdb639316"
     }
   }
 }

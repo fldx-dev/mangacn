@@ -253,6 +253,23 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/signup-form.tsx", includes: ["export function SignupForm("] },
   ],
+  // The sidebar variants share app/dashboard/page.tsx and components/app-sidebar.tsx (and some a
+  // search-form or nav-main): the full smoke checks each right after its own add.
+  "sidebar-01": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { SearchForm } from "./search-form"'],
+    },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+    {
+      file: "components/version-switcher.tsx",
+      includes: ["export function VersionSwitcher("],
+    },
+  ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
     {
