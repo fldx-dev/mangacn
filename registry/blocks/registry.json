@@ -592,6 +592,36 @@
       ]
     },
     {
+      "name": "sidebar-13",
+      "type": "registry:block",
+      "title": "Sidebar 13",
+      "description": "A sidebar inside a settings dialog: a manga reader's settings sections beside the open section's blank manga panels, opened from the page's button; stock's sidebar-13 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/dialog.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-13/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-13/components/settings-dialog.tsx",
+          "type": "registry:component",
+          "target": "@components/settings-dialog.tsx"
+        }
+      ]
+    },
+    {
       "name": "library-page",
       "type": "registry:block",
       "title": "Library Page",

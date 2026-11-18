@@ -290,6 +290,24 @@
       "dependencies": [],
       "registryDependencies": ["breadcrumb", "collapsible", "separator", "sidebar"],
       "sha1": "4070013aa734013b1445af0dc2d04d5064ad4f77"
+    },
+    "sidebar-13": {
+      "files": [
+        {
+          "path": "components/settings-dialog.tsx",
+          "type": "registry:component",
+          "exports": ["SettingsDialog"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "button", "dialog", "sidebar"],
+      "sha1": "435aa5d417c0fe285cced34c002dedeb8ee99ff1"
     }
   }
 }

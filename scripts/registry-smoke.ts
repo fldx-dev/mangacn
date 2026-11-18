@@ -381,6 +381,17 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function AppSidebar(", "function Tree("],
     },
   ],
+  // sidebar-13 shares the route only: its shell is a settings dialog of its own.
+  "sidebar-13": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { SettingsDialog } from "@/components/settings-dialog"',
+        "Reader settings",
+      ],
+    },
+    { file: "components/settings-dialog.tsx", includes: ["export function SettingsDialog("] },
+  ],
   // A page block inside another's shell: sidebar-07 arrives as a dependency (its route at
   // app/dashboard too), and the page reaches its app-sidebar by install path.
   "library-page": [
