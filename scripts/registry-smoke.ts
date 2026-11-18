@@ -437,6 +437,26 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/settings-dialog.tsx", includes: ["export function SettingsDialog("] },
   ],
+  // sidebar-12 shares sidebar-07's route and app-sidebar, nav-user: checked after its own add.
+  "sidebar-12": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"', "Release schedule"],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { DatePicker } from "./date-picker"'],
+    },
+    { file: "components/calendars.tsx", includes: ["export function Calendars("] },
+    {
+      file: "components/date-picker.tsx",
+      includes: [
+        "export function DatePicker(",
+        'import { Calendar } from "@/components/ui/calendar"',
+      ],
+    },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+  ],
   // A page block inside another's shell: sidebar-07 arrives as a dependency (its route at
   // app/dashboard too), and the page reaches its app-sidebar by install path.
   "library-page": [

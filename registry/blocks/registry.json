@@ -829,6 +829,54 @@
           "target": "@components/series-header.tsx"
         }
       ]
+    },
+    {
+      "name": "sidebar-12",
+      "type": "registry:block",
+      "title": "Sidebar 12",
+      "description": "A schedule shell whose sidebar holds a month calendar: the editor's account menu, a date picker and the studio's collapsible calendars, beside a month of blank manga panels; stock's sidebar-12 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/calendar.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-12/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-12/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-12/components/calendars.tsx",
+          "type": "registry:component",
+          "target": "@components/calendars.tsx"
+        },
+        {
+          "path": "sidebar-12/components/date-picker.tsx",
+          "type": "registry:component",
+          "target": "@components/date-picker.tsx"
+        },
+        {
+          "path": "sidebar-12/components/nav-user.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-user.tsx"
+        }
+      ]
     }
   ]
 }

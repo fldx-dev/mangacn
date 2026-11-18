@@ -395,6 +395,47 @@
         "sidebar"
       ],
       "sha1": "e8c0e826f26f65ae2518ae74d0a1a33197df85be"
+    },
+    "sidebar-12": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/calendars.tsx",
+          "type": "registry:component",
+          "exports": ["Calendars"]
+        },
+        {
+          "path": "components/date-picker.tsx",
+          "type": "registry:component",
+          "exports": ["DatePicker"]
+        },
+        {
+          "path": "components/nav-user.tsx",
+          "type": "registry:component",
+          "exports": ["NavUser"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "calendar",
+        "collapsible",
+        "dropdown-menu",
+        "separator",
+        "sidebar"
+      ],
+      "sha1": "72b3879be8d137f5d3f3d87543029ac02ab53419"
     }
   }
 }

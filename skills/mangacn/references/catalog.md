@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 120 items in the registry. Each line gives the item's name, what it is, the one
+All 121 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -395,6 +395,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `sidebar-11`: An app shell with a file tree: a chapter's changed files with their state, then its folders, opening on the page being drawn, beside that page's blank manga panels; stock's sidebar-11 in ink.
   Install: `npx shadcn@latest add @mangacn/sidebar-11 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/sidebar-11 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-11.md)
+- `sidebar-12`: A schedule shell whose sidebar holds a month calendar: the editor's account menu, a date picker and the studio's collapsible calendars, beside a month of blank manga panels; stock's sidebar-12 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-12 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-12 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-12.md)
 - `sidebar-13`: A sidebar inside a settings dialog: a manga reader's settings sections beside the open section's blank manga panels, opened from the page's button; stock's sidebar-13 in ink.
   Install: `npx shadcn@latest add @mangacn/sidebar-13 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/sidebar-13 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-13.md)

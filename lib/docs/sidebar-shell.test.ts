@@ -11,6 +11,7 @@ describe("sidebarShells", () => {
       "sidebar-09",
       "sidebar-10",
       "sidebar-11",
+      "sidebar-12",
       "sidebar-13",
     ]);
   });
