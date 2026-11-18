@@ -224,6 +224,16 @@ export default defineConfig({
         find: /^@\/components\/ui\/avatar$/,
         replacement: fileURLToPath(new URL("./registry/ui/avatar/avatar.tsx", import.meta.url)),
       },
+      // sidebar-09 (Task 120): its one item not mapped yet.
+      {
+        find: /^@\/components\/ui\/switch$/,
+        replacement: fileURLToPath(new URL("./registry/ui/switch/switch.tsx", import.meta.url)),
+      },
+      // sidebar-10 (Task 120): its one item not mapped yet.
+      {
+        find: /^@\/components\/ui\/popover$/,
+        replacement: fileURLToPath(new URL("./registry/ui/popover/popover.tsx", import.meta.url)),
+      },
       {
         find: /^@\/components\/panel$/,
         replacement: fileURLToPath(new URL("./registry/ui/panel/panel.tsx", import.meta.url)),

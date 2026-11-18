@@ -1,0 +1,20 @@
+---
+title: Sidebar 13
+description: "A sidebar inside a settings dialog: a manga reader's settings sections beside the open section's blank manga panels, opened from the page's button; stock's sidebar-13 in ink."
+item: sidebar-13
+skipDemos: ["default"]
+---
+
+<InstallCommand item="sidebar-13" />
+
+<ItemFiles item="sidebar-13" />
+
+<CopyPrompt item="sidebar-13" />
+
+Stock's settings dialog with a sidebar inside, in ink, with stock's two files and exports: one add writes `app/dashboard/page.tsx` and `components/settings-dialog.tsx`, where shadcn's sidebar-13 puts them. The page's button opens a mangacn [Dialog](/docs/components/dialog) that holds focus until it closes; in it a [Sidebar](/docs/components/sidebar) that does not collapse, a navigation landmark named "Settings sections", lists a manga reader's settings from the `md` breakpoint up, as stock's does, beside the open section's blank [panels](/docs/components/panel). The page stays one `main` with an `h1`: the dialog's content column is a `div` where stock nests a second `main`, and the dialog opens from the button rather than on load. It writes the same route as the other sidebar blocks, so adding it replaces their page.
+
+The page is a server component and `settings-dialog.tsx` is a client component, as in stock's block.
+
+## Preview
+
+<BlockPreview item="sidebar-13" />

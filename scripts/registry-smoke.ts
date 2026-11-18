@@ -349,6 +349,94 @@ export const EXPECTED_CONTENT: Record<
     { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
     { file: "components/team-switcher.tsx", includes: ["export function TeamSwitcher("] },
   ],
+  // sidebar-08 shares sidebar-07's route and app-sidebar, nav-main, nav-projects and nav-user.
+  "sidebar-08": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        "Volume 3: Paper lanterns",
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { NavSecondary } from "./nav-secondary"'],
+    },
+    {
+      file: "components/nav-main.tsx",
+      includes: ["export function NavMain(", "Toggle {item.title}"],
+    },
+    { file: "components/nav-projects.tsx", includes: ["export function NavProjects("] },
+    { file: "components/nav-secondary.tsx", includes: ["export function NavSecondary("] },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+  ],
+  // sidebar-09 shares the route, app-sidebar and nav-user: two nested sidebars in app-sidebar.
+  "sidebar-09": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        '"--sidebar-width": "350px"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: [
+        "export function AppSidebar(",
+        'import { NavUser } from "./nav-user"',
+        'aria-label="Mailboxes"',
+      ],
+    },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+  ],
+  // sidebar-10 shares the route and app-sidebar, nav-main, nav-secondary and team-switcher.
+  "sidebar-10": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        'import { NavActions } from "@/components/nav-actions"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { NavWorkspaces } from "./nav-workspaces"'],
+    },
+    { file: "components/nav-actions.tsx", includes: ["export function NavActions("] },
+    { file: "components/nav-favorites.tsx", includes: ["export function NavFavorites("] },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain("] },
+    {
+      file: "components/nav-secondary.tsx",
+      includes: ["export function NavSecondary(", "SidebarMenuBadge"],
+    },
+    { file: "components/nav-workspaces.tsx", includes: ["export function NavWorkspaces("] },
+    {
+      file: "components/team-switcher.tsx",
+      includes: ["export function TeamSwitcher(", "ChevronDownIcon"],
+    },
+  ],
+  // sidebar-11 shares the route and app-sidebar: the file tree lives in app-sidebar itself.
+  "sidebar-11": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"', "Chapter 12, page 2"],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "function Tree("],
+    },
+  ],
+  // sidebar-13 shares the route only: its shell is a settings dialog of its own.
+  "sidebar-13": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { SettingsDialog } from "@/components/settings-dialog"',
+        "Reader settings",
+      ],
+    },
+    { file: "components/settings-dialog.tsx", includes: ["export function SettingsDialog("] },
+  ],
   // A page block inside another's shell: sidebar-07 arrives as a dependency (its route at
   // app/dashboard too), and the page reaches its app-sidebar by install path.
   "library-page": [
