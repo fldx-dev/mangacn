@@ -7,7 +7,7 @@ import { hydrateAfterReveal, waitForInk } from "./ready";
 // are e2e/blocks.spec.ts's. Here: each sidebar collapses with Ctrl/⌘+B and with the trigger,
 // becomes a sheet at 360, and names every navigation landmark, each name once.
 
-const LANE = ["sidebar-08"] as const;
+const LANE = ["sidebar-08", "sidebar-11"] as const;
 
 const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
 

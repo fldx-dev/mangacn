@@ -370,6 +370,17 @@ export const EXPECTED_CONTENT: Record<
     { file: "components/nav-secondary.tsx", includes: ["export function NavSecondary("] },
     { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
   ],
+  // sidebar-11 shares the route and app-sidebar: the file tree lives in app-sidebar itself.
+  "sidebar-11": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"', "Chapter 12, page 2"],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "function Tree("],
+    },
+  ],
   // A page block inside another's shell: sidebar-07 arrives as a dependency (its route at
   // app/dashboard too), and the page reaches its app-sidebar by install path.
   "library-page": [
