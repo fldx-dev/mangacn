@@ -516,6 +516,34 @@
       ]
     },
     {
+      "name": "sidebar-14",
+      "type": "registry:block",
+      "title": "Sidebar 14",
+      "description": "A handbook page with its table of contents in a sidebar on the right, every section with its pages beneath it, beside a chapter's blank manga panels; stock's sidebar-14 in ink, server-only.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-14/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-14/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        }
+      ]
+    },
+    {
       "name": "library-page",
       "type": "registry:block",
       "title": "Library Page",

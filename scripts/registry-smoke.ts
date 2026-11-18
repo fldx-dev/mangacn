@@ -352,6 +352,20 @@ export const EXPECTED_CONTENT: Record<
     { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
     { file: "components/team-switcher.tsx", includes: ["export function TeamSwitcher("] },
   ],
+  // Server-only: neither file has a client directive.
+  "sidebar-14": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        '<AppSidebar side="right" />',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "Table of Contents"],
+    },
+  ],
   // A page block inside another's shell: sidebar-07 arrives as a dependency (its route at
   // app/dashboard too), and the page reaches its app-sidebar by install path.
   "library-page": [
