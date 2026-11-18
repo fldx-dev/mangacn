@@ -2577,6 +2577,150 @@
       }
     ]
   },
+  "rating": {
+    "RatingProps": [
+      {
+        "id": "rating.tsx-RatingProps",
+        "name": "RatingProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The rating, controlled.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The rating it starts with, uncontrolled.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "0"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with the new rating when a star is chosen.",
+            "type": "((value: number) => void) | undefined",
+            "simplifiedType": "(value: number) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "max",
+            "description": "How many stars.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "5"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "step",
+            "description": "The smallest change: whole stars, or half stars for pointer and keyboard.",
+            "type": "0.5 | 1 | undefined",
+            "simplifiedType": "0.5 | 1",
+            "tags": [
+              {
+                "name": "default",
+                "text": "1"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "readOnly",
+            "description": "Shows the rating as one image, with no focus and no input.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "disabled",
+            "description": "Shows the stars without letting them change.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "The form field name; the rating posts with a plain `<form>`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "The star size; `default` and `lg` keep a 44 px hit area per star.",
+            "type": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "simplifiedType": "\"default\" | \"lg\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"default\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "icon",
+            "description": "The icon drawn for each star; lucide's `Star` by default.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "Each radio's name and the read-only image's name.",
+            "type": "Partial<{ item: (n: number, max: number) => string; readOnly: (value: number, max: number) => string; }> | undefined",
+            "simplifiedType": "Partial<{ item: (n: number, max: number) => string; readOnly: (value: number, max: number) => string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ item: (n, max) => `${n} of ${max} stars`, readOnly: (value, max) => `Rated ${value} out of ${max}` }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "reader": {
     "ReaderChapter": [
       {

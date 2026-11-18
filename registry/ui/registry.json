@@ -1828,6 +1828,24 @@
       ]
     },
     {
+      "name": "rating",
+      "type": "registry:ui",
+      "title": "Rating",
+      "description": "Outlined ink stars, full or half filled: a radio group with roving focus when interactive, one named image when read-only.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "files": [
+        {
+          "path": "rating/rating.tsx",
+          "type": "registry:ui",
+          "target": "@ui/rating.tsx"
+        }
+      ]
+    },
+    {
       "name": "copy-button",
       "type": "registry:ui",
       "title": "Copy Button",

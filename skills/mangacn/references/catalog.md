@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 138 items in the registry. Each line gives the item's name, what it is, the one
+All 139 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -263,6 +263,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 
 ## Display
 
+- `rating`: Outlined ink stars, full or half filled: a radio group with roving focus when interactive, one named image when read-only.
+  Install: `npx shadcn@latest add @mangacn/rating --overwrite`
+  Docs: https://www.mangacn.com/docs/components/rating (Markdown: https://www.mangacn.com/docs/components/rating.md)
 - `copy-button`: An icon button that copies a value, says Copied once in a polite live region and shows failed without the Clipboard API.
   Install: `npx shadcn@latest add @mangacn/copy-button --overwrite`
   Docs: https://www.mangacn.com/docs/components/copy-button (Markdown: https://www.mangacn.com/docs/components/copy-button.md)
