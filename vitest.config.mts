@@ -85,6 +85,19 @@ export default defineConfig({
           new URL("./registry/ui/manga-frame/manga-frame.tsx", import.meta.url),
         ),
       },
+      // login-02 (Task 116): the cover panel's other two items.
+      {
+        find: /^@\/components\/focus-lines$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/focus-lines/focus-lines.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/halftone-background$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/halftone-background/halftone-background.tsx", import.meta.url),
+        ),
+      },
       {
         find: /^@\/components\/page-number$/,
         replacement: fileURLToPath(

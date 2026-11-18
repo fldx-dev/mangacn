@@ -231,6 +231,21 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/login-form.tsx", includes: ["export function LoginForm("] },
   ],
+  // login-02 shares login-01's paths: the full smoke checks it right after its own add.
+  "login-02": [
+    {
+      file: "app/login/page.tsx",
+      includes: [
+        'import { LoginForm } from "@/components/login-form"',
+        'import { MangaFrame } from "@/components/manga-frame"',
+        "Inkpot Studio",
+      ],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: ["export function LoginForm(", "<FieldSeparator>Or continue with</FieldSeparator>"],
+    },
+  ],
   "signup-01": [
     {
       file: "app/signup/page.tsx",

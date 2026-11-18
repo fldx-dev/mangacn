@@ -54,6 +54,10 @@
       "@/components/ui/progress": ["./registry/ui/progress/progress.tsx"],
       "@/components/blocks/*": ["./registry/blocks/*"],
       "@/components/ui/field": ["./registry/ui/field/field.tsx"],
+      "@/components/focus-lines": ["./registry/ui/focus-lines/focus-lines.tsx"],
+      "@/components/halftone-background": [
+        "./registry/ui/halftone-background/halftone-background.tsx"
+      ],
       "@/components/ui/sidebar": ["./registry/ui/sidebar/sidebar.tsx"],
       "@/components/ui/breadcrumb": ["./registry/ui/breadcrumb/breadcrumb.tsx"],
       "@/components/ui/collapsible": ["./registry/ui/collapsible/collapsible.tsx"],
