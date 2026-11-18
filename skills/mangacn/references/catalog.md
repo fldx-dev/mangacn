@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 140 items in the registry. Each line gives the item's name, what it is, the one
+All 141 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -269,6 +269,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `copy-button`: An icon button that copies a value, says Copied once in a polite live region and shows failed without the Clipboard API.
   Install: `npx shadcn@latest add @mangacn/copy-button --overwrite`
   Docs: https://www.mangacn.com/docs/components/copy-button (Markdown: https://www.mangacn.com/docs/components/copy-button.md)
+- `avatar-stack`: A row of overlapping avatars from a list of people: initials without a picture, and a +N button whose tooltip names the rest.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/avatar-stack --overwrite`
+  Docs: https://www.mangacn.com/docs/components/avatar-stack (Markdown: https://www.mangacn.com/docs/components/avatar-stack.md)
 - `banner`: A dismissible announcement bar, paper with an ink rule or solid ink, that hands focus on when it closes.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/banner --overwrite`
   Docs: https://www.mangacn.com/docs/components/banner (Markdown: https://www.mangacn.com/docs/components/banner.md)

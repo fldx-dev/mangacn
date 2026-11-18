@@ -1865,6 +1865,29 @@
       ]
     },
     {
+      "name": "avatar-stack",
+      "type": "registry:ui",
+      "title": "Avatar Stack",
+      "description": "A row of overlapping avatars from a list of people: initials without a picture, and a +N button whose tooltip names the rest.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/tooltip.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "avatar-stack/avatar-stack.tsx",
+          "type": "registry:ui",
+          "target": "@ui/avatar-stack.tsx"
+        }
+      ]
+    },
+    {
       "name": "banner",
       "type": "registry:ui",
       "title": "Banner",

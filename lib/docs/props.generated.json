@@ -1,4 +1,74 @@
 {
+  "avatar-stack": {
+    "AvatarStackProps": [
+      {
+        "id": "avatar-stack.tsx-AvatarStackProps",
+        "name": "AvatarStackProps",
+        "entries": [
+          {
+            "name": "items",
+            "description": "The people, in the order they are drawn.",
+            "type": "AvatarStackItem[]",
+            "simplifiedType": "AvatarStackItem[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "max",
+            "description": "How many avatars show before the rest fold into \"+N\".",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "4"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "Avatar's sizes; the \"+N\" button follows.",
+            "type": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "simplifiedType": "\"default\" | \"lg\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"default\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The \"+N\" button's name.",
+            "type": "Partial<{ more: (n: number) => string; }> | undefined",
+            "simplifiedType": "Partial<{ more: (n: number) => string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ more: (n) => `${n} more` }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-label",
+            "description": "Names the group. Defaults to \"{n} people\".",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "banner": {
     "BannerProps": [
       {

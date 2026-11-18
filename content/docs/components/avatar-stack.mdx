@@ -1,0 +1,28 @@
+---
+title: Avatar Stack
+description: "A row of overlapping avatars from a list of people: initials without a picture, and a +N button whose tooltip names the rest."
+item: avatar-stack
+---
+
+<InstallCommand item="avatar-stack" />
+
+<CopyPrompt item="avatar-stack" />
+
+Who is on a series, in a reading group or on a shared shelf, from a plain list of names. It
+draws [Avatar](/docs/components/avatar)'s `AvatarGroup` for you and folds everyone past `max`
+into a "+N" button; for a hand-built row, use `AvatarGroup` and `AvatarGroupCount` directly.
+
+The stack is a named group (`"{n} people"` unless you pass `aria-label`). The "+N" button follows
+the WAI-ARIA Tooltip pattern: its tooltip lists the hidden names.
+
+- Tab: focuses the "+N" button and shows the tooltip.
+- Escape: hides the tooltip.
+
+## Examples
+
+<DemoFrame item="avatar-stack" demo="default" />
+<DemoFrame item="avatar-stack" demo="max" />
+
+## Props
+
+<PropsTable item="avatar-stack" />
