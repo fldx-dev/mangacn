@@ -227,6 +227,51 @@
       "dependencies": ["cn"],
       "registryDependencies": ["button", "input", "label"],
       "sha1": "cf7ea519a9cf2c6a8a27c48932fc1f8c9d44ad48"
+    },
+    "sidebar-08": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "components/nav-main.tsx",
+          "type": "registry:component",
+          "exports": ["NavMain"]
+        },
+        {
+          "path": "components/nav-projects.tsx",
+          "type": "registry:component",
+          "exports": ["NavProjects"]
+        },
+        {
+          "path": "components/nav-secondary.tsx",
+          "type": "registry:component",
+          "exports": ["NavSecondary"]
+        },
+        {
+          "path": "components/nav-user.tsx",
+          "type": "registry:component",
+          "exports": ["NavUser"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "collapsible",
+        "dropdown-menu",
+        "separator",
+        "sidebar"
+      ],
+      "sha1": "31fbe9eb701dab7918d70fb99bdb428b4a665731"
     }
   }
 }
