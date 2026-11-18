@@ -270,6 +270,21 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function VersionSwitcher("],
     },
   ],
+  "sidebar-02": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"', "sticky top-0"],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "render={<CollapsibleTrigger />}"],
+    },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+    {
+      file: "components/version-switcher.tsx",
+      includes: ["export function VersionSwitcher("],
+    },
+  ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
     {
