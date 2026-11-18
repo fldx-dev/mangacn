@@ -30,6 +30,11 @@ const BLOCKS: Record<string, AuthBlock> = {
   },
   "signup-02": { form: "Create your account", social: ["Sign up with GitHub"], cover: 1024 },
   "signup-03": { form: "Create your account", social: [] },
+  "signup-04": {
+    form: "Create your account",
+    social: ["Sign up with Apple", "Sign up with Google", "Sign up with Meta"],
+    cover: 768,
+  },
 };
 
 const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));

@@ -87,6 +87,7 @@ export const PARITY_BLOCKS = [
   "login-05",
   "signup-02",
   "signup-03",
+  "signup-04",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";

@@ -310,6 +310,20 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function SignupForm(", 'htmlFor="confirm-password"'],
     },
   ],
+  "signup-04": [
+    {
+      file: "app/signup/page.tsx",
+      includes: ['import { SignupForm } from "@/components/signup-form"'],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: [
+        "export function SignupForm(",
+        "Sign up with Meta",
+        'import { MangaFrame } from "@/components/manga-frame"',
+      ],
+    },
+  ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
     {
