@@ -6,11 +6,14 @@ import {
   blockTarget,
   findBlockProblems,
   groupBlocks,
+  installPageSource,
   isBlock,
   isPageBlock,
   pageComponentTarget,
   pageFile,
+  type StockFamily,
 } from "./blocks";
+import { extractImportOffsets } from "./imports";
 import type { LoadedRegistry, LoadedRegistryItem } from "./index";
 
 function block(overrides: Partial<LoadedRegistryItem> = {}): LoadedRegistryItem {
@@ -218,6 +221,143 @@ describe("findBlockProblems", () => {
         ),
       ),
     ).toEqual([]);
+  });
+});
+
+describe("variants of one stock family (SPEC-components-6 §5.1)", () => {
+  // login-01 and login-02 both install stock's `app/login/page.tsx` and
+  // `components/login-form.tsx`: alternatives, as in stock. Anything else stays refused.
+  const variant = (name: string) =>
+    pageBlock({
+      name,
+      files: [
+        {
+          path: `registry/blocks/${name}/page.tsx`,
+          type: "registry:page",
+          target: "app/login/page.tsx",
+        },
+        {
+          path: `registry/blocks/${name}/components/login-form.tsx`,
+          type: "registry:component",
+          target: "@components/login-form.tsx",
+        },
+      ],
+    });
+  const stockLogin = {
+    files: [
+      { path: "components/login-form.tsx", type: "registry:component", exports: ["LoginForm"] },
+      {
+        path: "page.tsx",
+        type: "registry:page",
+        target: "app/login/page.tsx",
+        exports: ["default"],
+      },
+    ],
+  };
+  const family: StockFamily = {
+    blocks: ["login-01", "login-02"],
+    stock: { "login-01": stockLogin, "login-02": stockLogin },
+  };
+
+  it("lets two stock family variants share the paths stock's files share", () => {
+    expect(findBlockProblems(registry(variant("login-01"), variant("login-02")), family)).toEqual(
+      [],
+    );
+  });
+
+  it("refuses a shared path between a variant and a block outside PARITY_BLOCKS", () => {
+    expect(findBlockProblems(registry(variant("login-01"), variant("login-09")), family)).toEqual([
+      "login-09: registry/blocks/login-09/page.tsx installs to app/login/page.tsx, as a file of login-01 does",
+      "login-09: registry/blocks/login-09/components/login-form.tsx installs to components/login-form.tsx, as a file of login-01 does",
+    ]);
+  });
+
+  it("refuses a shared path stock's own files do not share", () => {
+    const narrow: StockFamily = {
+      blocks: family.blocks,
+      stock: { ...family.stock, "login-02": { files: [stockLogin.files[1]] } },
+    };
+    expect(findBlockProblems(registry(variant("login-01"), variant("login-02")), narrow)).toEqual([
+      "login-02: registry/blocks/login-02/components/login-form.tsx installs to components/login-form.tsx, as a file of login-01 does",
+    ]);
+  });
+
+  it("refuses a variant's file over an item's that is not a block", () => {
+    const loginForm: LoadedRegistryItem = {
+      name: "login-form",
+      type: "registry:component",
+      files: [
+        {
+          path: "registry/ui/login-form/login-form.tsx",
+          type: "registry:component",
+          target: "@components/login-form.tsx",
+        },
+      ],
+      source: "registry/ui/registry.json",
+    };
+    expect(findBlockProblems(registry(loginForm, variant("login-01")), family)).toEqual([
+      "login-01: registry/blocks/login-01/components/login-form.tsx installs to components/login-form.tsx, as a file of login-form does",
+    ]);
+  });
+});
+
+describe("installPageSource", () => {
+  const item = pageBlock({
+    files: [
+      ...pageBlock().files,
+      {
+        path: "registry/blocks/login-01/components/nav-main.tsx",
+        type: "registry:component",
+        target: "@components/nav-main.tsx",
+      },
+    ],
+  });
+  const rewrite = (source: string, of: Parameters<typeof installPageSource>[1] = item) =>
+    installPageSource(source, of, extractImportOffsets(source));
+
+  it("turns a page's ./components/<file> imports into @/components/<file>", () => {
+    expect(
+      rewrite(
+        [
+          'import { LoginForm } from "./components/login-form";',
+          "import { NavMain } from './components/nav-main';",
+          "",
+        ].join("\n"),
+      ),
+    ).toBe(
+      [
+        'import { LoginForm } from "@/components/login-form";',
+        "import { NavMain } from '@/components/nav-main';",
+        "",
+      ].join("\n"),
+    );
+  });
+
+  it("leaves every other import, comment and string alone", () => {
+    const source = [
+      'import * as React from "react";',
+      'import { Button } from "@/components/ui/button";',
+      'import { Missing } from "./components/missing";',
+      'import { Deep } from "./components/parts/deep";',
+      "// ./components/login-form",
+      'const label = "./components/login-form";',
+      "",
+    ].join("\n");
+    expect(rewrite(source)).toBe(source);
+  });
+
+  it("leaves a component file's relative imports alone (they install side by side)", () => {
+    const form = pageBlock({
+      files: [
+        {
+          path: "registry/blocks/login-01/components/login-form.tsx",
+          type: "registry:component",
+          target: "@components/login-form.tsx",
+        },
+      ],
+    });
+    const source = 'import { NavMain } from "./components/nav-main";\n';
+    expect(rewrite(source, form)).toBe(source);
   });
 });
 

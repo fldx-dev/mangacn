@@ -20,7 +20,7 @@
     "prebuild": "pnpm registry:build && pnpm gen:theme && pnpm gen:demos && pnpm gen:docs --check && pnpm gen:props --check",
     "build": "next build",
     "start": "next start",
-    "registry:build": "shadcn build --output public/r",
+    "registry:build": "shadcn build --output public/r && tsx scripts/registry-rewrite-pages.ts",
     "registry:validate": "shadcn registry validate",
     "registry:smoke": "tsx scripts/registry-smoke.ts",
     "registry:smoke:changed": "tsx scripts/registry-smoke.ts --changed",

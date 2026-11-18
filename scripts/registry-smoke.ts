@@ -231,6 +231,21 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/login-form.tsx", includes: ["export function LoginForm("] },
   ],
+  // login-02 shares login-01's paths: the full smoke checks it right after its own add.
+  "login-02": [
+    {
+      file: "app/login/page.tsx",
+      includes: [
+        'import { LoginForm } from "@/components/login-form"',
+        'import { MangaFrame } from "@/components/manga-frame"',
+        "Inkpot Studio",
+      ],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: ["export function LoginForm(", "<FieldSeparator>Or continue with</FieldSeparator>"],
+    },
+  ],
   "signup-01": [
     {
       file: "app/signup/page.tsx",
@@ -531,6 +546,68 @@ function installOrder(
   // Dependents first: visiting `button` places `dialog` and `sheet` ahead of it.
   for (const name of rest) visit(name);
   return [...first, ...order];
+}
+
+/**
+ * The items in `items` that write the same install path as another, grouped, each group in
+ * name order: variants of one stock family (`login-01`, `login-02`) are alternatives that share
+ * `app/login/page.tsx` and `components/login-form.tsx` (SPEC-components-6 §5.1). Items that share
+ * no path are in no group.
+ */
+export function installFamilies(items: readonly CatalogItem[]): string[][] {
+  const parent = new Map(items.map((item) => [item.name, item.name]));
+  const root = (name: string): string => {
+    const up = parent.get(name) ?? name;
+    return up === name ? name : root(up);
+  };
+  const writer = new Map<string, string>();
+  for (const item of items) {
+    for (const file of item.files ?? []) {
+      const target = installTarget(file);
+      const other = writer.get(target);
+      if (other === undefined) writer.set(target, item.name);
+      else parent.set(root(item.name), root(other));
+    }
+  }
+  const groups = new Map<string, string[]>();
+  for (const item of items) {
+    const key = root(item.name);
+    groups.set(key, [...(groups.get(key) ?? []), item.name]);
+  }
+  return [...groups.values()]
+    .filter((group) => group.length > 1)
+    .map((group) => group.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)));
+}
+
+/**
+ * `order` with each family's variants together, in name order, where its first variant was, and
+ * every item that declares a variant moved after that family's last one, so a variant is
+ * checked before the next overwrites it and `library-page` gets `sidebar-07`'s shell, not the
+ * last sidebar's.
+ */
+export function familyOrder(order: readonly string[], items: readonly CatalogItem[]): string[] {
+  const families = installFamilies(items.filter((item) => order.includes(item.name)));
+  const familyOf = new Map(families.flatMap((family) => family.map((name) => [name, family])));
+  const result: string[] = [];
+  for (const name of order) {
+    const family = familyOf.get(name);
+    if (!family) result.push(name);
+    else if (!result.includes(name)) result.push(...family);
+  }
+  for (const item of items) {
+    if (!result.includes(item.name) || familyOf.has(item.name)) continue;
+    const declared = (item.registryDependencies ?? []).flatMap((dep) => {
+      const family = familyOf.get(mangacnItemName(dep) ?? "");
+      return family ?? [];
+    });
+    if (declared.length === 0) continue;
+    const at = result.indexOf(item.name);
+    const last = Math.max(...declared.map((name) => result.indexOf(name)));
+    if (last < at) continue;
+    result.splice(at, 1);
+    result.splice(last, 0, item.name);
+  }
+  return result;
 }
 
 /** Stock shadcn items installed before the mangacn items, which must overwrite them. */
@@ -1171,7 +1248,9 @@ async function main() {
   }
   const selected = requested === undefined ? undefined : withDependencies(catalog.items, requested);
   const items = selected ? catalog.items.filter((item) => selected.has(item.name)) : catalog.items;
-  const names = installOrder(items, INSTALL_FIRST);
+  const names = familyOrder(installOrder(items, INSTALL_FIRST), items);
+  // A variant's files are checked right after its own add, before a sibling overwrites them.
+  const variants = new Set(installFamilies(items).flat());
   const label = selected ? `${names.length} of ${listed.length}` : `${names.length}`;
   console.log(`Smoke-installing ${label} item(s): ${names.join(", ")}`);
   // The overwrite check needs the three stock items it pre-installs and the page that uses them.
@@ -1205,6 +1284,7 @@ async function main() {
     }
 
     const owners = new Map<string, string>();
+    const missing: string[] = [];
     for (const name of names) {
       console.log(`→ shadcn add @mangacn/${name}`);
       const before = snapshot(project);
@@ -1223,10 +1303,17 @@ async function main() {
           owners.set(file, name);
         }
       }
+      if (variants.has(name)) missing.push(...contentProblems(project, [name]));
     }
 
     console.log("→ installed content");
-    const missing = [...contentProblems(project, names), ...landingProblems(project, items)];
+    missing.push(
+      ...contentProblems(
+        project,
+        names.filter((name) => !variants.has(name)),
+      ),
+      ...landingProblems(project, items),
+    );
     if (missing.length > 0) {
       throw new SmokeError(`Installed content check failed:\n  ${missing.join("\n  ")}`);
     }

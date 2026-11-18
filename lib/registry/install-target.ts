@@ -53,6 +53,25 @@ export function dependencyFiles(name: string, registry: LoadedRegistry): string[
   return [...new Set(files)].filter((file) => !own.has(file));
 }
 
+/**
+ * The other items that write one of `name`'s own files, each with the paths it shares, in
+ * catalog order and `name`'s file order: login-02 → `[{ item: "login-01", files:
+ * ["app/login/page.tsx", "components/login-form.tsx"] }]`. Variants of one stock family are
+ * alternatives (SPEC-components-6 §5.1): installing one replaces the other's files.
+ */
+export function sharedInstallTargets(
+  name: string,
+  registry: LoadedRegistry,
+): { item: string; files: string[] }[] {
+  const own = registry.items.find((item) => item.name === name)?.files.map(installTarget) ?? [];
+  return registry.items.flatMap((item) => {
+    if (item.name === name) return [];
+    const theirs = new Set(item.files.map(installTarget));
+    const files = own.filter((file) => theirs.has(file));
+    return files.length > 0 ? [{ item: item.name, files }] : [];
+  });
+}
+
 /** A file path as a `@/` import specifier: `components/ui/button.tsx` → `@/components/ui/button`. */
 export function importSpecifier(file: string): string {
   return `@/${file.replace(/\.(tsx?|jsx?)$/, "")}`;

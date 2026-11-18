@@ -46,3 +46,23 @@ describe("itemFilesMarkdown", () => {
     expect(itemFilesMarkdown("ink-frame")).toBe("\n**Files:** `components/ink-frame.tsx`.\n\n");
   });
 });
+
+describe("a variant of a stock family", () => {
+  // SPEC-components-6 §5.1: login-01 and login-02 write the same two paths.
+  it("names the shipped blocks whose files it replaces", () => {
+    const { container } = render(<ItemFiles item="login-02" />);
+    expect(container.textContent).toMatch(
+      / Replaces app\/login\/page\.tsx and components\/login-form\.tsx from login-01\.$/,
+    );
+    cleanup();
+    render(<ItemFiles item="login-01" />);
+    expect(document.body.textContent).toMatch(/ from login-02\.$/);
+  });
+
+  it("says the same in Markdown, and nothing for a block that shares no path", () => {
+    expect(itemFilesMarkdown("login-02")).toMatch(
+      / Replaces `app\/login\/page\.tsx` and `components\/login-form\.tsx` from `login-01`\.\n\n$/,
+    );
+    expect(itemFilesMarkdown("chapter-list")).not.toContain("Replaces");
+  });
+});

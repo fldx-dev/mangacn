@@ -85,6 +85,19 @@ export default defineConfig({
           new URL("./registry/ui/manga-frame/manga-frame.tsx", import.meta.url),
         ),
       },
+      // login-02 (Task 116): the cover panel's other two items.
+      {
+        find: /^@\/components\/focus-lines$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/focus-lines/focus-lines.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/halftone-background$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/halftone-background/halftone-background.tsx", import.meta.url),
+        ),
+      },
       {
         find: /^@\/components\/page-number$/,
         replacement: fileURLToPath(
@@ -184,26 +197,13 @@ export default defineConfig({
         find: /^@\/components\/ui\/progress$/,
         replacement: fileURLToPath(new URL("./registry/ui/progress/progress.tsx", import.meta.url)),
       },
-      // login-01 (Task 98): field, and the page's own form at its install path.
+      // login-01 (Task 98): field; its page imports its own form relatively.
       {
         find: /^@\/components\/ui\/field$/,
         replacement: fileURLToPath(new URL("./registry/ui/field/field.tsx", import.meta.url)),
       },
-      {
-        find: /^@\/components\/login-form$/,
-        replacement: fileURLToPath(
-          new URL("./registry/blocks/login-01/components/login-form.tsx", import.meta.url),
-        ),
-      },
-      // signup-01 (Task 104): the page's own form at its install path.
-      {
-        find: /^@\/components\/signup-form$/,
-        replacement: fileURLToPath(
-          new URL("./registry/blocks/signup-01/components/signup-form.tsx", import.meta.url),
-        ),
-      },
-      // sidebar-07 (Task 105): its items, and the page's five component files at their install
-      // paths (the components import each other relatively; the page reaches app-sidebar).
+      // sidebar-07 (Task 105): its items. Its page imports its own components relatively; the one
+      // alias left is app-sidebar, which library-page reaches at its install path.
       {
         find: /^@\/components\/ui\/sidebar$/,
         replacement: fileURLToPath(new URL("./registry/ui/sidebar/sidebar.tsx", import.meta.url)),
@@ -232,30 +232,6 @@ export default defineConfig({
         find: /^@\/components\/app-sidebar$/,
         replacement: fileURLToPath(
           new URL("./registry/blocks/sidebar-07/components/app-sidebar.tsx", import.meta.url),
-        ),
-      },
-      {
-        find: /^@\/components\/nav-main$/,
-        replacement: fileURLToPath(
-          new URL("./registry/blocks/sidebar-07/components/nav-main.tsx", import.meta.url),
-        ),
-      },
-      {
-        find: /^@\/components\/nav-projects$/,
-        replacement: fileURLToPath(
-          new URL("./registry/blocks/sidebar-07/components/nav-projects.tsx", import.meta.url),
-        ),
-      },
-      {
-        find: /^@\/components\/nav-user$/,
-        replacement: fileURLToPath(
-          new URL("./registry/blocks/sidebar-07/components/nav-user.tsx", import.meta.url),
-        ),
-      },
-      {
-        find: /^@\/components\/team-switcher$/,
-        replacement: fileURLToPath(
-          new URL("./registry/blocks/sidebar-07/components/team-switcher.tsx", import.meta.url),
         ),
       },
       // library-page (Task 110): empty, and the page's two component files at their install paths
