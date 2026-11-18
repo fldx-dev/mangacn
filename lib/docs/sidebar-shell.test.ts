@@ -3,7 +3,18 @@ import { isSidebarShell, sidebarShells } from "./sidebar-shell";
 
 describe("sidebarShells", () => {
   it("is the sidebar and the blocks that install it", () => {
-    expect([...sidebarShells()].sort()).toEqual(["library-page", "sidebar", "sidebar-07"]);
+    expect([...sidebarShells()].sort()).toEqual([
+      "library-page",
+      "sidebar",
+      "sidebar-01",
+      "sidebar-02",
+      "sidebar-03",
+      "sidebar-04",
+      "sidebar-05",
+      "sidebar-06",
+      "sidebar-07",
+      "sidebar-14",
+    ]);
   });
 
   it("reads registryDependencies by mangacn URL, not by name", () => {
