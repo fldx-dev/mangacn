@@ -2396,6 +2396,94 @@
       }
     ]
   },
+  "password-input": {
+    "PasswordInputProps": [
+      {
+        "id": "password-input.tsx-PasswordInputProps",
+        "name": "PasswordInputProps",
+        "entries": [
+          {
+            "name": "visible",
+            "description": "Whether the password shows as plain text, controlled.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultVisible",
+            "description": "Whether the password starts shown, uncontrolled.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onVisibleChange",
+            "description": "Called with the new visibility when the toggle is pressed.",
+            "type": "((visible: boolean) => void) | undefined",
+            "simplifiedType": "(visible: boolean) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "showStrength",
+            "description": "Shows the four-segment strength meter and its word under the field.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "strength",
+            "description": "Scores a password from 0 to 4, replacing `getPasswordStrength`.",
+            "type": "((value: string) => Strength) | undefined",
+            "simplifiedType": "(value: string) => Strength",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The toggle's name and title, and the five strength words (0 to 4).",
+            "type": "Partial<{ show: string; hide: string; strength: StrengthLabels; }> | undefined",
+            "simplifiedType": "Partial<{ show: string; hide: string; strength: StrengthLabels; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ show: \"Show password\", hide: \"Hide password\", strength: [\"Too weak\", \"Weak\", \"Fair\", \"Good\", \"Strong\"] }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the root, which fills its container.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "power-gauge": {
     "PowerGaugeProps": [
       {

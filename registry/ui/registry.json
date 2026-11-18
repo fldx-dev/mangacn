@@ -1759,6 +1759,28 @@
       ]
     },
     {
+      "name": "password-input",
+      "type": "registry:ui",
+      "title": "Password Input",
+      "description": "A password field with a show / hide toggle in one hand-drawn input group and an optional four-segment strength meter.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/input-group.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "password-input/password-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/password-input.tsx"
+        }
+      ]
+    },
+    {
       "name": "color-picker",
       "type": "registry:ui",
       "title": "Color Picker",
