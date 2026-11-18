@@ -1,5 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import catalog from "@/registry/blocks/registry.json";
 import { ItemFiles, itemFilesMarkdown } from "./item-files";
 
 afterEach(cleanup);
@@ -48,20 +49,35 @@ describe("itemFilesMarkdown", () => {
 });
 
 describe("a variant of a stock family", () => {
-  // SPEC-components-6 §5.1: login-01 and login-02 write the same two paths.
-  it("names the shipped blocks whose files it replaces", () => {
+  // SPEC-components-6 §5.1: the login-0N variants write the same two paths, so each page names
+  // the others in one sentence, read from the catalog.
+  const logins = (catalog as { items: { name: string }[] }).items
+    .map((item) => item.name)
+    .filter((name) => /^login-\d+$/.test(name));
+  const prose = (names: string[]) =>
+    names.length < 2 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+
+  it("names the shipped blocks whose files it replaces, in one sentence", () => {
+    expect(logins.length).toBeGreaterThan(2);
     const { container } = render(<ItemFiles item="login-02" />);
-    expect(container.textContent).toMatch(
-      / Replaces app\/login\/page\.tsx and components\/login-form\.tsx from login-01\.$/,
-    );
+    const others = prose(logins.filter((name) => name !== "login-02"));
+    expect(
+      container.textContent?.endsWith(
+        ` Replaces app/login/page.tsx and components/login-form.tsx from ${others}.`,
+      ),
+    ).toBe(true);
+    expect(container.querySelectorAll("[data-slot=item-files-replaces]")).toHaveLength(1);
     cleanup();
     render(<ItemFiles item="login-01" />);
-    expect(document.body.textContent).toMatch(/ from login-02\.$/);
+    expect(document.body.textContent).toContain(
+      ` from ${prose(logins.filter((name) => name !== "login-01"))}.`,
+    );
   });
 
   it("says the same in Markdown, and nothing for a block that shares no path", () => {
-    expect(itemFilesMarkdown("login-02")).toMatch(
-      / Replaces `app\/login\/page\.tsx` and `components\/login-form\.tsx` from `login-01`\.\n\n$/,
+    const others = prose(logins.filter((name) => name !== "login-02").map((name) => `\`${name}\``));
+    expect(itemFilesMarkdown("login-02")).toContain(
+      ` Replaces \`app/login/page.tsx\` and \`components/login-form.tsx\` from ${others}.\n\n`,
     );
     expect(itemFilesMarkdown("chapter-list")).not.toContain("Replaces");
   });
