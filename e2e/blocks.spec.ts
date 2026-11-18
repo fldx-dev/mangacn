@@ -1,19 +1,21 @@
 import { resolve } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
+import { DOCUMENT_END_ID } from "../components/docs/page-end";
 import { BLOCKS_CATALOG, docItems } from "../lib/docs/catalog";
+import { isSidebarShell } from "../lib/docs/sidebar-shell";
 import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
 import { demoEntries, pageEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
 import { AXE_DISABLED_RULES } from "../lib/test/axe-rules";
 import { paintInkFillsAsCss } from "./ink-fills";
-import { waitForInk } from "./ready";
+import { hydrateAfterReveal, waitForInk } from "./ready";
+import { comparePixels, shoot } from "./shoot";
 
 // Page blocks on their own (`/view/<block>`, app/view/[block]) at each project's width, light
 // and dark, with the waits and axe pass of the demo stages (e2e/demos.spec.ts); then the Blocks
 // index and a page block's framed preview. Baselines are Linux-only (CI); elsewhere the pages
 // are loaded and checked without pixels.
-const comparePixels = process.platform === "linux";
 
 type AxeResults = Awaited<ReturnType<AxeBuilder["analyze"]>>;
 
@@ -54,6 +56,8 @@ for (const { block } of views) {
   for (const mode of ["light", "dark"] as const) {
     test(`${block} view (${mode})`, async ({ page }) => {
       const errors = collectErrors(page);
+      // The page hydrates, never renders anew on the client: one wobble per shot.
+      await hydrateAfterReveal(page);
       const response = await page.goto(`/view/${block}${mode === "dark" ? "?mode=dark" : ""}`);
       expect(response?.status()).toBe(200);
       await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
@@ -61,11 +65,18 @@ for (const { block } of views) {
       await waitForInk(page);
 
       if (comparePixels) {
-        await expect(page).toHaveScreenshot(`${block}-view-${mode}.png`, { fullPage: true });
+        await shoot(page, `${block}-view-${mode}.png`, { fullPage: true });
       }
       await expectNoOverflow(page);
 
       if (mode === "light") {
+        // The first-frame hold reaches this route too (components/docs/page-end.tsx): the head
+        // as served has the expect link once, so the page streams in before the first frame.
+        const html = await (await page.request.get(`/view/${block}`)).text();
+        const head = html.slice(0, html.indexOf("<body"));
+        const link = `<link rel="expect" href="#${DOCUMENT_END_ID}" blocking="render"/>`;
+        expect(head.split(link).length - 1, "one expect link in the head").toBe(1);
+
         // A whole page: one main, one h1 opening the heading order, every form named.
         await expect(page.getByRole("main")).toHaveCount(1);
         await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
@@ -166,6 +177,11 @@ if (checkIndex) {
       const content = await (await frame.elementHandle())?.contentFrame();
       if (!content) throw new Error(`No frame for /view/${block}`);
       await expect(content.locator("html")).toHaveAttribute("data-demo-ready", "true");
+      // A sidebar shell keeps the desktop width in a 1280 px window's column (MANGA-19).
+      if (isSidebarShell(block) && test.info().project.name === "w1280") {
+        await expect(preview).toHaveAttribute("data-width", "desktop");
+        await expect.poll(() => content.evaluate(() => window.innerWidth)).toBe(1280);
+      }
 
       const box = preview.locator('[data-slot="block-preview-box"]');
       const boxHeight = (await box.boundingBox())?.height;

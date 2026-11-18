@@ -1,4 +1,4 @@
-import { highlightInk } from "@/lib/docs/ink-highlight";
+import { highlightCode } from "@/registry/hooks/lib/highlighter";
 import {
   CodeBlock,
   CodeBlockActions,
@@ -9,8 +9,8 @@ import {
 
 const command = "npx shadcn@latest add @mangacn/code-block --overwrite";
 
-// Highlighted once, when the module loads on the server.
-const [line] = highlightInk(command, "bash");
+// Highlighted once, when the module loads on the server, in the highlighter's default ink theme.
+const [line] = (await highlightCode(command, "bash")) ?? [command];
 
 export default function CodeBlockCommandDemo() {
   return (

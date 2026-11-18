@@ -3,6 +3,7 @@ import path from "node:path";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
+import { installedPageSource } from "@/lib/registry/page-source";
 import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
 import { SignupForm } from "./components/signup-form";
 import Page from "./page";
@@ -101,8 +102,9 @@ describe("signup-01 page", () => {
     expect(screen.getAllByRole("main")).toHaveLength(1);
   });
 
-  it("imports its form from the install path, which holds after shadcn add", () => {
-    expect(source("page.tsx")).toContain('from "@/components/signup-form"');
+  it("imports its form relatively, installed at the path that holds after shadcn add", () => {
+    expect(source("page.tsx")).toContain('from "./components/signup-form"');
+    expect(installedPageSource("signup-01")).toContain('from "@/components/signup-form"');
   });
 
   it("has no axe violations as a whole page", async () => {

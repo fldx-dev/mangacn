@@ -1,4 +1,4 @@
-import { SignupForm } from "@/components/signup-form";
+import { SignupForm } from "./components/signup-form";
 
 // Based on shadcn/ui signup-01 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-12.
 // The page is a `main`, the one landmark a sign-up page needs; the form is centred on the paper.

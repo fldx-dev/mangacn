@@ -13,7 +13,9 @@ const TARGETS = ["nd-page", "nd-home-layout"];
  */
 export function SkipLink() {
   const pathname = usePathname();
-  const [target, setTarget] = useState(TARGETS[1]);
+  // Right from the server's HTML: a link to an id the page lacks is not a skip link to axe, which
+  // then flags it as content outside any landmark until the effect below corrects it.
+  const [target, setTarget] = useState(pathname.startsWith("/docs") ? TARGETS[0] : TARGETS[1]);
   useEffect(() => {
     // Re-run on every navigation: a docs page has the article, the home and Create the main.
     void pathname;

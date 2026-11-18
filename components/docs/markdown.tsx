@@ -14,6 +14,7 @@ import {
 import { generatedProps, propsInterfaceName, typeTableToMarkdown } from "@/lib/docs/props";
 import { PROPS_DELTA, shadcnDocsUrl } from "@/lib/docs/props-delta";
 import { loadRegistry } from "@/lib/registry";
+import { groupBlocks } from "@/lib/registry/blocks";
 import { listDemos } from "@/lib/registry/demos";
 import { presetItemName } from "@/lib/registry/theme-presets";
 import type { DemoFrameProps } from "./demo-frame";
@@ -125,13 +126,17 @@ export function ComponentIndexMarkdown() {
     .join("");
 }
 
-/** Every block as a link with its description, in catalog order. */
+/** Every block as a link with its description, grouped as on the index. */
 export function BlockIndexMarkdown() {
   asMarkdown();
-  const items = docItems(loadRegistry(), listDemos(), BLOCKS_CATALOG);
-  return `\n${items
-    .map((item) => `- [${item.title}](/docs/blocks/${item.name}.md): ${item.description}`)
-    .join("\n")}\n\n`;
+  return groupBlocks(docItems(loadRegistry(), listDemos(), BLOCKS_CATALOG))
+    .map(
+      (group) =>
+        `\n## ${group.label}\n\n${group.items
+          .map((item) => `- [${item.title}](/docs/blocks/${item.name}.md): ${item.description}`)
+          .join("\n")}\n\n`,
+    )
+    .join("");
 }
 
 /** A page block's preview is the page itself, at its own URL. */

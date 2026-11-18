@@ -72,8 +72,16 @@ describe("CreatePage", () => {
     for (const name of ["Outline width", "Heavy outline", "Roughness", "Dot pitch", "Dot size"]) {
       expect(slider(choices, name)).toBeTruthy();
     }
-    expect(within(choices).getByRole("combobox", { name: /Display/ })).toBeTruthy();
-    expect(within(choices).getByRole("combobox", { name: /Dialogue/ })).toBeTruthy();
+    for (const [name, faces] of [
+      [/Display/, ["Dela Gothic One", "Reggae One"]],
+      [/Dialogue/, ["Shantell Sans", "Patrick Hand SC"]],
+    ] as const) {
+      const group = within(choices).getByRole("radiogroup", { name });
+      expect(within(group).getAllByRole("radio")).toHaveLength(faces.length);
+      for (const face of faces) {
+        expect(within(group).getByRole("radio", { name: new RegExp(face) })).toBeTruthy();
+      }
+    }
     const kits = within(choices).getByRole("radiogroup", { name: "Starter kit" });
     expect(within(kits).getAllByRole("radio")).toHaveLength(5);
     expect(within(choices).getByRole("textbox", { name: "Code" })).toHaveProperty("value", "10");
@@ -82,6 +90,38 @@ describe("CreatePage", () => {
     }
     expect(screen.getByRole("region", { name: "Preview of the chosen look" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 1, name: "Create" })).toBeTruthy();
+  });
+
+  it("sets each face's name in that face, and a picked face reaches the preview and the code", () => {
+    renderPage();
+    const names = [...rail().querySelectorAll<HTMLElement>('[data-slot="create-font-name"]')];
+    expect(names.map((name) => [name.dataset.font, name.style.fontFamily])).toEqual([
+      ["dela-gothic-one", "var(--font-display)"],
+      ["reggae-one", "var(--font-create-reggae-one)"],
+      ["shantell-sans", "var(--font-dialogue-latin)"],
+      ["patrick-hand-sc", "var(--font-create-patrick-hand-sc)"],
+    ]);
+    // The alternatives' variables are defined around the names.
+    expect(names[1].closest(".create-fonts")).not.toBeNull();
+
+    expect(surface().style.getPropertyValue("--font-display")).toBe("");
+    const display = within(rail()).getByRole("radiogroup", { name: /Display/ });
+    fireEvent.click(within(display).getByRole("radio", { name: /Reggae One/ }));
+    expect(surface().style.getPropertyValue("--font-display")).toBe(
+      "var(--font-create-reggae-one)",
+    );
+    const dialogue = within(rail()).getByRole("radiogroup", { name: /Dialogue/ });
+    fireEvent.click(within(dialogue).getByRole("radio", { name: /Patrick Hand SC/ }));
+    expect(surface().style.getPropertyValue("--font-dialogue-latin")).toBe(
+      "var(--font-create-patrick-hand-sc)",
+    );
+    expect(within(rail()).getByRole("textbox", { name: "Code" })).not.toHaveProperty("value", "10");
+    // Back to the defaults: the site's own faces again.
+    fireEvent.click(within(display).getByRole("radio", { name: /Dela Gothic One/ }));
+    fireEvent.click(within(dialogue).getByRole("radio", { name: /Shantell Sans/ }));
+    expect(surface().style.getPropertyValue("--font-display")).toBe("");
+    expect(surface().style.getPropertyValue("--font-dialogue-latin")).toBe("");
+    expect(within(rail()).getByRole("textbox", { name: "Code" })).toHaveProperty("value", "10");
   });
 
   it("puts a preset's base values and the derived tokens on the preview wrapper", () => {
@@ -210,17 +250,105 @@ describe("CreatePage", () => {
     await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
 
-  it("explains Get code until the command ships", async () => {
+  it("opens Get code on the page's code", async () => {
+    window.history.replaceState(null, "", "/create?c=111");
     renderPage();
     fireEvent.click(within(rail()).getByRole("button", { name: "Get code" }));
     const dialog = await screen.findByRole("dialog", { name: "Get code" });
-    expect(dialog.textContent).toContain("arrives with the next update");
-    expect(within(dialog).getByRole("link", { name: "Installation" }).getAttribute("href")).toBe(
-      "/docs/installation",
+    expect(dialog.querySelector('[data-slot="create-dialog-code"]')?.textContent).toBe("111");
+    expect(dialog.querySelector('[data-slot="create-command-new"]')?.textContent).toContain(
+      "/r/create/111/next.json",
     );
   });
 
   it("has no axe violations", async () => {
+    await expectNoA11yViolations(
+      <CreatePage>
+        <p>Specimen</p>
+      </CreatePage>,
+    );
+  });
+});
+
+describe("CreatePage preview tabs", () => {
+  const frame = () =>
+    document.querySelector<HTMLIFrameElement>('[data-slot="create-block"] iframe');
+
+  it("opens a page block in a frame at the current code and mode, on demand only", async () => {
+    window.history.replaceState(null, "", "/create?c=111");
+    renderPage();
+    expect(screen.getByRole("tablist", { name: "Preview page" })).toBeTruthy();
+    expect(frame()).toBeNull();
+    fireEvent.click(screen.getByRole("tab", { name: "Login" }));
+    expect(frame()?.getAttribute("src")).toBe("/view/login-01?c=111");
+    expect(frame()?.title).toBe("Login page in the chosen look");
+    await waitFor(() => expect(surface()).toBeNull());
+    // The reroll belongs to the specimen.
+    expect(screen.queryByRole("button", { name: "Reroll ink" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Dark" }));
+    expect(frame()?.getAttribute("src")).toBe("/view/login-01?c=111&mode=dark");
+    fireEvent.click(screen.getByRole("tab", { name: "Specimen" }));
+    await waitFor(() => expect(frame()).toBeNull());
+    expect(surface()).toBeTruthy();
+  });
+
+  it("sends a new code to the open frame as a message, without reloading it", async () => {
+    renderPage();
+    fireEvent.click(screen.getByRole("tab", { name: "Chat" }));
+    const target = frame()?.contentWindow;
+    if (!target) throw new Error("no frame window");
+    const post = vi.spyOn(target, "postMessage");
+    fireEvent.click(within(rail()).getByRole("button", { name: "Sepia" }));
+    await waitFor(() =>
+      expect(post).toHaveBeenCalledWith(
+        { type: "mangacn:create-code", code: "111" },
+        window.location.origin,
+      ),
+    );
+    expect(frame()?.getAttribute("src")).toBe("/demo/chat-thread/default?c=10");
+    // The frame says it listens: it gets the current code.
+    post.mockClear();
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: { type: "mangacn:create-ready" },
+          origin: window.location.origin,
+          source: target,
+        }),
+      );
+    });
+    expect(post).toHaveBeenCalledWith(
+      { type: "mangacn:create-code", code: "111" },
+      window.location.origin,
+    );
+  });
+
+  it("offers only the phone's width in a phone's column", () => {
+    const observers = stubResizeObserver();
+    renderPage();
+    fireEvent.click(screen.getByRole("tab", { name: "App shell" }));
+    observers.drawAll(1000, 640);
+    const widths = screen.getByRole("group", { name: "Preview width" });
+    expect(
+      within(widths)
+        .getAllByRole("button")
+        .map((button) => button.textContent),
+    ).toEqual(["Phone", "Tablet", "Desktop"]);
+    observers.drawAll(320, 512);
+    expect(
+      within(widths)
+        .getAllByRole("button")
+        .map((button) => button.textContent),
+    ).toEqual(["Phone"]);
+    expect(screen.getByText(/^Phone, 375 px, scaled to 85%$/)).toBeTruthy();
+  });
+
+  it("has no axe violations with a page tab open", async () => {
+    window.history.replaceState(null, "", "/create");
+    const { container } = renderPage();
+    fireEvent.click(screen.getByRole("tab", { name: "Series page" }));
+    expect(container.querySelector("iframe")).toBeTruthy();
+    cleanup();
     await expectNoA11yViolations(
       <CreatePage>
         <p>Specimen</p>

@@ -3,6 +3,7 @@ import path from "node:path";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
+import { installedPageSource } from "@/lib/registry/page-source";
 import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
 import Page from "./page";
 
@@ -126,8 +127,9 @@ describe("sidebar-07 files", () => {
     }
   });
 
-  it("imports app-sidebar from its install path, and the parts beside it relatively", () => {
-    expect(source("page.tsx")).toContain('from "@/components/app-sidebar"');
+  it("imports app-sidebar relatively, installed at its install path; the parts relatively", () => {
+    expect(source("page.tsx")).toContain('from "./components/app-sidebar"');
+    expect(installedPageSource("sidebar-07")).toContain('from "@/components/app-sidebar"');
     const appSidebar = source("components/app-sidebar.tsx");
     for (const name of COMPONENTS.slice(1)) {
       expect(appSidebar).toMatch(new RegExp(`from "\\./${name}"`));

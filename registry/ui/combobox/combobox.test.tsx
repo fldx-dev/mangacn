@@ -53,6 +53,23 @@ describe("Combobox", () => {
     expect(group?.querySelector('[data-slot="input-group-button"]')?.tagName).toBe("BUTTON");
   });
 
+  it("anchors the popup to the whole field, sized to it, not to the bare input", async () => {
+    render(<Picker open />);
+    await act(async () => {});
+    const input = screen.getByRole("combobox", { name: "Series" });
+    const group = input.closest<HTMLElement>('[data-slot="input-group"]');
+    // Base UI's Combobox.InputGroup marks its element with the popup's state; the positioner
+    // anchors to that element when there is one, so --anchor-width is the field's width.
+    expect(group?.hasAttribute("data-popup-open")).toBe(true);
+    const popup = screen
+      .getByRole("listbox")
+      .closest<HTMLElement>('[data-slot="combobox-content"]');
+    expect(popup?.classList.contains("w-(--anchor-width)")).toBe(true);
+    expect(popup?.classList.contains("max-w-(--available-width)")).toBe(true);
+    // No guessed widening for the trigger, and no min-width that would outrank the max-width.
+    expect(popup?.className).not.toMatch(/(^|\s)min-w-/);
+  });
+
   it("opens dropdown-menu's heavy paper list from the positioner, with no shadow or ring", async () => {
     render(<Picker open />);
     await act(async () => {});

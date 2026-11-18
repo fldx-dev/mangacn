@@ -2,9 +2,10 @@ import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import { type HTMLAttributes, isValidElement, type ReactNode } from "react";
+import { isSidebarShell } from "@/lib/docs/sidebar-shell";
 import { AgentsSnippet } from "./agents-snippet";
 import { BlockIndex } from "./block-index";
-import { BlockPreview } from "./block-preview";
+import { BlockPreview, type BlockPreviewProps } from "./block-preview";
 import { ComponentIndex } from "./component-index";
 import { CopyPrompt } from "./copy-prompt";
 import { DemoFrame } from "./demo-frame";
@@ -37,6 +38,11 @@ function CodeFence(props: HTMLAttributes<HTMLPreElement>) {
   );
 }
 
+/** A page block's preview, told by the registry whether the page is a sidebar app shell. */
+export function DocsBlockPreview(props: BlockPreviewProps) {
+  return <BlockPreview shell={isSidebarShell(props.item)} {...props} />;
+}
+
 // The components every docs page renders its MDX with; site components join them here.
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
@@ -44,7 +50,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     pre: CodeFence,
     AgentsSnippet,
     BlockIndex,
-    BlockPreview,
+    BlockPreview: DocsBlockPreview,
     ComponentIndex,
     CopyPrompt,
     DemoFrame,

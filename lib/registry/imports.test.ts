@@ -238,9 +238,9 @@ describe("blocks", () => {
 });
 
 describe("a page block's own files", () => {
-  // The page lands in app/<route>/ and its components in components/: the page imports them by
-  // install path (a relative path would miss after `shadcn add`), the components each other
-  // relatively (they land side by side).
+  // The page lands in app/<route>/ and its components in components/: the page imports them as
+  // `./components/<file>`, which `pnpm registry:build` rewrites to the install path, or by the
+  // install path itself; the components import each other relatively (they land side by side).
   const files = [
     {
       path: "registry/blocks/login-01/page.tsx",
@@ -262,10 +262,28 @@ describe("a page block's own files", () => {
   const none = new Set<string>();
   const [page, form] = files.map((file) => file.path);
 
-  it("lets the page import a component by its install path, not relatively", () => {
+  it("lets the page import a component as ./components/<file> or by its install path", () => {
+    expect(blockImportViolation("./components/login-form", item, page, none)).toBeNull();
     expect(blockImportViolation("@/components/login-form", item, page, none)).toBeNull();
-    expect(blockImportViolation("./components/login-form", item, page, none)).toBe(
-      "relative import that misses after install (registry/blocks/login-01/components/login-form.tsx installs to components/login-form.tsx); import @/components/login-form",
+  });
+
+  it("refuses any other relative path out of the page that misses after install", () => {
+    const nested = {
+      dependencies: [],
+      files: [
+        files[0],
+        {
+          path: "registry/blocks/login-01/components/parts/login-form.tsx",
+          type: "registry:component",
+          target: "@components/parts/login-form.tsx",
+        },
+      ],
+    };
+    expect(blockImportViolation("./components/parts/login-form", nested, page, none)).toBe(
+      "relative import that misses after install (registry/blocks/login-01/components/parts/login-form.tsx installs to components/parts/login-form.tsx); import @/components/parts/login-form",
+    );
+    expect(blockImportViolation("./components/nope", item, page, none)).toContain(
+      "relative import outside this block",
     );
   });
 
@@ -429,6 +447,61 @@ describe("a page block in another page block's shell", () => {
     expect(findRegistryDependencyProblems(registry, root)).toEqual([
       "loose: imports shell without declaring https://www.mangacn.com/r/shell.json",
     ]);
+  });
+});
+
+describe("a shell that variants of one family share", () => {
+  // SPEC-components-6 §5.1: sidebar-0N all install `components/app-sidebar.tsx`. A page that
+  // reaches the shell at its install path imports the variant it declares, not whichever
+  // variant the catalog lists first; each variant's page imports its own copy relatively.
+  const root = mkdtempSync(path.join(tmpdir(), "mangacn-family-shell-"));
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+  const write = (file: string, content: string) => {
+    mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    writeFileSync(path.join(root, file), content);
+  };
+  const pageBlock = (name: string, components: string[], registryDependencies: string[] = []) => ({
+    name,
+    type: "registry:block",
+    registryDependencies,
+    files: [
+      { path: `registry/blocks/${name}/page.tsx`, type: "registry:page", target: "app/x/page.tsx" },
+      ...components.map((file) => ({
+        path: `registry/blocks/${name}/components/${file}.tsx`,
+        type: "registry:component",
+        target: `@components/${file}.tsx`,
+      })),
+    ],
+  });
+  write(
+    "registry.json",
+    JSON.stringify({
+      items: [
+        pageBlock("shell-01", ["app-sidebar"]),
+        pageBlock("shell-07", ["app-sidebar"]),
+        pageBlock("library", [], ["https://www.mangacn.com/r/shell-07.json"]),
+      ],
+    }),
+  );
+  for (const name of ["shell-01", "shell-07"]) {
+    write(
+      `registry/blocks/${name}/page.tsx`,
+      'import { AppSidebar } from "./components/app-sidebar";\n',
+    );
+    write(`registry/blocks/${name}/components/app-sidebar.tsx`, "export const AppSidebar = 1;\n");
+  }
+  write(
+    "registry/blocks/library/page.tsx",
+    'import { AppSidebar } from "@/components/app-sidebar";\n',
+  );
+  const registry = loadRegistry(path.join(root, "registry.json"));
+
+  it("accepts each variant's relative import and the declared variant's install path", () => {
+    expect(findImportViolations(registry, root)).toEqual([]);
+  });
+
+  it("counts the install path as the variant the page declares", () => {
+    expect(findRegistryDependencyProblems(registry, root)).toEqual([]);
   });
 });
 

@@ -175,6 +175,132 @@
       ]
     },
     {
+      "name": "login-02",
+      "type": "registry:block",
+      "title": "Login 02",
+      "description": "A split-screen login page: the studio's mark and the form on paper, the title in the display face, beside a manga panel of halftone, focus lines and one sound effect; stock's login-02 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/halftone-background.json",
+        "https://www.mangacn.com/r/focus-lines.json",
+        "https://www.mangacn.com/r/sfx-text.json"
+      ],
+      "files": [
+        {
+          "path": "login-02/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "login-02/components/login-form.tsx",
+          "type": "registry:component",
+          "target": "@components/login-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "login-03",
+      "type": "registry:block",
+      "title": "Login 03",
+      "description": "A login card on tone-1 paper: Apple and Google first, then email and password, the card at the heavy outline and the title in the display face, stock's marks in ink; stock's login-03 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "login-03/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "login-03/components/login-form.tsx",
+          "type": "registry:component",
+          "target": "@components/login-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "login-04",
+      "type": "registry:block",
+      "title": "Login 04",
+      "description": "A login card with a cover panel: the form beside a manga panel of halftone, focus lines and one sound effect, three social marks in ink; stock's login-04 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/halftone-background.json",
+        "https://www.mangacn.com/r/focus-lines.json",
+        "https://www.mangacn.com/r/sfx-text.json"
+      ],
+      "files": [
+        {
+          "path": "login-04/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "login-04/components/login-form.tsx",
+          "type": "registry:component",
+          "target": "@components/login-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "login-05",
+      "type": "registry:block",
+      "title": "Login 05",
+      "description": "An email-only login: the studio's mark in ink above the title in the display face, one email field, Apple and Google in ink; stock's login-05 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "login-05/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "login-05/components/login-form.tsx",
+          "type": "registry:component",
+          "target": "@components/login-form.tsx"
+        }
+      ]
+    },
+    {
       "name": "signup-01",
       "type": "registry:block",
       "title": "Signup 01",
@@ -202,6 +328,357 @@
           "path": "signup-01/components/signup-form.tsx",
           "type": "registry:component",
           "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "signup-02",
+      "type": "registry:block",
+      "title": "Signup 02",
+      "description": "A split-screen sign-up page: the studio's mark and the form on paper, the title in the display face, beside a manga panel of halftone, focus lines and one sound effect; stock's signup-02 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/halftone-background.json",
+        "https://www.mangacn.com/r/focus-lines.json",
+        "https://www.mangacn.com/r/sfx-text.json"
+      ],
+      "files": [
+        {
+          "path": "signup-02/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-02/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "signup-03",
+      "type": "registry:block",
+      "title": "Signup 03",
+      "description": "A sign-up card on tone-1 paper: name, email and two passwords side by side, the card at the heavy outline and the title in the display face; stock's signup-03 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "signup-03/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-03/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "signup-04",
+      "type": "registry:block",
+      "title": "Signup 04",
+      "description": "A sign-up card with a cover panel: the form beside a manga panel of halftone, focus lines and one sound effect, three social marks in ink; stock's signup-04 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/halftone-background.json",
+        "https://www.mangacn.com/r/focus-lines.json",
+        "https://www.mangacn.com/r/sfx-text.json"
+      ],
+      "files": [
+        {
+          "path": "signup-04/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-04/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "signup-05",
+      "type": "registry:block",
+      "title": "Signup 05",
+      "description": "An email-only sign-up: the studio's mark in ink above the title in the display face, one email field, Apple and Google in ink; stock's signup-05 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "signup-05/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-05/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-01",
+      "type": "registry:block",
+      "title": "Sidebar 01",
+      "description": "A handbook's app shell: an edition menu, a search field and the sections as labelled groups of links, beside a chapter's blank manga panels; stock's sidebar-01 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-01/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-01/components/search-form.tsx",
+          "type": "registry:component",
+          "target": "@components/search-form.tsx"
+        },
+        {
+          "path": "sidebar-01/components/version-switcher.tsx",
+          "type": "registry:component",
+          "target": "@components/version-switcher.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-02",
+      "type": "registry:block",
+      "title": "Sidebar 02",
+      "description": "A handbook's app shell whose sections open and close: an edition menu, a search field and collapsible groups of links, beside a sticky header and a storyboard of blank manga panels; stock's sidebar-02 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-02/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-02/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-02/components/search-form.tsx",
+          "type": "registry:component",
+          "target": "@components/search-form.tsx"
+        },
+        {
+          "path": "sidebar-02/components/version-switcher.tsx",
+          "type": "registry:component",
+          "target": "@components/version-switcher.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-03",
+      "type": "registry:block",
+      "title": "Sidebar 03",
+      "description": "A handbook's app shell with submenus: every section a link with its pages beneath it on an ink guide rule, beside a chapter's blank manga panels; stock's sidebar-03 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-03/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-03/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-04",
+      "type": "registry:block",
+      "title": "Sidebar 04",
+      "description": "A handbook's app shell with a floating sidebar: a heavy-outlined paper card off the page's edge, every section with its pages beneath it, beside a chapter's blank manga panels; stock's sidebar-04 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-04/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-04/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-05",
+      "type": "registry:block",
+      "title": "Sidebar 05",
+      "description": "A handbook's app shell with collapsible submenus: a search field and sections that open and close their pages, beside a chapter's blank manga panels; stock's sidebar-05 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-05/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-05/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-05/components/search-form.tsx",
+          "type": "registry:component",
+          "target": "@components/search-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-06",
+      "type": "registry:block",
+      "title": "Sidebar 06",
+      "description": "A handbook's app shell whose sections open as menus, with the studio letter's sign-up card at the sidebar's foot, beside a chapter's blank manga panels; stock's sidebar-06 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-06/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-06/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-06/components/nav-main.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-main.tsx"
+        },
+        {
+          "path": "sidebar-06/components/sidebar-opt-in-form.tsx",
+          "type": "registry:component",
+          "target": "@components/sidebar-opt-in-form.tsx"
         }
       ]
     },
@@ -254,6 +731,249 @@
           "path": "sidebar-07/components/team-switcher.tsx",
           "type": "registry:component",
           "target": "@components/team-switcher.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-08",
+      "type": "registry:block",
+      "title": "Sidebar 08",
+      "description": "An inset app shell with a secondary nav: the studio's mark, sections whose chevrons open their links, series with their menus, support links at the foot and the editor's account menu, beside a volume's blank manga panels; stock's sidebar-08 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-08/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-08/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-08/components/nav-main.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-main.tsx"
+        },
+        {
+          "path": "sidebar-08/components/nav-projects.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-projects.tsx"
+        },
+        {
+          "path": "sidebar-08/components/nav-secondary.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-secondary.tsx"
+        },
+        {
+          "path": "sidebar-08/components/nav-user.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-user.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-09",
+      "type": "registry:block",
+      "title": "Sidebar 09",
+      "description": "Nested sidebars, mail-style: an icon rail of mailboxes and, beside it, the open mailbox's letters from a manga studio's editor, assistants and printer, with an Unreads switch and a search field; stock's sidebar-09 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/switch.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-09/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-09/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-09/components/nav-user.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-user.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-10",
+      "type": "registry:block",
+      "title": "Sidebar 10",
+      "description": "A notes-app shell: a studio switcher, main links, favourite notes and workspaces of pages in the sidebar, the note's actions in a popover in the header, beside the note's blank manga panels; stock's sidebar-10 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/popover.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-10/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-10/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-10/components/nav-actions.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-actions.tsx"
+        },
+        {
+          "path": "sidebar-10/components/nav-favorites.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-favorites.tsx"
+        },
+        {
+          "path": "sidebar-10/components/nav-main.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-main.tsx"
+        },
+        {
+          "path": "sidebar-10/components/nav-secondary.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-secondary.tsx"
+        },
+        {
+          "path": "sidebar-10/components/nav-workspaces.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-workspaces.tsx"
+        },
+        {
+          "path": "sidebar-10/components/team-switcher.tsx",
+          "type": "registry:component",
+          "target": "@components/team-switcher.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-11",
+      "type": "registry:block",
+      "title": "Sidebar 11",
+      "description": "An app shell with a file tree: a chapter's changed files with their state, then its folders, opening on the page being drawn, beside that page's blank manga panels; stock's sidebar-11 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-11/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-11/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-13",
+      "type": "registry:block",
+      "title": "Sidebar 13",
+      "description": "A sidebar inside a settings dialog: a manga reader's settings sections beside the open section's blank manga panels, opened from the page's button; stock's sidebar-13 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/dialog.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-13/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-13/components/settings-dialog.tsx",
+          "type": "registry:component",
+          "target": "@components/settings-dialog.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-14",
+      "type": "registry:block",
+      "title": "Sidebar 14",
+      "description": "A handbook page with its table of contents in a sidebar on the right, every section with its pages beneath it, beside a chapter's blank manga panels; stock's sidebar-14 in ink, server-only.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-14/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-14/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
         }
       ]
     },
@@ -360,6 +1080,197 @@
           "path": "series-page/components/series-header.tsx",
           "type": "registry:component",
           "target": "@components/series-header.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-12",
+      "type": "registry:block",
+      "title": "Sidebar 12",
+      "description": "A schedule shell whose sidebar holds a month calendar: the editor's account menu, a date picker and the studio's collapsible calendars, beside a month of blank manga panels; stock's sidebar-12 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/calendar.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-12/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-12/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-12/components/calendars.tsx",
+          "type": "registry:component",
+          "target": "@components/calendars.tsx"
+        },
+        {
+          "path": "sidebar-12/components/date-picker.tsx",
+          "type": "registry:component",
+          "target": "@components/date-picker.tsx"
+        },
+        {
+          "path": "sidebar-12/components/nav-user.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-user.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-15",
+      "type": "registry:block",
+      "title": "Sidebar 15",
+      "description": "A notebook shell between two sidebars: on the left a studio switcher, main links, favourite notes, collapsible workspaces and help links; on the right the editor's account menu, a date picker and the studio's calendars; both put away with one shortcut, beside a note of blank manga panels; stock's sidebar-15 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/popover.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/calendar.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-15/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-15/components/calendars.tsx",
+          "type": "registry:component",
+          "target": "@components/calendars.tsx"
+        },
+        {
+          "path": "sidebar-15/components/date-picker.tsx",
+          "type": "registry:component",
+          "target": "@components/date-picker.tsx"
+        },
+        {
+          "path": "sidebar-15/components/nav-favorites.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-favorites.tsx"
+        },
+        {
+          "path": "sidebar-15/components/nav-main.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-main.tsx"
+        },
+        {
+          "path": "sidebar-15/components/nav-secondary.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-secondary.tsx"
+        },
+        {
+          "path": "sidebar-15/components/nav-user.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-user.tsx"
+        },
+        {
+          "path": "sidebar-15/components/nav-workspaces.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-workspaces.tsx"
+        },
+        {
+          "path": "sidebar-15/components/sidebar-left.tsx",
+          "type": "registry:component",
+          "target": "@components/sidebar-left.tsx"
+        },
+        {
+          "path": "sidebar-15/components/sidebar-right.tsx",
+          "type": "registry:component",
+          "target": "@components/sidebar-right.tsx"
+        },
+        {
+          "path": "sidebar-15/components/team-switcher.tsx",
+          "type": "registry:component",
+          "target": "@components/team-switcher.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-16",
+      "type": "registry:block",
+      "title": "Sidebar 16",
+      "description": "An app shell under a sticky site header: the header's sidebar toggle, breadcrumb and search stay above a sidebar of collapsible sections, series with their menus, help links and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-16 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-16/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-16/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-16/components/nav-main.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-main.tsx"
+        },
+        {
+          "path": "sidebar-16/components/nav-projects.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-projects.tsx"
+        },
+        {
+          "path": "sidebar-16/components/nav-secondary.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-secondary.tsx"
+        },
+        {
+          "path": "sidebar-16/components/nav-user.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-user.tsx"
+        },
+        {
+          "path": "sidebar-16/components/search-form.tsx",
+          "type": "registry:component",
+          "target": "@components/search-form.tsx"
+        },
+        {
+          "path": "sidebar-16/components/site-header.tsx",
+          "type": "registry:component",
+          "target": "@components/site-header.tsx"
         }
       ]
     }

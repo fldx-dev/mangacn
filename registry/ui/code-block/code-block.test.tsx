@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { highlightInk } from "@/lib/docs/ink-highlight";
+import { highlightCode } from "@/lib/highlighter";
 import { expectDemosAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import {
@@ -118,8 +118,8 @@ describe("CodeBlock", () => {
     expect(document.querySelector('[aria-live="polite"]')?.textContent).toBe("Copied");
   });
 
-  it("takes ink-highlighted lines from the docs' sync highlighter", () => {
-    const [line] = highlightInk("const a = 1;", "tsx");
+  it("shows the stock highlighter's lines in ink by default, from the theme's tokens", async () => {
+    const [line] = (await highlightCode("const a = 1; // one", "tsx")) ?? [];
     render(
       <CodeBlock>
         <CodeBlockContent>
@@ -130,9 +130,21 @@ describe("CodeBlock", () => {
     const tokens = document.querySelectorAll<HTMLElement>(
       '[data-slot="code-block-line"] span span',
     );
-    expect([...tokens].map((token) => token.textContent).join("")).toBe("const a = 1;");
-    expect(tokens[0]?.style.getPropertyValue("--shiki-light").toLowerCase()).toBe("#0f0d0b");
-    expect(tokens[0]?.style.getPropertyValue("--shiki-light-font-weight")).toBe("bold");
+    expect([...tokens].map((token) => token.textContent).join("")).toBe("const a = 1; // one");
+    const style = (text: string, property: string) =>
+      [...tokens]
+        .find((token) => token.textContent?.trim() === text)
+        ?.style.getPropertyValue(property);
+    // No GitHub hues: code in the foreground, the rest in the muted foreground, in both modes.
+    for (const mode of ["light", "dark"]) {
+      expect(style("const", `--shiki-${mode}`)).toBe("var(--foreground)");
+      expect(style("const", `--shiki-${mode}-font-weight`)).toBe("bold");
+      expect(style("1", `--shiki-${mode}`)).toBe("var(--foreground)");
+      expect(style("// one", `--shiki-${mode}`)).toBe("var(--muted-foreground)");
+      expect(style("// one", `--shiki-${mode}-font-style`)).toBe("italic");
+    }
+    const colours = [...tokens].map((token) => token.style.getPropertyValue("--shiki-light"));
+    expect(colours.every((colour) => /^var\(--(muted-)?foreground\)$/.test(colour))).toBe(true);
   });
 
   expectDemosAccessible(import.meta.glob("./demos/*.tsx"));

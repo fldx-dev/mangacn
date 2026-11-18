@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "./components/app-sidebar";
 import { Panel } from "@/components/panel";
 import {
   Breadcrumb,
