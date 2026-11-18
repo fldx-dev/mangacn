@@ -437,6 +437,84 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/settings-dialog.tsx", includes: ["export function SettingsDialog("] },
   ],
+  // sidebar-12 shares sidebar-07's route and app-sidebar, nav-user: checked after its own add.
+  "sidebar-12": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"', "Release schedule"],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { DatePicker } from "./date-picker"'],
+    },
+    { file: "components/calendars.tsx", includes: ["export function Calendars("] },
+    {
+      file: "components/date-picker.tsx",
+      includes: [
+        "export function DatePicker(",
+        'import { Calendar } from "@/components/ui/calendar"',
+      ],
+    },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+  ],
+  // sidebar-16 shares the route and most component names with the other sidebars.
+  "sidebar-16": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        'import { SiteHeader } from "@/components/site-header"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { NavSecondary } from "./nav-secondary"'],
+    },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain("] },
+    { file: "components/nav-projects.tsx", includes: ["export function NavProjects("] },
+    { file: "components/nav-secondary.tsx", includes: ["export function NavSecondary("] },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+    {
+      file: "components/site-header.tsx",
+      includes: ["export function SiteHeader(", 'import { SearchForm } from "./search-form"'],
+    },
+  ],
+  // sidebar-15: two sidebars, eleven files; the route and five component names are shared.
+  "sidebar-15": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { SidebarLeft } from "@/components/sidebar-left"',
+        'import { SidebarRight } from "@/components/sidebar-right"',
+      ],
+    },
+    { file: "components/calendars.tsx", includes: ["export function Calendars("] },
+    {
+      file: "components/date-picker.tsx",
+      includes: [
+        "export function DatePicker(",
+        'import { Calendar } from "@/components/ui/calendar"',
+      ],
+    },
+    { file: "components/nav-favorites.tsx", includes: ["export function NavFavorites("] },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain("] },
+    { file: "components/nav-secondary.tsx", includes: ["export function NavSecondary("] },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+    { file: "components/nav-workspaces.tsx", includes: ["export function NavWorkspaces("] },
+    {
+      file: "components/sidebar-left.tsx",
+      includes: [
+        "export function SidebarLeft(",
+        'import { NavWorkspaces } from "./nav-workspaces"',
+      ],
+    },
+    {
+      file: "components/sidebar-right.tsx",
+      includes: ["export function SidebarRight(", 'import { DatePicker } from "./date-picker"'],
+    },
+    { file: "components/team-switcher.tsx", includes: ["export function TeamSwitcher("] },
+  ],
   // A page block inside another's shell: sidebar-07 arrives as a dependency (its route at
   // app/dashboard too), and the page reaches its app-sidebar by install path.
   "library-page": [
