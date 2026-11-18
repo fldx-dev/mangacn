@@ -3438,6 +3438,163 @@
       }
     ]
   },
+  "tags-input": {
+    "TagsInputProps": [
+      {
+        "id": "tags-input.tsx-TagsInputProps",
+        "name": "TagsInputProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The tags, controlled.",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The tags it starts with, uncontrolled.",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with the new list on every add and removal.",
+            "type": "((tags: string[]) => void) | undefined",
+            "simplifiedType": "(tags: string[]) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "max",
+            "description": "The most tags it takes; one more is refused and announced.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "delimiters",
+            "description": "Keys that add the typed text as a tag; character delimiters also split a paste.",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "[\"Enter\", \",\"]"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "allowDuplicates",
+            "description": "Takes the same tag twice.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "validate",
+            "description": "Checks a tag before it is added: `false` refuses it, a string refuses it with that message.",
+            "type": "((tag: string) => boolean | string) | undefined",
+            "simplifiedType": "(tag: string) => boolean | string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "addOnPaste",
+            "description": "Splits a pasted list by the delimiters (and new lines) into tags.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "addOnBlur",
+            "description": "Adds the typed text when the input loses focus.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "disabled",
+            "description": "Turns the field and its remove buttons off.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "The form field name; one hidden input per tag posts with a plain `<form>`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The remove buttons' names, the announcements and the refusal messages.",
+            "type": "Partial<{ remove: (tag: string) => string; added: (tag: string) => string; removed: (tag: string) => string; duplicate: (tag: string) => string; limit: (max: number) => string; invalid: (tag: string) => string; }> | undefined",
+            "simplifiedType": "Partial<{ remove: (tag: string) => string; added: (tag: string) => string; removed: (tag: string) => string; duplicate: (tag: string) => string; limit: (max: number) => string; invalid: (tag: string) => string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ remove: (tag) => `Remove ${tag}`, added: (tag) => `${tag} added`, removed: (tag) => `${tag} removed`, duplicate: (tag) => `${tag} is already added`, limit: (max) => `Up to ${max} tags`, invalid: (tag) => `${tag} is not valid` }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the root, which fills its container.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "thought-bubble": {
     "ThoughtBubbleProps": [
       {

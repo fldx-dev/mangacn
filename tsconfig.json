@@ -45,6 +45,7 @@
       "@/hooks/use-highlighted-code": ["./registry/hooks/use-highlighted-code.ts"],
       "@/lib/highlighter": ["./registry/hooks/lib/highlighter.tsx"],
       "@/components/ui/input-group": ["./registry/ui/input-group/input-group.tsx"],
+      "@/components/ui/badge": ["./registry/ui/badge/badge.tsx"],
       "@/components/ui/dialog": ["./registry/ui/dialog/dialog.tsx"],
       "@/components/speech-bubble": ["./registry/ui/speech-bubble/speech-bubble.tsx"],
       "@/components/power-gauge": ["./registry/ui/power-gauge/power-gauge.tsx"],

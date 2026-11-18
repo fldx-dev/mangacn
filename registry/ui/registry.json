@@ -1737,6 +1737,28 @@
       ]
     },
     {
+      "name": "tags-input",
+      "type": "registry:ui",
+      "title": "Tags Input",
+      "description": "Free-text tags as badges in one hand-drawn field: Enter or comma adds, Backspace removes, paste splits, every change announced.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/badge.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "tags-input/tags-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/tags-input.tsx"
+        }
+      ]
+    },
+    {
       "name": "multi-select",
       "type": "registry:ui",
       "title": "Multi Select",
