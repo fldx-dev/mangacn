@@ -1,4 +1,144 @@
 {
+  "avatar-stack": {
+    "AvatarStackProps": [
+      {
+        "id": "avatar-stack.tsx-AvatarStackProps",
+        "name": "AvatarStackProps",
+        "entries": [
+          {
+            "name": "items",
+            "description": "The people, in the order they are drawn.",
+            "type": "AvatarStackItem[]",
+            "simplifiedType": "AvatarStackItem[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "max",
+            "description": "How many avatars show before the rest fold into \"+N\".",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "4"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "Avatar's sizes; the \"+N\" button follows.",
+            "type": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "simplifiedType": "\"default\" | \"lg\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"default\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The \"+N\" button's name.",
+            "type": "Partial<{ more: (n: number) => string; }> | undefined",
+            "simplifiedType": "Partial<{ more: (n: number) => string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ more: (n) => `${n} more` }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-label",
+            "description": "Names the group. Defaults to \"{n} people\".",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "banner": {
+    "BannerProps": [
+      {
+        "id": "banner.tsx-BannerProps",
+        "name": "BannerProps",
+        "entries": [
+          {
+            "name": "variant",
+            "description": "Paper with an ink rule under it, or ink with paper text. There is no spot variant: spot is\nnever a surface colour.",
+            "type": "\"default\" | \"inverted\" | undefined",
+            "simplifiedType": "\"default\" | \"inverted\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"default\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "open",
+            "description": "Whether the banner shows (controlled). Pair with `onOpenChange`.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultOpen",
+            "description": "Whether the banner shows at first (uncontrolled).",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onOpenChange",
+            "description": "Called with `false` when the close button dismisses it. Remembering a dismissal (in\n`localStorage`, say) is the app's.",
+            "type": "((open: boolean) => void) | undefined",
+            "simplifiedType": "(open: boolean) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The region's name and the close button's name.",
+            "type": "Partial<{ region: string; dismiss: string; }> | undefined",
+            "simplifiedType": "Partial<{ region: string; dismiss: string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ region: \"Announcement\", dismiss: \"Dismiss announcement\" }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "caption-box": {
     "CaptionBoxProps": [
       {
@@ -3582,6 +3722,144 @@
       }
     ]
   },
+  "stat-card": {
+    "StatCardChangeProps": [
+      {
+        "id": "stat-card.tsx-StatCardChangeProps",
+        "name": "StatCardChangeProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The change in percent, signed: `12.5` is up 12.5%, `-3` down 3%, `0` flat.",
+            "type": "number",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "goodDirection",
+            "description": "Which way is good. A change the other way is drawn in spot; a good or flat one in ink.",
+            "type": "\"down\" | \"up\" | undefined",
+            "simplifiedType": "\"down\" | \"up\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"up\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "children",
+            "description": "The period, after the number: \"vs last month\".",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The direction words screen readers hear before the number.",
+            "type": "Partial<{ up: string; down: string; flat: string; }> | undefined",
+            "simplifiedType": "Partial<{ up: string; down: string; flat: string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ up: \"up\", down: \"down\", flat: \"no change\" }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "locale",
+            "description": "The locale the percentage is formatted in, through `Intl.NumberFormat`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"en-US\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "StatCardProps": [
+      {
+        "id": "stat-card.tsx-StatCardProps",
+        "name": "StatCardProps",
+        "description": "Card's props. Label, value, change and sparkline go inside.",
+        "entries": [
+          {
+            "name": "size",
+            "description": "Card's spacing; `sm` is tighter.",
+            "type": "\"default\" | \"sm\" | undefined",
+            "simplifiedType": "\"default\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"default\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "shadow",
+            "description": "Card's shadow: none, a solid ink one or a hatched one.",
+            "type": "\"hatch\" | \"ink\" | \"none\" | undefined",
+            "simplifiedType": "\"hatch\" | \"ink\" | \"none\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"none\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "StatCardSparklineProps": [
+      {
+        "id": "stat-card.tsx-StatCardSparklineProps",
+        "name": "StatCardSparklineProps",
+        "entries": [
+          {
+            "name": "data",
+            "description": "The series, oldest first.",
+            "type": "number[]",
+            "simplifiedType": "number[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "variant",
+            "description": "A line, or a line with a tone fill under it.",
+            "type": "\"area\" | \"line\" | undefined",
+            "simplifiedType": "\"area\" | \"line\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"area\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "tags-input": {
     "TagsInputProps": [
       {
@@ -3937,6 +4215,116 @@
           {
             "name": "aria-describedby",
             "description": "Set on every segment: the field's description and error.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "tree-view": {
+    "TreeViewProps": [
+      {
+        "id": "tree-view.tsx-TreeViewProps",
+        "name": "TreeViewProps",
+        "entries": [
+          {
+            "name": "items",
+            "description": "The tree.",
+            "type": "TreeNode[]",
+            "simplifiedType": "TreeNode[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "expanded",
+            "description": "The ids of the open parents (controlled). Pair with `onExpandedChange`.",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultExpanded",
+            "description": "The ids of the parents open at first (uncontrolled).",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "[]"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onExpandedChange",
+            "description": "Called with the new list of open parents whenever one opens or closes.",
+            "type": "((ids: string[]) => void) | undefined",
+            "simplifiedType": "(ids: string[]) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "selected",
+            "description": "The selected node's id, or `null` for none (controlled). Pair with `onSelectedChange`.",
+            "type": "string | null | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultSelected",
+            "description": "The node selected at first (uncontrolled).",
+            "type": "string | null | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "null"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onSelectedChange",
+            "description": "Called with the id of the node Enter, Space or a click selects.",
+            "type": "((id: string) => void) | undefined",
+            "simplifiedType": "(id: string) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "renderLabel",
+            "description": "Draws a node's label; defaults to `node.label`.",
+            "type": "((node: TreeNode) => React.ReactNode) | undefined",
+            "simplifiedType": "(node: TreeNode) => React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-label",
+            "description": "Names the tree. Required unless `aria-labelledby` names it.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-labelledby",
+            "description": "The id of the element that names the tree, instead of `aria-label`.",
             "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],

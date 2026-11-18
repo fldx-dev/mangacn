@@ -1,0 +1,36 @@
+---
+title: Stat Card
+description: "A KPI on card's ink frame: label, a display-face value, a change read as words, spot only the bad way, and an ink sparkline."
+item: stat-card
+---
+
+<InstallCommand item="stat-card" />
+
+<CopyPrompt item="stat-card" />
+
+One number a dashboard should not bury: readers, revenue, churn. It is a
+[Card](/docs/components/card) with a label, the value in the display face, a change and an
+optional sparkline drawn through [Chart](/docs/components/chart); set them in a grid of two to
+four.
+
+The change reads as words, not as colour or an arrow alone: a screen reader hears "up 12.5% vs
+last month". It turns spot only when it goes the bad way (`goodDirection="down"` for churn). The
+sparkline is hidden from assistive tech, because the number carries the meaning. The card is a
+plain region of text with no keys of its own; to make it a link, wrap it in one.
+
+## Examples
+
+<DemoFrame item="stat-card" demo="default" />
+<DemoFrame item="stat-card" demo="grid" />
+
+## Props
+
+<PropsTable item="stat-card" />
+
+### StatCardChange
+
+<PropsTable item="stat-card" name="StatCardChangeProps" />
+
+### StatCardSparkline
+
+<PropsTable item="stat-card" name="StatCardSparklineProps" />

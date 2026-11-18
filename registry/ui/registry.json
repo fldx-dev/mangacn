@@ -1863,6 +1863,91 @@
           "target": "@ui/copy-button.tsx"
         }
       ]
+    },
+    {
+      "name": "tree-view",
+      "type": "registry:ui",
+      "title": "Tree View",
+      "description": "Nested, collapsible items from a data tree: the full APG tree keyboard, one tab stop, ink indent guides, an ink selected row.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "files": [
+        {
+          "path": "tree-view/tree-view.tsx",
+          "type": "registry:ui",
+          "target": "@ui/tree-view.tsx"
+        }
+      ]
+    },
+    {
+      "name": "stat-card",
+      "type": "registry:ui",
+      "title": "Stat Card",
+      "description": "A KPI on card's ink frame: label, a display-face value, a change read as words, spot only the bad way, and an ink sparkline.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "recharts@3.8.0", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/chart.json"
+      ],
+      "files": [
+        {
+          "path": "stat-card/stat-card.tsx",
+          "type": "registry:ui",
+          "target": "@ui/stat-card.tsx"
+        }
+      ]
+    },
+    {
+      "name": "avatar-stack",
+      "type": "registry:ui",
+      "title": "Avatar Stack",
+      "description": "A row of overlapping avatars from a list of people: initials without a picture, and a +N button whose tooltip names the rest.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/tooltip.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "avatar-stack/avatar-stack.tsx",
+          "type": "registry:ui",
+          "target": "@ui/avatar-stack.tsx"
+        }
+      ]
+    },
+    {
+      "name": "banner",
+      "type": "registry:ui",
+      "title": "Banner",
+      "description": "A dismissible announcement bar, paper with an ink rule or solid ink, that hands focus on when it closes.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "banner/banner.tsx",
+          "type": "registry:ui",
+          "target": "@ui/banner.tsx"
+        }
+      ]
     }
   ]
 }

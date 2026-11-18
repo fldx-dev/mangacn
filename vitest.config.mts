@@ -321,6 +321,11 @@ export default defineConfig({
         find: /^@\/components\/ui\/slider$/,
         replacement: fileURLToPath(new URL("./registry/ui/slider/slider.tsx", import.meta.url)),
       },
+      // stat-card (Task 130) → chart.
+      {
+        find: /^@\/components\/ui\/chart$/,
+        replacement: fileURLToPath(new URL("./registry/ui/chart/chart.tsx", import.meta.url)),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,
