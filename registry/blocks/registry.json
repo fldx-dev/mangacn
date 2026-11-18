@@ -272,6 +272,35 @@
       ]
     },
     {
+      "name": "login-05",
+      "type": "registry:block",
+      "title": "Login 05",
+      "description": "An email-only login: the studio's mark in ink above the title in the display face, one email field, Apple and Google in ink; stock's login-05 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "login-05/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "login-05/components/login-form.tsx",
+          "type": "registry:component",
+          "target": "@components/login-form.tsx"
+        }
+      ]
+    },
+    {
       "name": "signup-01",
       "type": "registry:block",
       "title": "Signup 01",

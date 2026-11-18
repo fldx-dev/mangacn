@@ -269,6 +269,16 @@ export const EXPECTED_CONTENT: Record<
       ],
     },
   ],
+  "login-05": [
+    {
+      file: "app/login/page.tsx",
+      includes: ['import { LoginForm } from "@/components/login-form"'],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: ["export function LoginForm(", "Continue with Apple"],
+    },
+  ],
   "signup-01": [
     {
       file: "app/signup/page.tsx",
