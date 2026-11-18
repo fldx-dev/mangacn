@@ -300,6 +300,16 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function SignupForm(", "Sign up with GitHub"],
     },
   ],
+  "signup-03": [
+    {
+      file: "app/signup/page.tsx",
+      includes: ['import { SignupForm } from "@/components/signup-form"', "Inkpot Studio"],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: ["export function SignupForm(", 'htmlFor="confirm-password"'],
+    },
+  ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
     {

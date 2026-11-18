@@ -29,6 +29,7 @@ const BLOCKS: Record<string, AuthBlock> = {
     social: ["Continue with Apple", "Continue with Google"],
   },
   "signup-02": { form: "Create your account", social: ["Sign up with GitHub"], cover: 1024 },
+  "signup-03": { form: "Create your account", social: [] },
 };
 
 const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));

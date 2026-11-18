@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 112 items in the registry. Each line gives the item's name, what it is, the one
+All 113 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -371,6 +371,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `signup-02`: A split-screen sign-up page: the studio's mark and the form on paper, the title in the display face, beside a manga panel of halftone, focus lines and one sound effect; stock's signup-02 in ink.
   Install: `npx shadcn@latest add @mangacn/signup-02 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/signup-02 (Markdown: https://www.mangacn.com/docs/blocks/signup-02.md)
+- `signup-03`: A sign-up card on tone-1 paper: name, email and two passwords side by side, the card at the heavy outline and the title in the display face; stock's signup-03 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-03 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-03 (Markdown: https://www.mangacn.com/docs/blocks/signup-03.md)
 - `sidebar-07`: An app shell whose sidebar collapses to icons: a studio switcher, collapsible sections, series with their menus and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-07 in ink.
   Install: `npx shadcn@latest add @mangacn/sidebar-07 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/sidebar-07 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-07.md)

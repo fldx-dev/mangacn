@@ -365,6 +365,36 @@
       ]
     },
     {
+      "name": "signup-03",
+      "type": "registry:block",
+      "title": "Signup 03",
+      "description": "A sign-up card on tone-1 paper: name, email and two passwords side by side, the card at the heavy outline and the title in the display face; stock's signup-03 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "signup-03/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-03/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
       "name": "sidebar-07",
       "type": "registry:block",
       "title": "Sidebar 07",
