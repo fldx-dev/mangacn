@@ -1,0 +1,35 @@
+---
+title: Color Picker
+description: A swatch trigger opening a saturation area, hue and alpha sliders, a hex field and swatches, all in ink around the colours.
+item: color-picker
+---
+
+<InstallCommand item="color-picker" />
+
+<CopyPrompt item="color-picker" />
+
+Pick one colour, such as a theme's spot or a label's tint: a swatch button opens Popover's heavy-outlined paper with a saturation and brightness area, hue and alpha on [Slider](/docs/components/slider), a hex field and optional preset swatches. The colours are the user's own; every outline, thumb and focus ring around them is ink. Use `ColorPickerPanel` to place the panel inline, and Field to label it.
+
+The area follows no WAI-ARIA pattern of its own: it is a focusable 2D slider. The rest follow the Dialog, Slider and Radio Group patterns:
+
+- Enter or Space on the trigger opens the panel; Escape closes it and returns focus to the trigger.
+- In the area, Left and Right change saturation, Up and Down change brightness; hold Shift for steps of 10.
+- The hue and alpha sliders move with the arrow keys, Page Up, Page Down, Home and End.
+- The hex field commits on Enter or when it loses focus, and marks a bad value invalid.
+- In the swatches, the arrow keys move to the next colour and pick it.
+
+## Examples
+
+An accent colour inside a Field, with a label and a hint; the hex posts as `accent`.
+
+<DemoFrame item="color-picker" demo="default" />
+The panel on its own, without the popover or the alpha slider.
+
+<DemoFrame item="color-picker" demo="inline" />
+A palette of print inks for a theme's spot colour, picked as a radio group under the panel.
+
+<DemoFrame item="color-picker" demo="swatches" />
+
+## Props
+
+<PropsTable item="color-picker" />

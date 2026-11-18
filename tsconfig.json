@@ -79,7 +79,9 @@
       "@/components/ui/attachment": ["./registry/ui/attachment/attachment.tsx"],
       "@/components/ui/tabs": ["./registry/ui/tabs/tabs.tsx"],
       "@/components/series-header": ["./registry/blocks/series-page/components/series-header.tsx"],
-      "@/components/ui/calendar": ["./registry/ui/calendar/calendar.tsx"]
+      "@/components/ui/calendar": ["./registry/ui/calendar/calendar.tsx"],
+      "@/components/ui/combobox": ["./registry/ui/combobox/combobox.tsx"],
+      "@/components/ui/slider": ["./registry/ui/slider/slider.tsx"]
     }
   },
   "include": [

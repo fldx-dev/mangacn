@@ -108,6 +108,17 @@ export const PARITY_BLOCKS = [
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";
 
+/**
+ * A restyled stock primitive: it keeps shadcn's API, so its docs link to shadcn's page. A
+ * `registry:ui` item of mangacn's own (`multi-select`, SPEC-components-7 §3) is not one: its
+ * props table is generated, as a manga-native piece's is.
+ */
+export function isStockPrimitive(item: { name: string; type: string }): boolean {
+  return (
+    item.type === "registry:ui" && (PARITY_PRIMITIVES as readonly string[]).includes(item.name)
+  );
+}
+
 export const BLOCK_PARITY_SNAPSHOT_PATH = "registry/blocks/__parity__/base-nova.json";
 
 export const STOCK_ITEM_URL = "https://ui.shadcn.com/r/styles/base-nova/{name}.json";
