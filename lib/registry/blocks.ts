@@ -181,8 +181,8 @@ function pageBlockProblems(item: LoadedRegistryItem, at: (problem: string) => vo
  * `page.tsx` first (`registry:page`, target `app/<route>/page.tsx`) and its other files in
  * `components/` (`registry:component`, target `@components/<file>`). No block file installs
  * where another item's file does, unless both are stock-derived blocks whose stock files share
- * that target (`sharesStockTarget`): variants of one family are alternatives. Items of other types in the block catalog, and blocks outside
- * it, are problems too.
+ * that target (`sharesStockTarget`): variants of one family are alternatives. Items of other
+ * types in the block catalog, and blocks outside it, are problems too.
  */
 export function findBlockProblems(
   registry: LoadedRegistry,
@@ -255,7 +255,7 @@ export function stockParityFamily(rootDir = process.cwd()): StockFamily {
   return { blocks: PARITY_BLOCKS, stock: loadBlockParitySnapshot(rootDir)?.items ?? {} };
 }
 
-/** Where stock's file installs: its target (a page), else its path (`components/login-form.tsx`). */
+/** Where stock's files install: a page at its target, others at their path (`components/x.tsx`). */
 function stockTargets(family: StockFamily, name: string): Set<string> {
   return new Set((family.stock[name]?.files ?? []).map((file) => file.target ?? file.path));
 }
