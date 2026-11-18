@@ -1865,6 +1865,28 @@
       ]
     },
     {
+      "name": "stat-card",
+      "type": "registry:ui",
+      "title": "Stat Card",
+      "description": "A KPI on card's ink frame: label, a display-face value, a change read as words, spot only the bad way, and an ink sparkline.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "recharts@3.8.0", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/chart.json"
+      ],
+      "files": [
+        {
+          "path": "stat-card/stat-card.tsx",
+          "type": "registry:ui",
+          "target": "@ui/stat-card.tsx"
+        }
+      ]
+    },
+    {
       "name": "avatar-stack",
       "type": "registry:ui",
       "title": "Avatar Stack",

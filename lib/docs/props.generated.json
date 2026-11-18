@@ -3722,6 +3722,144 @@
       }
     ]
   },
+  "stat-card": {
+    "StatCardChangeProps": [
+      {
+        "id": "stat-card.tsx-StatCardChangeProps",
+        "name": "StatCardChangeProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The change in percent, signed: `12.5` is up 12.5%, `-3` down 3%, `0` flat.",
+            "type": "number",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "goodDirection",
+            "description": "Which way is good. A change the other way is drawn in spot; a good or flat one in ink.",
+            "type": "\"down\" | \"up\" | undefined",
+            "simplifiedType": "\"down\" | \"up\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"up\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "children",
+            "description": "The period, after the number: \"vs last month\".",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The direction words screen readers hear before the number.",
+            "type": "Partial<{ up: string; down: string; flat: string; }> | undefined",
+            "simplifiedType": "Partial<{ up: string; down: string; flat: string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ up: \"up\", down: \"down\", flat: \"no change\" }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "locale",
+            "description": "The locale the percentage is formatted in, through `Intl.NumberFormat`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"en-US\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "StatCardProps": [
+      {
+        "id": "stat-card.tsx-StatCardProps",
+        "name": "StatCardProps",
+        "description": "Card's props. Label, value, change and sparkline go inside.",
+        "entries": [
+          {
+            "name": "size",
+            "description": "Card's spacing; `sm` is tighter.",
+            "type": "\"default\" | \"sm\" | undefined",
+            "simplifiedType": "\"default\" | \"sm\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"default\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "shadow",
+            "description": "Card's shadow: none, a solid ink one or a hatched one.",
+            "type": "\"hatch\" | \"ink\" | \"none\" | undefined",
+            "simplifiedType": "\"hatch\" | \"ink\" | \"none\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"none\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "StatCardSparklineProps": [
+      {
+        "id": "stat-card.tsx-StatCardSparklineProps",
+        "name": "StatCardSparklineProps",
+        "entries": [
+          {
+            "name": "data",
+            "description": "The series, oldest first.",
+            "type": "number[]",
+            "simplifiedType": "number[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "variant",
+            "description": "A line, or a line with a tone fill under it.",
+            "type": "\"area\" | \"line\" | undefined",
+            "simplifiedType": "\"area\" | \"line\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"area\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "tags-input": {
     "TagsInputProps": [
       {
