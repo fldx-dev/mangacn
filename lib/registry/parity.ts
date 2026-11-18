@@ -85,6 +85,7 @@ export const PARITY_BLOCKS = [
   "sidebar-01",
   "sidebar-02",
   "sidebar-03",
+  "sidebar-04",
 ] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";

@@ -175,6 +175,24 @@
       "dependencies": [],
       "registryDependencies": ["breadcrumb", "sidebar"],
       "sha1": "57c90bab592179238c6464290f8642048eba847b"
+    },
+    "sidebar-04": {
+      "files": [
+        {
+          "path": "components/app-sidebar.tsx",
+          "type": "registry:component",
+          "exports": ["AppSidebar"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["breadcrumb", "separator", "sidebar"],
+      "sha1": "a630d6d7b5b4addfbbd892a0ee78a68d041feb97"
     }
   }
 }

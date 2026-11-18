@@ -295,6 +295,19 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function AppSidebar(", "<SidebarMenuSub>"],
     },
   ],
+  "sidebar-04": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        '"--sidebar-width": "19rem"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'variant="floating"'],
+    },
+  ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
     {
