@@ -67,7 +67,7 @@ Add the item to `registry/ui/registry.json` (never to the root `registry.json`, 
 
 - `description`: one sentence, at most 140 characters.
 - `categories`: at least one of `primitive`, `layout`, `text`, `background`, `feedback`,
-  `overlay`, `navigation`, `form`, `data`, `decoration`, `animation`, `block`, `hook`.
+  `overlay`, `navigation`, `form`, `display`, `data`, `decoration`, `animation`, `block`, `hook`.
 - `meta.since`: the `package.json` version the item first ships in.
 - `files[]`: the shipped file only. Demos, tests, fixtures and `__parity__` are never listed.
 - `dependencies`: every npm package the shipped file imports (`class-variance-authority`,

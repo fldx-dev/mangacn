@@ -1,9 +1,9 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { loadRegistry } from "@/lib/registry";
+import { type LoadedRegistry, loadRegistry } from "@/lib/registry";
 import { collectDemos } from "@/lib/registry/demo-map";
-import { CATEGORIES, CATEGORY_LABELS } from "./catalog";
+import { CATEGORIES, CATEGORY_LABELS, COMPONENTS_CATALOG } from "./catalog";
 import { renderSkillCatalog, SKILL_CATALOG_HEADER, SKILL_CATALOG_PATH, SKILL_DIR } from "./skill";
 
 const registry = loadRegistry();
@@ -50,6 +50,42 @@ describe("renderSkillCatalog", () => {
     const order = CATEGORIES.map((category) => CATEGORY_LABELS[category]);
     const rest = headings.slice(1);
     expect(rest).toEqual(order.filter((label) => rest.includes(label)));
+  });
+
+  it("writes Inputs and Display right after Primitives, and no heading for an empty group", () => {
+    const fixture: LoadedRegistry = {
+      name: "fixture",
+      homepage: "",
+      items: [
+        ["badge", "display"],
+        ["speech-bubble", "text"],
+        ["input", "form"],
+        ["button", "primitive"],
+      ].map(([name, category]) => ({
+        name,
+        type: "registry:component",
+        description: `The ${name}.`,
+        categories: [category],
+        files: [],
+        source: COMPONENTS_CATALOG,
+      })),
+    };
+    const demos = fixture.items.map((entry) => ({ item: entry.name, demo: "default" }));
+    const fixtureCatalog = renderSkillCatalog(fixture, demos);
+    const sections = fixtureCatalog
+      .split("\n## ")
+      .slice(1)
+      .map((section) => [
+        section.split("\n")[0],
+        [...section.matchAll(/^- `([^`]+)`: /gm)].map((match) => match[1]),
+      ]);
+    expect(sections).toEqual([
+      ["Foundation", []],
+      ["Primitives", ["button"]],
+      ["Inputs", ["input"]],
+      ["Display", ["badge"]],
+      ["Text", ["speech-bubble"]],
+    ]);
   });
 
   it("gives component items their page and its Markdown, and the theme its guide", () => {

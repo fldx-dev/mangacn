@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 import type { LoadedRegistry, LoadedRegistryItem } from "@/lib/registry";
 import {
   BLOCKS_CATALOG,
+  CATEGORY_LABELS,
   COMPONENTS_CATALOG,
   DOCS_SECTIONS,
   type DocItem,
   docItems,
+  groupByCategory,
   itemPagePath,
   PROSE_PLACEHOLDER,
   parseFrontmatter,
@@ -174,6 +176,50 @@ describe("renderComponentsMeta", () => {
       defaultOpen: true,
       pages: ["---Primitives---", "button", "---Text---", "bubble"],
     });
+  });
+});
+
+describe("the Inputs and Display groups (SPEC-components-7 §6)", () => {
+  // A form and a display item, listed out of order, with an empty group (layout) between.
+  const grouped: LoadedRegistry = {
+    ...registry,
+    items: [
+      item("chips", "display"),
+      item("bubble", "text"),
+      item("dial", "form"),
+      item("button", "primitive"),
+    ],
+  };
+  const groupedDemos = ["chips", "bubble", "dial", "button"].map((name) => ({
+    item: name,
+    demo: "default",
+  }));
+
+  it("come right after Primitives, and an empty group has no heading", () => {
+    expect(
+      groupByCategory(docItems(grouped, groupedDemos)).map(([category, group]) => [
+        CATEGORY_LABELS[category],
+        group.map((entry) => entry.name),
+      ]),
+    ).toEqual([
+      ["Primitives", ["button"]],
+      ["Inputs", ["dial"]],
+      ["Display", ["chips"]],
+      ["Text", ["bubble"]],
+    ]);
+  });
+
+  it("get a sidebar separator each, and an empty group gets none", () => {
+    expect(JSON.parse(renderComponentsMeta(docItems(grouped, groupedDemos))).pages).toEqual([
+      "---Primitives---",
+      "button",
+      "---Inputs---",
+      "dial",
+      "---Display---",
+      "chips",
+      "---Text---",
+      "bubble",
+    ]);
   });
 });
 

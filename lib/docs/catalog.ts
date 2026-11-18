@@ -39,13 +39,16 @@ export function itemPagePath(item: { name: string; source: string }): string | n
 }
 
 /**
- * Catalog categories in sidebar and index order (SPEC-docs-site §4); `block` is the block
+ * Catalog categories in sidebar and index order (SPEC-docs-site §4; Inputs and Display after
+ * Primitives, SPEC-components-7 §6); `block` is the block
  * catalog's one category. `hook` is the hook catalog's, last: a hook has no page, no index card
  * and no sidebar entry (no demos, and no `DOCS_SECTIONS` entry), so it only orders `list_items`
  * and the skill catalog's Hooks group.
  */
 export const CATEGORIES = [
   "primitive",
+  "form",
+  "display",
   "layout",
   "text",
   "background",
@@ -61,6 +64,8 @@ export type Category = (typeof CATEGORIES)[number];
 
 export const CATEGORY_LABELS: Record<Category, string> = {
   primitive: "Primitives",
+  form: "Inputs",
+  display: "Display",
   layout: "Layout",
   text: "Text",
   background: "Background",
