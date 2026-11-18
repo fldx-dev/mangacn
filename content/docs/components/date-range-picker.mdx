@@ -1,0 +1,36 @@
+---
+title: Date Range Picker
+description: "An outlined button that opens a popover with presets and a range calendar; posts the two days as yyyy-MM-dd."
+item: date-range-picker
+---
+
+<InstallCommand item="date-range-picker" />
+
+<CopyPrompt item="date-range-picker" />
+
+A first and a last day in one control, for a convention's dates, a reading log or a report's span: an outlined button that shows the range and opens a popover with presets and Calendar's range view. Pair it with `time-picker` when the days need hours too, and put it in a `field` for a label and an error.
+
+It follows the WAI-ARIA [Date Picker Dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/):
+
+- Enter, Space or Down on the trigger opens the popover, with focus on the picked day (or today).
+- The arrow keys, Page Up and Page Down, Home and End move through the calendar's days, as in Calendar.
+- Picking the second day keeps the popover open, so the range can be redone; a preset sets the range and closes it.
+- Escape closes the popover and returns focus to the trigger.
+
+## Examples
+
+A week picked; the popover shows two months side by side, one on a phone.
+
+<DemoFrame item="date-range-picker" demo="default" />
+
+Presets of your own: a reading log's "This week" and the month the last volume came out. `presets={[]}` hides the column.
+
+<DemoFrame item="date-range-picker" demo="presets" />
+
+In a booking form's `field`: submit with no range and the trigger turns invalid under the field's error. With `name`, the form posts `booth-from` and `booth-to` as `yyyy-MM-dd`.
+
+<DemoFrame item="date-range-picker" demo="field" />
+
+## Props
+
+<PropsTable item="date-range-picker" />

@@ -30,6 +30,7 @@ export const OVERLAY_ITEMS: ReadonlySet<string> = new Set([
   "command",
   "multi-select",
   "color-picker",
+  "date-range-picker",
 ]);
 
 export interface DemoFrameProps {
