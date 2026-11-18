@@ -67,6 +67,8 @@
     "questionnaire",
     "code-block",
     "---Inputs---",
+    "date-range-picker",
+    "time-picker",
     "multi-select",
     "color-picker",
     "---Layout---",

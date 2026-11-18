@@ -1675,6 +1675,49 @@
       ]
     },
     {
+      "name": "date-range-picker",
+      "type": "registry:ui",
+      "title": "Date Range Picker",
+      "description": "An outlined button that opens a popover with presets and a range calendar; posts the two days as yyyy-MM-dd.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "date-fns", "lucide-react", "react-day-picker@latest"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/calendar.json",
+        "https://www.mangacn.com/r/popover.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/use-mobile.json"
+      ],
+      "files": [
+        {
+          "path": "date-range-picker/date-range-picker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/date-range-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "time-picker",
+      "type": "registry:ui",
+      "title": "Time Picker",
+      "description": "Hour and minute spinbuttons, and AM/PM in 12-hour mode, in one hand-drawn outline; posts \"HH:mm\" like a time input.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "time-picker/time-picker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/time-picker.tsx"
+        }
+      ]
+    },
+    {
       "name": "multi-select",
       "type": "registry:ui",
       "title": "Multi Select",
