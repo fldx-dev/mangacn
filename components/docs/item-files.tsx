@@ -10,7 +10,7 @@ function Paths({ paths }: { paths: readonly string[] }) {
   ));
 }
 
-/** `a`, `a and b`, `a, b and c`: the paths a sibling block shares, as prose. */
+/** `a`, `a and b`, `a, b and c`: the paths sibling blocks share, or the siblings, as prose. */
 function PathList({ paths }: { paths: readonly string[] }) {
   return paths.map((file, index) => (
     <span key={file}>
@@ -37,10 +37,10 @@ export function ItemFiles({ item }: { item: string }) {
         </>
       )}
       .
-      {replaces.map(({ item: other, files: shared }) => (
-        <span key={other} data-slot="item-files-replaces">
+      {replaces.map(({ items: others, files: shared }) => (
+        <span key={others.join()} data-slot="item-files-replaces">
           {" "}
-          Replaces <PathList paths={shared} /> from <code>{other}</code>.
+          Replaces <PathList paths={shared} /> from <PathList paths={others} />.
         </span>
       ))}
     </p>
@@ -63,7 +63,7 @@ export function itemFilesMarkdown(item: string): string {
       ? `; also adds ${code(dependencyFiles)} through its registry dependencies`
       : "";
   const replaced = replaces
-    .map(({ item: other, files: shared }) => ` Replaces ${prose(shared)} from \`${other}\`.`)
+    .map(({ items: others, files: shared }) => ` Replaces ${prose(shared)} from ${prose(others)}.`)
     .join("");
   return `\n**Files:** ${code(files)}${deps}.${replaced}\n\n`;
 }

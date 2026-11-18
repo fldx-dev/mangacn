@@ -77,7 +77,19 @@ export const PARITY_PRIMITIVES = [
  * The blocks mangacn redraws from stock base-nova blocks, by stock name (batch 5): each keeps
  * stock's files, page target, exports and registry dependencies (`compareBlockParity`).
  */
-export const PARITY_BLOCKS = ["login-01", "signup-01", "sidebar-07", "login-02"] as const;
+export const PARITY_BLOCKS = [
+  "login-01",
+  "signup-01",
+  "sidebar-07",
+  "login-02",
+  "login-03",
+  "login-04",
+  "login-05",
+  "signup-02",
+  "signup-03",
+  "signup-04",
+  "signup-05",
+] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";
 

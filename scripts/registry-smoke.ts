@@ -246,12 +246,93 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function LoginForm(", "<FieldSeparator>Or continue with</FieldSeparator>"],
     },
   ],
+  "login-03": [
+    {
+      file: "app/login/page.tsx",
+      includes: ['import { LoginForm } from "@/components/login-form"', "Inkpot Studio"],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: ["export function LoginForm(", "Login with Apple"],
+    },
+  ],
+  "login-04": [
+    {
+      file: "app/login/page.tsx",
+      includes: ['import { LoginForm } from "@/components/login-form"'],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: [
+        "export function LoginForm(",
+        'import { MangaFrame } from "@/components/manga-frame"',
+      ],
+    },
+  ],
+  "login-05": [
+    {
+      file: "app/login/page.tsx",
+      includes: ['import { LoginForm } from "@/components/login-form"'],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: ["export function LoginForm(", "Continue with Apple"],
+    },
+  ],
   "signup-01": [
     {
       file: "app/signup/page.tsx",
       includes: ['import { SignupForm } from "@/components/signup-form"'],
     },
     { file: "components/signup-form.tsx", includes: ["export function SignupForm("] },
+  ],
+  "signup-02": [
+    {
+      file: "app/signup/page.tsx",
+      includes: [
+        'import { SignupForm } from "@/components/signup-form"',
+        "Inkpot Studio",
+        'import { MangaFrame } from "@/components/manga-frame"',
+      ],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: ["export function SignupForm(", "Sign up with GitHub"],
+    },
+  ],
+  "signup-03": [
+    {
+      file: "app/signup/page.tsx",
+      includes: ['import { SignupForm } from "@/components/signup-form"', "Inkpot Studio"],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: ["export function SignupForm(", 'htmlFor="confirm-password"'],
+    },
+  ],
+  "signup-04": [
+    {
+      file: "app/signup/page.tsx",
+      includes: ['import { SignupForm } from "@/components/signup-form"'],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: [
+        "export function SignupForm(",
+        "Sign up with Meta",
+        'import { MangaFrame } from "@/components/manga-frame"',
+      ],
+    },
+  ],
+  "signup-05": [
+    {
+      file: "app/signup/page.tsx",
+      includes: ['import { SignupForm } from "@/components/signup-form"'],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: ["export function SignupForm(", "Continue with Google"],
+    },
   ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [

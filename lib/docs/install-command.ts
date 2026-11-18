@@ -155,19 +155,26 @@ export function commandFor(props: InstallCommandProps, manager: PackageManager):
  * What one add of `name` writes, at the default `components.json` aliases: the item's own files
  * (`components/blocks/chapter-list/chapter-list.tsx`, …), then what its mangacn registry
  * dependencies add, transitively, and the shipped items whose files it replaces (a variant of a
- * stock family writes the paths its siblings write). A block's page prints it under the install
- * block.
+ * stock family writes the paths its siblings write), the siblings that share the same paths in
+ * one group. A block's page prints it under the install block.
  */
 export function itemFiles(name: string): {
   files: string[];
   dependencyFiles: string[];
-  replaces: { item: string; files: string[] }[];
+  replaces: { items: string[]; files: string[] }[];
 } {
   const item = catalogItem(name);
+  const groups = new Map<string, { items: string[]; files: string[] }>();
+  for (const shared of registry ? sharedInstallTargets(name, registry) : []) {
+    const key = shared.files.join(" ");
+    const group = groups.get(key) ?? { items: [], files: shared.files };
+    group.items.push(shared.item);
+    groups.set(key, group);
+  }
   return {
     files: item.files.map(installTarget),
     dependencyFiles: registry ? dependencyFiles(name, registry) : [],
-    replaces: registry ? sharedInstallTargets(name, registry) : [],
+    replaces: [...groups.values()],
   };
 }
 
