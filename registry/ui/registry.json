@@ -1675,6 +1675,25 @@
       ]
     },
     {
+      "name": "time-picker",
+      "type": "registry:ui",
+      "title": "Time Picker",
+      "description": "Hour and minute spinbuttons, and AM/PM in 12-hour mode, in one hand-drawn outline; posts \"HH:mm\" like a time input.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "time-picker/time-picker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/time-picker.tsx"
+        }
+      ]
+    },
+    {
       "name": "multi-select",
       "type": "registry:ui",
       "title": "Multi Select",

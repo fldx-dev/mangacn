@@ -2923,6 +2923,162 @@
       }
     ]
   },
+  "time-picker": {
+    "TimePickerProps": [
+      {
+        "id": "time-picker.tsx-TimePickerProps",
+        "name": "TimePickerProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The time as \"HH:mm\" in 24 hours (as `<input type=\"time\">`), or null when unset. Controlled.",
+            "type": "string | null | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The starting time when uncontrolled.",
+            "type": "string | null | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with \"HH:mm\" once hours and minutes are set (and AM/PM in 12-hour mode), else null.",
+            "type": "((value: string | null) => void) | undefined",
+            "simplifiedType": "(value: string | null) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "hourCycle",
+            "description": "24 shows 00–23; 12 shows 1–12 and an AM/PM segment.",
+            "type": "12 | 24 | undefined",
+            "simplifiedType": "12 | 24",
+            "tags": [
+              {
+                "name": "default",
+                "text": "24"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "minuteStep",
+            "description": "How far Up and Down move the minutes.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "1"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "min",
+            "description": "The earliest valid time, \"HH:mm\"; an earlier value sets `aria-invalid`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "max",
+            "description": "The latest valid time, \"HH:mm\"; a later value sets `aria-invalid`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "disabled",
+            "description": "Stops editing and greys the frame.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "required",
+            "description": "Marks each segment `aria-required`.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "Posts the value as \"HH:mm\" in a hidden input of this name (empty when unset).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "Overrides the segments' names.",
+            "type": "TimePickerLabels | undefined",
+            "simplifiedType": "TimePickerLabels",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "id",
+            "description": "Set on the hour segment, so a field's label can point at it.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-invalid",
+            "description": "Marks every segment invalid, as a field's error does; out-of-range values set it too.",
+            "type": "\"false\" | \"true\" | boolean | undefined",
+            "simplifiedType": "\"false\" | \"true\" | boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-describedby",
+            "description": "Set on every segment: the field's description and error.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "vertical-text": {
     "VerticalTextProps": [
       {
