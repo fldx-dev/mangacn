@@ -101,6 +101,24 @@
       "dependencies": ["cn"],
       "registryDependencies": ["button", "field", "input", "label"],
       "sha1": "c07a42865d84d1f8ad5030dccaa356498172c334"
+    },
+    "login-03": {
+      "files": [
+        {
+          "path": "components/login-form.tsx",
+          "type": "registry:component",
+          "exports": ["LoginForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": ["cn"],
+      "registryDependencies": ["button", "card", "field", "input", "label"],
+      "sha1": "84aaa2a919c7df3fd88fa061db8a221c83c2eb79"
     }
   }
 }

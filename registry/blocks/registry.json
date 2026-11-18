@@ -208,6 +208,36 @@
       ]
     },
     {
+      "name": "login-03",
+      "type": "registry:block",
+      "title": "Login 03",
+      "description": "A login card on tone-1 paper: Apple and Google first, then email and password, the card at the heavy outline and the title in the display face, stock's marks in ink; stock's login-03 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "login-03/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "login-03/components/login-form.tsx",
+          "type": "registry:component",
+          "target": "@components/login-form.tsx"
+        }
+      ]
+    },
+    {
       "name": "signup-01",
       "type": "registry:block",
       "title": "Signup 01",

@@ -246,6 +246,16 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function LoginForm(", "<FieldSeparator>Or continue with</FieldSeparator>"],
     },
   ],
+  "login-03": [
+    {
+      file: "app/login/page.tsx",
+      includes: ['import { LoginForm } from "@/components/login-form"', "Inkpot Studio"],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: ["export function LoginForm(", "Login with Apple"],
+    },
+  ],
   "signup-01": [
     {
       file: "app/signup/page.tsx",
