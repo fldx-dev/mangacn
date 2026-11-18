@@ -62,6 +62,7 @@
       "@/components/ui/breadcrumb": ["./registry/ui/breadcrumb/breadcrumb.tsx"],
       "@/components/ui/collapsible": ["./registry/ui/collapsible/collapsible.tsx"],
       "@/components/ui/avatar": ["./registry/ui/avatar/avatar.tsx"],
+      "@/components/ui/switch": ["./registry/ui/switch/switch.tsx"],
       "@/components/panel": ["./registry/ui/panel/panel.tsx"],
       "@/components/app-sidebar": ["./registry/blocks/sidebar-07/components/app-sidebar.tsx"],
       "@/components/ui/empty": ["./registry/ui/empty/empty.tsx"],

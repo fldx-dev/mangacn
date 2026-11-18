@@ -370,6 +370,25 @@ export const EXPECTED_CONTENT: Record<
     { file: "components/nav-secondary.tsx", includes: ["export function NavSecondary("] },
     { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
   ],
+  // sidebar-09 shares the route, app-sidebar and nav-user: two nested sidebars in app-sidebar.
+  "sidebar-09": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        '"--sidebar-width": "350px"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: [
+        "export function AppSidebar(",
+        'import { NavUser } from "./nav-user"',
+        'aria-label="Mailboxes"',
+      ],
+    },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+  ],
   // sidebar-11 shares the route and app-sidebar: the file tree lives in app-sidebar itself.
   "sidebar-11": [
     {

@@ -9,7 +9,7 @@ import { hydrateAfterReveal, waitForInk } from "./ready";
 // sidebar-13's settings dialog opens from the page, holds focus and shows its named sidebar from
 // md up (stock's sidebar there does not collapse: it is hidden under md).
 
-const SHELLS = ["sidebar-08", "sidebar-11"] as const;
+const SHELLS = ["sidebar-08", "sidebar-09", "sidebar-11"] as const;
 const LANE = [...SHELLS, "sidebar-13"] as const;
 
 const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
