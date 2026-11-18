@@ -301,6 +301,11 @@ export default defineConfig({
           new URL("./registry/blocks/series-page/components/series-header.tsx", import.meta.url),
         ),
       },
+      // sidebar-12, sidebar-15 (Task 121): the calendar in the sidebar.
+      {
+        find: /^@\/components\/ui\/calendar$/,
+        replacement: fileURLToPath(new URL("./registry/ui/calendar/calendar.tsx", import.meta.url)),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,
