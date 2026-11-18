@@ -4225,6 +4225,78 @@
       }
     ]
   },
+  "timeline": {
+    "TimelineItemProps": [
+      {
+        "id": "timeline.tsx-TimelineItemProps",
+        "name": "TimelineItemProps",
+        "entries": [
+          {
+            "name": "status",
+            "description": "Done is ink-filled, current a heavy ring with a tone fill (and `aria-current`), upcoming paper.",
+            "type": "TimelineStatus | undefined",
+            "simplifiedType": "\"current\" | \"done\" | \"upcoming\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"done\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "Overrides the screen-reader word on the current item.",
+            "type": "TimelineItemLabels | undefined",
+            "simplifiedType": "TimelineItemLabels",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "TimelineProps": [
+      {
+        "id": "timeline.tsx-TimelineProps",
+        "name": "TimelineProps",
+        "entries": [
+          {
+            "name": "align",
+            "description": "`start` keeps every item right of the line; `alternate` switches sides from 768 px and falls\nback to `start` below.",
+            "type": "TimelineAlign | undefined",
+            "simplifiedType": "\"alternate\" | \"start\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"start\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "TimelineTimeProps": [
+      {
+        "id": "timeline.tsx-TimelineTimeProps",
+        "name": "TimelineTimeProps",
+        "entries": [
+          {
+            "name": "dateTime",
+            "description": "The machine-readable date or time, as `<time dateTime>` takes it (\"2026-11-18\").",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "tree-view": {
     "TreeViewProps": [
       {

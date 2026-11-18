@@ -1948,6 +1948,25 @@
           "target": "@ui/banner.tsx"
         }
       ]
+    },
+    {
+      "name": "timeline",
+      "type": "registry:ui",
+      "title": "Timeline",
+      "description": "Dated events on a hand-drawn line, done, current or upcoming; alternates sides from 768 px. A server component.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "timeline/timeline.tsx",
+          "type": "registry:ui",
+          "target": "@ui/timeline.tsx"
+        }
+      ]
     }
   ]
 }

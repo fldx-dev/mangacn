@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 143 items in the registry. Each line gives the item's name, what it is, the one
+All 144 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -281,6 +281,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `banner`: A dismissible announcement bar, paper with an ink rule or solid ink, that hands focus on when it closes.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/banner --overwrite`
   Docs: https://www.mangacn.com/docs/components/banner (Markdown: https://www.mangacn.com/docs/components/banner.md)
+- `timeline`: Dated events on a hand-drawn line, done, current or upcoming; alternates sides from 768 px. A server component.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/timeline --overwrite`
+  Docs: https://www.mangacn.com/docs/components/timeline (Markdown: https://www.mangacn.com/docs/components/timeline.md)
 
 ## Layout
 
