@@ -1950,6 +1950,25 @@
       ]
     },
     {
+      "name": "stepper",
+      "type": "registry:ui",
+      "title": "Stepper",
+      "description": "Numbered steps of a process in hand-drawn circles joined by ink lines, horizontal or vertical; linear by default.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "stepper/stepper.tsx",
+          "type": "registry:ui",
+          "target": "@ui/stepper.tsx"
+        }
+      ]
+    },
+    {
       "name": "timeline",
       "type": "registry:ui",
       "title": "Timeline",

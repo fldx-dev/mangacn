@@ -3860,6 +3860,156 @@
       }
     ]
   },
+  "stepper": {
+    "StepperContentProps": [
+      {
+        "id": "stepper.tsx-StepperContentProps",
+        "name": "StepperContentProps",
+        "entries": [
+          {
+            "name": "step",
+            "description": "The step this content belongs to; it shows while that step is the value.",
+            "type": "number",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "StepperItemProps": [
+      {
+        "id": "stepper.tsx-StepperItemProps",
+        "name": "StepperItemProps",
+        "entries": [
+          {
+            "name": "step",
+            "description": "The step's index, 0-based.",
+            "type": "number",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "completed",
+            "description": "Marks the step completed; without it, steps before the current one count as completed.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "disabled",
+            "description": "Makes the step text that cannot be chosen.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "error",
+            "description": "Draws the indicator in spot with an icon and ends the step's name with \"error\".",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "StepperProps": [
+      {
+        "id": "stepper.tsx-StepperProps",
+        "name": "StepperProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The current step (0-based). Controlled.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The starting step when uncontrolled.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "0"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with the step a trigger chose.",
+            "type": "((step: number) => void) | undefined",
+            "simplifiedType": "(step: number) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "orientation",
+            "description": "Horizontal shows only the indicators and the current title under 768 px; vertical is the\nsame at every width and puts each StepperContent under its item.",
+            "type": "StepperOrientation | undefined",
+            "simplifiedType": "\"horizontal\" | \"vertical\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"horizontal\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "linear",
+            "description": "Only completed steps and the one after the current step can be chosen.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "Overrides the screen-reader words.",
+            "type": "StepperLabels | undefined",
+            "simplifiedType": "StepperLabels",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "tags-input": {
     "TagsInputProps": [
       {
