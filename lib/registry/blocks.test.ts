@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  BLOCK_GROUPS,
   BLOCKS_CATALOG,
+  blockGroup,
   blockTarget,
   findBlockProblems,
+  groupBlocks,
   isBlock,
   isPageBlock,
   pageComponentTarget,
@@ -215,5 +218,42 @@ describe("findBlockProblems", () => {
         ),
       ),
     ).toEqual([]);
+  });
+});
+
+describe("block groups (SPEC-components-6 §6)", () => {
+  const named = (...names: string[]) => names.map((name) => ({ name }));
+
+  it("puts a stock block in its family's group by name, anything else in Manga", () => {
+    expect(blockGroup("login-05")).toBe("login");
+    expect(blockGroup("signup-01")).toBe("signup");
+    expect(blockGroup("sidebar-16")).toBe("sidebar");
+    expect(blockGroup("chapter-list")).toBe("manga");
+    expect(blockGroup("library-page")).toBe("manga");
+  });
+
+  it("orders the groups Manga, Login, Signup, Sidebar: Manga as given, a family by number", () => {
+    const groups = groupBlocks(
+      named("sidebar-10", "reader", "login-01", "sidebar-07", "chapter-list", "sidebar-02"),
+    );
+    expect(
+      groups.map(({ id, label, items }) => [id, label, items.map((item) => item.name)]),
+    ).toEqual([
+      ["manga", "Manga", ["reader", "chapter-list"]],
+      ["login", "Login", ["login-01"]],
+      ["sidebar", "Sidebar", ["sidebar-02", "sidebar-07", "sidebar-10"]],
+    ]);
+    expect(BLOCK_GROUPS.map((group) => group.label)).toEqual([
+      "Manga",
+      "Login",
+      "Signup",
+      "Sidebar",
+    ]);
+  });
+
+  it("names a stock family with no group instead of filing it under Manga", () => {
+    expect(() => groupBlocks(named("dashboard-01"))).toThrow(
+      /"dashboard" family, which has no group/,
+    );
   });
 });

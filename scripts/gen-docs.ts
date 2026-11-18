@@ -2,8 +2,8 @@
  * Scaffolds a page for every component-catalog and block-catalog item with demos that has none
  * yet (content/docs/components/<item>.mdx, content/docs/blocks/<block>.mdx; never overwrites
  * one), and rewrites each section's meta.json so the sidebar lists the pages: the components
- * under category separators, the blocks in catalog order. See SPEC-docs-site §6 and
- * SPEC-components-3 §5.
+ * under category separators, the blocks under group separators. See SPEC-docs-site §6,
+ * SPEC-components-3 §5 and SPEC-components-6 §6.
  *
  * Usage: pnpm gen:docs          (write missing pages and the metas)
  *        pnpm gen:docs --check  (write nothing; exit 1 naming every missing page or a stale meta)
