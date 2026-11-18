@@ -1865,6 +1865,24 @@
       ]
     },
     {
+      "name": "tree-view",
+      "type": "registry:ui",
+      "title": "Tree View",
+      "description": "Nested, collapsible items from a data tree: the full APG tree keyboard, one tab stop, ink indent guides, an ink selected row.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "files": [
+        {
+          "path": "tree-view/tree-view.tsx",
+          "type": "registry:ui",
+          "target": "@ui/tree-view.tsx"
+        }
+      ]
+    },
+    {
       "name": "stat-card",
       "type": "registry:ui",
       "title": "Stat Card",

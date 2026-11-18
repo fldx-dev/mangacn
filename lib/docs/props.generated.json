@@ -4225,6 +4225,116 @@
       }
     ]
   },
+  "tree-view": {
+    "TreeViewProps": [
+      {
+        "id": "tree-view.tsx-TreeViewProps",
+        "name": "TreeViewProps",
+        "entries": [
+          {
+            "name": "items",
+            "description": "The tree.",
+            "type": "TreeNode[]",
+            "simplifiedType": "TreeNode[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "expanded",
+            "description": "The ids of the open parents (controlled). Pair with `onExpandedChange`.",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultExpanded",
+            "description": "The ids of the parents open at first (uncontrolled).",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "[]"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onExpandedChange",
+            "description": "Called with the new list of open parents whenever one opens or closes.",
+            "type": "((ids: string[]) => void) | undefined",
+            "simplifiedType": "(ids: string[]) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "selected",
+            "description": "The selected node's id, or `null` for none (controlled). Pair with `onSelectedChange`.",
+            "type": "string | null | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultSelected",
+            "description": "The node selected at first (uncontrolled).",
+            "type": "string | null | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "null"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onSelectedChange",
+            "description": "Called with the id of the node Enter, Space or a click selects.",
+            "type": "((id: string) => void) | undefined",
+            "simplifiedType": "(id: string) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "renderLabel",
+            "description": "Draws a node's label; defaults to `node.label`.",
+            "type": "((node: TreeNode) => React.ReactNode) | undefined",
+            "simplifiedType": "(node: TreeNode) => React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-label",
+            "description": "Names the tree. Required unless `aria-labelledby` names it.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-labelledby",
+            "description": "The id of the element that names the tree, instead of `aria-label`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "vertical-text": {
     "VerticalTextProps": [
       {
