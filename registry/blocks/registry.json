@@ -332,6 +332,39 @@
       ]
     },
     {
+      "name": "signup-02",
+      "type": "registry:block",
+      "title": "Signup 02",
+      "description": "A split-screen sign-up page: the studio's mark and the form on paper, the title in the display face, beside a manga panel of halftone, focus lines and one sound effect; stock's signup-02 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/halftone-background.json",
+        "https://www.mangacn.com/r/focus-lines.json",
+        "https://www.mangacn.com/r/sfx-text.json"
+      ],
+      "files": [
+        {
+          "path": "signup-02/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-02/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
       "name": "sidebar-07",
       "type": "registry:block",
       "title": "Sidebar 07",

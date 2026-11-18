@@ -286,6 +286,20 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/signup-form.tsx", includes: ["export function SignupForm("] },
   ],
+  "signup-02": [
+    {
+      file: "app/signup/page.tsx",
+      includes: [
+        'import { SignupForm } from "@/components/signup-form"',
+        "Inkpot Studio",
+        'import { MangaFrame } from "@/components/manga-frame"',
+      ],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: ["export function SignupForm(", "Sign up with GitHub"],
+    },
+  ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
     {
