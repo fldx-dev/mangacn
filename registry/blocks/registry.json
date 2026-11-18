@@ -735,6 +735,221 @@
       ]
     },
     {
+      "name": "sidebar-08",
+      "type": "registry:block",
+      "title": "Sidebar 08",
+      "description": "An inset app shell with a secondary nav: the studio's mark, sections whose chevrons open their links, series with their menus, support links at the foot and the editor's account menu, beside a volume's blank manga panels; stock's sidebar-08 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-08/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-08/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-08/components/nav-main.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-main.tsx"
+        },
+        {
+          "path": "sidebar-08/components/nav-projects.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-projects.tsx"
+        },
+        {
+          "path": "sidebar-08/components/nav-secondary.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-secondary.tsx"
+        },
+        {
+          "path": "sidebar-08/components/nav-user.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-user.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-09",
+      "type": "registry:block",
+      "title": "Sidebar 09",
+      "description": "Nested sidebars, mail-style: an icon rail of mailboxes and, beside it, the open mailbox's letters from a manga studio's editor, assistants and printer, with an Unreads switch and a search field; stock's sidebar-09 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/switch.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-09/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-09/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-09/components/nav-user.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-user.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-10",
+      "type": "registry:block",
+      "title": "Sidebar 10",
+      "description": "A notes-app shell: a studio switcher, main links, favourite notes and workspaces of pages in the sidebar, the note's actions in a popover in the header, beside the note's blank manga panels; stock's sidebar-10 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/popover.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-10/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-10/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        },
+        {
+          "path": "sidebar-10/components/nav-actions.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-actions.tsx"
+        },
+        {
+          "path": "sidebar-10/components/nav-favorites.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-favorites.tsx"
+        },
+        {
+          "path": "sidebar-10/components/nav-main.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-main.tsx"
+        },
+        {
+          "path": "sidebar-10/components/nav-secondary.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-secondary.tsx"
+        },
+        {
+          "path": "sidebar-10/components/nav-workspaces.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-workspaces.tsx"
+        },
+        {
+          "path": "sidebar-10/components/team-switcher.tsx",
+          "type": "registry:component",
+          "target": "@components/team-switcher.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-11",
+      "type": "registry:block",
+      "title": "Sidebar 11",
+      "description": "An app shell with a file tree: a chapter's changed files with their state, then its folders, opening on the page being drawn, beside that page's blank manga panels; stock's sidebar-11 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-11/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-11/components/app-sidebar.tsx",
+          "type": "registry:component",
+          "target": "@components/app-sidebar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-13",
+      "type": "registry:block",
+      "title": "Sidebar 13",
+      "description": "A sidebar inside a settings dialog: a manga reader's settings sections beside the open section's blank manga panels, opened from the page's button; stock's sidebar-13 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/dialog.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-13/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-13/components/settings-dialog.tsx",
+          "type": "registry:component",
+          "target": "@components/settings-dialog.tsx"
+        }
+      ]
+    },
+    {
       "name": "sidebar-14",
       "type": "registry:block",
       "title": "Sidebar 14",
