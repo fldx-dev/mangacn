@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 115 items in the registry. Each line gives the item's name, what it is, the one
+All 122 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -356,9 +356,30 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `login-02`: A split-screen login page: the studio's mark and the form on paper, the title in the display face, beside a manga panel of halftone, focus lines and one sound effect; stock's login-02 in ink.
   Install: `npx shadcn@latest add @mangacn/login-02 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/login-02 (Markdown: https://www.mangacn.com/docs/blocks/login-02.md)
+- `login-03`: A login card on tone-1 paper: Apple and Google first, then email and password, the card at the heavy outline and the title in the display face, stock's marks in ink; stock's login-03 in ink.
+  Install: `npx shadcn@latest add @mangacn/login-03 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/login-03 (Markdown: https://www.mangacn.com/docs/blocks/login-03.md)
+- `login-04`: A login card with a cover panel: the form beside a manga panel of halftone, focus lines and one sound effect, three social marks in ink; stock's login-04 in ink.
+  Install: `npx shadcn@latest add @mangacn/login-04 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/login-04 (Markdown: https://www.mangacn.com/docs/blocks/login-04.md)
+- `login-05`: An email-only login: the studio's mark in ink above the title in the display face, one email field, Apple and Google in ink; stock's login-05 in ink.
+  Install: `npx shadcn@latest add @mangacn/login-05 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/login-05 (Markdown: https://www.mangacn.com/docs/blocks/login-05.md)
 - `signup-01`: A sign-up page: name, email and two passwords on a paper card with a heavy ink outline, the title in the display face and a registration stamp; stock's signup-01 in ink.
   Install: `npx shadcn@latest add @mangacn/signup-01 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/signup-01 (Markdown: https://www.mangacn.com/docs/blocks/signup-01.md)
+- `signup-02`: A split-screen sign-up page: the studio's mark and the form on paper, the title in the display face, beside a manga panel of halftone, focus lines and one sound effect; stock's signup-02 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-02 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-02 (Markdown: https://www.mangacn.com/docs/blocks/signup-02.md)
+- `signup-03`: A sign-up card on tone-1 paper: name, email and two passwords side by side, the card at the heavy outline and the title in the display face; stock's signup-03 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-03 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-03 (Markdown: https://www.mangacn.com/docs/blocks/signup-03.md)
+- `signup-04`: A sign-up card with a cover panel: the form beside a manga panel of halftone, focus lines and one sound effect, three social marks in ink; stock's signup-04 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-04 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-04 (Markdown: https://www.mangacn.com/docs/blocks/signup-04.md)
+- `signup-05`: An email-only sign-up: the studio's mark in ink above the title in the display face, one email field, Apple and Google in ink; stock's signup-05 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-05 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-05 (Markdown: https://www.mangacn.com/docs/blocks/signup-05.md)
 - `sidebar-01`: A handbook's app shell: an edition menu, a search field and the sections as labelled groups of links, beside a chapter's blank manga panels; stock's sidebar-01 in ink.
   Install: `npx shadcn@latest add @mangacn/sidebar-01 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/sidebar-01 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-01.md)

@@ -208,6 +208,99 @@
       ]
     },
     {
+      "name": "login-03",
+      "type": "registry:block",
+      "title": "Login 03",
+      "description": "A login card on tone-1 paper: Apple and Google first, then email and password, the card at the heavy outline and the title in the display face, stock's marks in ink; stock's login-03 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "login-03/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "login-03/components/login-form.tsx",
+          "type": "registry:component",
+          "target": "@components/login-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "login-04",
+      "type": "registry:block",
+      "title": "Login 04",
+      "description": "A login card with a cover panel: the form beside a manga panel of halftone, focus lines and one sound effect, three social marks in ink; stock's login-04 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/halftone-background.json",
+        "https://www.mangacn.com/r/focus-lines.json",
+        "https://www.mangacn.com/r/sfx-text.json"
+      ],
+      "files": [
+        {
+          "path": "login-04/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "login-04/components/login-form.tsx",
+          "type": "registry:component",
+          "target": "@components/login-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "login-05",
+      "type": "registry:block",
+      "title": "Login 05",
+      "description": "An email-only login: the studio's mark in ink above the title in the display face, one email field, Apple and Google in ink; stock's login-05 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "login-05/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "login-05/components/login-form.tsx",
+          "type": "registry:component",
+          "target": "@components/login-form.tsx"
+        }
+      ]
+    },
+    {
       "name": "signup-01",
       "type": "registry:block",
       "title": "Signup 01",
@@ -233,6 +326,132 @@
         },
         {
           "path": "signup-01/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "signup-02",
+      "type": "registry:block",
+      "title": "Signup 02",
+      "description": "A split-screen sign-up page: the studio's mark and the form on paper, the title in the display face, beside a manga panel of halftone, focus lines and one sound effect; stock's signup-02 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/halftone-background.json",
+        "https://www.mangacn.com/r/focus-lines.json",
+        "https://www.mangacn.com/r/sfx-text.json"
+      ],
+      "files": [
+        {
+          "path": "signup-02/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-02/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "signup-03",
+      "type": "registry:block",
+      "title": "Signup 03",
+      "description": "A sign-up card on tone-1 paper: name, email and two passwords side by side, the card at the heavy outline and the title in the display face; stock's signup-03 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "signup-03/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-03/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "signup-04",
+      "type": "registry:block",
+      "title": "Signup 04",
+      "description": "A sign-up card with a cover panel: the form beside a manga panel of halftone, focus lines and one sound effect, three social marks in ink; stock's signup-04 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/manga-frame.json",
+        "https://www.mangacn.com/r/halftone-background.json",
+        "https://www.mangacn.com/r/focus-lines.json",
+        "https://www.mangacn.com/r/sfx-text.json"
+      ],
+      "files": [
+        {
+          "path": "signup-04/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-04/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "signup-05",
+      "type": "registry:block",
+      "title": "Signup 05",
+      "description": "An email-only sign-up: the studio's mark in ink above the title in the display face, one email field, Apple and Google in ink; stock's signup-05 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "signup-05/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-05/components/signup-form.tsx",
           "type": "registry:component",
           "target": "@components/signup-form.tsx"
         }

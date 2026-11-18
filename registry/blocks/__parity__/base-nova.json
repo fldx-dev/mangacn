@@ -102,6 +102,132 @@
       "registryDependencies": ["button", "field", "input", "label"],
       "sha1": "c07a42865d84d1f8ad5030dccaa356498172c334"
     },
+    "login-03": {
+      "files": [
+        {
+          "path": "components/login-form.tsx",
+          "type": "registry:component",
+          "exports": ["LoginForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": ["cn"],
+      "registryDependencies": ["button", "card", "field", "input", "label"],
+      "sha1": "84aaa2a919c7df3fd88fa061db8a221c83c2eb79"
+    },
+    "login-04": {
+      "files": [
+        {
+          "path": "components/login-form.tsx",
+          "type": "registry:component",
+          "exports": ["LoginForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": ["cn"],
+      "registryDependencies": ["button", "card", "field", "input", "label"],
+      "sha1": "33a8547da65dbf201a635d3d37b2fdf599228326"
+    },
+    "login-05": {
+      "files": [
+        {
+          "path": "components/login-form.tsx",
+          "type": "registry:component",
+          "exports": ["LoginForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": ["cn"],
+      "registryDependencies": ["button", "field", "input", "label"],
+      "sha1": "5ca4813cf98050aadb9ddc57958f6f24f87be9d1"
+    },
+    "signup-02": {
+      "files": [
+        {
+          "path": "components/signup-form.tsx",
+          "type": "registry:component",
+          "exports": ["SignupForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": ["cn"],
+      "registryDependencies": ["button", "field", "input", "label"],
+      "sha1": "4f0cc5e1e98c713ec66f75d9313233cced468fe1"
+    },
+    "signup-03": {
+      "files": [
+        {
+          "path": "components/signup-form.tsx",
+          "type": "registry:component",
+          "exports": ["SignupForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": ["cn"],
+      "registryDependencies": ["button", "card", "field", "input", "label"],
+      "sha1": "cf6cb68ef2000c6a2b650c099a92a3cc7f922ca5"
+    },
+    "signup-04": {
+      "files": [
+        {
+          "path": "components/signup-form.tsx",
+          "type": "registry:component",
+          "exports": ["SignupForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": ["cn"],
+      "registryDependencies": ["button", "card", "field", "input", "label"],
+      "sha1": "149c1541c80499126f31936a1a33bbddd8e5efc6"
+    },
+    "signup-05": {
+      "files": [
+        {
+          "path": "components/signup-form.tsx",
+          "type": "registry:component",
+          "exports": ["SignupForm"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": ["cn"],
+      "registryDependencies": ["button", "input", "label"],
+      "sha1": "cf7ea519a9cf2c6a8a27c48932fc1f8c9d44ad48"
+    },
     "sidebar-01": {
       "files": [
         {
