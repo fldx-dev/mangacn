@@ -63,9 +63,19 @@ export function CopyButton({
   const [state, setState] = React.useState<CopyState>("idle");
   const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  React.useEffect(() => () => clearTimeout(timer.current), []);
+  const mounted = React.useRef(true);
+
+  React.useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      clearTimeout(timer.current);
+    };
+  }, []);
 
   const settle = (next: CopyState) => {
+    // The clipboard may answer after unmount: start no timer then.
+    if (!mounted.current) return;
     setState(next);
     clearTimeout(timer.current);
     timer.current = setTimeout(() => setState("idle"), timeout);

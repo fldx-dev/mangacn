@@ -114,6 +114,19 @@ describe("CopyButton", () => {
     expect(button.querySelector('[data-slot="ink-frame"]')).not.toBeNull();
   });
 
+  it("starts no timer when the clipboard answers after unmount", async () => {
+    vi.useFakeTimers();
+    let resolve: () => void = () => {};
+    stubClipboard(vi.fn(() => new Promise<void>((done) => (resolve = done))));
+    const { unmount } = render(<CopyButton value="a" />);
+    fireEvent.click(screen.getByRole("button"));
+    unmount();
+    await act(async () => {
+      resolve();
+    });
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
   it("calls the caller's onClick too", async () => {
     stubClipboard();
     const onClick = vi.fn();

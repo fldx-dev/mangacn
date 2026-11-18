@@ -168,6 +168,24 @@ describe("TagsInput", () => {
     expect(data.getAll("genres")).toEqual(["Action", "Drama"]);
   });
 
+  it("posts nothing when disabled, as a native disabled control", () => {
+    render(
+      <form data-testid="form">
+        <TagsInput aria-label="Genres" name="genres" defaultValue={["Action"]} disabled />
+      </form>,
+    );
+    const data = new FormData(screen.getByTestId("form") as HTMLFormElement);
+    expect(data.getAll("genres")).toEqual([]);
+  });
+
+  it("adds the typed draft along with a pasted list", () => {
+    render(<TagsInput aria-label="Genres" />);
+    type("a");
+    paste("b, c");
+    expect(chips()).toEqual(["a", "b", "c"]);
+    expect(input().value).toBe("");
+  });
+
   it("takes its words from labels", () => {
     render(
       <TagsInput

@@ -122,6 +122,21 @@ describe("Rating", () => {
     expect(data.get("rating")).toBe("4");
   });
 
+  it("posts nothing when disabled, as a native disabled control", () => {
+    render(
+      <form data-testid="form">
+        <Rating aria-label="Rating" name="rating" defaultValue={4} disabled />
+      </form>,
+    );
+    const data = new FormData(screen.getByTestId("form") as HTMLFormElement);
+    expect(data.has("rating")).toBe(false);
+  });
+
+  it("keeps its role when a caller passes one", () => {
+    render(<Rating aria-label="Rating" role="group" />);
+    expect(screen.getByRole("radiogroup")).toBeTruthy();
+  });
+
   it("takes its words from labels and max", () => {
     const { rerender } = render(
       <Rating aria-label="Rating" max={3} labels={{ item: (n, max) => `${n}/${max}` }} />,

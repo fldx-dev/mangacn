@@ -132,17 +132,18 @@ export function Rating({
     if (next !== current) onValueChange?.(next);
   };
 
-  const hidden = name ? <input type="hidden" name={name} value={current} /> : null;
+  // A disabled rating posts nothing, as a native disabled control.
+  const hidden = name && !disabled ? <input type="hidden" name={name} value={current} /> : null;
 
   if (readOnly) {
     return (
       <div
+        {...props}
         role="img"
         data-slot="rating"
         data-readonly=""
         aria-label={words.readOnly(current, max)}
         className={cn("inline-flex items-center text-ink", className)}
-        {...props}
       >
         {stars.map((star) => {
           const state = starState(current, star);
@@ -211,6 +212,7 @@ export function Rating({
 
   return (
     <div
+      {...props}
       role="radiogroup"
       data-slot="rating"
       data-disabled={disabled ? "" : undefined}
@@ -223,7 +225,6 @@ export function Rating({
         setHover(null);
         onPointerLeave?.(event);
       }}
-      {...props}
     >
       {stars.map((star) => {
         const state = starState(shown, star);

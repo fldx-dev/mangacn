@@ -257,7 +257,12 @@ export function TagsInput({
             const text = event.clipboardData.getData("text");
             if (!splitPattern.test(text)) return;
             event.preventDefault();
-            add(text.split(splitPattern));
+            // The typed draft joins the paste, so "a" then a pasted "b, c" adds all three.
+            add(
+              `${draft}
+${text}`.split(splitPattern),
+            );
+            setDraft("");
           }}
           onBlur={(event) => {
             onBlur?.(event);
@@ -271,7 +276,9 @@ export function TagsInput({
           {error}
         </p>
       )}
+      {/* A disabled field posts nothing, as a native disabled control. */}
       {name &&
+        !disabled &&
         tags.map((tag, index) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: tags may repeat (allowDuplicates); position tells them apart.
           <input key={`${tag}-${index}`} type="hidden" name={name} value={tag} />
