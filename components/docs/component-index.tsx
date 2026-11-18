@@ -26,6 +26,8 @@ const TALL_STAGES: Readonly<Record<string, string>> = {
   // progress and buttons, which wraps to its tallest in the narrow two-column cards at 768.
   "message-scroller": "22rem",
   questionnaire: "30rem",
+  // Three dated events, wrapping to 385 px in the narrow two-column cards at 768.
+  timeline: "28rem",
 };
 
 /**

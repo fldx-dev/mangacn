@@ -1,0 +1,42 @@
+---
+title: Stepper
+description: "Numbered steps of a process in hand-drawn circles joined by ink lines, horizontal or vertical; linear by default."
+item: stepper
+---
+
+<InstallCommand item="stepper" />
+
+<CopyPrompt item="stepper" />
+
+Where someone is in a process of a few steps, a checkout or a submission wizard: each step a hand-drawn circle, inked when current and checked when done, joined by ink lines. Put each step's form in `StepperContent` with `button`s for Back and Next; for events that already happened, use `timeline`.
+
+It is an ordered list, not a tablist (there is no WAI-ARIA pattern for steps), so it has no roving focus:
+
+- Tab and Shift+Tab move through the steps that can be chosen; each is a `button`.
+- Enter or Space chooses the focused step.
+- With `linear` (the default), only completed steps and the one after the current step can be chosen; the rest are text.
+- The current step has `aria-current="step"`, and each step's name starts with "Step 2 of 4" and ends with its state ("Shipping, completed"; "Payment, error").
+
+Pass each `StepperItem` (and a horizontal stepper's `StepperContent`) as a direct child of `Stepper`, not wrapped in a fragment or a `div`: the stepper finds its steps by their `step` prop. `labels.step` is a function, so set it from a client component.
+
+## Examples
+
+A horizontal checkout with an error on the current step. Under 768 px only the circles and the current step's title show; the other titles stay for screen readers.
+
+<DemoFrame item="stepper" demo="default" />
+
+`orientation="vertical"` puts each step's `StepperContent` under it, here with Back and Next buttons.
+
+<DemoFrame item="stepper" demo="vertical" />
+
+## Props
+
+<PropsTable item="stepper" />
+
+`StepperItem`:
+
+<PropsTable item="stepper" name="StepperItemProps" />
+
+`StepperContent`:
+
+<PropsTable item="stepper" name="StepperContentProps" />
