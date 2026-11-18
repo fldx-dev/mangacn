@@ -1863,6 +1863,28 @@
           "target": "@ui/copy-button.tsx"
         }
       ]
+    },
+    {
+      "name": "banner",
+      "type": "registry:ui",
+      "title": "Banner",
+      "description": "A dismissible announcement bar, paper with an ink rule or solid ink, that hands focus on when it closes.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "banner/banner.tsx",
+          "type": "registry:ui",
+          "target": "@ui/banner.tsx"
+        }
+      ]
     }
   ]
 }

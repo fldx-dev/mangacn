@@ -1,4 +1,74 @@
 {
+  "banner": {
+    "BannerProps": [
+      {
+        "id": "banner.tsx-BannerProps",
+        "name": "BannerProps",
+        "entries": [
+          {
+            "name": "variant",
+            "description": "Paper with an ink rule under it, or ink with paper text. There is no spot variant: spot is\nnever a surface colour.",
+            "type": "\"default\" | \"inverted\" | undefined",
+            "simplifiedType": "\"default\" | \"inverted\"",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"default\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "open",
+            "description": "Whether the banner shows (controlled). Pair with `onOpenChange`.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultOpen",
+            "description": "Whether the banner shows at first (uncontrolled).",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onOpenChange",
+            "description": "Called with `false` when the close button dismisses it. Remembering a dismissal (in\n`localStorage`, say) is the app's.",
+            "type": "((open: boolean) => void) | undefined",
+            "simplifiedType": "(open: boolean) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The region's name and the close button's name.",
+            "type": "Partial<{ region: string; dismiss: string; }> | undefined",
+            "simplifiedType": "Partial<{ region: string; dismiss: string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ region: \"Announcement\", dismiss: \"Dismiss announcement\" }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "caption-box": {
     "CaptionBoxProps": [
       {
