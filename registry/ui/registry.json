@@ -1695,6 +1695,31 @@
           "target": "@ui/multi-select.tsx"
         }
       ]
+    },
+    {
+      "name": "color-picker",
+      "type": "registry:ui",
+      "title": "Color Picker",
+      "description": "A swatch trigger opening a saturation area, hue and alpha sliders, a hex field and swatches, all in ink around the colours.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/popover.json",
+        "https://www.mangacn.com/r/slider.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "color-picker/color-picker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/color-picker.tsx"
+        }
+      ]
     }
   ]
 }

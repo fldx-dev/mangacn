@@ -311,6 +311,11 @@ export default defineConfig({
         find: /^@\/components\/ui\/combobox$/,
         replacement: fileURLToPath(new URL("./registry/ui/combobox/combobox.tsx", import.meta.url)),
       },
+      // color-picker (Task 128) → slider.
+      {
+        find: /^@\/components\/ui\/slider$/,
+        replacement: fileURLToPath(new URL("./registry/ui/slider/slider.tsx", import.meta.url)),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,

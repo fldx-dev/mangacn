@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 131 items in the registry. Each line gives the item's name, what it is, the one
+All 132 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -242,6 +242,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `multi-select`: Combobox's multiple mode in one line: an options array in, string values out, as outlined chips with groups and a limit.
   Install: `npx shadcn@latest add @mangacn/multi-select --overwrite`
   Docs: https://www.mangacn.com/docs/components/multi-select (Markdown: https://www.mangacn.com/docs/components/multi-select.md)
+- `color-picker`: A swatch trigger opening a saturation area, hue and alpha sliders, a hex field and swatches, all in ink around the colours.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/color-picker --overwrite`
+  Docs: https://www.mangacn.com/docs/components/color-picker (Markdown: https://www.mangacn.com/docs/components/color-picker.md)
 
 ## Layout
 

@@ -29,6 +29,7 @@ export const OVERLAY_ITEMS: ReadonlySet<string> = new Set([
   "combobox",
   "command",
   "multi-select",
+  "color-picker",
 ]);
 
 export interface DemoFrameProps {

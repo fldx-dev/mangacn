@@ -723,6 +723,171 @@
       }
     ]
   },
+  "color-picker": {
+    "ColorPickerProps": [
+      {
+        "id": "color-picker.tsx-ColorPickerProps",
+        "name": "ColorPickerProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The colour as `#rrggbb`, or `#rrggbbaa` when it is not opaque (controlled).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The colour at first (uncontrolled).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"#000000\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with the new colour (lowercase `#rrggbb`, or `#rrggbbaa` below full opacity).",
+            "type": "((hex: string) => void) | undefined",
+            "simplifiedType": "(hex: string) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "alpha",
+            "description": "Shows the alpha slider and accepts 8-digit hex.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "swatches",
+            "description": "Preset colours under the panel, as a radio group.",
+            "type": "string[] | undefined",
+            "simplifiedType": "string[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "disabled",
+            "description": "Disables the trigger and every control.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "Posts the hex in a hidden input under this name with a plain `<form>`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "open",
+            "description": "Whether the panel is open (controlled; `ColorPicker` only).",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultOpen",
+            "description": "Whether the panel is open at first (uncontrolled; `ColorPicker` only).",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onOpenChange",
+            "description": "Called when the panel opens or closes (`ColorPicker` only).",
+            "type": "((open: boolean) => void) | undefined",
+            "simplifiedType": "(open: boolean) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "Built-in words: `trigger` (\"Colour\", named with the value as \"Colour, #e60012\"), `area`\n(\"Saturation and brightness\"), `saturation` and `brightness` (the area's value text), `hue`\n(\"Hue\"), `alpha` (\"Alpha\"), `hex` (\"Hex\"), `invalid` (the hex error, \"Use a hex colour such as\n#e60012.\") and `swatches` (\"Swatches\").",
+            "type": "{ trigger?: string; area?: string; saturation?: string; brightness?: string; hue?: string; alpha?: string; hex?: string; invalid?: string; swatches?: string; } | undefined",
+            "simplifiedType": "{ trigger?: string; area?: string; saturation?: string; brightness?: string; hue?: string; alpha?: string; hex?: string; invalid?: string; swatches?: string; }",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "id",
+            "description": "The focusable element's id (the trigger, or the panel's area), for a `FieldLabel htmlFor`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-describedby",
+            "description": "Describes the trigger (a `FieldDescription` or `FieldError`).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-invalid",
+            "description": "Marks the trigger invalid: a spot outline.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the root (the trigger's wrapper, or the panel).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "emanata": {
     "EmanataProps": [
       {

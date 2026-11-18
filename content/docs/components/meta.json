@@ -68,6 +68,7 @@
     "code-block",
     "---Inputs---",
     "multi-select",
+    "color-picker",
     "---Layout---",
     "panel",
     "panel-grid",
