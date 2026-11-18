@@ -437,6 +437,78 @@
       ],
       "sha1": "72b3879be8d137f5d3f3d87543029ac02ab53419"
     },
+    "sidebar-15": {
+      "files": [
+        {
+          "path": "components/calendars.tsx",
+          "type": "registry:component",
+          "exports": ["Calendars"]
+        },
+        {
+          "path": "components/date-picker.tsx",
+          "type": "registry:component",
+          "exports": ["DatePicker"]
+        },
+        {
+          "path": "components/nav-favorites.tsx",
+          "type": "registry:component",
+          "exports": ["NavFavorites"]
+        },
+        {
+          "path": "components/nav-main.tsx",
+          "type": "registry:component",
+          "exports": ["NavMain"]
+        },
+        {
+          "path": "components/nav-secondary.tsx",
+          "type": "registry:component",
+          "exports": ["NavSecondary"]
+        },
+        {
+          "path": "components/nav-user.tsx",
+          "type": "registry:component",
+          "exports": ["NavUser"]
+        },
+        {
+          "path": "components/nav-workspaces.tsx",
+          "type": "registry:component",
+          "exports": ["NavWorkspaces"]
+        },
+        {
+          "path": "components/sidebar-left.tsx",
+          "type": "registry:component",
+          "exports": ["SidebarLeft"]
+        },
+        {
+          "path": "components/sidebar-right.tsx",
+          "type": "registry:component",
+          "exports": ["SidebarRight"]
+        },
+        {
+          "path": "components/team-switcher.tsx",
+          "type": "registry:component",
+          "exports": ["TeamSwitcher"]
+        },
+        {
+          "path": "page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx",
+          "exports": ["default"]
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "calendar",
+        "collapsible",
+        "dropdown-menu",
+        "popover",
+        "separator",
+        "sidebar"
+      ],
+      "sha1": "eebf0e7f971b8408193b2399dd5c65f18381a9b7"
+    },
     "sidebar-16": {
       "files": [
         {

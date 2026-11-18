@@ -879,6 +879,85 @@
       ]
     },
     {
+      "name": "sidebar-15",
+      "type": "registry:block",
+      "title": "Sidebar 15",
+      "description": "A notebook shell between two sidebars: on the left a studio switcher, main links, favourite notes, collapsible workspaces and help links; on the right the editor's account menu, a date picker and the studio's calendars; both put away with one shortcut, beside a note of blank manga panels; stock's sidebar-15 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/sidebar.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/popover.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/calendar.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/panel.json"
+      ],
+      "files": [
+        {
+          "path": "sidebar-15/page.tsx",
+          "type": "registry:page",
+          "target": "app/dashboard/page.tsx"
+        },
+        {
+          "path": "sidebar-15/components/calendars.tsx",
+          "type": "registry:component",
+          "target": "@components/calendars.tsx"
+        },
+        {
+          "path": "sidebar-15/components/date-picker.tsx",
+          "type": "registry:component",
+          "target": "@components/date-picker.tsx"
+        },
+        {
+          "path": "sidebar-15/components/nav-favorites.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-favorites.tsx"
+        },
+        {
+          "path": "sidebar-15/components/nav-main.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-main.tsx"
+        },
+        {
+          "path": "sidebar-15/components/nav-secondary.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-secondary.tsx"
+        },
+        {
+          "path": "sidebar-15/components/nav-user.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-user.tsx"
+        },
+        {
+          "path": "sidebar-15/components/nav-workspaces.tsx",
+          "type": "registry:component",
+          "target": "@components/nav-workspaces.tsx"
+        },
+        {
+          "path": "sidebar-15/components/sidebar-left.tsx",
+          "type": "registry:component",
+          "target": "@components/sidebar-left.tsx"
+        },
+        {
+          "path": "sidebar-15/components/sidebar-right.tsx",
+          "type": "registry:component",
+          "target": "@components/sidebar-right.tsx"
+        },
+        {
+          "path": "sidebar-15/components/team-switcher.tsx",
+          "type": "registry:component",
+          "target": "@components/team-switcher.tsx"
+        }
+      ]
+    },
+    {
       "name": "sidebar-16",
       "type": "registry:block",
       "title": "Sidebar 16",
