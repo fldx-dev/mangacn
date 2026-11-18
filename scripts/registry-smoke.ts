@@ -324,6 +324,16 @@ export const EXPECTED_CONTENT: Record<
       ],
     },
   ],
+  "signup-05": [
+    {
+      file: "app/signup/page.tsx",
+      includes: ['import { SignupForm } from "@/components/signup-form"'],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: ["export function SignupForm(", "Continue with Google"],
+    },
+  ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
     {

@@ -429,6 +429,35 @@
       ]
     },
     {
+      "name": "signup-05",
+      "type": "registry:block",
+      "title": "Signup 05",
+      "description": "An email-only sign-up: the studio's mark in ink above the title in the display face, one email field, Apple and Google in ink; stock's signup-05 in ink.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/label.json",
+        "https://www.mangacn.com/r/field.json"
+      ],
+      "files": [
+        {
+          "path": "signup-05/page.tsx",
+          "type": "registry:page",
+          "target": "app/signup/page.tsx"
+        },
+        {
+          "path": "signup-05/components/signup-form.tsx",
+          "type": "registry:component",
+          "target": "@components/signup-form.tsx"
+        }
+      ]
+    },
+    {
       "name": "sidebar-07",
       "type": "registry:block",
       "title": "Sidebar 07",

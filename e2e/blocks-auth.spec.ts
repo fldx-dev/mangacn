@@ -35,6 +35,10 @@ const BLOCKS: Record<string, AuthBlock> = {
     social: ["Sign up with Apple", "Sign up with Google", "Sign up with Meta"],
     cover: 768,
   },
+  "signup-05": {
+    form: "Welcome to Inkpot Studio.",
+    social: ["Continue with Apple", "Continue with Google"],
+  },
 };
 
 const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
