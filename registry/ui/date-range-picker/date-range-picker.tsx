@@ -27,7 +27,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export interface DateRangePreset {
   /** The button's text. */
   label: string;
-  /** The range the preset stands for, computed at render and on click (so "today" is today). */
+  /** The range the preset stands for, computed while open and on click (so "today" is today). */
   range: () => DateRange;
 }
 
@@ -247,7 +247,9 @@ export function DateRangePicker({
                 className="flex flex-wrap gap-1 md:flex-col md:flex-nowrap"
               >
                 {presets.map((preset) => {
-                  const pressed = sameRange(value, preset.range());
+                  // Only while open: a closed picker reads no clock, so a page prerendered
+                  // with cacheComponents (Next 16's default) does not stop at `new Date()`.
+                  const pressed = open && sameRange(value, preset.range());
                   return (
                     <Button
                       key={preset.label}
