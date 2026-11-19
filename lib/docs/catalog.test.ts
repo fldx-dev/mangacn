@@ -134,16 +134,24 @@ describe("block pages", () => {
     }));
     expect(renderBlocksMeta(many)).toContain('  "pages": [\n    "---Manga---",\n    "shelf-a",');
     expect(JSON.parse(renderBlocksMeta(many)).pages).toHaveLength(10);
-    // A new stock block joins its family's group by its name alone: Manga first, in catalog
-    // order, then Login, Signup and Sidebar, each by number.
-    const stock = ["sidebar-16", "login-02", "sidebar-07", "signup-01", "login-01"].map((name) => ({
-      ...blocks[0],
-      name,
-    }));
+    // A new block joins its family's group by its name alone: Manga first, in catalog order,
+    // then App, Login, Signup and Sidebar, each by number.
+    const stock = [
+      "sidebar-16",
+      "login-02",
+      "file-manager-01",
+      "sidebar-07",
+      "signup-01",
+      "settings-01",
+      "login-01",
+    ].map((name) => ({ ...blocks[0], name }));
     expect(JSON.parse(renderBlocksMeta([...stock, ...blocks])).pages).toEqual([
       "---Manga---",
       "shelf",
       "reader",
+      "---App---",
+      "file-manager-01",
+      "settings-01",
       "---Login---",
       "login-01",
       "login-02",

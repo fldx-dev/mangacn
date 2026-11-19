@@ -211,6 +211,10 @@ describe("findBlockProblems", () => {
     expect(findBlockProblems(registry(stamp, clash))).toEqual([
       "login-01: registry/blocks/login-01/components/stamp.tsx installs to components/stamp.tsx, as a file of stamp does",
     ]);
+    // In either order: the item's file is refused even when the block comes first.
+    expect(findBlockProblems(registry(clash, stamp))).toEqual([
+      "login-01: registry/blocks/login-01/components/stamp.tsx installs to components/stamp.tsx, as a file of stamp does",
+    ]);
   });
 
   it("ignores items of other types outside the block catalog", () => {
@@ -279,6 +283,47 @@ describe("variants of one stock family (SPEC-components-6 §5.1)", () => {
     };
     expect(findBlockProblems(registry(variant("login-01"), variant("login-02")), narrow)).toEqual([
       "login-02: registry/blocks/login-02/components/login-form.tsx installs to components/login-form.tsx, as a file of login-01 does",
+    ]);
+  });
+
+  it("checks a third block against every owner of a shared path, not only the first", () => {
+    const three: StockFamily = {
+      blocks: ["login-01", "login-02", "login-03"],
+      stock: { "login-01": stockLogin, "login-02": stockLogin, "login-03": stockLogin },
+    };
+    // Allowed with both owners: no problem.
+    expect(
+      findBlockProblems(
+        registry(variant("login-01"), variant("login-02"), variant("login-03")),
+        three,
+      ),
+    ).toEqual([]);
+    // Allowed with neither: refused against each owner, not only login-01.
+    expect(
+      findBlockProblems(
+        registry(variant("login-01"), variant("login-02"), variant("login-09")),
+        three,
+      ),
+    ).toEqual([
+      "login-09: registry/blocks/login-09/page.tsx installs to app/login/page.tsx, as a file of login-01 does",
+      "login-09: registry/blocks/login-09/page.tsx installs to app/login/page.tsx, as a file of login-02 does",
+      "login-09: registry/blocks/login-09/components/login-form.tsx installs to components/login-form.tsx, as a file of login-01 does",
+      "login-09: registry/blocks/login-09/components/login-form.tsx installs to components/login-form.tsx, as a file of login-02 does",
+    ]);
+    // Allowed with the first owner only (stock's login-02 has no login form): refused against
+    // the second, which checking only the first owner missed.
+    const narrow: StockFamily = {
+      blocks: three.blocks,
+      stock: { ...three.stock, "login-02": { files: [stockLogin.files[1]] } },
+    };
+    expect(
+      findBlockProblems(
+        registry(variant("login-01"), variant("login-02"), variant("login-03")),
+        narrow,
+      ),
+    ).toEqual([
+      "login-02: registry/blocks/login-02/components/login-form.tsx installs to components/login-form.tsx, as a file of login-01 does",
+      "login-03: registry/blocks/login-03/components/login-form.tsx installs to components/login-form.tsx, as a file of login-02 does",
     ]);
   });
 
@@ -368,32 +413,54 @@ describe("block groups (SPEC-components-6 §6)", () => {
     expect(blockGroup("login-05")).toBe("login");
     expect(blockGroup("signup-01")).toBe("signup");
     expect(blockGroup("sidebar-16")).toBe("sidebar");
+    expect(blockGroup("settings-01")).toBe("app");
+    expect(blockGroup("file-manager-01")).toBe("app");
     expect(blockGroup("chapter-list")).toBe("manga");
     expect(blockGroup("library-page")).toBe("manga");
   });
 
-  it("orders the groups Manga, Login, Signup, Sidebar: Manga as given, a family by number", () => {
+  it("orders the groups Manga, App, Login, Signup, Sidebar: Manga as given, a family by number", () => {
     const groups = groupBlocks(
-      named("sidebar-10", "reader", "login-01", "sidebar-07", "chapter-list", "sidebar-02"),
+      named(
+        "sidebar-10",
+        "reader",
+        "upload-01",
+        "login-01",
+        "settings-02",
+        "sidebar-07",
+        "chapter-list",
+        "settings-01",
+        "sidebar-02",
+      ),
     );
     expect(
       groups.map(({ id, label, items }) => [id, label, items.map((item) => item.name)]),
     ).toEqual([
       ["manga", "Manga", ["reader", "chapter-list"]],
+      ["app", "App", ["upload-01", "settings-01", "settings-02"]],
       ["login", "Login", ["login-01"]],
       ["sidebar", "Sidebar", ["sidebar-02", "sidebar-07", "sidebar-10"]],
     ]);
     expect(BLOCK_GROUPS.map((group) => group.label)).toEqual([
       "Manga",
+      "App",
       "Login",
       "Signup",
       "Sidebar",
     ]);
   });
 
-  it("names a stock family with no group instead of filing it under Manga", () => {
+  it("leaves out a group with no blocks, App included", () => {
+    expect(groupBlocks(named("reader", "login-01")).map((group) => group.id)).toEqual([
+      "manga",
+      "login",
+    ]);
+  });
+
+  it("names a family with no group instead of filing it under Manga", () => {
     expect(() => groupBlocks(named("dashboard-01"))).toThrow(
       /"dashboard" family, which has no group/,
     );
+    expect(() => blockGroup("file-browser-01")).toThrow(/"file-browser" family/);
   });
 });

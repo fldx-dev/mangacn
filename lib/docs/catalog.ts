@@ -100,7 +100,7 @@ function isCategory(value: string | undefined): value is Category {
  * Every component-catalog item that has demos, in category order and catalog order within a
  * category. Throws naming an item whose first category is not one of `CATEGORIES`. `catalog`
  * picks the section: the components (the default, which the component index lists) or the blocks,
- * which come in their groups (`groupBlocks`: Manga, then each stock family by number).
+ * which come in their groups (`groupBlocks`: Manga, then each family by number).
  */
 export function docItems(
   registry: LoadedRegistry,
@@ -199,8 +199,8 @@ export function renderComponentsMeta(items: readonly DocItem[]): string {
 const JSON_LINE_WIDTH = 100;
 
 /**
- * `content/docs/blocks/meta.json`: the block pages under one separator per group (Manga, Login,
- * Signup, Sidebar; `groupBlocks`), laid out as Biome formats it (the page list on one line while
+ * `content/docs/blocks/meta.json`: the block pages under one separator per group (Manga, App,
+ * Login, Signup, Sidebar; `groupBlocks`; none for an empty group), laid out as Biome formats it (the page list on one line while
  * it fits), so `gen:docs --check` and `biome check` agree.
  */
 export function renderBlocksMeta(items: readonly DocItem[]): string {

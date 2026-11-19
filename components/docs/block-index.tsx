@@ -17,10 +17,10 @@ import { PREVIEW_WIDTHS } from "./preview-widths";
 export const BLOCK_STAGE_HEIGHT = "26rem";
 
 /**
- * Every block as a card with a preview, under a heading per group (Manga, Login, Signup, Sidebar;
- * `groupBlocks`, from the block's name): a page block's whole page from
- * `/view/<name>` (in an inert iframe at a phone's width, scaled to the card), any other
- * block's default demo. Previews are inert: a card is a way to the block's page, which its title
+ * Every block as a card with a preview, under a heading per group (Manga, App, Login, Signup,
+ * Sidebar; `groupBlocks`, from the block's name; a group with no block has no heading): a page
+ * block's whole page from `/view/<name>` (in an inert iframe at a phone's width, scaled to the
+ * card), any other block's default demo. Previews are inert: a card is a way to the block's page, which its title
  * links to, not a place to use the block. Read from the catalog and the demo map, so a new block
  * shows up, in its group, without an edit here.
  */
