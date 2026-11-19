@@ -301,6 +301,9 @@ for (const path of pages) {
       // indexes; every other page keeps the default.
       const index = INDEXES[path];
       if (index) test.slow();
+      // The Blocks index loads a stage per page block; with batch 8's App group it reached the
+      // tripled 90 s budget on CI. Six minutes leaves room for the blocks still to come.
+      if (path === "/docs/blocks") test.setTimeout(360_000);
       const errors: string[] = [];
       page.on("console", (message) => {
         if (message.type() === "error") errors.push(message.text());
