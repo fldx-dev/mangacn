@@ -1,6 +1,6 @@
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { Metadata } from "next";
-import ThemeSpecimen from "@/app/demo/[item]/[demo]/theme-specimen";
+import ThemeSpecimen from "@/app/demo/theme-specimen";
 import { CreatePage } from "@/components/create/create-page";
 import { baseOptions } from "@/lib/docs/layout.shared";
 import { OG_IMAGE } from "@/lib/site";

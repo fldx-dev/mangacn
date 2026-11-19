@@ -128,3 +128,128 @@ export function renderDemoMap(entries: DemoEntry[], pages: PageEntry[] = []): st
     "",
   ].join("\n");
 }
+
+/** Repo-relative path of the generated demo list (data only, no loaders; `pnpm gen:demos`). */
+export const DEMO_LIST_PATH = "lib/registry/demo-list.generated.ts";
+
+/**
+ * Renders the demo list module: the demos and page blocks as data, with no `import()`. The
+ * `/view` and `/demo` routes read it instead of the demo map: Turbopack gives a route the client
+ * code of every module its server code can `import()`, so the map would load the whole
+ * registry's client code on each of them (MANGA-21).
+ */
+export function renderDemoList(entries: DemoEntry[], pages: PageEntry[] = []): string {
+  return [
+    DEMO_MAP_HEADER,
+    "",
+    "export const demoEntries: readonly { item: string; demo: string; path: string }[] = [",
+    ...entries.map(
+      (entry) =>
+        `  { item: ${JSON.stringify(entry.item)}, demo: ${JSON.stringify(entry.demo)}, path: ${JSON.stringify(entry.path)} },`,
+    ),
+    "];",
+    "",
+    "export const pageEntries: readonly { block: string; path: string }[] = [",
+    ...pages.map(
+      (page) => `  { block: ${JSON.stringify(page.block)}, path: ${JSON.stringify(page.path)} },`,
+    ),
+    "];",
+    "",
+  ].join("\n");
+}
+
+/** Stages that are not an item's demo, served at `/demo/<item>/<demo>` from app/demo. */
+export const EXTRA_STAGES: readonly { item: string; demo: string; module: string }[] = [
+  // The theme specimen: a dozen items' default demos on one page, so one shot shows a look.
+  { item: "theme", demo: "specimen", module: "@/app/demo/theme-specimen" },
+];
+
+export interface RouteFile {
+  /** Repo-relative POSIX path of the route file. */
+  path: string;
+  source: string;
+}
+
+/** The folders the generated routes live in; every subfolder of these is generated. */
+export const ROUTE_ROOTS = ["app/view", "app/demo"] as const;
+
+const moduleOf = (file: string) => `@/${file.slice(0, -".tsx".length)}`;
+
+/**
+ * Renders one static route file per page block (`app/view/<block>/page.tsx`), per item gallery
+ * (`app/demo/<item>/page.tsx`) and per demo stage (`app/demo/<item>/<demo>/page.tsx`), each
+ * importing only its own module, so each route loads only its own client code (MANGA-21). The
+ * pages themselves are the shared shells next to them (app/view/block-view.tsx,
+ * app/demo/demo-stage.tsx, app/demo/item-gallery.tsx). Throws on a name that would collide.
+ */
+export function renderDemoRoutes(entries: DemoEntry[], pages: PageEntry[] = []): RouteFile[] {
+  const header = [DEMO_MAP_HEADER, 'import type { Metadata } from "next";'];
+  const files: RouteFile[] = pages.map((page) => ({
+    path: `app/view/${page.block}/page.tsx`,
+    source: [
+      ...header,
+      `import Page from ${JSON.stringify(moduleOf(page.path))};`,
+      'import { BlockView, VIEW_METADATA } from "../block-view";',
+      "",
+      "export const metadata: Metadata = VIEW_METADATA;",
+      "",
+      "export default function View() {",
+      "  return <BlockView page={Page} />;",
+      "}",
+      "",
+    ].join("\n"),
+  }));
+
+  const byItem = new Map<string, DemoEntry[]>();
+  for (const entry of entries) byItem.set(entry.item, [...(byItem.get(entry.item) ?? []), entry]);
+  for (const extra of EXTRA_STAGES) {
+    if (byItem.has(extra.item)) throw new Error(`Item "${extra.item}" collides with a stage`);
+  }
+
+  for (const [item, demos] of byItem) {
+    files.push({
+      path: `app/demo/${item}/page.tsx`,
+      source: [
+        ...header,
+        ...demos.map(
+          (entry, index) => `import Demo${index} from ${JSON.stringify(moduleOf(entry.path))};`,
+        ),
+        'import { GALLERY_METADATA, ItemGallery } from "../item-gallery";',
+        "",
+        "export const metadata: Metadata = GALLERY_METADATA;",
+        "",
+        "const demos = {",
+        ...demos.map((entry, index) => `  ${JSON.stringify(entry.demo)}: Demo${index},`),
+        "};",
+        "",
+        "export default function Gallery() {",
+        `  return <ItemGallery item=${JSON.stringify(item)} demos={demos} />;`,
+        "}",
+        "",
+      ].join("\n"),
+    });
+  }
+
+  const stages = [
+    ...entries.map((entry) => ({ ...entry, module: moduleOf(entry.path) })),
+    ...EXTRA_STAGES,
+  ];
+  for (const stage of stages) {
+    files.push({
+      path: `app/demo/${stage.item}/${stage.demo}/page.tsx`,
+      source: [
+        ...header,
+        `import Demo from ${JSON.stringify(stage.module)};`,
+        'import { DemoStage, STAGE_METADATA } from "../../demo-stage";',
+        "",
+        "export const metadata: Metadata = STAGE_METADATA;",
+        "",
+        "export default function Stage() {",
+        `  return <DemoStage item=${JSON.stringify(stage.item)} demo=${JSON.stringify(stage.demo)} component={Demo} />;`,
+        "}",
+        "",
+      ].join("\n"),
+    });
+  }
+  return files;
+}

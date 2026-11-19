@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/docs/catalog";
 import { loadRegistry } from "@/lib/registry";
-import { listDemos } from "@/lib/registry/demos";
+import { listDemos } from "@/lib/registry/demo-list";
 
 // Gallery index: every item that has demos, grouped by catalog category, linking to the
 // per-item page (all demos inline) and to each lone demo stage.
