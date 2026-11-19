@@ -659,6 +659,18 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/series-header.tsx", includes: ["export function SeriesHeader("] },
   ],
+  // App blocks (SPEC-components-8 §5): the route imports its form and data by install path.
+  "settings-01": [
+    {
+      file: "app/settings/page.tsx",
+      includes: [
+        'import { settings } from "@/components/settings-data"',
+        'import { SettingsForm } from "@/components/settings-form"',
+      ],
+    },
+    { file: "components/settings-form.tsx", includes: ["export function SettingsForm("] },
+    { file: "components/settings-data.ts", includes: ["export const settings: Settings"] },
+  ],
   // Hooks: registry:hook with `target: "@hooks/<name>.ts"`, stock source with the header.
   "use-mobile": [
     {

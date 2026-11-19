@@ -1273,6 +1273,46 @@
           "target": "@components/site-header.tsx"
         }
       ]
+    },
+    {
+      "name": "settings-01",
+      "type": "registry:block",
+      "title": "Settings 01",
+      "description": "Account settings for a signed-in reader: a section nav and four cards (account, notifications, reading, danger zone) with selects, switches, radio groups and a direction toggle; Save validates and announces, Delete account asks first.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/select.json",
+        "https://www.mangacn.com/r/switch.json",
+        "https://www.mangacn.com/r/radio-group.json",
+        "https://www.mangacn.com/r/toggle-group.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/alert-dialog.json"
+      ],
+      "files": [
+        {
+          "path": "settings-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/settings/page.tsx"
+        },
+        {
+          "path": "settings-01/components/settings-form.tsx",
+          "type": "registry:component",
+          "target": "@components/settings-form.tsx"
+        },
+        {
+          "path": "settings-01/components/settings-data.ts",
+          "type": "registry:component",
+          "target": "@components/settings-data.ts"
+        }
+      ]
     }
   ]
 }
