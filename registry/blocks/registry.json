@@ -1395,6 +1395,46 @@
       ]
     },
     {
+      "name": "file-manager-01",
+      "type": "registry:block",
+      "title": "File Manager 01",
+      "description": "A file manager for a manga project: a folder tree (series, volumes, chapters, covers, scripts), a breadcrumb, the open folder as a table with Rename, Download and Delete per file, and Upload or a drop over the list to add files; every change is announced.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/tree-view.json",
+        "https://www.mangacn.com/r/breadcrumb.json",
+        "https://www.mangacn.com/r/table.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/alert-dialog.json",
+        "https://www.mangacn.com/r/file-upload.json",
+        "https://www.mangacn.com/r/empty.json",
+        "https://www.mangacn.com/r/collapsible.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/input.json"
+      ],
+      "files": [
+        {
+          "path": "file-manager-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/files/page.tsx"
+        },
+        {
+          "path": "file-manager-01/components/file-manager.tsx",
+          "type": "registry:component",
+          "target": "@components/file-manager.tsx"
+        },
+        {
+          "path": "file-manager-01/components/file-manager-data.ts",
+          "type": "registry:component",
+          "target": "@components/file-manager-data.ts"
+        }
+      ]
+    },
+    {
       "name": "activity-01",
       "type": "registry:block",
       "title": "Activity",
@@ -1432,6 +1472,45 @@
           "path": "activity-01/components/activity-data.ts",
           "type": "registry:component",
           "target": "@components/activity-data.ts"
+        }
+      ]
+    },
+    {
+      "name": "upload-01",
+      "type": "registry:block",
+      "title": "Upload 01",
+      "description": "A chapter upload page: series, chapter number and title in a card, a drop zone for up to 40 page images with per-page progress and retry, an overall count, and Upload, Cancel and Publish; the upload is simulated and Publish validates and announces.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/file-upload.json",
+        "https://www.mangacn.com/r/progress.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/select.json",
+        "https://www.mangacn.com/r/number-input.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/alert.json"
+      ],
+      "files": [
+        {
+          "path": "upload-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/upload/page.tsx"
+        },
+        {
+          "path": "upload-01/components/upload-form.tsx",
+          "type": "registry:component",
+          "target": "@components/upload-form.tsx"
+        },
+        {
+          "path": "upload-01/components/upload-data.ts",
+          "type": "registry:component",
+          "target": "@components/upload-data.ts"
         }
       ]
     }

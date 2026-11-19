@@ -690,6 +690,20 @@ export const EXPECTED_CONTENT: Record<
     { file: "components/onboarding-flow.tsx", includes: ["export function OnboardingFlow("] },
     { file: "components/onboarding-data.ts", includes: ["export const onboardingGenres"] },
   ],
+  "file-manager-01": [
+    {
+      file: "app/files/page.tsx",
+      includes: [
+        'from "@/components/file-manager-data"',
+        'import { FileManager } from "@/components/file-manager"',
+      ],
+    },
+    { file: "components/file-manager.tsx", includes: ["export function FileManager("] },
+    {
+      file: "components/file-manager-data.ts",
+      includes: ["export const fileManagerFiles: FileManagerFile[]"],
+    },
+  ],
   "activity-01": [
     {
       file: "app/activity/page.tsx",
@@ -701,6 +715,17 @@ export const EXPECTED_CONTENT: Record<
     { file: "components/activity-stats.tsx", includes: ["export function ActivityStats("] },
     { file: "components/activity-feed.tsx", includes: ["export function ActivityFeed("] },
     { file: "components/activity-data.ts", includes: ["export const activityEvents"] },
+  ],
+  "upload-01": [
+    {
+      file: "app/upload/page.tsx",
+      includes: [
+        'import { uploadSeries } from "@/components/upload-data"',
+        'import { UploadForm } from "@/components/upload-form"',
+      ],
+    },
+    { file: "components/upload-form.tsx", includes: ["export function UploadForm("] },
+    { file: "components/upload-data.ts", includes: ["export const uploadSeries: UploadSeries[]"] },
   ],
   // Hooks: registry:hook with `target: "@hooks/<name>.ts"`, stock source with the header.
   "use-mobile": [

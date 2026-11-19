@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 150 items in the registry. Each line gives the item's name, what it is, the one
+All 152 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -413,9 +413,15 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `onboarding-01`: A first-run flow in a card: a linear stepper over Profile, Interests and Habits, each validated on Next with focus to the first invalid field, then a summary of the answers and a link to the library.
   Install: `npx shadcn@latest add @mangacn/onboarding-01 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/onboarding-01 (Markdown: https://www.mangacn.com/docs/blocks/onboarding-01.md)
+- `file-manager-01`: A file manager for a manga project: a folder tree (series, volumes, chapters, covers, scripts), a breadcrumb, the open folder as a table with Rename, Download and Delete per file, and Upload or a drop over the list to add files; every change is announced.
+  Install: `npx shadcn@latest add @mangacn/file-manager-01 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/file-manager-01 (Markdown: https://www.mangacn.com/docs/blocks/file-manager-01.md)
 - `activity-01`: A reader's own activity page: four stat cards with sparklines, a filter by kind that announces its count, and a timeline of events under day headings with Show more.
   Install: `npx shadcn@latest add @mangacn/activity-01 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/activity-01 (Markdown: https://www.mangacn.com/docs/blocks/activity-01.md)
+- `upload-01`: A chapter upload page: series, chapter number and title in a card, a drop zone for up to 40 page images with per-page progress and retry, an overall count, and Upload, Cancel and Publish; the upload is simulated and Publish validates and announces.
+  Install: `npx shadcn@latest add @mangacn/upload-01 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/upload-01 (Markdown: https://www.mangacn.com/docs/blocks/upload-01.md)
 - `login-01`: A login page: email and password on a paper card with a heavy ink outline, the title in the display face and a reception stamp; stock's login-01 in ink.
   Install: `npx shadcn@latest add @mangacn/login-01 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/login-01 (Markdown: https://www.mangacn.com/docs/blocks/login-01.md)
