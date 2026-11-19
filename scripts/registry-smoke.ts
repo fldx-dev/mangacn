@@ -1,6 +1,9 @@
 /**
  * Smoke-installs every built registry item into a throwaway Next.js + shadcn project,
- * then typechecks and builds that project. See SPEC-registry-core §7.
+ * then typechecks and builds that project. See SPEC-registry-core §7. The build prerenders
+ * `app/smoke/<category>/page.tsx`, each item's default demo at install paths, under
+ * `cacheComponents` (scripts/registry-smoke-pages.ts, SPEC-components-8 §4.1); with `--only` or
+ * `--changed`, only the named items' demos.
  *
  * Usage: pnpm registry:build && pnpm registry:smoke
  *
@@ -59,11 +62,24 @@ import { fontItemUrls, VITE_FONT_SANS } from "../lib/create/items";
 import { kitItems } from "../lib/create/kits";
 import { createAnswer, fontAnswer } from "../lib/create/serve";
 import { SETUP_ITEMS, setCommand } from "../lib/docs/install-command";
-import { mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
+import { loadRegistry, mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
 import { installTarget } from "../lib/registry/install-target";
 import { loadPresets } from "../lib/registry/theme-preset-items";
+import {
+  copyVariant,
+  demoFile,
+  readRepoFile,
+  smokeEntries,
+  smokePageFiles,
+  writeProjectFile,
+} from "./registry-smoke-pages";
 
-const NEXT_VERSION = "16.4.6";
+/** create-next-app at the site's own Next.js version (package.json pins it exactly). */
+const NEXT_VERSION = (
+  JSON.parse(readFileSync(path.resolve("package.json"), "utf8")) as {
+    dependencies: { next: string };
+  }
+).dependencies.next;
 const SHADCN_VERSION = "4.23.0";
 /** Overall budget: setup plus a minute per item (`pnpm dlx shadcn add` takes ~40 s on Windows). */
 const BASE_TIMEOUT_MS = 6 * 60 * 1000;
@@ -805,6 +821,7 @@ export function itemsForChangedPaths(
     const posix = file.split(path.sep).join("/");
     if (
       posix === "scripts/registry-smoke.ts" ||
+      posix === "scripts/registry-smoke-pages.ts" ||
       posix.startsWith("lib/registry/") ||
       /^registry\/[^/]+\/registry\.json$/.test(posix) ||
       posix === "registry.json"
@@ -1177,6 +1194,16 @@ async function createProject(workDir: string, name: string, port: number): Promi
     ],
     workDir,
   );
+
+  // The smoke pages prerender under cacheComponents, as the template sets it; a template that
+  // stopped setting it would let a clock read during render pass unseen.
+  const nextConfig = readProjectFile(project, "next.config.ts") ?? "";
+  if (!/\bcacheComponents:\s*true\b/.test(nextConfig)) {
+    throw new SmokeError(
+      `create-next-app@${NEXT_VERSION}'s next.config.ts does not set cacheComponents: true`,
+      nextConfig,
+    );
+  }
 
   console.log(`→ shadcn@${SHADCN_VERSION} init`);
   await run("pnpm", ["dlx", `shadcn@${SHADCN_VERSION}`, "init", "-d", "--yes"], project);
@@ -1628,6 +1655,8 @@ async function main() {
       writeFileSync(path.join(smokeDir, "page.tsx"), STOCK_USAGE_PAGE);
     }
 
+    const registry = loadRegistry();
+    const sources = new Map(registry.items.map((item) => [item.name, item]));
     const owners = new Map<string, string>();
     const missing: string[] = [];
     for (const name of names) {
@@ -1648,7 +1677,12 @@ async function main() {
           owners.set(file, name);
         }
       }
-      if (variants.has(name)) missing.push(...contentProblems(project, [name]));
+      if (variants.has(name)) {
+        missing.push(...contentProblems(project, [name]));
+        // Its demo renders from a copy: the next sibling overwrites these install paths.
+        const source = sources.get(name);
+        if (source) copyVariant(project, source);
+      }
     }
 
     console.log("→ installed content");
@@ -1663,6 +1697,21 @@ async function main() {
       throw new SmokeError(`Installed content check failed:\n  ${missing.join("\n  ")}`);
     }
 
+    // Every requested item's default demo on its category's page, prerendered by next build.
+    const { entries, skipped } = smokeEntries(
+      registry.items,
+      names,
+      requested ?? names,
+      variants,
+      readRepoFile,
+    );
+    for (const { file, content } of smokePageFiles(entries))
+      writeProjectFile(project, file, content);
+    for (const entry of entries) owners.set(demoFile(entry), entry.name);
+    const categories = [...new Set(entries.map((entry) => entry.category))];
+    console.log(`→ smoke pages: ${entries.length} item(s) on app/smoke/{${categories.join(",")}}`);
+    for (const { name, reason } of skipped) console.log(`  not rendered: ${name} (${reason})`);
+
     const check = async (label: string, args: string[]) => {
       console.log(`→ ${label}`);
       try {
@@ -1676,7 +1725,9 @@ async function main() {
     };
     await check("tsc --noEmit", ["exec", "tsc", "--noEmit"]);
     await check("next build", ["exec", "next", "build"]);
-    console.log(`✓ ${names.length} item(s) installed, typechecked and built`);
+    console.log(
+      `✓ ${names.length} item(s) installed, typechecked and built; ${entries.length} prerendered`,
+    );
 
     for (const command of ONE_COMMANDS) {
       if (requested && !command.items.every((name) => requested.includes(name))) {
