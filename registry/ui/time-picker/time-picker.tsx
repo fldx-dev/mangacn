@@ -24,7 +24,10 @@ export interface TimePickerLabels {
 
 export interface TimePickerProps
   extends Omit<React.ComponentProps<"div">, "defaultValue" | "onChange" | "children"> {
-  /** The time as "HH:mm" in 24 hours (as `<input type="time">`), or null when unset. Controlled. */
+  /**
+   * The time as "HH:mm" in 24 hours (as `<input type="time">`), or null when unset. Controlled:
+   * a full time the parent does not take back is not shown; a partial entry stays on screen.
+   */
   value?: string | null;
   /** The starting time when uncontrolled. */
   defaultValue?: string | null;
@@ -122,7 +125,7 @@ export function TimePicker({
 }: TimePickerProps) {
   const labels = { ...DEFAULT_LABELS, ...labelsProp };
   const controlled = valueProp !== undefined;
-  const [segments, setSegments] = React.useState<Segments>(() =>
+  const [local, setSegments] = React.useState<Segments>(() =>
     parse(controlled ? valueProp : defaultValue, hourCycle),
   );
   // A controlled value that differs from what the segments compose replaces them; a partial
@@ -130,8 +133,15 @@ export function TimePicker({
   const [seen, setSeen] = React.useState(valueProp);
   if (controlled && valueProp !== seen) {
     setSeen(valueProp);
-    if (valueProp !== compose(segments, hourCycle)) setSegments(parse(valueProp, hourCycle));
+    if (valueProp !== compose(local, hourCycle)) setSegments(parse(valueProp, hourCycle));
   }
+  // Controlled, only a partial entry is kept locally: a full time the parent rejected (its
+  // value did not follow) gives way to the value, so the display cannot drift from it.
+  const localValue = compose(local, hourCycle);
+  const segments =
+    controlled && localValue !== null && localValue !== valueProp
+      ? parse(valueProp, hourCycle)
+      : local;
 
   const value = compose(segments, hourCycle);
   const outOfRange = value !== null && ((min && value < min) || (max && value > max));

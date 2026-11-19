@@ -176,6 +176,25 @@ describe("DateRangePicker", () => {
     expect(document.activeElement).toBe(trigger);
   });
 
+  it("keeps its own state attributes over a caller's", () => {
+    const { container } = render(
+      <DateRangePicker
+        {...({
+          "data-slot": "mine",
+          "data-state": "open",
+          "data-disabled": "",
+        } as React.ComponentProps<typeof DateRangePicker>)}
+        className="mine"
+      />,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.dataset.slot).toBe("date-range-picker");
+    expect(root.dataset.state).toBe("closed");
+    expect(root.hasAttribute("data-disabled")).toBe(false);
+    expect(root.className).toContain("inline-flex");
+    expect(root.className).toContain("mine");
+  });
+
   it("keeps stock's grid keys in the calendar", async () => {
     render(<DateRangePicker defaultValue={JUNE} />);
     await openWith(screen.getByRole("button"));

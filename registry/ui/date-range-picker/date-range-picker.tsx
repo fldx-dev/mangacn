@@ -81,7 +81,8 @@ export interface DateRangePickerProps
   /** Whether the popover is open. Controlled. */
   open?: boolean;
   /**
-   * Whether the popover starts open when uncontrolled.
+   * Whether the popover starts open when uncontrolled. An open picker reads the clock on
+   * render, so leave this off on a prerendered page.
    * @default false
    */
   defaultOpen?: boolean;
@@ -190,11 +191,11 @@ export function DateRangePicker({
 
   return (
     <div
+      {...props}
       data-slot="date-range-picker"
       data-state={open ? "open" : "closed"}
       data-disabled={disabled ? "" : undefined}
       className={cn("inline-flex max-w-full", className)}
-      {...props}
     >
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger

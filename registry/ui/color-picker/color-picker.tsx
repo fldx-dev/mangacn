@@ -28,7 +28,10 @@ export interface ColorPickerProps {
    * @default true
    */
   alpha?: boolean;
-  /** Preset colours under the panel, as a radio group. */
+  /**
+   * Preset colours under the panel, as a radio group. Two spellings of one colour (`#fff`,
+   * `#ffffff`) show once; a swatch that is not valid hex falls back to `#000000`.
+   */
   swatches?: string[];
   /**
    * Disables the trigger and every control.
@@ -268,16 +271,18 @@ export function ColorPickerPanel({
   };
 
   const [r, g, b] = parseHex(hsvaToHex({ ...hsva, a: 1 }, false), false) ?? [0, 0, 0];
-  const checked = swatches?.find((swatch) => normalize(swatch, alpha) === hex);
+  // One swatch per normalised hex, so keys are unique and at most one is checked.
+  const colors = swatches && [...new Set(swatches.map((swatch) => normalize(swatch, alpha)))];
+  const checked = colors?.find((color) => color === hex);
   const swatchRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const onSwatchKeyDown = (event: React.KeyboardEvent, index: number) => {
-    if (!swatches) return;
+    if (!colors) return;
     const delta = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
     if (!delta) return;
     event.preventDefault();
-    const next = (index + delta + swatches.length) % swatches.length;
+    const next = (index + delta + colors.length) % colors.length;
     swatchRefs.current[next]?.focus();
-    commit(hexToHsva(normalize(swatches[next], alpha)));
+    commit(hexToHsva(colors[next]));
   };
 
   return (
@@ -404,7 +409,7 @@ export function ColorPickerPanel({
         )}
       </div>
 
-      {swatches && swatches.length > 0 && (
+      {colors && colors.length > 0 && (
         <div
           role="radiogroup"
           aria-label={words.swatches}
@@ -412,27 +417,27 @@ export function ColorPickerPanel({
           data-slot="color-picker-swatches"
           className="flex flex-wrap gap-1.5"
         >
-          {swatches.map((swatch, index) => {
-            const isChecked = swatch === checked;
+          {colors.map((color, index) => {
+            const isChecked = color === checked;
             const tabbable = checked ? isChecked : index === 0;
             return (
               // biome-ignore lint/a11y/useSemanticElements: a swatch is a button filled with its colour, as a radio
               <button
-                key={swatch}
+                key={color}
                 ref={(element) => {
                   swatchRefs.current[index] = element;
                 }}
                 type="button"
                 role="radio"
                 aria-checked={isChecked}
-                aria-label={normalize(swatch, alpha)}
+                aria-label={color}
                 tabIndex={tabbable ? 0 : -1}
                 disabled={disabled}
                 data-slot="color-picker-swatch"
                 data-state={isChecked ? "checked" : "unchecked"}
                 className="relative isolate size-6 rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none"
-                style={{ background: swatch }}
-                onClick={() => commit(hexToHsva(normalize(swatch, alpha)))}
+                style={{ background: color }}
+                onClick={() => commit(hexToHsva(color))}
                 onKeyDown={(event) => onSwatchKeyDown(event, index)}
               >
                 <InkFrame

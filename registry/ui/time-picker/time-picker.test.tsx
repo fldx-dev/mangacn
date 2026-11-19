@@ -69,6 +69,20 @@ describe("TimePicker", () => {
     expect(segment("Hours").textContent).toBe("12");
   });
 
+  it("shows the controlled value when the parent rejects a change, keeping a partial entry", () => {
+    const onValueChange = vi.fn();
+    render(<TimePicker aria-label="T" value="12:00" onValueChange={onValueChange} />);
+    press("Hours", "ArrowUp");
+    expect(onValueChange).toHaveBeenLastCalledWith("13:00");
+    expect(segment("Hours").textContent).toBe("12");
+    press("Hours", "ArrowUp");
+    expect(onValueChange).toHaveBeenLastCalledWith("13:00");
+    press("Minutes", "Backspace");
+    expect(onValueChange).toHaveBeenLastCalledWith(null);
+    expect(segment("Hours").textContent).toBe("12");
+    expect(segment("Minutes").textContent).toBe("--");
+  });
+
   it("calls back null until hours and minutes are both set", () => {
     const onValueChange = vi.fn();
     render(<TimePicker aria-label="T" onValueChange={onValueChange} />);

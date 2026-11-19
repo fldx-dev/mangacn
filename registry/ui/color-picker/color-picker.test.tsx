@@ -166,6 +166,25 @@ describe("ColorPickerPanel", () => {
     expect(onValueChange).toHaveBeenLastCalledWith("#ff3399");
   });
 
+  it("shows one swatch per normalised hex, an invalid one as #000000", () => {
+    const error = vi.spyOn(console, "error");
+    render(
+      <ColorPickerPanel
+        defaultValue="#ffffff"
+        swatches={["#fff", "#FFFFFF", "#ffffff", "#e60012", "nope", "#000"]}
+      />,
+    );
+    const radios = screen.getAllByRole("radio");
+    expect(radios.map((radio) => radio.getAttribute("aria-label"))).toEqual([
+      "#ffffff",
+      "#e60012",
+      "#000000",
+    ]);
+    expect(radios.filter((radio) => radio.getAttribute("aria-checked") === "true")).toHaveLength(1);
+    expect(error).not.toHaveBeenCalled();
+    error.mockRestore();
+  });
+
   it("shows swatches as a radio group named by hex, picked by click and arrow keys", () => {
     const onValueChange = vi.fn();
     render(
