@@ -146,6 +146,14 @@ describe("DateRangePicker", () => {
     ).toBe("true");
   });
 
+  it("reads no preset range while closed, so a prerender reads no clock", async () => {
+    const range = vi.fn(() => JUNE);
+    render(<DateRangePicker presets={[{ label: "June", range }]} />);
+    expect(range).not.toHaveBeenCalled();
+    await openWith(screen.getByRole("button"));
+    expect(range).toHaveBeenCalled();
+  });
+
   it("hides the presets column with presets={[]}", async () => {
     render(<DateRangePicker presets={[]} />);
     const dialog = await openWith(screen.getByRole("button"));
