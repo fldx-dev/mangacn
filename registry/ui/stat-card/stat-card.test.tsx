@@ -65,6 +65,13 @@ describe("StatCard", () => {
     expect(change()?.textContent).toBe("no change 0%");
   });
 
+  it("renders NaN as the flat state, in ink, not as NaN%", () => {
+    render(<StatCardChange value={Number.NaN} goodDirection="down" />);
+    expect(change()?.dataset.trend).toBe("flat");
+    expect(change()?.hasAttribute("data-good")).toBe(true);
+    expect(change()?.textContent).toBe("no change 0%");
+  });
+
   it("draws the change in spot only when it goes the bad way", () => {
     const { rerender } = render(<StatCardChange value={5} />);
     expect(change()?.hasAttribute("data-good")).toBe(true);

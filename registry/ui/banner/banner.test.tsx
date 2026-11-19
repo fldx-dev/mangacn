@@ -148,6 +148,44 @@ describe("Banner", () => {
     expect(main.getAttribute("tabindex")).toBe("-1");
   });
 
+  it("hands focus on when a controlled open turns false from outside with focus inside", () => {
+    stubReducedMotion(false);
+    const { rerender } = render(
+      <>
+        <Example open />
+        <a href="#next">After</a>
+      </>,
+    );
+    screen.getByRole("link", { name: "Read it" }).focus();
+    rerender(
+      <>
+        <Example open={false} />
+        <a href="#next">After</a>
+      </>,
+    );
+    expect(document.activeElement).toBe(screen.getByRole("link", { name: "After" }));
+  });
+
+  it("skips display: none and visibility: hidden candidates when it hands focus on", () => {
+    stubReducedMotion(true);
+    render(
+      <>
+        <Example />
+        <div style={{ display: "none" }}>
+          <a href="#gone">Gone</a>
+        </div>
+        <a href="#hidden" style={{ visibility: "hidden" }}>
+          Hidden
+        </a>
+        <a href="#next">After</a>
+      </>,
+    );
+    const close = screen.getByRole("button", { name: "Dismiss announcement" });
+    close.focus();
+    fireEvent.click(close);
+    expect(document.activeElement).toBe(screen.getByRole("link", { name: "After" }));
+  });
+
   it("leaves focus alone when it closes with focus elsewhere", () => {
     stubReducedMotion(true);
     render(

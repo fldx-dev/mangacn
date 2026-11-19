@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge";
 // list before a plain text input; every add, removal and refusal is announced once in a polite
 // live region, and a refusal also shows under the field.
 
+/** How long a repeated announcement waits after the live region is cleared. */
+const REANNOUNCE_MS = 100;
+
 /** Built-in words, each overridable through `labels`. */
 const defaultLabels = {
   remove: (tag: string) => `Remove ${tag}`,
@@ -100,6 +103,19 @@ export function TagsInput({
   const [draft, setDraft] = React.useState("");
   const [error, setError] = React.useState("");
   const [announcement, setAnnouncement] = React.useState("");
+  const announceTimer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  React.useEffect(() => () => clearTimeout(announceTimer.current), []);
+  // The same text twice in a row would not change the live region, so it would be read once:
+  // clear the region, then set the text again a moment later. A new text is set at once.
+  const announce = (text: string) => {
+    clearTimeout(announceTimer.current);
+    if (text !== announcement || !text) {
+      setAnnouncement(text);
+      return;
+    }
+    setAnnouncement("");
+    announceTimer.current = setTimeout(() => setAnnouncement(text), REANNOUNCE_MS);
+  };
   const inputRef = React.useRef<HTMLInputElement>(null);
   const listRef = React.useRef<HTMLUListElement>(null);
   const errorId = React.useId();
@@ -135,7 +151,7 @@ export function TagsInput({
     }
     if (added.length > 0) commit(next);
     setError(refusal);
-    setAnnouncement([...added.map(words.added), refusal].filter(Boolean).join(". "));
+    announce([...added.map(words.added), refusal].filter(Boolean).join(". "));
     return refusal === "";
   };
 
@@ -143,7 +159,7 @@ export function TagsInput({
     const tag = tags[index];
     commit(tags.filter((_, i) => i !== index));
     setError("");
-    setAnnouncement(words.removed(tag));
+    announce(words.removed(tag));
   };
 
   const removeButtons = () => [

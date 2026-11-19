@@ -51,6 +51,26 @@ describe("CopyButton", () => {
     expect(status().textContent).toBe("");
   });
 
+  it("announces a second copy in a row again: clears the live region, then sets it", async () => {
+    vi.useFakeTimers();
+    stubClipboard();
+    render(<CopyButton value="npx shadcn add" timeout={2000} />);
+    const button = screen.getByRole("button");
+    await act(async () => {
+      fireEvent.click(button);
+    });
+    expect(status().textContent).toBe("Copied");
+    await act(async () => {
+      fireEvent.click(button);
+    });
+    expect(status().textContent).toBe("");
+    await act(async () => {
+      vi.advanceTimersByTime(100);
+    });
+    expect(status().textContent).toBe("Copied");
+    expect(button.dataset.state).toBe("copied");
+  });
+
   it("copies what a (possibly async) function returns at click time", async () => {
     const writeText = stubClipboard();
     render(<CopyButton value={async () => "from a promise"} />);

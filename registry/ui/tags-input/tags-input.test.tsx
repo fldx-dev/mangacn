@@ -59,6 +59,25 @@ describe("TagsInput", () => {
     expect(status()).toBe("Drama added");
   });
 
+  it("announces the same refusal twice in a row: clears the live region, then sets it", () => {
+    vi.useFakeTimers();
+    try {
+      render(<TagsInput aria-label="Genres" defaultValue={["Action"]} />);
+      type("Action");
+      press("Enter");
+      expect(status()).toBe("Action is already added");
+      type("Action");
+      press("Enter");
+      expect(status()).toBe("");
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+      expect(status()).toBe("Action is already added");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("removes the last chip on Backspace in an empty input, announcing it", () => {
     render(<TagsInput aria-label="Genres" defaultValue={["Action", "Drama"]} />);
     press("Backspace");

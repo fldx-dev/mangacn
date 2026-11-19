@@ -14,7 +14,8 @@ Alert or a Sonner toast instead.
 
 It is a WAI-ARIA *region* landmark named "Announcement" (`labels.region`), not an alert, so a
 screen reader does not interrupt for it. Closing it with the keyboard moves focus to the next
-focusable element after it, or to `main`, never to the page body.
+focusable element after it, or to `main`, never to the page body. A controlled `open` set to
+`false` from outside does the same when focus is inside it.
 
 - Tab: reaches the action, then the close button.
 - Enter / Space on the close button: dismisses the banner.

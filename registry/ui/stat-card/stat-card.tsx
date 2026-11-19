@@ -67,7 +67,10 @@ export function StatCardValue({ className, ...props }: React.ComponentProps<"div
 }
 
 export interface StatCardChangeProps extends Omit<React.ComponentProps<"div">, "children"> {
-  /** The change in percent, signed: `12.5` is up 12.5%, `-3` down 3%, `0` flat. */
+  /**
+   * The change in percent, signed: `12.5` is up 12.5%, `-3` down 3%, `0` flat. `NaN` (a change
+   * from zero, say) renders the flat state, "0%".
+   */
   value: number;
   /**
    * Which way is good. A change the other way is drawn in spot; a good or flat one in ink.
@@ -98,13 +101,14 @@ export function StatCardChange({
   ...props
 }: StatCardChangeProps) {
   const words = { ...defaultChangeLabels, ...labels };
-  const trend = value > 0 ? "up" : value < 0 ? "down" : "flat";
+  const change = Number.isNaN(value) ? 0 : value;
+  const trend = change > 0 ? "up" : change < 0 ? "down" : "flat";
   const good = trend === "flat" || trend === goodDirection;
   const Icon = trendIcons[trend];
   const percent = new Intl.NumberFormat(locale, {
     style: "percent",
     maximumFractionDigits: 1,
-  }).format(Math.abs(value) / 100);
+  }).format(Math.abs(change) / 100);
 
   return (
     <div

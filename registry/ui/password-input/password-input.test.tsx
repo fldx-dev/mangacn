@@ -45,8 +45,28 @@ describe("PasswordInput", () => {
     expect(field().type).toBe("text");
     expect(button.getAttribute("aria-pressed")).toBe("true");
     expect(button.getAttribute("aria-label")).toBe("Show password");
-    expect(button.getAttribute("title")).toBe("Hide password");
+    expect(button.getAttribute("title")).toBe("Show password");
     expect(document.activeElement).toBe(button);
+  });
+
+  it("describes the input by its strength meter, keeping the caller's description", () => {
+    render(
+      <>
+        <p id="hint">At least 8 characters.</p>
+        <PasswordInput
+          aria-label="Password"
+          aria-describedby="hint"
+          showStrength
+          defaultValue="Abcdefg1"
+        />
+      </>,
+    );
+    const meter = screen.getByRole("meter");
+    expect(field().getAttribute("aria-describedby")).toBe(`hint ${meter.id}`);
+    expect(meter.id).not.toBe("");
+    cleanup();
+    render(<PasswordInput aria-label="Password" />);
+    expect(field().hasAttribute("aria-describedby")).toBe(false);
   });
 
   it("controls visibility with visible / onVisibleChange", () => {
