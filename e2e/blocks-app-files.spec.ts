@@ -168,6 +168,7 @@ test.describe("upload-01", () => {
     await cancel.click();
     await expect(announcer(page)).toHaveText("Upload cancelled");
     await expect(cancel).toBeDisabled();
+    // Three ticks of the form's timer (300 ms each) on purpose: nothing may move once cancelled.
     await page.waitForTimeout(1000);
     await expect(page.getByText("0 of 12 pages uploaded", { exact: true })).toBeVisible();
     await expect(page.locator('[data-slot="file-upload-item"][data-status="idle"]')).toHaveCount(

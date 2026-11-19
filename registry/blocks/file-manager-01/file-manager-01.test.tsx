@@ -260,7 +260,29 @@ describe("FileManager: delete, download, upload", () => {
     const row = within(screen.getByRole("table")).getAllByRole("row").at(-1) as HTMLElement;
     expect(row.textContent).toContain("night-train-ch01-p07.png");
     expect(row.textContent).toContain("2 MB");
-    expect(screen.getByText("1 file added to Chapter 1")).toBeTruthy();
+    expect(announcer().textContent).toBe("1 file added to Chapter 1.");
+  });
+
+  it("refuses an upload whose name is already in the folder, any case, and says so", () => {
+    const onFilesChange = renderManager();
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const pick = (names: string[]) => {
+      const files = names.map((name) => new File(["x"], name, { type: "image/png" }));
+      Object.defineProperty(input, "files", { configurable: true, value: files });
+      fireEvent.change(input);
+    };
+
+    pick(["NIGHT-TRAIN-CH01-P01.png"]);
+    expect(rows()).toHaveLength(6);
+    expect(onFilesChange).not.toHaveBeenCalled();
+    expect(announcer().textContent).toBe("NIGHT-TRAIN-CH01-P01.png is already in this folder.");
+
+    pick(["extra.png", "Extra.png", "night-train-ch01-p02.png"]);
+    expect(rows()).toHaveLength(7);
+    expect(rows().filter((text) => /extra\.png/i.test(text))).toHaveLength(1);
+    expect(announcer().textContent).toBe(
+      "1 file added to Chapter 1. Extra.png is already in this folder. night-train-ch01-p02.png is already in this folder.",
+    );
   });
 });
 

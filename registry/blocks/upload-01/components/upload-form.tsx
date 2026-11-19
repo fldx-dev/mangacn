@@ -125,14 +125,22 @@ export function UploadForm({ series, onPublish, className, ...props }: UploadFor
   const waiting = files.filter((file) => pageOf(file).status === "idle");
   const summary = `${done} of ${total} ${total === 1 ? "page" : "pages"} uploaded`;
 
-  // The run ends when no page is uploading any more: stop the timer and say how it went.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the summary follows `uploads`.
+  // The run ends when no page is uploading any more: stop the timer and say how it went. The
+  // map holds exactly the listed pages, so the counts come from it.
   React.useEffect(() => {
     if (!running) return;
-    if (Array.from(uploads.values()).some((upload) => upload.status === "uploading")) return;
+    const pages = Array.from(uploads.values());
+    if (pages.some((upload) => upload.status === "uploading")) return;
     stopTimer();
     setRunning(false);
-    announce(failed > 0 ? `${summary}. ${failed} failed.` : `${summary}.`);
+    if (pages.length === 0) return;
+    const doneCount = pages.filter((upload) => upload.status === "done").length;
+    const failedCount = pages.filter((upload) => upload.status === "error").length;
+    const text = `${doneCount} of ${pages.length} ${pages.length === 1 ? "page" : "pages"} uploaded.`;
+    setAnnouncement((last) => ({
+      key: last.key + 1,
+      text: failedCount > 0 ? `${text} ${failedCount} failed.` : text,
+    }));
   }, [running, uploads, stopTimer]);
 
   /** Starts (or restarts) the given pages and the timer, if it is not already running. */

@@ -100,18 +100,21 @@ export function fileKind(name: string): { label: string; Icon: typeof FileIcon }
   return KINDS.find((kind) => kind.test.test(name)) ?? { label: "File", Icon: FileIcon };
 }
 
+/** Whether `name` matches one of `names`, ignoring case, as most file systems do. */
+function nameTaken(name: string, names: string[]): boolean {
+  const lower = name.toLocaleLowerCase("en-US");
+  return names.some((other) => other.toLocaleLowerCase("en-US") === lower);
+}
+
+/** The reason a name clashes with another in the folder. */
+const takenReason = (name: string) => `${name} is already in this folder.`;
+
 /** Why a new name cannot be used in this folder, or an empty string when it can. */
 export function renameProblem(name: string, current: string, siblings: string[]): string {
   const next = name.trim();
   if (!next) return "Enter a name.";
   if (/[/\\]/.test(next)) return "A name cannot contain / or \\.";
-  const lower = next.toLocaleLowerCase("en-US");
-  if (
-    lower !== current.toLocaleLowerCase("en-US") &&
-    siblings.some((s) => s.toLocaleLowerCase("en-US") === lower)
-  ) {
-    return `${next} is already in this folder.`;
-  }
+  if (!nameTaken(next, [current]) && nameTaken(next, siblings)) return takenReason(next);
   return "";
 }
 
@@ -288,19 +291,36 @@ export function FileManager({
     announce(`${deleteTarget.name} deleted`);
   };
 
+  // A file whose name is already in the folder (or earlier in the same drop) is refused, as
+  // Rename refuses it, so no two rows share a name.
   const addFiles = (incoming: File[]) => {
     if (!folderId || incoming.length === 0) return;
-    const entries = incoming.map((file) => {
+    const taken = [...subfolders.map((f) => f.name), ...contents.map((f) => f.name)];
+    const entries: FileManagerFile[] = [];
+    const refused: string[] = [];
+    for (const file of incoming) {
+      if (nameTaken(file.name, taken)) {
+        refused.push(takenReason(file.name));
+        continue;
+      }
+      taken.push(file.name);
       added.current += 1;
-      return {
+      entries.push({
         id: `${folderId}/added-${added.current}`,
         folderId,
         name: file.name,
         size: file.size,
         modified: new Date(file.lastModified).toISOString(),
-      };
-    });
-    setFiles([...files, ...entries]);
+      });
+    }
+    if (entries.length > 0) setFiles([...files, ...entries]);
+    const count = entries.length;
+    const addedText = count === 1 ? "1 file" : `${count} files`;
+    announce(
+      [count > 0 ? `${addedText} added to ${folderName}.` : "", ...refused]
+        .filter(Boolean)
+        .join(" "),
+    );
   };
 
   const headingId = `${id}-heading`;
@@ -374,8 +394,8 @@ export function FileManager({
             locale="en-US"
             labels={{
               dropzone: `Drop files here to add them to ${folderName}.`,
-              added: (count) =>
-                `${count === 1 ? "1 file" : `${count} files`} added to ${folderName}`,
+              // The manager announces what it added and what it refused (addFiles).
+              added: () => "",
             }}
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -470,7 +490,10 @@ export function FileManager({
                                         setProblem("");
                                       }}
                                       onKeyDown={(event) => {
-                                        if (event.key === "Enter") {
+                                        if (
+                                          event.key === "Enter" &&
+                                          !event.nativeEvent.isComposing
+                                        ) {
                                           event.preventDefault();
                                           commitRename(file);
                                         } else if (event.key === "Escape") {
