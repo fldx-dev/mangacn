@@ -368,6 +368,17 @@ export default defineConfig({
           new URL("./registry/ui/password-input/password-input.tsx", import.meta.url),
         ),
       },
+      // activity-01 (Task 139): its items by install path.
+      {
+        find: /^@\/components\/ui\/stat-card$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/stat-card/stat-card.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/timeline$/,
+        replacement: fileURLToPath(new URL("./registry/ui/timeline/timeline.tsx", import.meta.url)),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,

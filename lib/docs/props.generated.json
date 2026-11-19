@@ -1,4 +1,37 @@
 {
+  "activity-01": {
+    "ActivityFeedProps": [
+      {
+        "id": "activity-feed.tsx-ActivityFeedProps",
+        "name": "ActivityFeedProps",
+        "entries": [
+          {
+            "name": "events",
+            "description": "Every event, newest first.",
+            "type": "ActivityEvent[]",
+            "simplifiedType": "ActivityEvent[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "pageSize",
+            "description": "How many events show at first, and how many more each \"Show more\" reveals.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [
+              {
+                "name": "default",
+                "text": "10"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "avatar-stack": {
     "AvatarStackProps": [
       {

@@ -1354,6 +1354,47 @@
           "target": "@components/profile-data.ts"
         }
       ]
+    },
+    {
+      "name": "activity-01",
+      "type": "registry:block",
+      "title": "Activity",
+      "description": "A reader's own activity page: four stat cards with sparklines, a filter by kind that announces its count, and a timeline of events under day headings with Show more.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "registryDependencies": [
+        "https://www.mangacn.com/r/stat-card.json",
+        "https://www.mangacn.com/r/toggle-group.json",
+        "https://www.mangacn.com/r/timeline.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/badge.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/separator.json"
+      ],
+      "files": [
+        {
+          "path": "activity-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/activity/page.tsx"
+        },
+        {
+          "path": "activity-01/components/activity-stats.tsx",
+          "type": "registry:component",
+          "target": "@components/activity-stats.tsx"
+        },
+        {
+          "path": "activity-01/components/activity-feed.tsx",
+          "type": "registry:component",
+          "target": "@components/activity-feed.tsx"
+        },
+        {
+          "path": "activity-01/components/activity-data.ts",
+          "type": "registry:component",
+          "target": "@components/activity-data.ts"
+        }
+      ]
     }
   ]
 }

@@ -682,6 +682,18 @@ export const EXPECTED_CONTENT: Record<
     { file: "components/profile-form.tsx", includes: ["export function ProfileForm("] },
     { file: "components/profile-data.ts", includes: ["export const profile: Profile"] },
   ],
+  "activity-01": [
+    {
+      file: "app/activity/page.tsx",
+      includes: [
+        'import { ActivityFeed } from "@/components/activity-feed"',
+        'import { activityEvents, activityStats } from "@/components/activity-data"',
+      ],
+    },
+    { file: "components/activity-stats.tsx", includes: ["export function ActivityStats("] },
+    { file: "components/activity-feed.tsx", includes: ["export function ActivityFeed("] },
+    { file: "components/activity-data.ts", includes: ["export const activityEvents"] },
+  ],
   // Hooks: registry:hook with `target: "@hooks/<name>.ts"`, stock source with the header.
   "use-mobile": [
     {
