@@ -17,6 +17,9 @@ export interface FileRejection {
   reason: "type" | "size" | "count";
 }
 
+/** How long a repeated announcement waits after the live region is cleared. */
+const REANNOUNCE_MS = 100;
+
 /** Every word the upload shows or announces. */
 export interface FileUploadLabels {
   /**
@@ -187,6 +190,19 @@ export function FileUpload({
   const files = valueProp ?? uncontrolled;
   const [rejections, setRejections] = React.useState<FileRejection[]>([]);
   const [message, setMessage] = React.useState("");
+  const announceTimer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  React.useEffect(() => () => clearTimeout(announceTimer.current), []);
+  // The same text twice in a row would not change the live region, so it would be read once:
+  // clear the region, then set the text again a moment later. A new text is set at once.
+  const announce = (text: string) => {
+    clearTimeout(announceTimer.current);
+    if (text !== message || !text) {
+      setMessage(text);
+      return;
+    }
+    setMessage("");
+    announceTimer.current = setTimeout(() => setMessage(text), REANNOUNCE_MS);
+  };
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const labels: Required<FileUploadLabels> = {
@@ -239,7 +255,7 @@ export function FileUpload({
     syncInput(next);
     setRejections(rejected);
     if (rejected.length > 0) onReject?.(rejected);
-    setMessage(
+    announce(
       [
         accepted.length > 0 ? labels.added(accepted.length) : "",
         ...rejected.map((rejection) => labels.rejected(rejection.file.name, reasonText(rejection))),

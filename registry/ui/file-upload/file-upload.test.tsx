@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { expectDemosAccessible } from "@/lib/test/axe";
@@ -172,6 +172,24 @@ describe("FileUpload", () => {
     // Removing a rejected row dismisses it.
     fireEvent.click(screen.getByRole("button", { name: "Remove big.png" }));
     expect(screen.queryByText("big.png")).toBeNull();
+  });
+
+  it("announces the same message twice in a row: clears the live region, then sets it", () => {
+    vi.useFakeTimers();
+    try {
+      render(<Example accept="image/*" />);
+      choose(file("notes.txt", 10, "text/plain"));
+      const message = live()?.textContent;
+      expect(message).toBe("notes.txt was not added: not an accepted file type");
+      choose(file("notes.txt", 10, "text/plain"));
+      expect(live()?.textContent).toBe("");
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+      expect(live()?.textContent).toBe(message);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("replaces its one file when multiple is false", () => {

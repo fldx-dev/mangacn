@@ -60,7 +60,8 @@ export interface PasswordInputProps extends Omit<React.ComponentProps<"input">, 
   /** Scores a password from 0 to 4, replacing `getPasswordStrength`. */
   strength?: (value: string) => Strength;
   /**
-   * The toggle's name and title, and the five strength words (0 to 4).
+   * The toggle's name and title, and the five strength words (0 to 4). The toggle keeps one name
+   * (`show`) and reports its state through `aria-pressed`, so `hide` is no longer read.
    * @default { show: "Show password", hide: "Hide password", strength: ["Too weak", "Weak", "Fair", "Good", "Strong"] }
    */
   labels?: Partial<typeof defaultLabels>;
@@ -80,11 +81,13 @@ export function PasswordInput({
   value,
   defaultValue,
   onChange,
+  "aria-describedby": describedBy,
   ...props
 }: PasswordInputProps) {
   const words = { ...defaultLabels, ...labels };
   const fallbackId = React.useId();
   const inputId = id ?? fallbackId;
+  const meterId = React.useId();
 
   const [innerVisible, setInnerVisible] = React.useState(defaultVisible);
   const shown = visible ?? innerVisible;
@@ -106,6 +109,9 @@ export function PasswordInput({
           type={shown ? "text" : "password"}
           value={value}
           defaultValue={defaultValue}
+          aria-describedby={
+            [describedBy, showStrength ? meterId : undefined].filter(Boolean).join(" ") || undefined
+          }
           onChange={(event) => {
             setTyped(event.target.value);
             onChange?.(event);
@@ -119,7 +125,7 @@ export function PasswordInput({
             aria-label={words.show}
             aria-pressed={shown}
             aria-controls={inputId}
-            title={shown ? words.hide : words.show}
+            title={words.show}
             disabled={props.disabled}
             onClick={toggle}
           >
@@ -129,6 +135,7 @@ export function PasswordInput({
       </InputGroup>
       {showStrength && (
         <MeterPrimitive.Root
+          id={meterId}
           data-slot="password-input-strength"
           value={score}
           min={0}

@@ -2902,7 +2902,7 @@
           },
           {
             "name": "labels",
-            "description": "The toggle's name and title, and the five strength words (0 to 4).",
+            "description": "The toggle's name and title, and the five strength words (0 to 4). The toggle keeps one name\n(`show`) and reports its state through `aria-pressed`, so `hide` is no longer read.",
             "type": "Partial<{ show: string; hide: string; strength: StrengthLabels; }> | undefined",
             "simplifiedType": "Partial<{ show: string; hide: string; strength: StrengthLabels; }> | undefined",
             "tags": [
@@ -4033,7 +4033,7 @@
         "entries": [
           {
             "name": "value",
-            "description": "The change in percent, signed: `12.5` is up 12.5%, `-3` down 3%, `0` flat.",
+            "description": "The change in percent, signed: `12.5` is up 12.5%, `-3` down 3%, `0` flat. `NaN` (a change\nfrom zero, say) renders the flat state, \"0%\".",
             "type": "number",
             "simplifiedType": "number",
             "tags": [],

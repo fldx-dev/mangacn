@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 
 // mangacn banner: a dismissible announcement bar, paper with an ink rule under it or solid ink.
 // A named region (a labelled <section>), not an alert. Closing collapses it (instantly under reduced motion) and hands
-// focus on to the next focusable element, or `main`, so it is never lost to the body.
+// focus on to the next focusable element, or `main`, so it is never lost to the body; a controlled
+// `open` set to false from outside does the same.
 
 /** Built-in words, each overridable through `labels`. */
 const defaultLabels = { region: "Announcement", dismiss: "Dismiss announcement" };
@@ -42,7 +43,18 @@ function useBanner(part: string) {
   return context;
 }
 
-/** The first focusable element after `root` in document order, outside it; else `main`. */
+/** Whether `element` is drawn: no `display: none` on it or above it, and not `visibility: hidden`. */
+function isRendered(element: HTMLElement) {
+  const view = element.ownerDocument.defaultView;
+  if (!view) return true;
+  if (view.getComputedStyle(element).visibility === "hidden") return false;
+  for (let node: Element | null = element; node; node = node.parentElement) {
+    if (view.getComputedStyle(node).display === "none") return false;
+  }
+  return true;
+}
+
+/** The first rendered focusable element after `root` in document order, outside it; else `main`. */
 function nextFocusTarget(root: HTMLElement): HTMLElement | null {
   const candidates = Array.from(root.ownerDocument.querySelectorAll<HTMLElement>(FOCUSABLE));
   const next = candidates.find(
@@ -50,7 +62,8 @@ function nextFocusTarget(root: HTMLElement): HTMLElement | null {
       !root.contains(element) &&
       // DOCUMENT_POSITION_FOLLOWING
       root.compareDocumentPosition(element) & 4 &&
-      !element.closest("[hidden], [inert]"),
+      !element.closest("[hidden], [inert]") &&
+      isRendered(element),
   );
   if (next) return next;
   const main = root.ownerDocument.querySelector<HTMLElement>("main");
@@ -100,6 +113,14 @@ export function Banner({
   const open = openProp ?? uncontrolledOpen;
   // Closed and collapsed: unmounted. Closed but still collapsing: in the DOM, inert.
   const [gone, setGone] = React.useState(!open);
+  const bodyRef = React.useRef<HTMLDivElement>(null);
+
+  // A controlled `open` set to false from outside, with focus inside: hand focus on as the close
+  // button does, before `inert` would drop it on the body.
+  React.useLayoutEffect(() => {
+    const root = bodyRef.current?.closest<HTMLElement>('[data-slot="banner"]');
+    if (!open && root?.contains(root.ownerDocument.activeElement)) nextFocusTarget(root)?.focus();
+  }, [open]);
 
   React.useEffect(() => {
     if (open) {
@@ -139,7 +160,7 @@ export function Banner({
         }}
         {...props}
       >
-        <div className="min-h-0 overflow-hidden">
+        <div ref={bodyRef} className="min-h-0 overflow-hidden">
           <div className="relative flex flex-wrap items-start gap-x-3 gap-y-2 py-3 pr-12 pl-4 md:flex-nowrap md:items-center">
             {children}
           </div>

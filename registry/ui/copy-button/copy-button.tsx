@@ -14,6 +14,9 @@ const defaultLabels = { copy: "Copy", copied: "Copied", failed: "Copy failed" };
 
 const icons = { idle: CopyIcon, copied: CheckIcon, failed: XIcon };
 
+/** How long a repeated announcement waits after the live region is cleared. */
+const REANNOUNCE_MS = 100;
+
 export interface CopyButtonProps
   extends Omit<React.ComponentProps<typeof Button>, "value" | "onCopy"> {
   /** The text to copy, or a function that returns it (sync or async) at click time. */
@@ -61,7 +64,9 @@ export function CopyButton({
 }: CopyButtonProps) {
   const words = { ...defaultLabels, ...labels };
   const [state, setState] = React.useState<CopyState>("idle");
+  const [announcement, setAnnouncement] = React.useState("");
   const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const announceTimer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const mounted = React.useRef(true);
 
@@ -70,15 +75,33 @@ export function CopyButton({
     return () => {
       mounted.current = false;
       clearTimeout(timer.current);
+      clearTimeout(announceTimer.current);
     };
   }, []);
+
+  // Copying twice in a row would not change the live region, so it would be read once: clear the
+  // region, then set the text again a moment later. A new text is set at once.
+  const announce = (text: string) => {
+    clearTimeout(announceTimer.current);
+    if (text !== announcement) {
+      setAnnouncement(text);
+      return;
+    }
+    setAnnouncement("");
+    announceTimer.current = setTimeout(() => setAnnouncement(text), REANNOUNCE_MS);
+  };
 
   const settle = (next: CopyState) => {
     // The clipboard may answer after unmount: start no timer then.
     if (!mounted.current) return;
     setState(next);
+    announce(next === "copied" ? words.copied : words.failed);
     clearTimeout(timer.current);
-    timer.current = setTimeout(() => setState("idle"), timeout);
+    timer.current = setTimeout(() => {
+      setState("idle");
+      clearTimeout(announceTimer.current);
+      setAnnouncement("");
+    }, timeout);
   };
 
   const copy = async () => {
@@ -118,9 +141,9 @@ export function CopyButton({
         <Icon aria-hidden="true" data-icon={children ? "inline-start" : undefined} />
         {children}
       </Button>
-      {/* One polite announcement per copy; empty while idle, so nothing repeats. */}
+      {/* One polite announcement per copy; empty while idle. */}
       <span role="status" className="sr-only">
-        {state === "idle" ? "" : name}
+        {announcement}
       </span>
     </>
   );
