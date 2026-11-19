@@ -349,6 +349,25 @@ export default defineConfig({
           new URL("./registry/ui/alert-dialog/alert-dialog.tsx", import.meta.url),
         ),
       },
+      // profile-01 (Task 138): photo, interests and password.
+      {
+        find: /^@\/components\/ui\/file-upload$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/file-upload/file-upload.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/tags-input$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/tags-input/tags-input.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/password-input$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/password-input/password-input.tsx", import.meta.url),
+        ),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,

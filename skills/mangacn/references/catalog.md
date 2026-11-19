@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 147 items in the registry. Each line gives the item's name, what it is, the one
+All 148 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -407,6 +407,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `settings-01`: Account settings for a signed-in reader: a section nav and four cards (account, notifications, reading, danger zone) with selects, switches, radio groups and a direction toggle; Save validates and announces, Delete account asks first.
   Install: `npx shadcn@latest add @mangacn/settings-01 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/settings-01 (Markdown: https://www.mangacn.com/docs/blocks/settings-01.md)
+- `profile-01`: Profile editing for a signed-in reader: a public profile card (initials avatar with a photo preview, name, @username, bio with a live count, interests as tags, website) and a password card with a strength meter; each Save validates and announces.
+  Install: `npx shadcn@latest add @mangacn/profile-01 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/profile-01 (Markdown: https://www.mangacn.com/docs/blocks/profile-01.md)
 - `login-01`: A login page: email and password on a paper card with a heavy ink outline, the title in the display face and a reception stamp; stock's login-01 in ink.
   Install: `npx shadcn@latest add @mangacn/login-01 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/login-01 (Markdown: https://www.mangacn.com/docs/blocks/login-01.md)

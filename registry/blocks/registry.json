@@ -1313,6 +1313,47 @@
           "target": "@components/settings-data.ts"
         }
       ]
+    },
+    {
+      "name": "profile-01",
+      "type": "registry:block",
+      "title": "Profile 01",
+      "description": "Profile editing for a signed-in reader: a public profile card (initials avatar with a photo preview, name, @username, bio with a live count, interests as tags, website) and a password card with a strength meter; each Save validates and announces.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/file-upload.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/input-group.json",
+        "https://www.mangacn.com/r/textarea.json",
+        "https://www.mangacn.com/r/tags-input.json",
+        "https://www.mangacn.com/r/password-input.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/separator.json",
+        "https://www.mangacn.com/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "profile-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/profile/page.tsx"
+        },
+        {
+          "path": "profile-01/components/profile-form.tsx",
+          "type": "registry:component",
+          "target": "@components/profile-form.tsx"
+        },
+        {
+          "path": "profile-01/components/profile-data.ts",
+          "type": "registry:component",
+          "target": "@components/profile-data.ts"
+        }
+      ]
     }
   ]
 }

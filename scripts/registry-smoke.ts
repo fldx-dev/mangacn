@@ -671,6 +671,17 @@ export const EXPECTED_CONTENT: Record<
     { file: "components/settings-form.tsx", includes: ["export function SettingsForm("] },
     { file: "components/settings-data.ts", includes: ["export const settings: Settings"] },
   ],
+  "profile-01": [
+    {
+      file: "app/profile/page.tsx",
+      includes: [
+        'import { profile } from "@/components/profile-data"',
+        'import { ProfileForm } from "@/components/profile-form"',
+      ],
+    },
+    { file: "components/profile-form.tsx", includes: ["export function ProfileForm("] },
+    { file: "components/profile-data.ts", includes: ["export const profile: Profile"] },
+  ],
   // Hooks: registry:hook with `target: "@hooks/<name>.ts"`, stock source with the header.
   "use-mobile": [
     {

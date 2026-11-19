@@ -87,7 +87,10 @@
       "@/components/ui/select": ["./registry/ui/select/select.tsx"],
       "@/components/ui/radio-group": ["./registry/ui/radio-group/radio-group.tsx"],
       "@/components/ui/toggle-group": ["./registry/ui/toggle-group/toggle-group.tsx"],
-      "@/components/ui/alert-dialog": ["./registry/ui/alert-dialog/alert-dialog.tsx"]
+      "@/components/ui/alert-dialog": ["./registry/ui/alert-dialog/alert-dialog.tsx"],
+      "@/components/ui/file-upload": ["./registry/ui/file-upload/file-upload.tsx"],
+      "@/components/ui/tags-input": ["./registry/ui/tags-input/tags-input.tsx"],
+      "@/components/ui/password-input": ["./registry/ui/password-input/password-input.tsx"]
     }
   },
   "include": [

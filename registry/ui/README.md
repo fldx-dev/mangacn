@@ -758,7 +758,7 @@ baseline are printed); one written by a single run, or differently by the two, i
    first failure with that step's exit code (`scripts/check-catalog.ts`).
 
 A full local `pnpm run ci` or `pnpm registry:smoke` costs 25–40 min on Windows (timed when the
-catalog had 60 items; it holds 146 now, so expect more); main's run does both.
+catalog had 60 items; it holds 148 now, so expect more); main's run does both.
 
 What the loop and CI cost (GitHub runner), from batches 4 and 5:
 
