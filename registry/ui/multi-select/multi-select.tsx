@@ -41,7 +41,10 @@ export interface MultiSelectOption {
 export interface MultiSelectProps {
   /** The choices, in list order. */
   options: MultiSelectOption[];
-  /** The picked values (controlled). */
+  /**
+   * The picked values (controlled). A value that matches no option is dropped on the next
+   * change.
+   */
   value?: string[];
   /**
    * The values picked at first (uncontrolled).

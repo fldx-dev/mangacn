@@ -917,7 +917,7 @@
           },
           {
             "name": "swatches",
-            "description": "Preset colours under the panel, as a radio group.",
+            "description": "Preset colours under the panel, as a radio group. Two spellings of one colour (`#fff`,\n`#ffffff`) show once; a swatch that is not valid hex falls back to `#000000`.",
             "type": "string[] | undefined",
             "simplifiedType": "string[]",
             "tags": [],
@@ -1271,7 +1271,7 @@
           },
           {
             "name": "defaultOpen",
-            "description": "Whether the popover starts open when uncontrolled.",
+            "description": "Whether the popover starts open when uncontrolled. An open picker reads the clock on\nrender, so leave this off on a prerendered page.",
             "type": "boolean | undefined",
             "simplifiedType": "boolean",
             "tags": [
@@ -2274,7 +2274,7 @@
           },
           {
             "name": "value",
-            "description": "The picked values (controlled).",
+            "description": "The picked values (controlled). A value that matches no option is dropped on the next\nchange.",
             "type": "string[] | undefined",
             "simplifiedType": "string[]",
             "tags": [],
@@ -4530,7 +4530,7 @@
         "entries": [
           {
             "name": "value",
-            "description": "The time as \"HH:mm\" in 24 hours (as `<input type=\"time\">`), or null when unset. Controlled.",
+            "description": "The time as \"HH:mm\" in 24 hours (as `<input type=\"time\">`), or null when unset. Controlled:\na full time the parent does not take back is not shown; a partial entry stays on screen.",
             "type": "string | null | undefined",
             "simplifiedType": "string",
             "tags": [],

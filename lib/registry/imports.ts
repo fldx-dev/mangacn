@@ -10,7 +10,7 @@ import {
   registryItemUrl,
 } from "./index";
 import { importSpecifier, installTarget } from "./install-target";
-import { loadBlockParitySnapshot, loadParitySnapshot, PARITY_PRIMITIVES } from "./parity";
+import { loadBlockParitySnapshot, loadParitySnapshot, PARITY_PRIMITIVE_SET } from "./parity";
 
 export interface ImportSpecifier {
   specifier: string;
@@ -326,8 +326,7 @@ export function findRegistryDependencyProblems(
 ): string[] {
   const catalog = new Map(registry.items.map((item) => [item.name, item]));
   // Restyled primitives keep stock names, so a bare `button` is shadcn's and stays bare.
-  const mangacnOnly = (name: string) =>
-    catalog.has(name) && !(PARITY_PRIMITIVES as readonly string[]).includes(name);
+  const mangacnOnly = (name: string) => catalog.has(name) && !PARITY_PRIMITIVE_SET.has(name);
   // A stock-derived block or restyled primitive keeps every dependency stock declares, imported
   // or not: stock's login-01 declares `label`, which its form reaches only through `field`, and
   // stock's code-block declares `use-highlighted-code` for its users to call, not itself.

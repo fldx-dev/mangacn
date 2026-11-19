@@ -73,6 +73,9 @@ export const PARITY_PRIMITIVES = [
   "code-block",
 ] as const;
 
+/** `PARITY_PRIMITIVES` as a set of plain strings, for membership checks on any name. */
+export const PARITY_PRIMITIVE_SET: ReadonlySet<string> = new Set(PARITY_PRIMITIVES);
+
 /**
  * The blocks mangacn redraws from stock base-nova blocks, by stock name (batch 5): each keeps
  * stock's files, page target, exports and registry dependencies (`compareBlockParity`).
@@ -114,9 +117,7 @@ export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";
  * props table is generated, as a manga-native piece's is.
  */
 export function isStockPrimitive(item: { name: string; type: string }): boolean {
-  return (
-    item.type === "registry:ui" && (PARITY_PRIMITIVES as readonly string[]).includes(item.name)
-  );
+  return item.type === "registry:ui" && PARITY_PRIMITIVE_SET.has(item.name);
 }
 
 export const BLOCK_PARITY_SNAPSHOT_PATH = "registry/blocks/__parity__/base-nova.json";
