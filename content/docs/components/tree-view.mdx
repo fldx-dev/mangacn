@@ -1,0 +1,33 @@
+---
+title: Tree View
+description: "Nested, collapsible items from a data tree: the full APG tree keyboard, one tab stop, ink indent guides, an ink selected row."
+item: tree-view
+---
+
+<InstallCommand item="tree-view" />
+
+<CopyPrompt item="tree-view" />
+
+Folders, a table of contents, series → volumes → chapters: anything nested that a reader
+opens and picks from. Pass the whole tree as `items`; keep `expanded` and `selected` yourself
+when the page shows the choice elsewhere, as the controlled demo does. In a
+[Sidebar](/docs/components/sidebar) it fills the width and truncates long labels.
+
+It follows the WAI-ARIA Tree View pattern, single select, with one tab stop:
+
+- Down / Up: the next / previous visible item.
+- Right: opens a closed parent, or moves to its first child.
+- Left: closes an open parent, or moves to the parent.
+- Home / End: the first / last visible item.
+- Enter / Space: selects the item.
+- `*`: opens every parent at the focused item's level.
+- A letter: the next item starting with it.
+
+## Examples
+
+<DemoFrame item="tree-view" demo="default" />
+<DemoFrame item="tree-view" demo="controlled" />
+
+## Props
+
+<PropsTable item="tree-view" />

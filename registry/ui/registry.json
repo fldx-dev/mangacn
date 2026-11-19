@@ -1673,6 +1673,342 @@
           "target": "@ui/code-block.tsx"
         }
       ]
+    },
+    {
+      "name": "date-range-picker",
+      "type": "registry:ui",
+      "title": "Date Range Picker",
+      "description": "An outlined button that opens a popover with presets and a range calendar; posts the two days as yyyy-MM-dd.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "date-fns", "lucide-react", "react-day-picker@latest"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/calendar.json",
+        "https://www.mangacn.com/r/popover.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/use-mobile.json"
+      ],
+      "files": [
+        {
+          "path": "date-range-picker/date-range-picker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/date-range-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "time-picker",
+      "type": "registry:ui",
+      "title": "Time Picker",
+      "description": "Hour and minute spinbuttons, and AM/PM in 12-hour mode, in one hand-drawn outline; posts \"HH:mm\" like a time input.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "time-picker/time-picker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/time-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "number-input",
+      "type": "registry:ui",
+      "title": "Number Input",
+      "description": "A number field with − and + steppers in one hand-drawn frame, on Base UI NumberField, formatted through Intl.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "number-input/number-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/number-input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tags-input",
+      "type": "registry:ui",
+      "title": "Tags Input",
+      "description": "Free-text tags as badges in one hand-drawn field: Enter or comma adds, Backspace removes, paste splits, every change announced.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/badge.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "tags-input/tags-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/tags-input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "multi-select",
+      "type": "registry:ui",
+      "title": "Multi Select",
+      "description": "Combobox's multiple mode in one line: an options array in, string values out, as outlined chips with groups and a limit.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/combobox.json",
+        "https://www.mangacn.com/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "multi-select/multi-select.tsx",
+          "type": "registry:ui",
+          "target": "@ui/multi-select.tsx"
+        }
+      ]
+    },
+    {
+      "name": "password-input",
+      "type": "registry:ui",
+      "title": "Password Input",
+      "description": "A password field with a show / hide toggle in one hand-drawn input group and an optional four-segment strength meter.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/input-group.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "password-input/password-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/password-input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "color-picker",
+      "type": "registry:ui",
+      "title": "Color Picker",
+      "description": "A swatch trigger opening a saturation area, hue and alpha sliders, a hex field and swatches, all in ink around the colours.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@base-ui/react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/popover.json",
+        "https://www.mangacn.com/r/slider.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "color-picker/color-picker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/color-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "rating",
+      "type": "registry:ui",
+      "title": "Rating",
+      "description": "Outlined ink stars, full or half filled: a radio group with roving focus when interactive, one named image when read-only.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "files": [
+        {
+          "path": "rating/rating.tsx",
+          "type": "registry:ui",
+          "target": "@ui/rating.tsx"
+        }
+      ]
+    },
+    {
+      "name": "copy-button",
+      "type": "registry:ui",
+      "title": "Copy Button",
+      "description": "An icon button that copies a value, says Copied once in a polite live region and shows failed without the Clipboard API.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/button.json"],
+      "files": [
+        {
+          "path": "copy-button/copy-button.tsx",
+          "type": "registry:ui",
+          "target": "@ui/copy-button.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tree-view",
+      "type": "registry:ui",
+      "title": "Tree View",
+      "description": "Nested, collapsible items from a data tree: the full APG tree keyboard, one tab stop, ink indent guides, an ink selected row.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "files": [
+        {
+          "path": "tree-view/tree-view.tsx",
+          "type": "registry:ui",
+          "target": "@ui/tree-view.tsx"
+        }
+      ]
+    },
+    {
+      "name": "stat-card",
+      "type": "registry:ui",
+      "title": "Stat Card",
+      "description": "A KPI on card's ink frame: label, a display-face value, a change read as words, spot only the bad way, and an ink sparkline.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "recharts@3.8.0", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/chart.json"
+      ],
+      "files": [
+        {
+          "path": "stat-card/stat-card.tsx",
+          "type": "registry:ui",
+          "target": "@ui/stat-card.tsx"
+        }
+      ]
+    },
+    {
+      "name": "avatar-stack",
+      "type": "registry:ui",
+      "title": "Avatar Stack",
+      "description": "A row of overlapping avatars from a list of people: initials without a picture, and a +N button whose tooltip names the rest.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/tooltip.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "avatar-stack/avatar-stack.tsx",
+          "type": "registry:ui",
+          "target": "@ui/avatar-stack.tsx"
+        }
+      ]
+    },
+    {
+      "name": "banner",
+      "type": "registry:ui",
+      "title": "Banner",
+      "description": "A dismissible announcement bar, paper with an ink rule or solid ink, that hands focus on when it closes.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "banner/banner.tsx",
+          "type": "registry:ui",
+          "target": "@ui/banner.tsx"
+        }
+      ]
+    },
+    {
+      "name": "file-upload",
+      "type": "registry:ui",
+      "title": "File Upload",
+      "description": "A drop zone with a real file button, rejections with reasons and rows with progress; your app sends the files.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/progress.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "file-upload/file-upload.tsx",
+          "type": "registry:ui",
+          "target": "@ui/file-upload.tsx"
+        }
+      ]
+    },
+    {
+      "name": "stepper",
+      "type": "registry:ui",
+      "title": "Stepper",
+      "description": "Numbered steps of a process in hand-drawn circles joined by ink lines, horizontal or vertical; linear by default.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "stepper/stepper.tsx",
+          "type": "registry:ui",
+          "target": "@ui/stepper.tsx"
+        }
+      ]
+    },
+    {
+      "name": "timeline",
+      "type": "registry:ui",
+      "title": "Timeline",
+      "description": "Dated events on a hand-drawn line, done, current or upcoming; alternates sides from 768 px. A server component.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn"],
+      "registryDependencies": ["https://www.mangacn.com/r/ink-frame.json"],
+      "files": [
+        {
+          "path": "timeline/timeline.tsx",
+          "type": "registry:ui",
+          "target": "@ui/timeline.tsx"
+        }
+      ]
     }
   ]
 }

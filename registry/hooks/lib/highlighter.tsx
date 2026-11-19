@@ -1,9 +1,52 @@
 import type * as React from "react";
-import { createHighlighterCore, type GrammarState, type HighlighterCore } from "shiki/core";
+import {
+  createHighlighterCore,
+  type GrammarState,
+  type HighlighterCore,
+  type ThemeRegistration,
+} from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 
 // Based on shadcn/ui use-highlighted-code's highlighter (MIT, https://ui.shadcn.com), base-nova style,
-// fetched 2026-11-12. Unchanged for mangacn: the shiki highlighter use-highlighted-code loads.
+// fetched 2026-11-12. Restyled for mangacn: tokens come out in ink instead of GitHub's colours. The
+// ink theme below is drawn from the theme's own tokens (CSS variables), so one theme serves light
+// and dark mode and every preset: code in the foreground, strings, comments and punctuation in the
+// muted foreground, keywords set bold and comments italic instead of coloured. Each token span
+// also takes the theme's weight and slant.
+
+const fg = "var(--foreground)";
+const muted = "var(--muted-foreground)";
+
+const ink: ThemeRegistration = {
+  name: "mangacn-ink",
+  type: "light",
+  colors: { "editor.background": "var(--background)", "editor.foreground": fg },
+  settings: [
+    { settings: { foreground: fg } },
+    {
+      scope: ["comment", "punctuation.definition.comment"],
+      settings: { foreground: muted, fontStyle: "italic" },
+    },
+    {
+      scope: ["string", "markup.inline.raw", "markup.fenced_code"],
+      settings: { foreground: muted },
+    },
+    // `keyword.operator` would inherit the keyword weight; the empty style resets it.
+    {
+      scope: ["punctuation", "meta.brace", "keyword.operator"],
+      settings: { foreground: muted, fontStyle: "" },
+    },
+    {
+      scope: ["keyword", "storage", "storage.type", "markup.heading", "markup.bold"],
+      settings: { foreground: fg, fontStyle: "bold" },
+    },
+    {
+      scope: ["keyword.operator.new", "keyword.operator.expression"],
+      settings: { foreground: fg, fontStyle: "bold" },
+    },
+    { scope: ["markup.italic"], settings: { fontStyle: "italic" } },
+  ],
+};
 
 // Add the languages you need. Each one loads the first time it is used.
 const languages = {
@@ -38,7 +81,9 @@ let highlighter: Promise<HighlighterCore> | undefined;
 
 function getHighlighter() {
   highlighter ??= createHighlighterCore({
-    themes: [import("shiki/themes/github-light.mjs"), import("shiki/themes/github-dark.mjs")],
+    // To use other themes, load them here and name them in `themes` below, e.g. stock's
+    // import("shiki/themes/github-light.mjs") and import("shiki/themes/github-dark.mjs").
+    themes: [ink],
     langs: [],
     engine: createJavaScriptRegexEngine({ forgiving: true }),
   });
@@ -82,7 +127,7 @@ export async function loadHighlighter(language: string) {
       const tokenize = (text: string) =>
         shiki.codeToTokens(text, {
           lang,
-          themes: { light: "github-light", dark: "github-dark" },
+          themes: { light: "mangacn-ink", dark: "mangacn-ink" },
           defaultColor: false,
           grammarState: state,
         }).tokens;
@@ -99,7 +144,7 @@ export async function loadHighlighter(language: string) {
               // biome-ignore lint/suspicious/noArrayIndexKey: stock's; a line's tokens never reorder
               key={index}
               style={token.htmlStyle as React.CSSProperties}
-              className="text-(--shiki-light) dark:text-(--shiki-dark)"
+              className="text-(--shiki-light) [font-style:var(--shiki-light-font-style)] font-(--shiki-light-font-weight) dark:text-(--shiki-dark) dark:[font-style:var(--shiki-dark-font-style)] dark:font-(--shiki-dark-font-weight)"
             >
               {token.content}
             </span>

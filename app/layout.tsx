@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Dela_Gothic_One, Geist, Geist_Mono, Shantell_Sans, Yusei_Magic } from "next/font/google";
+import { PAINT_WITH_PAGE } from "@/components/docs/page-end";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
+import appleIcon from "./apple-icon.png";
 import "./globals.css";
+import icon from "./icon.svg";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -55,6 +58,14 @@ export const metadata: Metadata = {
     locale: "en_US",
   },
   twitter: { card: "summary_large_image", title: SITE_TITLE, description: SITE_DESCRIPTION },
+  // The first-frame hold rides here, for every route (components/docs/page-end.tsx). Setting
+  // `icons` makes Next skip the icon files in app/ (all but the favicon), so they are listed too,
+  // with the sizes and types Next gave them.
+  icons: {
+    icon: { url: icon.src, sizes: "any", type: "image/svg+xml" },
+    apple: { url: appleIcon.src, sizes: "180x180", type: "image/png" },
+    other: [PAINT_WITH_PAGE],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

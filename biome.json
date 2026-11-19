@@ -59,5 +59,22 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["registry/blocks/*/page.tsx"],
+      "assist": {
+        "actions": {
+          "source": {
+            "organizeImports": {
+              "level": "on",
+              "options": {
+                "groups": [":PACKAGE:", "./components/**", ":ALIAS:", ":PATH:"]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

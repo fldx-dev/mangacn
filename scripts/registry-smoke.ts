@@ -54,15 +54,16 @@ import {
   SCREENTONE_RANGES,
   SCREENTONE_TOKENS,
 } from "../lib/create/config";
-import { fontItemNames } from "../lib/create/items";
+import { DIALOGUE_FACES, DISPLAY_FACES } from "../lib/create/fonts";
+import { fontItemUrls, VITE_FONT_SANS } from "../lib/create/items";
 import { kitItems } from "../lib/create/kits";
-import { createAnswer } from "../lib/create/serve";
+import { createAnswer, fontAnswer } from "../lib/create/serve";
 import { SETUP_ITEMS, setCommand } from "../lib/docs/install-command";
 import { mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
 import { installTarget } from "../lib/registry/install-target";
 import { loadPresets } from "../lib/registry/theme-preset-items";
 
-const NEXT_VERSION = "16.4.3";
+const NEXT_VERSION = "16.4.6";
 const SHADCN_VERSION = "4.23.0";
 /** Overall budget: setup plus a minute per item (`pnpm dlx shadcn add` takes ~40 s on Windows). */
 const BASE_TIMEOUT_MS = 6 * 60 * 1000;
@@ -230,12 +231,192 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/login-form.tsx", includes: ["export function LoginForm("] },
   ],
+  // login-02 shares login-01's paths: the full smoke checks it right after its own add.
+  "login-02": [
+    {
+      file: "app/login/page.tsx",
+      includes: [
+        'import { LoginForm } from "@/components/login-form"',
+        'import { MangaFrame } from "@/components/manga-frame"',
+        "Inkpot Studio",
+      ],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: ["export function LoginForm(", "<FieldSeparator>Or continue with</FieldSeparator>"],
+    },
+  ],
+  "login-03": [
+    {
+      file: "app/login/page.tsx",
+      includes: ['import { LoginForm } from "@/components/login-form"', "Inkpot Studio"],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: ["export function LoginForm(", "Login with Apple"],
+    },
+  ],
+  "login-04": [
+    {
+      file: "app/login/page.tsx",
+      includes: ['import { LoginForm } from "@/components/login-form"'],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: [
+        "export function LoginForm(",
+        'import { MangaFrame } from "@/components/manga-frame"',
+      ],
+    },
+  ],
+  "login-05": [
+    {
+      file: "app/login/page.tsx",
+      includes: ['import { LoginForm } from "@/components/login-form"'],
+    },
+    {
+      file: "components/login-form.tsx",
+      includes: ["export function LoginForm(", "Continue with Apple"],
+    },
+  ],
   "signup-01": [
     {
       file: "app/signup/page.tsx",
       includes: ['import { SignupForm } from "@/components/signup-form"'],
     },
     { file: "components/signup-form.tsx", includes: ["export function SignupForm("] },
+  ],
+  "signup-02": [
+    {
+      file: "app/signup/page.tsx",
+      includes: [
+        'import { SignupForm } from "@/components/signup-form"',
+        "Inkpot Studio",
+        'import { MangaFrame } from "@/components/manga-frame"',
+      ],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: ["export function SignupForm(", "Sign up with GitHub"],
+    },
+  ],
+  "signup-03": [
+    {
+      file: "app/signup/page.tsx",
+      includes: ['import { SignupForm } from "@/components/signup-form"', "Inkpot Studio"],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: ["export function SignupForm(", 'htmlFor="confirm-password"'],
+    },
+  ],
+  "signup-04": [
+    {
+      file: "app/signup/page.tsx",
+      includes: ['import { SignupForm } from "@/components/signup-form"'],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: [
+        "export function SignupForm(",
+        "Sign up with Meta",
+        'import { MangaFrame } from "@/components/manga-frame"',
+      ],
+    },
+  ],
+  "signup-05": [
+    {
+      file: "app/signup/page.tsx",
+      includes: ['import { SignupForm } from "@/components/signup-form"'],
+    },
+    {
+      file: "components/signup-form.tsx",
+      includes: ["export function SignupForm(", "Continue with Google"],
+    },
+  ],
+  // The sidebar variants share app/dashboard/page.tsx and components/app-sidebar.tsx (and some a
+  // search-form or nav-main): the full smoke checks each right after its own add.
+  "sidebar-01": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { SearchForm } from "./search-form"'],
+    },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+    {
+      file: "components/version-switcher.tsx",
+      includes: ["export function VersionSwitcher("],
+    },
+  ],
+  "sidebar-02": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"', "sticky top-0"],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "render={<CollapsibleTrigger />}"],
+    },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+    {
+      file: "components/version-switcher.tsx",
+      includes: ["export function VersionSwitcher("],
+    },
+  ],
+  "sidebar-03": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "<SidebarMenuSub>"],
+    },
+  ],
+  "sidebar-04": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        '"--sidebar-width": "19rem"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'variant="floating"'],
+    },
+  ],
+  "sidebar-05": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "defaultOpen={index === 1}"],
+    },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+  ],
+  "sidebar-06": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: [
+        "export function AppSidebar(",
+        'import { SidebarOptInForm } from "./sidebar-opt-in-form"',
+      ],
+    },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain(", "<DropdownMenu"] },
+    {
+      file: "components/sidebar-opt-in-form.tsx",
+      includes: ["export function SidebarOptInForm("],
+    },
   ],
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
@@ -250,6 +431,186 @@ export const EXPECTED_CONTENT: Record<
     { file: "components/nav-main.tsx", includes: ["export function NavMain("] },
     { file: "components/nav-projects.tsx", includes: ["export function NavProjects("] },
     { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+    { file: "components/team-switcher.tsx", includes: ["export function TeamSwitcher("] },
+  ],
+  // sidebar-08 shares sidebar-07's route and app-sidebar, nav-main, nav-projects and nav-user.
+  "sidebar-08": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        "Volume 3: Paper lanterns",
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { NavSecondary } from "./nav-secondary"'],
+    },
+    {
+      file: "components/nav-main.tsx",
+      includes: ["export function NavMain(", "Toggle {item.title}"],
+    },
+    { file: "components/nav-projects.tsx", includes: ["export function NavProjects("] },
+    { file: "components/nav-secondary.tsx", includes: ["export function NavSecondary("] },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+  ],
+  // sidebar-09 shares the route, app-sidebar and nav-user: two nested sidebars in app-sidebar.
+  "sidebar-09": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        '"--sidebar-width": "350px"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: [
+        "export function AppSidebar(",
+        'import { NavUser } from "./nav-user"',
+        'aria-label="Mailboxes"',
+      ],
+    },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+  ],
+  // sidebar-10 shares the route and app-sidebar, nav-main, nav-secondary and team-switcher.
+  "sidebar-10": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        'import { NavActions } from "@/components/nav-actions"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { NavWorkspaces } from "./nav-workspaces"'],
+    },
+    { file: "components/nav-actions.tsx", includes: ["export function NavActions("] },
+    { file: "components/nav-favorites.tsx", includes: ["export function NavFavorites("] },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain("] },
+    {
+      file: "components/nav-secondary.tsx",
+      includes: ["export function NavSecondary(", "SidebarMenuBadge"],
+    },
+    { file: "components/nav-workspaces.tsx", includes: ["export function NavWorkspaces("] },
+    {
+      file: "components/team-switcher.tsx",
+      includes: ["export function TeamSwitcher(", "ChevronDownIcon"],
+    },
+  ],
+  // sidebar-11 shares the route and app-sidebar: the file tree lives in app-sidebar itself.
+  "sidebar-11": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"', "Chapter 12, page 2"],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "function Tree("],
+    },
+  ],
+  // sidebar-13 shares the route only: its shell is a settings dialog of its own.
+  "sidebar-13": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { SettingsDialog } from "@/components/settings-dialog"',
+        "Reader settings",
+      ],
+    },
+    { file: "components/settings-dialog.tsx", includes: ["export function SettingsDialog("] },
+  ],
+  // Server-only: neither file has a client directive.
+  "sidebar-14": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        '<AppSidebar side="right" />',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", "Table of Contents"],
+    },
+  ],
+  // sidebar-12 shares sidebar-07's route and app-sidebar, nav-user: checked after its own add.
+  "sidebar-12": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: ['import { AppSidebar } from "@/components/app-sidebar"', "Release schedule"],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { DatePicker } from "./date-picker"'],
+    },
+    { file: "components/calendars.tsx", includes: ["export function Calendars("] },
+    {
+      file: "components/date-picker.tsx",
+      includes: [
+        "export function DatePicker(",
+        'import { Calendar } from "@/components/ui/calendar"',
+      ],
+    },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+  ],
+  // sidebar-16 shares the route and most component names with the other sidebars.
+  "sidebar-16": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { AppSidebar } from "@/components/app-sidebar"',
+        'import { SiteHeader } from "@/components/site-header"',
+      ],
+    },
+    {
+      file: "components/app-sidebar.tsx",
+      includes: ["export function AppSidebar(", 'import { NavSecondary } from "./nav-secondary"'],
+    },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain("] },
+    { file: "components/nav-projects.tsx", includes: ["export function NavProjects("] },
+    { file: "components/nav-secondary.tsx", includes: ["export function NavSecondary("] },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+    { file: "components/search-form.tsx", includes: ["export function SearchForm("] },
+    {
+      file: "components/site-header.tsx",
+      includes: ["export function SiteHeader(", 'import { SearchForm } from "./search-form"'],
+    },
+  ],
+  // sidebar-15: two sidebars, eleven files; the route and five component names are shared.
+  "sidebar-15": [
+    {
+      file: "app/dashboard/page.tsx",
+      includes: [
+        'import { SidebarLeft } from "@/components/sidebar-left"',
+        'import { SidebarRight } from "@/components/sidebar-right"',
+      ],
+    },
+    { file: "components/calendars.tsx", includes: ["export function Calendars("] },
+    {
+      file: "components/date-picker.tsx",
+      includes: [
+        "export function DatePicker(",
+        'import { Calendar } from "@/components/ui/calendar"',
+      ],
+    },
+    { file: "components/nav-favorites.tsx", includes: ["export function NavFavorites("] },
+    { file: "components/nav-main.tsx", includes: ["export function NavMain("] },
+    { file: "components/nav-secondary.tsx", includes: ["export function NavSecondary("] },
+    { file: "components/nav-user.tsx", includes: ["export function NavUser("] },
+    { file: "components/nav-workspaces.tsx", includes: ["export function NavWorkspaces("] },
+    {
+      file: "components/sidebar-left.tsx",
+      includes: [
+        "export function SidebarLeft(",
+        'import { NavWorkspaces } from "./nav-workspaces"',
+      ],
+    },
+    {
+      file: "components/sidebar-right.tsx",
+      includes: ["export function SidebarRight(", 'import { DatePicker } from "./date-picker"'],
+    },
     { file: "components/team-switcher.tsx", includes: ["export function TeamSwitcher("] },
   ],
   // A page block inside another's shell: sidebar-07 arrives as a dependency (its route at
@@ -532,6 +893,68 @@ function installOrder(
   return [...first, ...order];
 }
 
+/**
+ * The items in `items` that write the same install path as another, grouped, each group in
+ * name order: variants of one stock family (`login-01`, `login-02`) are alternatives that share
+ * `app/login/page.tsx` and `components/login-form.tsx` (SPEC-components-6 §5.1). Items that share
+ * no path are in no group.
+ */
+export function installFamilies(items: readonly CatalogItem[]): string[][] {
+  const parent = new Map(items.map((item) => [item.name, item.name]));
+  const root = (name: string): string => {
+    const up = parent.get(name) ?? name;
+    return up === name ? name : root(up);
+  };
+  const writer = new Map<string, string>();
+  for (const item of items) {
+    for (const file of item.files ?? []) {
+      const target = installTarget(file);
+      const other = writer.get(target);
+      if (other === undefined) writer.set(target, item.name);
+      else parent.set(root(item.name), root(other));
+    }
+  }
+  const groups = new Map<string, string[]>();
+  for (const item of items) {
+    const key = root(item.name);
+    groups.set(key, [...(groups.get(key) ?? []), item.name]);
+  }
+  return [...groups.values()]
+    .filter((group) => group.length > 1)
+    .map((group) => group.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)));
+}
+
+/**
+ * `order` with each family's variants together, in name order, where its first variant was, and
+ * every item that declares a variant moved after that family's last one, so a variant is
+ * checked before the next overwrites it and `library-page` gets `sidebar-07`'s shell, not the
+ * last sidebar's.
+ */
+export function familyOrder(order: readonly string[], items: readonly CatalogItem[]): string[] {
+  const families = installFamilies(items.filter((item) => order.includes(item.name)));
+  const familyOf = new Map(families.flatMap((family) => family.map((name) => [name, family])));
+  const result: string[] = [];
+  for (const name of order) {
+    const family = familyOf.get(name);
+    if (!family) result.push(name);
+    else if (!result.includes(name)) result.push(...family);
+  }
+  for (const item of items) {
+    if (!result.includes(item.name) || familyOf.has(item.name)) continue;
+    const declared = (item.registryDependencies ?? []).flatMap((dep) => {
+      const family = familyOf.get(mangacnItemName(dep) ?? "");
+      return family ?? [];
+    });
+    if (declared.length === 0) continue;
+    const at = result.indexOf(item.name);
+    const last = Math.max(...declared.map((name) => result.indexOf(name)));
+    if (last < at) continue;
+    result.splice(at, 1);
+    result.splice(last, 0, item.name);
+  }
+  return result;
+}
+
 /** Stock shadcn items installed before the mangacn items, which must overwrite them. */
 const STOCK_PREINSTALL = [
   { name: "button", file: "components/ui/button.tsx" },
@@ -667,13 +1090,22 @@ const served: string[] = [];
 function serveRegistry(): Promise<Server> {
   const server = createServer((req, res) => {
     const pathname = decodeURIComponent(new URL(req.url ?? "/", "http://localhost").pathname);
-    // A Create code's items, answered as app/r/create/ answers them, on this server's origin.
-    const create = /^\/r\/create\/([^/]+)(\/theme\.json)?$/.exec(pathname);
-    if (create) {
+    // A Create font and a code's items, answered as app/r/create/ answers them, on this
+    // server's origin.
+    const font = /^\/r\/create\/font\/([^/]+)\/([^/]+)$/.exec(pathname);
+    const create = font
+      ? null
+      : /^\/r\/create\/([^/]+)(?:\/(theme|next|vite)\.json)?$/.exec(pathname);
+    if (font || create) {
       served.push(pathname);
       const { port } = server.address() as AddressInfo;
-      const kind = create[2] ? "theme" : "bundle";
-      const answer = createAnswer(kind, create[1], `http://127.0.0.1:${port}`);
+      const answer = font
+        ? fontAnswer(font[1], font[2])
+        : createAnswer(
+            (create?.[2] as "theme" | "next" | "vite" | undefined) ?? "bundle",
+            create?.[1],
+            `http://127.0.0.1:${port}`,
+          );
       res.writeHead(answer.status, answer.headers).end(JSON.stringify(answer.body, null, 2));
       return;
     }
@@ -976,7 +1408,15 @@ function createCssProblems(
     "--color-background: var(--background);",
     "--color-border: var(--border);",
     "@utility halftone",
-    ...(vite ? ['@import "@fontsource/dela-gothic-one"', '@import "@fontsource/yusei-magic"'] : []),
+    // The chosen faces: Fontsource imports and the body font in Vite (Task C7).
+    ...(vite
+      ? [
+          `@import "${DISPLAY_FACES[config.fonts.display].dependency}"`,
+          `@import "${DIALOGUE_FACES[config.fonts.dialogue].dependency}"`,
+          '@import "@fontsource/yusei-magic"',
+          `--font-sans: ${VITE_FONT_SANS};`,
+        ]
+      : []),
   ];
   const problems = needles
     .filter((needle) => !css.includes(needle))
@@ -985,6 +1425,29 @@ function createCssProblems(
   if (!isDefault) {
     for (const needle of DEFAULT_PAPERS) {
       if (css.includes(needle)) problems.push(`${cssFile} still has the default "${needle}"`);
+    }
+  }
+  return problems;
+}
+
+/**
+ * A Next.js layout after a Create code: it loads the code's face for each role, and no other face
+ * of that role (one loader per variable; an existing project's old face is replaced).
+ */
+function createLayoutProblems(layout: string, config: CreateConfig): string[] {
+  const problems: string[] = [];
+  for (const [role, faces, chosen] of [
+    ["display", DISPLAY_FACES, config.fonts.display],
+    ["dialogue", DIALOGUE_FACES, config.fonts.dialogue],
+  ] as const) {
+    for (const [id, face] of Object.entries(faces)) {
+      const loads = layout.includes(`${face.import}(`);
+      if (id === chosen && !loads) {
+        problems.push(`app/layout.tsx does not load the ${role} face ${face.family}`);
+      }
+      if (id !== chosen && loads) {
+        problems.push(`app/layout.tsx still loads ${face.family}, not this code's ${role} face`);
+      }
     }
   }
   return problems;
@@ -1007,10 +1470,13 @@ async function createSmoke(code: string, vite: boolean) {
   const { port } = server.address() as AddressInfo;
   const origin = `http://127.0.0.1:${port}`;
   const commands = createCommands(config, "pnpm", origin);
-  const fetched = [
-    `/r/create/${commands.code}.json`,
+  // The new project's own bundle; the existing-project command's is the plain `<code>.json`.
+  let bundlePath = `/r/create/${commands.code}/${vite ? "vite" : "next"}.json`;
+  const fetched = () => [
+    bundlePath,
     `/r/create/${commands.code}/theme.json`,
-    ...[...fontItemNames(config.fonts), ...kitItems(config.kit)].map((name) => `/r/${name}.json`),
+    ...fontItemUrls(config.fonts, origin).map((url) => url.slice(origin.length)),
+    ...kitItems(config.kit).map((name) => `/r/${name}.json`),
   ];
   console.log(`Create code ${code} (canonical ${commands.code}), ${vite ? "Vite" : "Next.js"}`);
 
@@ -1025,11 +1491,14 @@ async function createSmoke(code: string, vite: boolean) {
   const verify = (project: string, label: string) => {
     const cssFile = vite ? "src/index.css" : "app/globals.css";
     const problems = [
-      ...fetched
+      ...fetched()
         .filter((url) => !served.includes(url))
         .map((url) => `${url} was never fetched from the local registry`),
       ...createCssProblems(readProjectFile(project, cssFile), config, cssFile, vite),
       ...(vite ? [] : fontVariableProblems(readProjectFile(project, "app/layout.tsx") ?? "")),
+      ...(vite
+        ? []
+        : createLayoutProblems(readProjectFile(project, "app/layout.tsx") ?? "", config)),
     ];
     if (problems.length > 0) {
       throw new SmokeError(`${label}: Create check failed:\n  ${problems.join("\n  ")}`);
@@ -1074,6 +1543,7 @@ async function createSmoke(code: string, vite: boolean) {
         existing,
       );
       served.length = 0;
+      bundlePath = `/r/create/${commands.code}.json`;
       await step(
         `${commands.existingProject} (as printed, CLI pinned)`,
         documentedArgs(commands.existingProject),
@@ -1123,7 +1593,9 @@ async function main() {
   }
   const selected = requested === undefined ? undefined : withDependencies(catalog.items, requested);
   const items = selected ? catalog.items.filter((item) => selected.has(item.name)) : catalog.items;
-  const names = installOrder(items, INSTALL_FIRST);
+  const names = familyOrder(installOrder(items, INSTALL_FIRST), items);
+  // A variant's files are checked right after its own add, before a sibling overwrites them.
+  const variants = new Set(installFamilies(items).flat());
   const label = selected ? `${names.length} of ${listed.length}` : `${names.length}`;
   console.log(`Smoke-installing ${label} item(s): ${names.join(", ")}`);
   // The overwrite check needs the three stock items it pre-installs and the page that uses them.
@@ -1157,6 +1629,7 @@ async function main() {
     }
 
     const owners = new Map<string, string>();
+    const missing: string[] = [];
     for (const name of names) {
       console.log(`→ shadcn add @mangacn/${name}`);
       const before = snapshot(project);
@@ -1175,10 +1648,17 @@ async function main() {
           owners.set(file, name);
         }
       }
+      if (variants.has(name)) missing.push(...contentProblems(project, [name]));
     }
 
     console.log("→ installed content");
-    const missing = [...contentProblems(project, names), ...landingProblems(project, items)];
+    missing.push(
+      ...contentProblems(
+        project,
+        names.filter((name) => !variants.has(name)),
+      ),
+      ...landingProblems(project, items),
+    );
     if (missing.length > 0) {
       throw new SmokeError(`Installed content check failed:\n  ${missing.join("\n  ")}`);
     }

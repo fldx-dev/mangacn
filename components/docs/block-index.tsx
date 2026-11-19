@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { BLOCKS_CATALOG, type DocItem, docItems } from "@/lib/docs/catalog";
 import { loadRegistry } from "@/lib/registry";
+import { groupBlocks } from "@/lib/registry/blocks";
 import { listDemos } from "@/lib/registry/demos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/registry/ui/card/card";
 import { ScaledView } from "./block-preview";
@@ -16,11 +17,12 @@ import { PREVIEW_WIDTHS } from "./preview-widths";
 export const BLOCK_STAGE_HEIGHT = "26rem";
 
 /**
- * Every block as a card with a preview, in catalog order: a page block's whole page from
+ * Every block as a card with a preview, under a heading per group (Manga, Login, Signup, Sidebar;
+ * `groupBlocks`, from the block's name): a page block's whole page from
  * `/view/<name>` (in an inert iframe at a phone's width, scaled to the card), any other
  * block's default demo. Previews are inert: a card is a way to the block's page, which its title
  * links to, not a place to use the block. Read from the catalog and the demo map, so a new block
- * shows up without an edit here.
+ * shows up, in its group, without an edit here.
  */
 export async function BlockIndex() {
   const items = docItems(loadRegistry(), listDemos(), BLOCKS_CATALOG);
@@ -29,14 +31,29 @@ export async function BlockIndex() {
   );
 
   return (
-    <div data-slot="block-index" className="not-prose">
-      <ul className="grid min-w-0 gap-6 md:grid-cols-2">
-        {items.map((item) => (
-          <li key={item.name} className="flex min-w-0">
-            <BlockCard item={item} preview={previews.get(item.name)} />
-          </li>
-        ))}
-      </ul>
+    <div data-slot="block-index" className="not-prose flex flex-col gap-12">
+      {groupBlocks(items).map((group) => (
+        <section
+          key={group.id}
+          data-group={group.id}
+          aria-labelledby={`group-${group.id}`}
+          className="flex min-w-0 flex-col gap-4"
+        >
+          <h2 id={`group-${group.id}`} className="font-display text-2xl uppercase">
+            {group.label}
+            <span className="ms-2 align-middle font-sans text-sm text-fd-muted-foreground normal-case">
+              {group.items.length}
+            </span>
+          </h2>
+          <ul className="grid min-w-0 gap-6 md:grid-cols-2">
+            {group.items.map((item) => (
+              <li key={item.name} className="flex min-w-0">
+                <BlockCard item={item} preview={previews.get(item.name)} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </div>
   );
 }

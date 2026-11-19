@@ -1,0 +1,37 @@
+---
+title: Time Picker
+description: "Hour and minute spinbuttons, and AM/PM in 12-hour mode, in one hand-drawn outline; posts \"HH:mm\" like a time input."
+item: time-picker
+---
+
+<InstallCommand item="time-picker" />
+
+<CopyPrompt item="time-picker" />
+
+A time without a popover, for a release hour, a signing slot or a deadline: hours and minutes in one ink outline, typed or stepped, posting `"HH:mm"` as a native time input does. Put it in a `field` with a label and an error, or beside `date-range-picker` for a date and a time.
+
+Each segment follows the WAI-ARIA [Spinbutton pattern](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/):
+
+- Up and Down step by one (minutes by `minuteStep`) and wrap around.
+- Page Up and Page Down step by 3 hours or 10 minutes.
+- Home and End go to the segment's first and last value.
+- Digits fill the segment and move on once it is full; Backspace clears it.
+- Left and Right move between segments; A and P set AM or PM.
+
+## Examples
+
+A 24-hour time, as `<input type="time">` shows it by default.
+
+<DemoFrame item="time-picker" demo="default" />
+
+`hourCycle={12}` shows 1 to 12 and an AM/PM segment; the value stays `"HH:mm"` in 24 hours.
+
+<DemoFrame item="time-picker" demo="twelve-hour" />
+
+In a `field`, with `min`, `max` and `minuteStep={15}`: a time outside the range sets `aria-invalid` and the field shows its error.
+
+<DemoFrame item="time-picker" demo="field" />
+
+## Props
+
+<PropsTable item="time-picker" />

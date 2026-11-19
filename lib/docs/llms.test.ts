@@ -70,6 +70,7 @@ describe("renderIndex", () => {
         "# mangacn",
         "> Summary.",
         "Every link below is the page as Markdown; https://www.mangacn.com/llms-full.txt holds them all in one file.",
+        "A theme and starter kit from the Create page (https://www.mangacn.com/create) as text, with its install commands and files: https://www.mangacn.com/create.md?c=<code>.",
         "- [Docs](https://www.mangacn.com/docs.md): Intro.\n- [Elsewhere](https://example.com)\n",
       ].join("\n\n"),
     );

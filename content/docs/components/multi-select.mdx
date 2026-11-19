@@ -1,0 +1,32 @@
+---
+title: Multi Select
+description: "Combobox's multiple mode in one line: an options array in, string values out, as outlined chips with groups and a limit."
+item: multi-select
+---
+
+<InstallCommand item="multi-select" />
+
+<CopyPrompt item="multi-select" />
+
+Pick several values from a known list, such as a series' genres or a reader's tags: pass an options array and read string values back, with one hidden input per value for a plain form. Pair it with Field for a label and a hint; for custom rows or chips, compose [Combobox](/docs/components/combobox)'s parts instead.
+
+It follows the WAI-ARIA Combobox pattern with a multi-select listbox popup:
+
+- Type to filter the list.
+- Down and Up move the ink highlight.
+- Enter picks or unpicks the highlighted option.
+- Backspace in the empty input removes the last chip.
+- Escape closes the list.
+
+## Examples
+
+Genres for a series inside a Field, with a label and a hint; the picks post as `genres`.
+
+<DemoFrame item="multi-select" demo="default" />
+Tags under Genre, Demographic and Format, at most three: at the limit the other tags are disabled and say why.
+
+<DemoFrame item="multi-select" demo="groups" />
+
+## Props
+
+<PropsTable item="multi-select" />

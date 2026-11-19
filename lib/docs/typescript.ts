@@ -3,6 +3,7 @@ import path from "node:path";
 import type { GeneratedDoc, Generator } from "fumadocs-typescript";
 import { type LoadedRegistry, loadRegistry } from "@/lib/registry";
 import { isPageBlock } from "@/lib/registry/blocks";
+import { isStockPrimitive } from "@/lib/registry/parity";
 import { DOCS_SECTIONS } from "./catalog";
 import { type GeneratedProps, propsInterfaceName } from "./props";
 
@@ -132,7 +133,7 @@ export function propsTargets(
   const targets = new Map<string, PropsTarget>();
   const add = (item: string, name: string) => {
     const entry = registry.items.find((candidate) => candidate.name === item);
-    if (!entry || entry.type === "registry:ui") return;
+    if (!entry || isStockPrimitive(entry)) return;
     // The file that declares the interface (a page block's component), else the entry file.
     const file =
       entry.files.find((candidate) => {
@@ -144,7 +145,8 @@ export function propsTargets(
   for (const entry of registry.items) {
     // A page block has no `<Pascal>Props`: its page takes none, its components name their own.
     if (isPageBlock(entry)) continue;
-    if (entry.type === "registry:component" || entry.type === "registry:block") {
+    const own = entry.type === "registry:ui" && !isStockPrimitive(entry);
+    if (entry.type === "registry:component" || entry.type === "registry:block" || own) {
       add(entry.name, propsInterfaceName(entry.name));
     }
   }

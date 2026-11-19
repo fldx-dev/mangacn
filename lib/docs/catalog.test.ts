@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 import type { LoadedRegistry, LoadedRegistryItem } from "@/lib/registry";
 import {
   BLOCKS_CATALOG,
+  CATEGORY_LABELS,
   COMPONENTS_CATALOG,
   DOCS_SECTIONS,
   type DocItem,
   docItems,
+  groupByCategory,
   itemPagePath,
   PROSE_PLACEHOLDER,
   parseFrontmatter,
@@ -119,16 +121,38 @@ describe("block pages", () => {
     expect(scaffold).not.toContain("PropsTable");
   });
 
-  it("sit in the Blocks section, in catalog order", () => {
-    const meta = { title: "Blocks", defaultOpen: true, pages: ["shelf", "reader"] };
+  it("sit in the Blocks section, under a separator per group", () => {
+    const meta = { title: "Blocks", defaultOpen: true, pages: ["---Manga---", "shelf", "reader"] };
     expect(JSON.parse(renderBlocksMeta(blocks))).toEqual(meta);
     // Biome's layout: the list on one line while it fits in 100 columns, else one per line.
     expect(renderBlocksMeta(blocks)).toBe(
-      '{\n  "title": "Blocks",\n  "defaultOpen": true,\n  "pages": ["shelf", "reader"]\n}\n',
+      '{\n  "title": "Blocks",\n  "defaultOpen": true,\n  "pages": ["---Manga---", "shelf", "reader"]\n}\n',
     );
-    const many = Array.from({ length: 9 }, (_, i) => ({ ...blocks[0], name: `block-${i}` }));
-    expect(renderBlocksMeta(many)).toContain('  "pages": [\n    "block-0",\n    "block-1",');
-    expect(JSON.parse(renderBlocksMeta(many)).pages).toHaveLength(9);
+    const many = Array.from({ length: 9 }, (_, i) => ({
+      ...blocks[0],
+      name: `shelf-${"abcdefghi"[i]}`,
+    }));
+    expect(renderBlocksMeta(many)).toContain('  "pages": [\n    "---Manga---",\n    "shelf-a",');
+    expect(JSON.parse(renderBlocksMeta(many)).pages).toHaveLength(10);
+    // A new stock block joins its family's group by its name alone: Manga first, in catalog
+    // order, then Login, Signup and Sidebar, each by number.
+    const stock = ["sidebar-16", "login-02", "sidebar-07", "signup-01", "login-01"].map((name) => ({
+      ...blocks[0],
+      name,
+    }));
+    expect(JSON.parse(renderBlocksMeta([...stock, ...blocks])).pages).toEqual([
+      "---Manga---",
+      "shelf",
+      "reader",
+      "---Login---",
+      "login-01",
+      "login-02",
+      "---Signup---",
+      "signup-01",
+      "---Sidebar---",
+      "sidebar-07",
+      "sidebar-16",
+    ]);
     expect(JSON.parse(renderBlocksMeta([])).pages).toEqual([]);
     expect(JSON.parse(renderSectionMeta(DOCS_SECTIONS[1], blocks))).toEqual(meta);
     expect(renderSectionMeta(DOCS_SECTIONS[0], docItems(registry, demos))).toBe(
@@ -152,6 +176,50 @@ describe("renderComponentsMeta", () => {
       defaultOpen: true,
       pages: ["---Primitives---", "button", "---Text---", "bubble"],
     });
+  });
+});
+
+describe("the Inputs and Display groups (SPEC-components-7 §6)", () => {
+  // A form and a display item, listed out of order, with an empty group (layout) between.
+  const grouped: LoadedRegistry = {
+    ...registry,
+    items: [
+      item("chips", "display"),
+      item("bubble", "text"),
+      item("dial", "form"),
+      item("button", "primitive"),
+    ],
+  };
+  const groupedDemos = ["chips", "bubble", "dial", "button"].map((name) => ({
+    item: name,
+    demo: "default",
+  }));
+
+  it("come right after Primitives, and an empty group has no heading", () => {
+    expect(
+      groupByCategory(docItems(grouped, groupedDemos)).map(([category, group]) => [
+        CATEGORY_LABELS[category],
+        group.map((entry) => entry.name),
+      ]),
+    ).toEqual([
+      ["Primitives", ["button"]],
+      ["Inputs", ["dial"]],
+      ["Display", ["chips"]],
+      ["Text", ["bubble"]],
+    ]);
+  });
+
+  it("get a sidebar separator each, and an empty group gets none", () => {
+    expect(JSON.parse(renderComponentsMeta(docItems(grouped, groupedDemos))).pages).toEqual([
+      "---Primitives---",
+      "button",
+      "---Inputs---",
+      "dial",
+      "---Display---",
+      "chips",
+      "---Text---",
+      "bubble",
+    ]);
   });
 });
 

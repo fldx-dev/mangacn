@@ -1,0 +1,39 @@
+---
+title: Timeline
+description: "Dated events on a hand-drawn line, done, current or upcoming; alternates sides from 768 px. A server component."
+item: timeline
+---
+
+<InstallCommand item="timeline" />
+
+<CopyPrompt item="timeline" />
+
+A record of what happened when, for a series' release history, a changelog or a production schedule: each event a dot on one hand-drawn line, inked when done, ringed when current. It is static and renders on the server; for steps someone moves through, use `stepper`.
+
+It is an ordered list (`<ol>`) with no keyboard of its own:
+
+- each date is a `<time dateTime>`;
+- the current item has `aria-current="true"` and says "current" to screen readers;
+- the dots and the line are hidden from assistive tech.
+
+## Examples
+
+Done events down one side, as a series' release history.
+
+<DemoFrame item="timeline" demo="default" />
+
+`align="alternate"` switches sides from 768 px and keeps one side below; here with a current and an upcoming event.
+
+<DemoFrame item="timeline" demo="alternate" />
+
+## Props
+
+<PropsTable item="timeline" />
+
+`TimelineItem`:
+
+<PropsTable item="timeline" name="TimelineItemProps" />
+
+`TimelineTime`:
+
+<PropsTable item="timeline" name="TimelineTimeProps" />

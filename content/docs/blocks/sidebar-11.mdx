@@ -1,0 +1,20 @@
+---
+title: Sidebar 11
+description: "An app shell with a file tree: a chapter's changed files with their state, then its folders, opening on the page being drawn, beside that page's blank manga panels; stock's sidebar-11 in ink."
+item: sidebar-11
+skipDemos: ["default"]
+---
+
+<InstallCommand item="sidebar-11" />
+
+<ItemFiles item="sidebar-11" />
+
+<CopyPrompt item="sidebar-11" />
+
+Stock's file-tree sidebar in ink, with stock's two files and exports: one add writes `app/dashboard/page.tsx` and `components/app-sidebar.tsx`, where shadcn's sidebar-11 puts them. Mangacn's [Sidebar](/docs/components/sidebar) lists a chapter's changed files with their state, then its folders as [collapsibles](/docs/components/collapsible), opening on the page being drawn; it collapses with <kbd>Ctrl</kbd>+<kbd>B</kbd> (<kbd>⌘</kbd>+<kbd>B</kbd> on a Mac) or the trigger and opens as a sheet on phones, beside the page's blank [panels](/docs/components/panel). It is an alternative to the other sidebar blocks, so adding it replaces their shared files; swap the sample tree in `app-sidebar.tsx` for your own.
+
+The page is a server component and `app-sidebar.tsx` is a client component, as in stock's block.
+
+## Preview
+
+<BlockPreview item="sidebar-11" />

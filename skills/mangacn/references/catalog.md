@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 107 items in the registry. Each line gives the item's name, what it is, the one
+All 146 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -237,6 +237,60 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/code-block --overwrite`
   Docs: https://www.mangacn.com/docs/components/code-block (Markdown: https://www.mangacn.com/docs/components/code-block.md)
 
+## Inputs
+
+- `date-range-picker`: An outlined button that opens a popover with presets and a range calendar; posts the two days as yyyy-MM-dd.
+  Install: `npx shadcn@latest add @mangacn/date-range-picker --overwrite`
+  Docs: https://www.mangacn.com/docs/components/date-range-picker (Markdown: https://www.mangacn.com/docs/components/date-range-picker.md)
+- `time-picker`: Hour and minute spinbuttons, and AM/PM in 12-hour mode, in one hand-drawn outline; posts "HH:mm" like a time input.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/time-picker --overwrite`
+  Docs: https://www.mangacn.com/docs/components/time-picker (Markdown: https://www.mangacn.com/docs/components/time-picker.md)
+- `number-input`: A number field with − and + steppers in one hand-drawn frame, on Base UI NumberField, formatted through Intl.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/number-input --overwrite`
+  Docs: https://www.mangacn.com/docs/components/number-input (Markdown: https://www.mangacn.com/docs/components/number-input.md)
+- `tags-input`: Free-text tags as badges in one hand-drawn field: Enter or comma adds, Backspace removes, paste splits, every change announced.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/tags-input --overwrite`
+  Docs: https://www.mangacn.com/docs/components/tags-input (Markdown: https://www.mangacn.com/docs/components/tags-input.md)
+- `multi-select`: Combobox's multiple mode in one line: an options array in, string values out, as outlined chips with groups and a limit.
+  Install: `npx shadcn@latest add @mangacn/multi-select --overwrite`
+  Docs: https://www.mangacn.com/docs/components/multi-select (Markdown: https://www.mangacn.com/docs/components/multi-select.md)
+- `password-input`: A password field with a show / hide toggle in one hand-drawn input group and an optional four-segment strength meter.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/password-input --overwrite`
+  Docs: https://www.mangacn.com/docs/components/password-input (Markdown: https://www.mangacn.com/docs/components/password-input.md)
+- `color-picker`: A swatch trigger opening a saturation area, hue and alpha sliders, a hex field and swatches, all in ink around the colours.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/color-picker --overwrite`
+  Docs: https://www.mangacn.com/docs/components/color-picker (Markdown: https://www.mangacn.com/docs/components/color-picker.md)
+- `file-upload`: A drop zone with a real file button, rejections with reasons and rows with progress; your app sends the files.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/file-upload --overwrite`
+  Docs: https://www.mangacn.com/docs/components/file-upload (Markdown: https://www.mangacn.com/docs/components/file-upload.md)
+
+## Display
+
+- `rating`: Outlined ink stars, full or half filled: a radio group with roving focus when interactive, one named image when read-only.
+  Install: `npx shadcn@latest add @mangacn/rating --overwrite`
+  Docs: https://www.mangacn.com/docs/components/rating (Markdown: https://www.mangacn.com/docs/components/rating.md)
+- `copy-button`: An icon button that copies a value, says Copied once in a polite live region and shows failed without the Clipboard API.
+  Install: `npx shadcn@latest add @mangacn/copy-button --overwrite`
+  Docs: https://www.mangacn.com/docs/components/copy-button (Markdown: https://www.mangacn.com/docs/components/copy-button.md)
+- `tree-view`: Nested, collapsible items from a data tree: the full APG tree keyboard, one tab stop, ink indent guides, an ink selected row.
+  Install: `npx shadcn@latest add @mangacn/tree-view --overwrite`
+  Docs: https://www.mangacn.com/docs/components/tree-view (Markdown: https://www.mangacn.com/docs/components/tree-view.md)
+- `stat-card`: A KPI on card's ink frame: label, a display-face value, a change read as words, spot only the bad way, and an ink sparkline.
+  Install: `npx shadcn@latest add @mangacn/stat-card --overwrite`
+  Docs: https://www.mangacn.com/docs/components/stat-card (Markdown: https://www.mangacn.com/docs/components/stat-card.md)
+- `avatar-stack`: A row of overlapping avatars from a list of people: initials without a picture, and a +N button whose tooltip names the rest.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/avatar-stack --overwrite`
+  Docs: https://www.mangacn.com/docs/components/avatar-stack (Markdown: https://www.mangacn.com/docs/components/avatar-stack.md)
+- `banner`: A dismissible announcement bar, paper with an ink rule or solid ink, that hands focus on when it closes.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/banner --overwrite`
+  Docs: https://www.mangacn.com/docs/components/banner (Markdown: https://www.mangacn.com/docs/components/banner.md)
+- `stepper`: Numbered steps of a process in hand-drawn circles joined by ink lines, horizontal or vertical; linear by default.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/stepper --overwrite`
+  Docs: https://www.mangacn.com/docs/components/stepper (Markdown: https://www.mangacn.com/docs/components/stepper.md)
+- `timeline`: Dated events on a hand-drawn line, done, current or upcoming; alternates sides from 768 px. A server component.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/timeline --overwrite`
+  Docs: https://www.mangacn.com/docs/components/timeline (Markdown: https://www.mangacn.com/docs/components/timeline.md)
+
 ## Layout
 
 - `panel`: One manga panel: heavy hand-drawn ink frame on paper, optional screentone, corner caption and hatched shadow (needs ink-frame).
@@ -341,15 +395,6 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `reader`: A chapter page: the spread viewer, a drawer with the series' chapter list, progress as text, the page kept in the address through use-reader; made of two blocks.
   Install: `npx shadcn@latest add @mangacn/reader --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/reader (Markdown: https://www.mangacn.com/docs/blocks/reader.md)
-- `login-01`: A login page: email and password on a paper card with a heavy ink outline, the title in the display face and a reception stamp; stock's login-01 in ink.
-  Install: `npx shadcn@latest add @mangacn/login-01 --overwrite`
-  Docs: https://www.mangacn.com/docs/blocks/login-01 (Markdown: https://www.mangacn.com/docs/blocks/login-01.md)
-- `signup-01`: A sign-up page: name, email and two passwords on a paper card with a heavy ink outline, the title in the display face and a registration stamp; stock's signup-01 in ink.
-  Install: `npx shadcn@latest add @mangacn/signup-01 --overwrite`
-  Docs: https://www.mangacn.com/docs/blocks/signup-01 (Markdown: https://www.mangacn.com/docs/blocks/signup-01.md)
-- `sidebar-07`: An app shell whose sidebar collapses to icons: a studio switcher, collapsible sections, series with their menus and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-07 in ink.
-  Install: `npx shadcn@latest add @mangacn/sidebar-07 --overwrite`
-  Docs: https://www.mangacn.com/docs/blocks/sidebar-07 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-07.md)
 - `library-page`: A reader's library inside sidebar-07's app shell: the chapters they have open as cards with a cover, a progress bar and a Resume link, then shelves of volume covers, an empty shelf showing what to do next.
   Install: `npx shadcn@latest add @mangacn/library-page --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/library-page (Markdown: https://www.mangacn.com/docs/blocks/library-page.md)
@@ -359,6 +404,84 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `series-page`: A manga series' home page: the cover with a status stamp, title, credits, synopsis, Start reading and Follow, then tabs of volumes, chapters and cast; made of three blocks.
   Install: `npx shadcn@latest add @mangacn/series-page --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/series-page (Markdown: https://www.mangacn.com/docs/blocks/series-page.md)
+- `login-01`: A login page: email and password on a paper card with a heavy ink outline, the title in the display face and a reception stamp; stock's login-01 in ink.
+  Install: `npx shadcn@latest add @mangacn/login-01 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/login-01 (Markdown: https://www.mangacn.com/docs/blocks/login-01.md)
+- `login-02`: A split-screen login page: the studio's mark and the form on paper, the title in the display face, beside a manga panel of halftone, focus lines and one sound effect; stock's login-02 in ink.
+  Install: `npx shadcn@latest add @mangacn/login-02 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/login-02 (Markdown: https://www.mangacn.com/docs/blocks/login-02.md)
+- `login-03`: A login card on tone-1 paper: Apple and Google first, then email and password, the card at the heavy outline and the title in the display face, stock's marks in ink; stock's login-03 in ink.
+  Install: `npx shadcn@latest add @mangacn/login-03 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/login-03 (Markdown: https://www.mangacn.com/docs/blocks/login-03.md)
+- `login-04`: A login card with a cover panel: the form beside a manga panel of halftone, focus lines and one sound effect, three social marks in ink; stock's login-04 in ink.
+  Install: `npx shadcn@latest add @mangacn/login-04 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/login-04 (Markdown: https://www.mangacn.com/docs/blocks/login-04.md)
+- `login-05`: An email-only login: the studio's mark in ink above the title in the display face, one email field, Apple and Google in ink; stock's login-05 in ink.
+  Install: `npx shadcn@latest add @mangacn/login-05 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/login-05 (Markdown: https://www.mangacn.com/docs/blocks/login-05.md)
+- `signup-01`: A sign-up page: name, email and two passwords on a paper card with a heavy ink outline, the title in the display face and a registration stamp; stock's signup-01 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-01 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-01 (Markdown: https://www.mangacn.com/docs/blocks/signup-01.md)
+- `signup-02`: A split-screen sign-up page: the studio's mark and the form on paper, the title in the display face, beside a manga panel of halftone, focus lines and one sound effect; stock's signup-02 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-02 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-02 (Markdown: https://www.mangacn.com/docs/blocks/signup-02.md)
+- `signup-03`: A sign-up card on tone-1 paper: name, email and two passwords side by side, the card at the heavy outline and the title in the display face; stock's signup-03 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-03 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-03 (Markdown: https://www.mangacn.com/docs/blocks/signup-03.md)
+- `signup-04`: A sign-up card with a cover panel: the form beside a manga panel of halftone, focus lines and one sound effect, three social marks in ink; stock's signup-04 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-04 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-04 (Markdown: https://www.mangacn.com/docs/blocks/signup-04.md)
+- `signup-05`: An email-only sign-up: the studio's mark in ink above the title in the display face, one email field, Apple and Google in ink; stock's signup-05 in ink.
+  Install: `npx shadcn@latest add @mangacn/signup-05 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/signup-05 (Markdown: https://www.mangacn.com/docs/blocks/signup-05.md)
+- `sidebar-01`: A handbook's app shell: an edition menu, a search field and the sections as labelled groups of links, beside a chapter's blank manga panels; stock's sidebar-01 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-01 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-01 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-01.md)
+- `sidebar-02`: A handbook's app shell whose sections open and close: an edition menu, a search field and collapsible groups of links, beside a sticky header and a storyboard of blank manga panels; stock's sidebar-02 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-02 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-02 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-02.md)
+- `sidebar-03`: A handbook's app shell with submenus: every section a link with its pages beneath it on an ink guide rule, beside a chapter's blank manga panels; stock's sidebar-03 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-03 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-03 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-03.md)
+- `sidebar-04`: A handbook's app shell with a floating sidebar: a heavy-outlined paper card off the page's edge, every section with its pages beneath it, beside a chapter's blank manga panels; stock's sidebar-04 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-04 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-04 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-04.md)
+- `sidebar-05`: A handbook's app shell with collapsible submenus: a search field and sections that open and close their pages, beside a chapter's blank manga panels; stock's sidebar-05 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-05 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-05 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-05.md)
+- `sidebar-06`: A handbook's app shell whose sections open as menus, with the studio letter's sign-up card at the sidebar's foot, beside a chapter's blank manga panels; stock's sidebar-06 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-06 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-06 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-06.md)
+- `sidebar-07`: An app shell whose sidebar collapses to icons: a studio switcher, collapsible sections, series with their menus and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-07 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-07 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-07 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-07.md)
+- `sidebar-08`: An inset app shell with a secondary nav: the studio's mark, sections whose chevrons open their links, series with their menus, support links at the foot and the editor's account menu, beside a volume's blank manga panels; stock's sidebar-08 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-08 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-08 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-08.md)
+- `sidebar-09`: Nested sidebars, mail-style: an icon rail of mailboxes and, beside it, the open mailbox's letters from a manga studio's editor, assistants and printer, with an Unreads switch and a search field; stock's sidebar-09 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-09 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-09 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-09.md)
+- `sidebar-10`: A notes-app shell: a studio switcher, main links, favourite notes and workspaces of pages in the sidebar, the note's actions in a popover in the header, beside the note's blank manga panels; stock's sidebar-10 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-10 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-10 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-10.md)
+- `sidebar-11`: An app shell with a file tree: a chapter's changed files with their state, then its folders, opening on the page being drawn, beside that page's blank manga panels; stock's sidebar-11 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-11 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-11 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-11.md)
+- `sidebar-12`: A schedule shell whose sidebar holds a month calendar: the editor's account menu, a date picker and the studio's collapsible calendars, beside a month of blank manga panels; stock's sidebar-12 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-12 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-12 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-12.md)
+- `sidebar-13`: A sidebar inside a settings dialog: a manga reader's settings sections beside the open section's blank manga panels, opened from the page's button; stock's sidebar-13 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-13 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-13 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-13.md)
+- `sidebar-14`: A handbook page with its table of contents in a sidebar on the right, every section with its pages beneath it, beside a chapter's blank manga panels; stock's sidebar-14 in ink, server-only.
+  Install: `npx shadcn@latest add @mangacn/sidebar-14 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-14 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-14.md)
+- `sidebar-15`: A notebook shell between two sidebars: on the left a studio switcher, main links, favourite notes, collapsible workspaces and help links; on the right the editor's account menu, a date picker and the studio's calendars; both put away with one shortcut, beside a note of blank manga panels; stock's sidebar-15 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-15 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-15 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-15.md)
+- `sidebar-16`: An app shell under a sticky site header: the header's sidebar toggle, breadcrumb and search stay above a sidebar of collapsible sections, series with their menus, help links and the editor's account menu, beside a chapter's blank manga panels; stock's sidebar-16 in ink.
+  Install: `npx shadcn@latest add @mangacn/sidebar-16 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/sidebar-16 (Markdown: https://www.mangacn.com/docs/blocks/sidebar-16.md)
 
 ## Hooks
 

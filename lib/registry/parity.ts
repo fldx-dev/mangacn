@@ -77,9 +77,47 @@ export const PARITY_PRIMITIVES = [
  * The blocks mangacn redraws from stock base-nova blocks, by stock name (batch 5): each keeps
  * stock's files, page target, exports and registry dependencies (`compareBlockParity`).
  */
-export const PARITY_BLOCKS = ["login-01", "signup-01", "sidebar-07"] as const;
+export const PARITY_BLOCKS = [
+  "login-01",
+  "signup-01",
+  "sidebar-07",
+  "login-02",
+  "login-03",
+  "login-04",
+  "login-05",
+  "signup-02",
+  "signup-03",
+  "signup-04",
+  "signup-05",
+  "sidebar-08",
+  "sidebar-11",
+  "sidebar-13",
+  "sidebar-09",
+  "sidebar-10",
+  "sidebar-12",
+  "sidebar-15",
+  "sidebar-16",
+  "sidebar-01",
+  "sidebar-02",
+  "sidebar-03",
+  "sidebar-04",
+  "sidebar-05",
+  "sidebar-06",
+  "sidebar-14",
+] as const;
 
 export const PARITY_SNAPSHOT_PATH = "registry/ui/__parity__/base-nova.json";
+
+/**
+ * A restyled stock primitive: it keeps shadcn's API, so its docs link to shadcn's page. A
+ * `registry:ui` item of mangacn's own (`multi-select`, SPEC-components-7 §3) is not one: its
+ * props table is generated, as a manga-native piece's is.
+ */
+export function isStockPrimitive(item: { name: string; type: string }): boolean {
+  return (
+    item.type === "registry:ui" && (PARITY_PRIMITIVES as readonly string[]).includes(item.name)
+  );
+}
 
 export const BLOCK_PARITY_SNAPSHOT_PATH = "registry/blocks/__parity__/base-nova.json";
 

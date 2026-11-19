@@ -28,7 +28,8 @@ export const metadata: Metadata = {
 // same dozen items as `/demo/theme/specimen`, rendered here on the server.
 export default function Create() {
   return (
-    <HomeLayout {...baseOptions()}>
+    // Named, so it stays a unique landmark beside the `main` of a page framed in the preview.
+    <HomeLayout {...baseOptions()} aria-label="Create">
       <CreatePage>
         <ThemeSpecimen />
       </CreatePage>

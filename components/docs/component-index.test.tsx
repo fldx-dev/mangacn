@@ -1,6 +1,6 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { docItems } from "@/lib/docs/catalog";
+import { CATEGORY_LABELS, docItems } from "@/lib/docs/catalog";
 import { loadRegistry } from "@/lib/registry";
 import { listDemos } from "@/lib/registry/demos";
 import { stubGetAnimations } from "@/lib/test/animations";
@@ -58,22 +58,30 @@ const CARDS = docItems(loadRegistry(), listDemos()).length;
 vi.setConfig({ testTimeout: 120_000 });
 
 describe("ComponentIndex", () => {
-  it("groups every item under the eight categories in spec order", async () => {
+  it("groups every item under the categories in spec order", async () => {
     const { container } = render(await ComponentIndex());
     // Demos bring headings of their own (panel), so only the section headings are read.
     const headings = [...container.querySelectorAll("section[aria-labelledby] > h2")];
-    expect(headings.map((h) => h.firstChild?.textContent)).toMatchInlineSnapshot(`
-      [
-        "Primitives",
-        "Layout",
-        "Text",
-        "Background",
-        "Decoration",
-        "Feedback",
-        "Animation",
-        "Data",
-      ]
-    `);
+    // SPEC-components-7 §6: Inputs and Display right after Primitives; an empty group has no
+    // heading, so a lane's first item brings its group's heading with no edit here.
+    const order = [
+      "Primitives",
+      "Inputs",
+      "Display",
+      "Layout",
+      "Text",
+      "Background",
+      "Decoration",
+      "Feedback",
+      "Animation",
+      "Data",
+    ];
+    const filled = new Set(
+      docItems(loadRegistry(), listDemos()).map((item) => CATEGORY_LABELS[item.category]),
+    );
+    expect(headings.map((h) => h.firstChild?.textContent)).toEqual(
+      order.filter((label) => filled.has(label)),
+    );
     expect(document.querySelectorAll("[data-item]")).toHaveLength(CARDS);
   });
 

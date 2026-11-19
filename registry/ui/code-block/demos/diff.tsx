@@ -1,4 +1,4 @@
-import { highlightInk } from "@/lib/docs/ink-highlight";
+import { highlightCode } from "@/registry/hooks/lib/highlighter";
 import {
   CodeBlock,
   CodeBlockContent,
@@ -16,8 +16,9 @@ const lines = [
   ["default", "</Panel>"],
 ] as const;
 
-// Highlighted once, when the module loads on the server.
-const highlighted = highlightInk(lines.map(([, line]) => line).join("\n"), "tsx");
+// Highlighted once, when the module loads on the server, in the highlighter's default ink theme.
+const source = lines.map(([, line]) => line).join("\n");
+const highlighted = (await highlightCode(source, "tsx")) ?? source.split("\n");
 
 export default function CodeBlockDiffDemo() {
   return (

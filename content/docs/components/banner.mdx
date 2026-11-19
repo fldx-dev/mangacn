@@ -1,0 +1,47 @@
+---
+title: Banner
+description: A dismissible announcement bar, paper with an ink rule or solid ink, that hands focus on when it closes.
+item: banner
+---
+
+<InstallCommand item="banner" />
+
+<CopyPrompt item="banner" />
+
+A bar across the top of a page or a panel for news that can wait: a new chapter, a release, a
+maintenance window. Put it above `main` or at the top of a card; for something urgent use
+Alert or a Sonner toast instead.
+
+It is a WAI-ARIA *region* landmark named "Announcement" (`labels.region`), not an alert, so a
+screen reader does not interrupt for it. Closing it with the keyboard moves focus to the next
+focusable element after it, or to `main`, never to the page body.
+
+- Tab: reaches the action, then the close button.
+- Enter / Space on the close button: dismisses the banner.
+
+The banner does not remember a dismissal; keep it in your app through `onOpenChange`:
+
+```tsx
+const [open, setOpen] = React.useState(
+  () => typeof window === "undefined" || localStorage.getItem("news-dismissed") !== "1",
+);
+
+<Banner
+  open={open}
+  onOpenChange={(next) => {
+    setOpen(next);
+    if (!next) localStorage.setItem("news-dismissed", "1");
+  }}
+>
+  …
+</Banner>
+```
+
+## Examples
+
+<DemoFrame item="banner" demo="default" />
+<DemoFrame item="banner" demo="inverted" />
+
+## Props
+
+<PropsTable item="banner" />

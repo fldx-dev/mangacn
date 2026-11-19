@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { isBlock, isPageBlock, PAGE_COMPONENT_TYPE } from "./blocks";
+import { isBlock, isOwnComponentImport, isPageBlock, PAGE_COMPONENT_TYPE } from "./blocks";
 import { HOOK_LIB_TYPE, HOOKS_CATALOG, hookLibSpecifiers, isHook } from "./hooks";
 import {
   type LoadedRegistry,
@@ -68,8 +68,11 @@ const PATTERNS = [
   /\b(?:import|require)\s*\(\s*(["'`])(x+)\1\s*\)/g,
 ];
 
-/** Every import specifier in a module (static, re-export, dynamic, require), in source order. */
-export function extractImports(source: string): ImportSpecifier[] {
+/**
+ * Every import specifier in a module (static, re-export, dynamic, require), in source order, with
+ * the 0-based offset of its first character, for a rewrite that changes the specifier only.
+ */
+export function extractImportOffsets(source: string): { specifier: string; start: number }[] {
   const masked = maskSource(source);
   const found: number[][] = [];
   for (const pattern of PATTERNS) {
@@ -81,10 +84,15 @@ export function extractImports(source: string): ImportSpecifier[] {
   }
   return found
     .sort((a, b) => a[0] - b[0])
-    .map(([start, end]) => ({
-      specifier: source.slice(start, end),
-      line: source.slice(0, start).split("\n").length,
-    }));
+    .map(([start, end]) => ({ specifier: source.slice(start, end), start }));
+}
+
+/** Every import specifier in a module (static, re-export, dynamic, require), in source order. */
+export function extractImports(source: string): ImportSpecifier[] {
+  return extractImportOffsets(source).map(({ specifier, start }) => ({
+    specifier,
+    line: source.slice(0, start).split("\n").length,
+  }));
 }
 
 /** `@scope/pkg/sub` → `@scope/pkg`, `pkg/sub` → `pkg`, `motion@14` → `motion`. */
@@ -182,8 +190,10 @@ export function blockImportPaths(
  * mangacn URL (`blockImportPaths`), a declared block among them. No bare stock names, no
  * `@/lib/<x>` or `@/hooks/<x>` it did not declare, no undeclared block's files, no
  * `@/components/blocks/…` path to its own parts. Own files are imported relatively where the
- * relative path holds after install too, and by install path only where it does not: a page
- * block's `page.tsx` (installed to `app/<route>/`) imports `@/components/login-form`.
+ * relative path holds after install too, and by install path only where it does not. A page
+ * block's `page.tsx` (installed to `app/<route>/`) imports its components either as
+ * `./components/login-form`, which the build rewrites to the install path, or as
+ * `@/components/login-form` directly; no other relative path out of the page is allowed.
  */
 export function blockImportViolation(
   specifier: string,
@@ -197,8 +207,15 @@ export function blockImportViolation(
       return "relative import outside this block (import its own part files only)";
     }
     const own = ownFile(specifier, item.files, file);
-    // A page block's route lands in app/, away from its components: the path must hold there too.
-    if (self && own && !relativeSurvivesInstall(self, own)) {
+    // A page block's route lands in app/, away from its components: the path must hold there too,
+    // except a page's `./components/<file>`, which `pnpm registry:build` rewrites to the install
+    // path (lib/registry/blocks.ts, installPageSource).
+    if (
+      self &&
+      own &&
+      !relativeSurvivesInstall(self, own) &&
+      !isOwnComponentImport(specifier, self, own)
+    ) {
       return `relative import that misses after install (${own.path} installs to ${installTarget(own)}); import ${importSpecifier(installTarget(own))}`;
     }
     return null;
@@ -321,15 +338,26 @@ export function findRegistryDependencyProblems(
     (parity?.items[item]?.registryDependencies.includes(name) ?? false);
   // A page block's component lands at `@/components/<file>`, a name no item has: importing it
   // imports the page block (library-page reaches sidebar-07's shell through `app-sidebar`).
-  const pageComponentOwners = new Map<string, string>();
+  // Variants of a family share the path, so the owner is the one the importer declares.
+  const pageComponentOwners = new Map<string, string[]>();
   for (const item of registry.items) {
     if (!isPageBlock(item)) continue;
     for (const file of item.files) {
       if (file.type === PAGE_COMPONENT_TYPE) {
-        pageComponentOwners.set(importSpecifier(installTarget(file)), item.name);
+        const specifier = importSpecifier(installTarget(file));
+        pageComponentOwners.set(specifier, [
+          ...(pageComponentOwners.get(specifier) ?? []),
+          item.name,
+        ]);
       }
     }
   }
+  const pageComponentOwner = (specifier: string, item: LoadedRegistryItem) => {
+    const owners = pageComponentOwners.get(specifier);
+    if (!owners) return undefined;
+    const declared = (item.registryDependencies ?? []).map((dep) => mangacnItemName(dep) ?? dep);
+    return owners.find((owner) => declared.includes(owner)) ?? owners[0];
+  };
   const problems: string[] = [];
   for (const item of registry.items) {
     const imported = new Set<string>();
@@ -338,7 +366,7 @@ export function findRegistryDependencyProblems(
       for (const { specifier } of extractImports(source)) {
         // A block's own parts are imported relatively; its alias path is refused elsewhere.
         const name =
-          pageComponentOwners.get(specifier) ??
+          pageComponentOwner(specifier, item) ??
           aliasedItemName(specifier) ??
           aliasedBlockName(specifier);
         if (name && name !== item.name) imported.add(name);

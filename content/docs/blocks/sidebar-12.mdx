@@ -1,0 +1,20 @@
+---
+title: Sidebar 12
+description: "A schedule shell whose sidebar holds a month calendar: the editor's account menu, a date picker and the studio's collapsible calendars, beside a month of blank manga panels; stock's sidebar-12 in ink."
+item: sidebar-12
+skipDemos: ["default"]
+---
+
+<InstallCommand item="sidebar-12" />
+
+<ItemFiles item="sidebar-12" />
+
+<CopyPrompt item="sidebar-12" />
+
+Stock's calendar shell in ink, with stock's five files and exports: mangacn's [Sidebar](/docs/components/sidebar) holds the editor's account menu, a [Calendar](/docs/components/calendar) and the studio's collapsible calendars, slides away with <kbd>Ctrl</kbd>+<kbd>B</kbd> (<kbd>⌘</kbd>+<kbd>B</kbd> on a Mac) or the trigger and opens as a sheet on phones, beside a month of blank [panels](/docs/components/panel); the sample month is fixed so the page looks the same every day (`date-picker.tsx` says how to make it live). It is an alternative to the other sidebar blocks: it writes `app/dashboard/page.tsx` and component files of the same names, so adding it replaces theirs.
+
+The page is a server component; `app-sidebar`, `calendars` and `nav-user` are client components, and `date-picker` has no directive, as in stock: it holds state, so import it only from a client component, as `app-sidebar` does.
+
+## Preview
+
+<BlockPreview item="sidebar-12" />

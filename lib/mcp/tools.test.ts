@@ -407,10 +407,10 @@ describe("get_install_command", () => {
 
   it("is an error for an unknown name", async () => {
     const { text, isError } = await call("get_install_command", {
-      names: ["speech-bubble", "stat-card"],
+      names: ["speech-bubble", "kpi-tile"],
     });
     expect(isError).toBe(true);
-    expect(text).toContain('Unknown mangacn item "stat-card"');
+    expect(text).toContain('Unknown mangacn item "kpi-tile"');
   });
 });
 

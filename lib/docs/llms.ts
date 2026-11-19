@@ -17,8 +17,9 @@ export function markdownUrl(pageUrl: string): string {
 }
 
 /**
- * /llms.txt: the project name, the docs summary as a quote, then the page tree from
- * `indexNode()` with every link pointing at the page's Markdown, absolute.
+ * /llms.txt: the project name, the docs summary as a quote, a line each for the full file and for
+ * a Create code as text (`/create.md`), then the page tree from `indexNode()` with every link
+ * pointing at the page's Markdown, absolute.
  */
 export function renderIndex(tree: string, summary?: string): string {
   const linked = tree.replace(
@@ -29,6 +30,7 @@ export function renderIndex(tree: string, summary?: string): string {
     "# mangacn",
     summary ? `> ${summary}` : undefined,
     `Every link below is the page as Markdown; ${SITE_URL}/llms-full.txt holds them all in one file.`,
+    `A theme and starter kit from the Create page (${SITE_URL}/create) as text, with its install commands and files: ${SITE_URL}/create.md?c=<code>.`,
     linked.trim(),
   ]
     .filter((part) => part !== undefined)

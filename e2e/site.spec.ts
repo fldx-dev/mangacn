@@ -6,10 +6,10 @@ import { BLOCKS_CATALOG, type DocItem, docItems } from "../lib/docs/catalog";
 import { demoEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
 import { hydrateAfterReveal, waitForInk } from "./ready";
+import { comparePixels, shoot } from "./shoot";
 
 // The site pages (SPEC-docs-site §11), light and dark, at each project's width: pixels on
 // Linux only (CI), and everywhere no overflow, no axe violations and no errors.
-const comparePixels = process.platform === "linux";
 
 // The landing and the two indexes (components, blocks) are shot at their first viewport
 // (`site-<page>-viewport-<mode>.png`), not whole (SPEC-components-3 §8.1). An index is never
@@ -328,7 +328,7 @@ for (const path of pages) {
       if (comparePixels) {
         // The whole page first, in the state its baseline was always taken in.
         if (fullShot(path)) {
-          await expect(page).toHaveScreenshot(`site-${slug(path)}-${mode}.png`, {
+          await shoot(page, `site-${slug(path)}-${mode}.png`, {
             fullPage: true,
             ...(await shotOptions(page, path)),
           });
@@ -337,7 +337,7 @@ for (const path of pages) {
           // The first viewport is the top of the page (the full shot above may leave it scrolled).
           await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
           await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
-          await expect(page).toHaveScreenshot(`site-${slug(path)}-viewport-${mode}.png`);
+          await shoot(page, `site-${slug(path)}-viewport-${mode}.png`);
         }
       }
 
@@ -439,6 +439,19 @@ test("an embedded dialog stage works with the pointer from the start", async ({ 
   await expect(field).toHaveValue("Ink");
 });
 
+// The skip link points at content the page has from its first HTML, before any script: axe
+// counts a link to a missing id as content outside a landmark (`region`), which failed docs pages
+// whenever the scan ran before hydration.
+test("the skip link's target is in the server's HTML", async ({ request }, testInfo) => {
+  test.skip(testInfo.project.name !== "w1280", "plain requests; one project is enough");
+  for (const path of ["/", "/docs", "/docs/components/speech-bubble", "/create"]) {
+    const html = await (await request.get(path)).text();
+    const target = html.match(/<a href="#([\w-]+)"[^>]*>Skip to content<\/a>/)?.[1];
+    expect(target, `${path}: the skip link`).toBeTruthy();
+    expect(html, `${path}: #${target} is on the page`).toContain(`id="${target}"`);
+  }
+});
+
 // The Markdown and registry routes (Tasks 43, 44): status, type and headers, once.
 test("markdown and registry routes", async ({ request }, testInfo) => {
   test.skip(testInfo.project.name !== "w1280", "plain requests; one project is enough");
@@ -474,3 +487,100 @@ test("markdown and registry routes", async ({ request }, testInfo) => {
     "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
   );
 });
+
+/**
+ * A page turns only when the reader goes to another page (components/docs/page-turn.tsx). Loading
+ * a page starts no view transition, and a link to another page starts exactly one, the page turn,
+ * which runs to its end. Before MANGA-15 a load started three or four (the streamed content's
+ * reveal and the updates after hydration) and a navigation two: a transition in flight paints
+ * only the viewport it captured, and the resize of a full-page screenshot aborts it, which made
+ * the `/docs/agents` and `/docs/theming` shots flaky. Back is committed at once by React (no
+ * turn, as before); it may start no transition that a screenshot then aborts either. Under reduced
+ * motion the turn is a plain swap.
+ */
+for (const reducedMotion of ["reduce", "no-preference"] as const) {
+  test(`a docs navigation turns the page once (${reducedMotion} motion)`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion });
+    const errors: string[] = [];
+    page.on("console", (message) => {
+      if (message.type() === "error") errors.push(message.text());
+    });
+    page.on("pageerror", (error) => errors.push(error.message));
+    // Each view transition: the classes it animates, its length once finished, or `aborted` when
+    // it never got to animate.
+    await page.addInitScript(() => {
+      const start = Document.prototype.startViewTransition;
+      if (!start) return;
+      const transitions: { classes: string[]; length?: number; aborted?: boolean }[] = [];
+      Object.assign(window, { transitions });
+      Document.prototype.startViewTransition = function (this: Document, ...args) {
+        const begun = performance.now();
+        const transition = start.apply(this, args as Parameters<typeof start>);
+        const entry: (typeof transitions)[number] = { classes: [] };
+        transitions.push(entry);
+        transition.ready.then(
+          () => {
+            entry.classes = [...document.querySelectorAll<HTMLElement>("[style]")]
+              .map((node) => node.style.getPropertyValue("view-transition-class"))
+              .filter(Boolean);
+          },
+          () => {
+            entry.aborted = true;
+          },
+        );
+        transition.finished.then(() => {
+          entry.length = performance.now() - begun;
+        });
+        return transition;
+      } as typeof start;
+    });
+    const transitions = () =>
+      page.evaluate(
+        () =>
+          (window as unknown as { transitions: unknown[] }).transitions as {
+            classes: string[];
+            length?: number;
+            aborted?: boolean;
+          }[],
+      );
+    /** Waits until the page has settled: ink drawn, the network quiet, no transition running. */
+    const settle = async () => {
+      await waitForInk(page);
+      await page.waitForLoadState("networkidle");
+      await page.waitForFunction(
+        () => !(document as Document & { activeViewTransition?: unknown }).activeViewTransition,
+      );
+    };
+    /** The docs page on screen (cacheComponents keeps the one before it, hidden). */
+    const heading = page.locator("#nd-page h1").filter({ visible: true });
+
+    await hydrateAfterReveal(page);
+    await page.goto("/docs/theming");
+    await settle();
+    expect(await transitions(), "view transitions on load").toEqual([]);
+
+    // The page's own "next" link, there at every width (the sidebar is a drawer below 768 px).
+    await page.locator('#nd-page a[href="/docs/agents"]').filter({ visible: true }).last().click();
+    await page.waitForURL("**/docs/agents");
+    await expect(heading, "the agents page is shown").toHaveText(/agent/i);
+    await settle();
+    const [turn, ...more] = await transitions();
+    expect(more, "view transitions after the page turn").toEqual([]);
+    expect(turn?.aborted, "an aborted page turn").toBeUndefined();
+    expect(turn?.classes, "the page turn").toEqual(["page-turn"]);
+    // The turn takes 520 ms (globals.css); under reduced motion it is a swap.
+    if (reducedMotion === "no-preference") expect(turn?.length).toBeGreaterThan(400);
+    else expect(turn?.length).toBeDefined();
+
+    // A full-page capture resizes the viewport: there is no transition left for it to abort.
+    await page.screenshot({ fullPage: true });
+    await page.goBack();
+    await page.waitForURL("**/docs/theming");
+    await expect(heading, "the theming page is shown").toHaveText(/theming/i);
+    await settle();
+    await page.screenshot({ fullPage: true });
+    const aborted = (await transitions()).filter((transition) => transition.aborted);
+    expect(aborted, "aborted view transitions").toEqual([]);
+    expect(errors).toEqual([]);
+  });
+}

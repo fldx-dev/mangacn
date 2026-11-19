@@ -5,6 +5,7 @@ import { demoEntries } from "../lib/registry/demos.generated";
 import { AXE_DISABLED_RULES, CONTRAST_EXEMPTIONS } from "../lib/test/axe-rules";
 import { paintInkFillsAsCss } from "./ink-fills";
 import { waitForInk } from "./ready";
+import { comparePixels, shoot } from "./shoot";
 
 type AxeResults = Awaited<ReturnType<AxeBuilder["analyze"]>>;
 
@@ -25,7 +26,6 @@ function axeFindings(violations: AxeResults["violations"]) {
 
 // Every demo in the generated map, light and dark, at each project's width. Baselines are
 // Linux-only (CI); elsewhere the page is loaded and checked for errors, without pixels.
-const comparePixels = process.platform === "linux";
 
 // Toasts fired on mount by the sonner demos; the snapshot waits until all of them are shown.
 const TOASTS_ON_MOUNT: Record<string, number> = {
@@ -116,6 +116,44 @@ for (const { item, demo, popup } of EDGE_POPUPS) {
   }
 }
 
+// A combobox popup lines up with its field: the popup anchors to the whole field (outline, trigger
+// and clear), not the bare <input>, so the two drawn outlines are one width (±1 px; the popup's
+// heavier pen reaches a hair less far) and the popup stays inside the phone.
+const COMBOBOX_FIELDS = [
+  { demo: "default", field: "input-group" },
+  { demo: "with-groups", field: "input-group" },
+  { demo: "multiple", field: "combobox-chips" },
+].filter(({ demo }) => entries.some((entry) => entry.item === "combobox" && entry.demo === demo));
+for (const { demo, field } of COMBOBOX_FIELDS) {
+  test(`combobox/${demo} popup is as wide as its field`, async ({ page }) => {
+    await page.goto(`/demo/combobox/${demo}`);
+    await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+    await waitForInk(page);
+    const popup = page.locator('[data-slot="combobox-content"]');
+    await expect(popup).toBeVisible();
+    const drawn = (slot: string) =>
+      page.evaluate((slot) => {
+        const box = document.querySelector(`[data-slot="${slot}"]`);
+        // The popup's frame sits on its positioner (the popup clips); the field's is its own.
+        const host = slot === "combobox-content" ? box?.parentElement : box;
+        const outline = host?.querySelector(':scope > [data-slot="ink-frame"] svg');
+        const outer = outline?.getBoundingClientRect();
+        const inner = box?.getBoundingClientRect();
+        return { outer: outer?.width ?? -1, inner: inner?.width ?? -1, right: inner?.right ?? -1 };
+      }, slot);
+    // Positioning settles a frame or two after the fonts, so poll.
+    await expect
+      .poll(async () => (await drawn("combobox-content")).inner - (await drawn(field)).inner)
+      .toBe(0);
+    const [popupBox, fieldBox] = await Promise.all([drawn("combobox-content"), drawn(field)]);
+    expect(
+      Math.abs(popupBox.outer - fieldBox.outer),
+      "outer widths, outlines included",
+    ).toBeLessThanOrEqual(1);
+    expect(popupBox.right).toBeLessThanOrEqual(page.viewportSize()?.width ?? 0);
+  });
+}
+
 // The spread viewer pages in reading order from the keyboard and the buttons, at a phone and a
 // desktop width: the arrow pointing the way the book reads is next (Left in rtl, Right in ltr),
 // Home and End go to the ends, the buttons stop there, and the live region says where.
@@ -184,7 +222,7 @@ for (const { item, demo } of entries) {
       await waitForInk(page);
 
       if (comparePixels) {
-        await expect(page).toHaveScreenshot(`${item}-${demo}-${mode}.png`, { fullPage: true });
+        await shoot(page, `${item}-${demo}-${mode}.png`, { fullPage: true });
       }
 
       const width = await page.evaluate(() => document.documentElement.scrollWidth);
