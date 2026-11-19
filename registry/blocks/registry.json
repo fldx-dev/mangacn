@@ -1354,6 +1354,86 @@
           "target": "@components/profile-data.ts"
         }
       ]
+    },
+    {
+      "name": "onboarding-01",
+      "type": "registry:block",
+      "title": "Onboarding",
+      "description": "A first-run flow in a card: a linear stepper over Profile, Interests and Habits, each validated on Next with focus to the first invalid field, then a summary of the answers and a link to the library.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "registryDependencies": [
+        "https://www.mangacn.com/r/stepper.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/radio-group.json",
+        "https://www.mangacn.com/r/checkbox.json",
+        "https://www.mangacn.com/r/switch.json",
+        "https://www.mangacn.com/r/time-picker.json",
+        "https://www.mangacn.com/r/toggle-group.json",
+        "https://www.mangacn.com/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "onboarding-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/onboarding/page.tsx"
+        },
+        {
+          "path": "onboarding-01/components/onboarding-flow.tsx",
+          "type": "registry:component",
+          "target": "@components/onboarding-flow.tsx"
+        },
+        {
+          "path": "onboarding-01/components/onboarding-data.ts",
+          "type": "registry:component",
+          "target": "@components/onboarding-data.ts"
+        }
+      ]
+    },
+    {
+      "name": "activity-01",
+      "type": "registry:block",
+      "title": "Activity",
+      "description": "A reader's own activity page: four stat cards with sparklines, a filter by kind that announces its count, and a timeline of events under day headings with Show more.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "registryDependencies": [
+        "https://www.mangacn.com/r/stat-card.json",
+        "https://www.mangacn.com/r/toggle-group.json",
+        "https://www.mangacn.com/r/timeline.json",
+        "https://www.mangacn.com/r/avatar.json",
+        "https://www.mangacn.com/r/badge.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/separator.json"
+      ],
+      "files": [
+        {
+          "path": "activity-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/activity/page.tsx"
+        },
+        {
+          "path": "activity-01/components/activity-stats.tsx",
+          "type": "registry:component",
+          "target": "@components/activity-stats.tsx"
+        },
+        {
+          "path": "activity-01/components/activity-feed.tsx",
+          "type": "registry:component",
+          "target": "@components/activity-feed.tsx"
+        },
+        {
+          "path": "activity-01/components/activity-data.ts",
+          "type": "registry:component",
+          "target": "@components/activity-data.ts"
+        }
+      ]
     }
   ]
 }

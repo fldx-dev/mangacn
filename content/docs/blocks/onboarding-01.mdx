@@ -1,0 +1,24 @@
+---
+title: Onboarding
+description: "A first-run flow in a card: a linear stepper over Profile, Interests and Habits, each validated on Next with focus to the first invalid field, then a summary of the answers and a link to the library."
+item: onboarding-01
+skipDemos: ["default"]
+---
+
+<InstallCommand item="onboarding-01" />
+
+<ItemFiles item="onboarding-01" />
+
+<CopyPrompt item="onboarding-01" />
+
+A first-run flow at `app/onboarding/page.tsx`: a linear [Stepper](/docs/components/stepper) in a [Card](/docs/components/card) over three forms, Profile (an [Input](/docs/components/input) and a [Radio Group](/docs/components/radio-group)), Interests (a grid of [Checkbox](/docs/components/checkbox)es, at least three) and Habits (a [Switch](/docs/components/switch), a [Time Picker](/docs/components/time-picker) and a [Toggle Group](/docs/components/toggle-group)), every control in a [Field](/docs/components/field), then a summary and a Go to library [Button](/docs/components/button). Next validates the step and focuses the first invalid field, Back keeps the answers, and each step change moves focus to the step's heading and announces it. The answers live in local state: pass `onComplete` to save them, and edit `components/onboarding-data.ts` for your genres and defaults.
+
+The page is a server component; `onboarding-flow.tsx` is a client component. To show the flow inside an app shell, render `<OnboardingFlow />` in [Sidebar 07](/docs/blocks/sidebar-07)'s `SidebarInset`, which is the route's `main`, in place of the page's own `main`.
+
+## Preview
+
+<BlockPreview item="onboarding-01" />
+
+## Props
+
+<PropsTable item="onboarding-01" name="OnboardingFlowProps" />
