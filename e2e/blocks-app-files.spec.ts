@@ -8,9 +8,7 @@ import { hydrateAfterReveal, waitForInk } from "./ready";
 
 const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
 
-test.beforeEach(({}, testInfo) => {
-  test.skip(testInfo.project.name === "w768", "the lane walks 360 and 1280");
-});
+test.skip(({ viewport }) => viewport?.width === 768, "the lane walks 360 and 1280");
 
 async function openView(page: Page, name: string) {
   await hydrateAfterReveal(page);
