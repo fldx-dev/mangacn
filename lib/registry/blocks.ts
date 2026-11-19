@@ -49,17 +49,24 @@ export const PAGE_COMPONENTS_DIR = "components";
 const PAGE_TARGET = /^app\/(?:[a-z0-9-]+\/)+page\.tsx$/;
 
 /**
- * The groups of the Blocks index and the docs sidebar, in order (SPEC-components-6 §6). A block
- * named after a stock family (`login-01`, `sidebar-16`) joins that family's group, by number; any
- * other block is manga-native and joins Manga, in catalog order. A new block lands in its group
- * by its name alone, so neither the index nor `gen:docs` needs an edit.
+ * The groups of the Blocks index and the docs sidebar, in order (SPEC-components-6 §6,
+ * SPEC-components-8 §6), each with the families it holds. A block named `<family>-<n>`
+ * (`login-01`, `settings-01`) joins the group that holds its family, by number; a `<family>-<n>`
+ * name no group holds throws. Any other block is manga-native and joins Manga, in catalog order.
+ * A new block lands in its group by its name alone, so neither the index nor `gen:docs` needs an
+ * edit.
  */
 export const BLOCK_GROUPS = [
-  { id: "manga", label: "Manga" },
-  { id: "login", label: "Login" },
-  { id: "signup", label: "Signup" },
-  { id: "sidebar", label: "Sidebar" },
-] as const;
+  { id: "manga", label: "Manga", families: [] },
+  {
+    id: "app",
+    label: "App",
+    families: ["settings", "profile", "onboarding", "file-manager", "activity", "upload"],
+  },
+  { id: "login", label: "Login", families: ["login"] },
+  { id: "signup", label: "Signup", families: ["signup"] },
+  { id: "sidebar", label: "Sidebar", families: ["sidebar"] },
+] as const satisfies readonly { id: string; label: string; families: readonly string[] }[];
 
 export type BlockGroupId = (typeof BLOCK_GROUPS)[number]["id"];
 
@@ -69,32 +76,34 @@ export interface BlockGroup<T> {
   items: T[];
 }
 
-/** A stock block's name: its family, then its number (`login-01`, `sidebar-16`). */
-const STOCK_BLOCK_NAME = /^([a-z]+(?:-[a-z]+)*)-(\d+)$/;
+/** A numbered block's name: its family, then its number (`login-01`, `file-manager-01`). */
+const FAMILY_BLOCK_NAME = /^([a-z]+(?:-[a-z]+)*)-(\d+)$/;
 
-function stockFamily(name: string): { family: BlockGroupId; number: number } | null {
-  const match = STOCK_BLOCK_NAME.exec(name);
+function blockFamily(name: string): { group: BlockGroupId; number: number } | null {
+  const match = FAMILY_BLOCK_NAME.exec(name);
   if (!match) return null;
-  const family = BLOCK_GROUPS.find((group) => group.id !== "manga" && group.id === match[1]);
-  if (!family) {
+  const group = BLOCK_GROUPS.find((group) =>
+    (group.families as readonly string[]).includes(match[1]),
+  );
+  if (!group) {
     throw new Error(
-      `Block "${name}" is named like stock's "${match[1]}" family, which has no group; add one to BLOCK_GROUPS (lib/registry/blocks.ts).`,
+      `Block "${name}" is named like a block of the "${match[1]}" family, which has no group; add the family to a group in BLOCK_GROUPS (lib/registry/blocks.ts).`,
     );
   }
-  return { family: family.id, number: Number(match[2]) };
+  return { group: group.id, number: Number(match[2]) };
 }
 
-/** The group a block joins, from its name; throws for a stock family with no group. */
+/** The group a block joins, from its name; throws for a `<family>-<n>` no group holds. */
 export function blockGroup(name: string): BlockGroupId {
-  return stockFamily(name)?.family ?? "manga";
+  return blockFamily(name)?.group ?? "manga";
 }
 
 /**
  * `items` in their groups, in `BLOCK_GROUPS` order: Manga in the order given (the catalog's),
- * each stock family by number. Empty groups are left out.
+ * each family's blocks by number. Empty groups are left out.
  */
 export function groupBlocks<T extends { name: string }>(items: readonly T[]): BlockGroup<T>[] {
-  const number = (item: T) => stockFamily(item.name)?.number ?? 0;
+  const number = (item: T) => blockFamily(item.name)?.number ?? 0;
   return BLOCK_GROUPS.map(({ id, label }) => ({
     id,
     label,
@@ -189,11 +198,19 @@ export function findBlockProblems(
   family: StockFamily = stockParityFamily(),
 ): string[] {
   const problems: string[] = [];
-  const owners = new Map<string, string>();
+  // Every item that installs a path, in registry order. A block is checked against every other
+  // owner (a third block sharing a path must be allowed with both of the others); a clash between
+  // two blocks is reported once, on the later one.
+  const catalog = new Set(
+    registry.items.filter((item) => item.source === BLOCKS_CATALOG).map((item) => item.name),
+  );
+  const owners = new Map<string, string[]>();
   for (const item of registry.items) {
     for (const file of item.files) {
       const target = installTarget(file);
-      if (!owners.has(target)) owners.set(target, item.name);
+      const names = owners.get(target) ?? [];
+      if (!names.includes(item.name)) names.push(item.name);
+      owners.set(target, names);
     }
   }
   for (const item of registry.items) {
@@ -227,9 +244,13 @@ export function findBlockProblems(
     }
     for (const file of item.files) {
       const target = installTarget(file);
-      const owner = owners.get(target);
-      if (owner && owner !== item.name && !sharesStockTarget(family, owner, item.name, target)) {
-        at(`${file.path} installs to ${installTarget(file)}, as a file of ${owner} does`);
+      const names = owners.get(target) ?? [];
+      const self = names.indexOf(item.name);
+      for (const [index, owner] of names.entries()) {
+        if (index === self || (index > self && catalog.has(owner))) continue;
+        if (!sharesStockTarget(family, owner, item.name, target)) {
+          at(`${file.path} installs to ${target}, as a file of ${owner} does`);
+        }
       }
     }
     for (const dependency of item.registryDependencies ?? []) {
