@@ -1,0 +1,20 @@
+---
+title: File Manager 01
+description: "A file manager for a manga project: a folder tree (series, volumes, chapters, covers, scripts), a breadcrumb, the open folder as a table with Rename, Download and Delete per file, and Upload or a drop over the list to add files; every change is announced."
+item: file-manager-01
+skipDemos: ["default"]
+---
+
+<InstallCommand item="file-manager-01" />
+
+<ItemFiles item="file-manager-01" />
+
+<CopyPrompt item="file-manager-01" />
+
+A project's files route, `app/files/page.tsx`: a folder [Tree View](/docs/components/tree-view) (series, volumes and chapters, then covers and scripts), a [Breadcrumb](/docs/components/breadcrumb) of the open folder and its contents in a [Table](/docs/components/table), each file with a [Dropdown Menu](/docs/components/dropdown-menu) to rename it in place, download it or delete it after an [Alert Dialog](/docs/components/alert-dialog). An "Upload" [File Upload](/docs/components/file-upload) trigger and a drop over the list add files to the open folder, and an empty folder shows [Empty](/docs/components/empty). On a phone the tree folds into a "Folders" [Collapsible](/docs/components/collapsible) above the list. Every change stays in the component and is announced: pass `onFilesChange` to `FileManager` and replace the sample folders and files in `file-manager-data.ts` with your storage's.
+
+The page is a server component and `file-manager` a client component. To put it in [Sidebar 07](/docs/blocks/sidebar-07)'s app shell, render the page's header and `FileManager` inside that block's `SidebarInset` instead of the page's `main`.
+
+## Preview
+
+<BlockPreview item="file-manager-01" />
