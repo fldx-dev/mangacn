@@ -1356,6 +1356,45 @@
       ]
     },
     {
+      "name": "onboarding-01",
+      "type": "registry:block",
+      "title": "Onboarding",
+      "description": "A first-run flow in a card: a linear stepper over Profile, Interests and Habits, each validated on Next with focus to the first invalid field, then a summary of the answers and a link to the library.",
+      "categories": ["block"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "registryDependencies": [
+        "https://www.mangacn.com/r/stepper.json",
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/field.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/radio-group.json",
+        "https://www.mangacn.com/r/checkbox.json",
+        "https://www.mangacn.com/r/switch.json",
+        "https://www.mangacn.com/r/time-picker.json",
+        "https://www.mangacn.com/r/toggle-group.json",
+        "https://www.mangacn.com/r/button.json"
+      ],
+      "files": [
+        {
+          "path": "onboarding-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/onboarding/page.tsx"
+        },
+        {
+          "path": "onboarding-01/components/onboarding-flow.tsx",
+          "type": "registry:component",
+          "target": "@components/onboarding-flow.tsx"
+        },
+        {
+          "path": "onboarding-01/components/onboarding-data.ts",
+          "type": "registry:component",
+          "target": "@components/onboarding-data.ts"
+        }
+      ]
+    },
+    {
       "name": "activity-01",
       "type": "registry:block",
       "title": "Activity",

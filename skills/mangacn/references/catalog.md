@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 149 items in the registry. Each line gives the item's name, what it is, the one
+All 150 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -410,6 +410,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `profile-01`: Profile editing for a signed-in reader: a public profile card (initials avatar with a photo preview, name, @username, bio with a live count, interests as tags, website) and a password card with a strength meter; each Save validates and announces.
   Install: `npx shadcn@latest add @mangacn/profile-01 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/profile-01 (Markdown: https://www.mangacn.com/docs/blocks/profile-01.md)
+- `onboarding-01`: A first-run flow in a card: a linear stepper over Profile, Interests and Habits, each validated on Next with focus to the first invalid field, then a summary of the answers and a link to the library.
+  Install: `npx shadcn@latest add @mangacn/onboarding-01 --overwrite`
+  Docs: https://www.mangacn.com/docs/blocks/onboarding-01 (Markdown: https://www.mangacn.com/docs/blocks/onboarding-01.md)
 - `activity-01`: A reader's own activity page: four stat cards with sparklines, a filter by kind that announces its count, and a timeline of events under day headings with Show more.
   Install: `npx shadcn@latest add @mangacn/activity-01 --overwrite`
   Docs: https://www.mangacn.com/docs/blocks/activity-01 (Markdown: https://www.mangacn.com/docs/blocks/activity-01.md)

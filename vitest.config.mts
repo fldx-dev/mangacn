@@ -379,6 +379,21 @@ export default defineConfig({
         find: /^@\/components\/ui\/timeline$/,
         replacement: fileURLToPath(new URL("./registry/ui/timeline/timeline.tsx", import.meta.url)),
       },
+      // onboarding-01 (Task 139): its items by install path.
+      {
+        find: /^@\/components\/ui\/stepper$/,
+        replacement: fileURLToPath(new URL("./registry/ui/stepper/stepper.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/time-picker$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/time-picker/time-picker.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/checkbox$/,
+        replacement: fileURLToPath(new URL("./registry/ui/checkbox/checkbox.tsx", import.meta.url)),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,

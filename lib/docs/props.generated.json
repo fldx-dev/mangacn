@@ -2611,6 +2611,53 @@
       }
     ]
   },
+  "onboarding-01": {
+    "OnboardingFlowProps": [
+      {
+        "id": "onboarding-flow.tsx-OnboardingFlowProps",
+        "name": "OnboardingFlowProps",
+        "entries": [
+          {
+            "name": "defaultAnswers",
+            "description": "The starting answers.",
+            "type": "OnboardingAnswers | undefined",
+            "simplifiedType": "OnboardingAnswers",
+            "tags": [
+              {
+                "name": "default",
+                "text": "onboardingDefaults"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "libraryHref",
+            "description": "Where \"Go to library\" goes.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"/library\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onComplete",
+            "description": "Called with the answers when Finish completes the last form step.",
+            "type": "((answers: OnboardingAnswers) => void) | undefined",
+            "simplifiedType": "(answers: OnboardingAnswers) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "page-number": {
     "PageNumberProps": [
       {

@@ -682,6 +682,14 @@ export const EXPECTED_CONTENT: Record<
     { file: "components/profile-form.tsx", includes: ["export function ProfileForm("] },
     { file: "components/profile-data.ts", includes: ["export const profile: Profile"] },
   ],
+  "onboarding-01": [
+    {
+      file: "app/onboarding/page.tsx",
+      includes: ['import { OnboardingFlow } from "@/components/onboarding-flow"'],
+    },
+    { file: "components/onboarding-flow.tsx", includes: ["export function OnboardingFlow("] },
+    { file: "components/onboarding-data.ts", includes: ["export const onboardingGenres"] },
+  ],
   "activity-01": [
     {
       file: "app/activity/page.tsx",
