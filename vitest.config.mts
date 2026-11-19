@@ -326,6 +326,48 @@ export default defineConfig({
         find: /^@\/components\/ui\/chart$/,
         replacement: fileURLToPath(new URL("./registry/ui/chart/chart.tsx", import.meta.url)),
       },
+      // settings-01 (Task 138): the controls of its sections.
+      {
+        find: /^@\/components\/ui\/select$/,
+        replacement: fileURLToPath(new URL("./registry/ui/select/select.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/radio-group$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/radio-group/radio-group.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/toggle-group$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/toggle-group/toggle-group.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/alert-dialog$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/alert-dialog/alert-dialog.tsx", import.meta.url),
+        ),
+      },
+      // profile-01 (Task 138): photo, interests and password.
+      {
+        find: /^@\/components\/ui\/file-upload$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/file-upload/file-upload.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/tags-input$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/tags-input/tags-input.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/password-input$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/password-input/password-input.tsx", import.meta.url),
+        ),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,

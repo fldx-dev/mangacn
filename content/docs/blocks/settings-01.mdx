@@ -1,0 +1,20 @@
+---
+title: Settings 01
+description: "Account settings for a signed-in reader: a section nav and four cards (account, notifications, reading, danger zone) with selects, switches, radio groups and a direction toggle; Save validates and announces, Delete account asks first."
+item: settings-01
+skipDemos: ["default"]
+---
+
+<InstallCommand item="settings-01" />
+
+<ItemFiles item="settings-01" />
+
+<CopyPrompt item="settings-01" />
+
+A reader's account settings route, `app/settings/page.tsx`: a section nav and four [Card](/docs/components/card)s of [Field](/docs/components/field)s, with [Input](/docs/components/input)s, [Select](/docs/components/select)s, [Switch](/docs/components/switch)es, [Radio Group](/docs/components/radio-group)s, a [Toggle Group](/docs/components/toggle-group) for the reading direction and an [Alert Dialog](/docs/components/alert-dialog) before Delete account. Save checks the display name and email, focuses the first invalid field or announces "Settings saved"; nothing is sent, so pass `onSave` and `onDeleteAccount` to `SettingsForm` and replace the sample `settings` in `settings-data.ts` with your own.
+
+The page is a server component and `settings-form` a client component. To put it in [Sidebar 07](/docs/blocks/sidebar-07)'s app shell, render the page's header and `SettingsForm` inside that block's `SidebarInset` instead of the page's `main`.
+
+## Preview
+
+<BlockPreview item="settings-01" />
