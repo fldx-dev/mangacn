@@ -394,6 +394,27 @@ export default defineConfig({
         find: /^@\/components\/ui\/checkbox$/,
         replacement: fileURLToPath(new URL("./registry/ui/checkbox/checkbox.tsx", import.meta.url)),
       },
+      // upload-01, file-manager-01 (Task 140): the chapter number, the alert, the tree, the list.
+      {
+        find: /^@\/components\/ui\/number-input$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/number-input/number-input.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/alert$/,
+        replacement: fileURLToPath(new URL("./registry/ui/alert/alert.tsx", import.meta.url)),
+      },
+      {
+        find: /^@\/components\/ui\/tree-view$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/tree-view/tree-view.tsx", import.meta.url),
+        ),
+      },
+      {
+        find: /^@\/components\/ui\/table$/,
+        replacement: fileURLToPath(new URL("./registry/ui/table/table.tsx", import.meta.url)),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,
