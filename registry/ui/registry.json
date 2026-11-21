@@ -2087,6 +2087,36 @@
           "target": "@ui/data-table.tsx"
         }
       ]
+    },
+    {
+      "name": "rich-text-editor",
+      "type": "registry:ui",
+      "title": "Rich Text Editor",
+      "description": "A tiptap editor in one hand-drawn field: a toolbar of ink toggles, headings and lists, HTML in and out, posts in a form.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": [
+        "cn",
+        "@base-ui/react",
+        "lucide-react",
+        "@tiptap/react@3.35.0",
+        "@tiptap/pm@3.35.0",
+        "@tiptap/starter-kit@3.35.0"
+      ],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json",
+        "https://www.mangacn.com/r/toggle-group.json"
+      ],
+      "files": [
+        {
+          "path": "rich-text-editor/rich-text-editor.tsx",
+          "type": "registry:ui",
+          "target": "@ui/rich-text-editor.tsx"
+        }
+      ]
     }
   ]
 }

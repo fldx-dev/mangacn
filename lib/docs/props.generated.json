@@ -3857,6 +3857,152 @@
       }
     ]
   },
+  "rich-text-editor": {
+    "RichTextEditorProps": [
+      {
+        "id": "rich-text-editor.tsx-RichTextEditorProps",
+        "name": "RichTextEditorProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The content as HTML, controlled.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The content as HTML it starts with, uncontrolled.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with the HTML (\"\" when empty) and its text on every change.",
+            "type": "((html: string, details: RichTextEditorChangeDetails) => void) | undefined",
+            "simplifiedType": "(html: string, details: RichTextEditorChangeDetails) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "The form field name; a hidden input posts the HTML with a plain `<form>`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "placeholder",
+            "description": "A muted line shown while the editor is empty.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "disabled",
+            "description": "Turns the editor and its toolbar off; a disabled editor posts nothing.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "editable",
+            "description": "`false` renders the content read-only, without the toolbar; it still posts.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "id",
+            "description": "The editable region's id. A `<label>` cannot name it: pair the label with `aria-labelledby`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-label",
+            "description": "",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-labelledby",
+            "description": "The id of the visible label, such as a `FieldLabel`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-describedby",
+            "description": "Ids of the description and error, such as `FieldDescription` and `FieldError`.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "aria-invalid",
+            "description": "",
+            "type": "\"false\" | \"true\" | boolean | undefined",
+            "simplifiedType": "\"false\" | \"true\" | boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "children",
+            "description": "The toolbar and content, for a custom layout. Defaults to the toolbar over the content.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the frame, which fills its container.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "series-page": {
     "Series": [
       {
