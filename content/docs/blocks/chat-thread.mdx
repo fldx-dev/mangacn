@@ -16,7 +16,7 @@ It is a client component that composes [Message Scroller](/docs/components/messa
 
 The thread opens at its latest message and follows new ones while the reader is at the end. A reader who has scrolled up stays where they are when someone writes, and the "jump to latest" button appears; sending a message brings the thread back to its end. The scrolling region is named by `label`. Each new message from someone else is read out once, as "Hana Mori: See you at six", by a polite live region that holds only that line: nothing on the first render, and nothing for your own messages.
 
-The composer is there only with `onSend`; without it the thread is read-only. In the composer, Enter sends and Shift+Enter breaks the line. Enter during an IME composition (Japanese, Chinese or Korean input) only commits the text, as it should. An empty or blank message is not sent. A send calls `onSend` with the trimmed text, clears the field and keeps the focus in it; add the message to `messages` yourself.
+The composer is there only with `onSend`; without it the thread is read-only. In the composer, Enter sends and Shift+Enter breaks the line. Enter during an IME composition (Japanese, Chinese or Korean input) only commits the text, as it should. An empty or blank message is not sent, and nothing is sent while `streaming` is set (a reply is still coming in): Send is disabled then, and the field stays writable. A send calls `onSend` with the trimmed text, clears the field and keeps the focus in it; add the message to `messages` yourself.
 
 ## Examples
 

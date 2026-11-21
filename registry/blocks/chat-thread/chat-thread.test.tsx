@@ -231,6 +231,24 @@ describe("ChatThread", () => {
       expect(sendButton().disabled).toBe(true);
     });
 
+    it("disables Send while a reply streams, keeps the draft on Enter, and enables it after", () => {
+      const onSend = vi.fn();
+      const { rerender } = render(
+        <ChatThread messages={thread} me="ren" onSend={onSend} streaming />,
+      );
+      type("Pencils by Friday");
+      expect(sendButton().disabled).toBe(true);
+      expect(field().disabled).toBe(false);
+      fireEvent.keyDown(field(), { key: "Enter" });
+      expect(onSend).not.toHaveBeenCalled();
+      expect(field().value).toBe("Pencils by Friday");
+
+      rerender(<ChatThread messages={thread} me="ren" onSend={onSend} streaming={false} />);
+      expect(sendButton().disabled).toBe(false);
+      fireEvent.click(sendButton());
+      expect(onSend).toHaveBeenCalledExactlyOnceWith("Pencils by Friday");
+    });
+
     it("adds no bubble for Enter on a blank draft with useChatThread, and one for text", () => {
       render(<ChatThreadDefaultDemo />);
       const count = () => document.querySelectorAll('[data-slot="bubble"]').length;

@@ -86,6 +86,12 @@ export interface ChatThreadProps
    */
   onSend?: (text: string) => void;
   /**
+   * Whether a reply is streaming in: Send is disabled and Enter sends nothing until it ends.
+   * The field stays writable, so the next message can be drafted meanwhile.
+   * @default false
+   */
+  streaming?: boolean;
+  /**
    * The composer's placeholder.
    * @default "Write a message…"
    */
@@ -292,6 +298,7 @@ function ChatThreadBody({
   messages,
   me,
   onSend,
+  streaming = false,
   placeholder = "Write a message…",
   label = "Conversation",
   unreadFrom,
@@ -333,12 +340,13 @@ function ChatThreadBody({
     }
   }, [messages, me, scrollToEnd]);
 
-  // Nothing to send while the draft is blank: the button is disabled and Enter does nothing.
+  // Nothing to send while the draft is blank or a reply streams: the button is disabled and
+  // Enter does nothing.
   const blank = draft.trim() === "";
 
   const send = () => {
     const text = draft.trim();
-    if (!text || !onSend) return;
+    if (!text || streaming || !onSend) return;
     onSend(text);
     setDraft("");
     field.current?.focus();
@@ -440,7 +448,7 @@ function ChatThreadBody({
             <InputGroupAddon align="inline-end" className="self-end">
               <InputGroupButton
                 type="submit"
-                disabled={blank}
+                disabled={blank || streaming}
                 variant="default"
                 size="icon-sm"
                 aria-label="Send"
