@@ -381,3 +381,117 @@ test.describe("kanban", () => {
     await page.keyboard.press("Escape");
   });
 });
+
+test.describe("rich-text-editor", () => {
+  test.skip(only !== undefined && !only.includes("rich-text-editor"), "E2E_ITEMS leaves it out");
+
+  const frame = '[data-slot="rich-text-editor"]';
+
+  /** The demo with tiptap mounted: the region is contenteditable. */
+  async function openEditor(page: Page, demo: string) {
+    const response = await page.goto(`/demo/rich-text-editor/${demo}`);
+    expect(response?.status()).toBe(200);
+    await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+    await expect(page.locator(".ProseMirror[contenteditable]")).toBeVisible();
+    await waitForInk(page);
+  }
+
+  test("types, bolds with Mod-B, makes a list from the toolbar and posts the HTML", async ({
+    page,
+  }) => {
+    await openEditor(page, "form");
+    const editor = page.getByRole("textbox", { name: "Chapter summary" });
+    const bold = page.getByRole("button", { name: "Bold" });
+
+    // Sending it empty shows the required error on the region.
+    await page.getByRole("button", { name: "Send to the editor" }).click();
+    await expect(page.getByText("Write a summary before you send it.")).toBeVisible();
+    await expect(editor).toHaveAttribute("aria-invalid", "true");
+    await expect(editor).toHaveAttribute("aria-describedby", /rich-text-editor-summary-error/);
+
+    await editor.click();
+    await page.keyboard.type("Rain on the ");
+    await page.keyboard.press("ControlOrMeta+b");
+    await expect(bold).toHaveAttribute("aria-pressed", "true");
+    await page.keyboard.type("rooftop");
+    await expect(page.getByText("19 / 280 characters")).toBeVisible();
+    await expect(editor).not.toHaveAttribute("aria-invalid", "true");
+
+    await page.getByRole("button", { name: "Bullet list" }).click();
+    await expect(page.getByRole("button", { name: "Bullet list" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    // The pointer kept the selection in the editor: typing goes on in the list item.
+    await page.keyboard.type("!");
+
+    const html = "<ul><li><p>Rain on the <strong>rooftop!</strong></p></li></ul>";
+    const posted = await page
+      .locator("form")
+      .evaluate((form: HTMLFormElement) => new FormData(form).get("summary"));
+    expect(posted).toBe(html);
+    await page.getByRole("button", { name: "Send to the editor" }).click();
+    await expect(page.getByRole("status")).toHaveText(`Sent ${html.length} characters of HTML.`);
+
+    // Tab leaves the list item instead of indenting it.
+    await editor.click();
+    await page.keyboard.press("Tab");
+    await expect(editor).not.toBeFocused();
+    expect(
+      await page
+        .locator("form")
+        .evaluate((form: HTMLFormElement) => new FormData(form).get("summary")),
+    ).toBe(html);
+  });
+
+  test("the toolbar is one tab stop with roving arrows", async ({ page }) => {
+    await openEditor(page, "default");
+    await page.getByRole("button", { name: "Bold" }).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("button", { name: "Italic" })).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("textbox", { name: "Author's note" })).toBeFocused();
+  });
+
+  test("keeps its box on hydrate: the server's HTML and the mounted editor are one size", async ({
+    page,
+  }) => {
+    // The docs page prerenders its demos (the stage renders on the client). Its scripts wait
+    // until the server's HTML is measured.
+    let release = () => {};
+    const scripts = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await page.route(
+      (url) => url.pathname.startsWith("/_next/static/") && url.pathname.endsWith(".js"),
+      async (route) => {
+        await scripts;
+        await route.continue();
+      },
+    );
+    await page.goto("/docs/components/rich-text-editor", { waitUntil: "commit" });
+    await page.waitForFunction(
+      () =>
+        document.readyState !== "loading" &&
+        document.querySelector('template[id^="B:"], div[hidden][id^="S:"]') === null,
+    );
+    await page.evaluate(() => document.fonts.ready);
+    const boxes = () =>
+      page
+        .locator(frame)
+        .evaluateAll((frames) => frames.map((element) => element.getBoundingClientRect().toJSON()));
+    const before = await boxes();
+    // The three demos, server-rendered as static HTML: no editable region yet.
+    expect(before).toHaveLength(3);
+    await expect(page.locator(".ProseMirror[contenteditable]")).toHaveCount(0);
+
+    release();
+    await expect(page.locator(".ProseMirror[contenteditable]")).toHaveCount(3);
+    await waitForInk(page);
+    const after = await boxes();
+    for (const [index, box] of after.entries()) {
+      expect(box.height, `demo ${index} height`).toBeCloseTo(before[index].height, 0);
+      expect(box.width, `demo ${index} width`).toBeCloseTo(before[index].width, 0);
+    }
+  });
+});
