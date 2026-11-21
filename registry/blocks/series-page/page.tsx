@@ -54,12 +54,11 @@ const series: Series = {
     date: `2026-${String(9 + Math.floor(i / 4)).padStart(2, "0")}-${String(3 + (i % 4) * 7).padStart(2, "0")}`,
     read: i < 3,
   })),
-  // Linked cards take no `reading`: character-card names its link by the name alone, so ruby
-  // inside the link would read differently from its name (WCAG 2.5.3, axe
-  // label-content-name-mismatch).
+  // Each reading is ruby over the name; a linked card's link is named by both.
   cast: [
     {
       name: "Mio Amano",
+      reading: "あまの みお",
       castRole: "Lead · Apprentice keeper",
       portrait: {
         src: portrait("M78 190 C70 100 230 100 222 190 C200 150 110 140 78 190 Z", "#d6d6d6"),
@@ -71,6 +70,7 @@ const series: Series = {
     },
     {
       name: "Ren Kuroda",
+      reading: "くろだ れん",
       castRole: "Rival · Ferryman's son",
       portrait: {
         src: portrait(
@@ -84,6 +84,7 @@ const series: Series = {
     },
     {
       name: "Old Tomo",
+      reading: "ともじい",
       castRole: "Mentor · Head keeper",
       portrait: {
         src: portrait("M90 160 C110 130 190 130 210 160 C190 150 110 150 90 160 Z", "#bdbdbd"),

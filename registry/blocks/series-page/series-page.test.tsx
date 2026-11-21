@@ -153,4 +153,18 @@ describe("series-page page", () => {
   it("has no axe violations as a whole page", async () => {
     await expectNoA11yViolations(<Page />);
   });
+
+  it("sets each cast member's reading as ruby, and the Cast tab has no axe violations", async () => {
+    await expectNoA11yViolations(<Page />, async () => {
+      fireEvent.click(screen.getByRole("tab", { name: "Cast" }));
+      await act(async () => {});
+      const cast = screen.getByRole("tabpanel", { name: "Cast" });
+      const readings = [...cast.querySelectorAll('ruby[lang="ja"] rt')];
+      expect(readings.map((rt) => rt.textContent)).toEqual([
+        "あまの みお",
+        "くろだ れん",
+        "ともじい",
+      ]);
+    });
+  });
 });

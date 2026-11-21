@@ -768,6 +768,20 @@
             "deprecated": false
           },
           {
+            "name": "streaming",
+            "description": "Whether a reply is streaming in: Send is disabled and Enter sends nothing until it ends.\nThe field stays writable, so the next message can be drafted meanwhile.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
             "name": "placeholder",
             "description": "The composer's placeholder.",
             "type": "string | undefined",

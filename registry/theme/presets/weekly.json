@@ -1,9 +1,9 @@
 {
   "name": "weekly",
   "title": "Weekly",
-  "description": "A weekly manga magazine: pale green-grey recycled newsprint, green-black ink and a magenta spot, with greys leaning green; dark is deep green-black paper and pale ink.",
+  "description": "A weekly manga magazine: pale green-grey recycled newsprint, cool slate-black ink and a magenta spot, with greys leaning green; dark is deep green-black paper and pale ink.",
   "light": {
-    "ink": "oklch(0.17 0.012 150)",
+    "ink": "oklch(0.175 0.025 230)",
     "paper": "oklch(0.945 0.022 135)",
     "spot": "oklch(0.52 0.21 350)",
     "spot-foreground": "oklch(0.945 0.022 135)",
