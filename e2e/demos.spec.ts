@@ -201,6 +201,28 @@ for (const { demo, next, previous, later } of SPREADS) {
   });
 }
 
+// The reader's key-hint row (spread-viewer's help line) takes two lines on controls under 400 px,
+// a phone's, Home and End on the second, and one line from a tablet up (Task 144).
+if (entries.some((entry) => entry.item === "reader" && entry.demo === "default")) {
+  test("reader/default key hints wrap to two lines under 400 px", async ({ page }) => {
+    await page.goto("/demo/reader/default");
+    await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+    const help = page.locator('[data-slot="spread-viewer-help"]');
+    await expect(help).toBeVisible();
+    const lines = await help.evaluate((element) => {
+      const tops = [...element.children]
+        .filter((child) => child.tagName === "SPAN")
+        .map((child) => Math.round(child.getBoundingClientRect().top));
+      const controls = element.parentElement?.getBoundingClientRect().width ?? 0;
+      return { count: new Set(tops).size, controls };
+    });
+    expect(lines.count, `help lines on ${lines.controls} px controls`).toBe(
+      lines.controls < 400 ? 2 : 1,
+    );
+    if (test.info().project.name === "w360") expect(lines.count).toBe(2);
+  });
+}
+
 for (const { item, demo } of entries) {
   for (const mode of ["light", "dark"] as const) {
     test(`${item}/${demo} (${mode})`, async ({ page }) => {
