@@ -107,13 +107,13 @@ export const CUSTOM_STARTS: Record<LookPreset, CustomLook> = {
   },
   weekly: {
     paper: { hue: 135, strength: 6 },
-    ink: { hue: 150, strength: 3 },
+    ink: { hue: 230, strength: 7 },
     spot: { hue: 350, vividness: 8 },
   },
   blueline: {
     paper: { hue: 230, strength: 2 },
     ink: { hue: 260, strength: 10 },
-    spot: { hue: 228, vividness: 2 },
+    spot: { hue: 238, vividness: 3 },
   },
 };
 
