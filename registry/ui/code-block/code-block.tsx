@@ -2,18 +2,20 @@
 
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
-import { CheckIcon, CopyIcon } from "lucide-react";
-import * as React from "react";
+import type * as React from "react";
 import { InkFrame } from "@/components/ink-frame";
-import { Button } from "@/components/ui/button";
+import type { Button } from "@/components/ui/button";
+import { CopyButton } from "@/components/ui/copy-button";
 
 // Based on shadcn/ui Code Block (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-12.
 // Restyled for mangacn: the docs' own code look. InkFrame draws a heavy paper outline (so the
 // block no longer clips: the drawing reaches past its box, and the content scrolls itself), a
-// hand-drawn rule sits under the header, the title is set in the mono face, the copy button is
-// mangacn's outlined icon button, and the scrollbar is thin ink. The content stands 2 px in from
-// the frame so tone rows do not cover the inner half of its stroke. Token colours come from the
-// highlighter; added and highlighted lines are tone-1 and removed lines carry a spot minus.
+// hand-drawn rule sits under the header, the title is set in the mono face, and the scrollbar is
+// thin ink. The content stands 2 px in from the frame so tone rows do not cover the inner half of
+// its stroke. Token colours come from the highlighter; added and highlighted lines are tone-1 and
+// removed lines carry a spot minus. CodeBlockCopyButton keeps stock's name and props but renders
+// mangacn's copy-button (outlined, extra small): its state is `data-state` (idle, copied,
+// failed) where stock sets `data-copied`, a failed copy says so, and the copy is announced once.
 
 const codeBlockVariants = cva(
   "group/code-block relative isolate flex w-full min-w-0 flex-col rounded-lg text-sm has-[>[data-slot=code-block-content]:focus-visible]:ring-3 has-[>[data-slot=code-block-content]:focus-visible]:ring-ring/50 data-[size=sm]:text-xs",
@@ -107,45 +109,19 @@ function CodeBlockCopyButton({
   value,
   variant = "outline",
   size = "icon-xs",
-  className,
-  onClick,
+  // CopyButton's onCopy is its own (the copied text), so the DOM copy event is not passed on.
+  onCopy: _onCopy,
+  children: _children,
   ...props
 }: React.ComponentProps<typeof Button> & { value: string }) {
-  const [copied, setCopied] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!copied) {
-      return;
-    }
-
-    const timeout = setTimeout(() => setCopied(false), 2000);
-    return () => clearTimeout(timeout);
-  }, [copied]);
-
   return (
-    <>
-      <Button
-        data-slot="code-block-copy-button"
-        data-copied={copied || undefined}
-        variant={variant}
-        size={size}
-        aria-label={copied ? "Copied" : "Copy"}
-        className={cn(className)}
-        onClick={(event) => {
-          onClick?.(event);
-          navigator.clipboard
-            .writeText(value)
-            .then(() => setCopied(true))
-            .catch(() => {});
-        }}
-        {...props}
-      >
-        {copied ? <CheckIcon /> : <CopyIcon />}
-      </Button>
-      <span aria-live="polite" className="sr-only">
-        {copied ? "Copied" : ""}
-      </span>
-    </>
+    <CopyButton
+      data-slot="code-block-copy-button"
+      value={value}
+      variant={variant}
+      size={size}
+      {...props}
+    />
   );
 }
 

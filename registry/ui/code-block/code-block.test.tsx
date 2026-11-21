@@ -103,19 +103,73 @@ describe("CodeBlock", () => {
     expect(empty?.textContent).toBe("\n");
   });
 
-  it("copies its value with mangacn's outlined icon button and says so", async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined);
+  const stubClipboard = (writeText: ReturnType<typeof vi.fn>) =>
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+
+  it("copies its value with mangacn's copy-button, outlined, and says so once", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    stubClipboard(writeText);
     render(<Block />);
     const button = screen.getByRole("button", { name: "Copy" });
     expect(button.dataset.slot).toBe("code-block-copy-button");
+    expect(button.dataset.state).toBe("idle");
+    // Stock's outline, icon-xs button, where copy-button alone defaults to ghost and icon.
     expect(frameOf(button)?.dataset.fill).toBe("paper");
+    expect(button.className).toContain("size-6");
+    // One live region in the whole block, empty until a copy.
+    expect(screen.getAllByRole("status")).toHaveLength(1);
+    expect(document.querySelectorAll("[aria-live]")).toHaveLength(0);
+    expect(screen.getByRole("status").textContent).toBe("");
     await act(async () => {
       fireEvent.click(button);
     });
     expect(writeText).toHaveBeenCalledWith("const a = 1;");
-    expect(screen.getByRole("button", { name: "Copied" }).dataset.copied).toBe("true");
-    expect(document.querySelector('[aria-live="polite"]')?.textContent).toBe("Copied");
+    expect(screen.getByRole("button", { name: "Copied" }).dataset.state).toBe("copied");
+    expect(screen.getAllByRole("status").map((region) => region.textContent)).toEqual(["Copied"]);
+  });
+
+  it("says the copy failed when the clipboard refuses, then returns to idle", async () => {
+    vi.useFakeTimers();
+    stubClipboard(vi.fn().mockRejectedValue(new Error("denied")));
+    render(<Block />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Copy" }));
+    });
+    expect(screen.getByRole("button", { name: "Copy failed" }).dataset.state).toBe("failed");
+    expect(screen.getAllByRole("status").map((region) => region.textContent)).toEqual([
+      "Copy failed",
+    ]);
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+    expect(screen.getByRole("button", { name: "Copy" }).dataset.state).toBe("idle");
+    expect(screen.getByRole("status").textContent).toBe("");
+  });
+
+  it("keeps stock's props: Button's props pass through, value is what it copies", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    stubClipboard(writeText);
+    const onClick = vi.fn();
+    render(
+      <CodeBlockCopyButton
+        value="npx shadcn add"
+        variant="ghost"
+        size="icon-sm"
+        className="custom-copy"
+        aria-label="Copy the command"
+        onClick={onClick}
+      />,
+    );
+    const button = screen.getByRole("button", { name: "Copy the command" });
+    expect(button.className).toContain("hover:bg-muted");
+    expect(frameOf(button)).toBeNull();
+    expect(button.className).toContain("size-7");
+    expect(button.classList.contains("custom-copy")).toBe(true);
+    await act(async () => {
+      fireEvent.click(button);
+    });
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(writeText).toHaveBeenCalledWith("npx shadcn add");
   });
 
   it("shows the stock highlighter's lines in ink by default, from the theme's tokens", async () => {

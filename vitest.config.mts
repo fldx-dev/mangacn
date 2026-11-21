@@ -415,6 +415,13 @@ export default defineConfig({
         find: /^@\/components\/ui\/table$/,
         replacement: fileURLToPath(new URL("./registry/ui/table/table.tsx", import.meta.url)),
       },
+      // code-block (Task 143) → copy-button.
+      {
+        find: /^@\/components\/ui\/copy-button$/,
+        replacement: fileURLToPath(
+          new URL("./registry/ui/copy-button/copy-button.tsx", import.meta.url),
+        ),
+      },
       // trace (Task 101) → collapsible.
       {
         find: /^@\/components\/blocks\/(.+)$/,

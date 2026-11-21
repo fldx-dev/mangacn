@@ -99,7 +99,8 @@
       "@/components/ui/number-input": ["./registry/ui/number-input/number-input.tsx"],
       "@/components/ui/alert": ["./registry/ui/alert/alert.tsx"],
       "@/components/ui/tree-view": ["./registry/ui/tree-view/tree-view.tsx"],
-      "@/components/ui/table": ["./registry/ui/table/table.tsx"]
+      "@/components/ui/table": ["./registry/ui/table/table.tsx"],
+      "@/components/ui/copy-button": ["./registry/ui/copy-button/copy-button.tsx"]
     }
   },
   "include": [
