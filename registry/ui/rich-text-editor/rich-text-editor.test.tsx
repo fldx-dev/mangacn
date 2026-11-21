@@ -360,6 +360,13 @@ describe("RichTextEditor", () => {
     ["an h1 the schema lacks", "<h1>Title</h1><p>Body</p>"],
     ["bare text in list items", "<ul><li>one</li><li>two <b>bold</b></li></ul>"],
     ["inline text beside blocks", "loose <i>text</i><blockquote>quoted</blockquote>after"],
+    ["a pre's lines and spaces", "<p>Script:</p><pre>\nPanel 1:  rain\n\tPanel 2: a shadow</pre>"],
+    ["a table's cells", "<table><tr><td>Ch. 12</td> <td><b>Inks</b></td></tr></table><p>Done</p>"],
+    [
+      "nested marks in the schema's order",
+      "<p><em><s><b>all</b></s></em> <code><b>x</b></code></p>",
+    ],
+    ["full-width and no-break spaces", "<p>\u3000東京\u3000KYOTO\u00a0</p><p>\u3000</p>"],
   ])("blocks the static HTML as the editor's parser does: %s", async (_, html) => {
     const before = staticRegion(html);
     render(<RichTextEditor aria-label="Note" defaultValue={html} />);
@@ -381,6 +388,41 @@ describe("RichTextEditor", () => {
       editor.commands.insertContent("Y");
     });
     expect(editor.getHTML()).toBe("<p>IXYnk</p>");
+  });
+
+  it("keeps a full-width space as content: it posts and is not empty", () => {
+    render(
+      <form data-testid="form">
+        <RichTextEditor
+          aria-label="Note"
+          name="note"
+          defaultValue={"<p>\u3000</p>"}
+          placeholder="P"
+        />
+      </form>,
+    );
+    const data = new FormData(screen.getByTestId("form") as HTMLFormElement);
+    expect(data.get("note")).toBe("<p>\u3000</p>");
+    expect(document.querySelector('[data-slot="rich-text-editor-placeholder"]')).toBeNull();
+  });
+
+  it.each([
+    ["nested marks", "<b>x".repeat(25_000)],
+    ["unclosed lists", `${"<ul>".repeat(12_500)}${"</li>".repeat(10_000)}`],
+    ["unterminated tags", "<a".repeat(50_000)],
+    ["unterminated script tags", "<script ".repeat(12_500)],
+    ["unclosed scripts", "<script>".repeat(12_500)],
+    ["unterminated comments", "<!--".repeat(25_000)],
+  ])("renders crafted HTML of 100k characters in linear time: %s", (_, html) => {
+    expect(html.length).toBeGreaterThanOrEqual(100_000);
+    const start = performance.now();
+    renderToString(<RichTextEditor aria-label="Note" defaultValue={html} />);
+    expect(performance.now() - start).toBeLessThan(200);
+  });
+
+  it("hides the rest of an unclosed script or style, as the browser does", () => {
+    expect(staticRegion("<p>Ink</p><style>p { color: red }")).toBe("<p>Ink</p>");
+    expect(staticRegion("<p>Ink<script>alert(1)</p>")).toBe("<p>Ink</p>");
   });
 
   it("posts an empty string for an empty stored value", async () => {

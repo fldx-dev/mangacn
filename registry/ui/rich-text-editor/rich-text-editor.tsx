@@ -50,7 +50,7 @@ const extensions = [
 ];
 
 /** Marks by tag, written as the editor writes them. */
-const MARKS: Record<string, string> = {
+const MARKS: Record<string, Mark> = {
   strong: "strong",
   b: "strong",
   em: "em",
@@ -60,17 +60,27 @@ const MARKS: Record<string, string> = {
   strike: "s",
   code: "code",
 };
+type Mark = "strong" | "em" | "s" | "code";
+/** The schema's mark order (bold, italic, strike), which is the order the editor nests them. */
+const MARK_ORDER: Mark[] = ["strong", "em", "s"];
 const TEXTBLOCKS = new Set(["p", "h2", "h3"]);
 const CONTAINERS = new Set(["ul", "ol", "li", "blockquote"]);
-/** Elements outside the schema that tiptap's parser still reads as block edges. */
+/** prosemirror-model's `blockTags` that the schema has no rule for: each ends a paragraph. */
 const FOREIGN_BLOCKS = new Set(
-  "address article aside caption center dd details div dl dt fieldset figcaption figure footer form h1 h4 h5 h6 header hgroup main nav pre section summary table tbody td tfoot th thead tr".split(
+  "address article aside body canvas dd div dl fieldset figcaption figure footer form h1 h4 h5 h6 header hgroup output pre section table tfoot".split(
     " ",
   ),
 );
-const SKIPPED =
-  /<(script|style|template|textarea|title|iframe|noscript)\b[\s\S]*?<\/\1\s*>|<!--[\s\S]*?-->/gi;
-const TOKENS = /<(\/?)([a-z][a-z0-9]*)\b[^>]*>|[^<]+|</gi;
+/** Elements whose content the parser ignores (prosemirror-model's `ignoreTags`, and the like). */
+const SKIPPED = new Set(
+  "head iframe noscript object script style template textarea title".split(" "),
+);
+/** A tag at the cursor. `[^<>]` stops at the next `<`, so an unclosed `<` costs nothing. */
+const TAG = /<(\/?)([a-z][a-z0-9]*)\b[^<>]*>/iy;
+/** The whitespace ProseMirror collapses; not U+3000 or a no-break space. */
+const WS = "[ \\t\\r\\n\\f]";
+const WS_RUN = new RegExp(`${WS}+`, "g");
+const NOT_WS = /[^ \t\r\n\f]/;
 const escapeText = (text: string) => text.replace(/[<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 /** The static render of an empty editor: one paragraph with the editor's line break. */
 const EMPTY_HTML = "<p><br></p>";
@@ -81,40 +91,52 @@ const EMPTY_HTML = "<p><br></p>";
  * skips tiptap's parser, so it writes only the schema's elements, without attributes, and every
  * other `<`, `>` and quote as text. Inline content outside a paragraph (in the document, a quote
  * or a list item) gets one; other block elements (`div`, `h1`, `pre`…) end the paragraph;
- * whitespace collapses, none at a block's edges; an empty block gets the editor's line break.
+ * whitespace collapses, none at a block's edges, except in a `pre`, whose lines become line
+ * breaks; a block that is empty or ends in a line break gets the editor's extra one. One pass,
+ * linear in the input's length.
  */
 function staticHtml(html: string): string {
+  const lower = html.toLowerCase();
   let out = "";
   let block: string | null = null;
   let filled = false;
   /** A collapsed space waiting for the next inline content, with the marks it had. */
-  let space: string[] | null = null;
-  let written: string[] = [];
-  const marks: string[] = [];
+  let space: Mark[] | null = null;
+  let written: Mark[] = [];
+  const markCount: Record<Mark, number> = { strong: 0, em: 0, s: 0, code: 0 };
   const open: string[] = [];
+  const openCount: Record<string, number> = { ul: 0, ol: 0, li: 0, blockquote: 0 };
+  let pre = 0;
+  /** Right after a `<pre>`, where the HTML parser drops one line break. */
+  let preStart = false;
 
-  const writeMarks = (target: string[]) => {
+  // Code excludes every other mark, as in the schema.
+  const activeMarks = (): Mark[] =>
+    markCount.code > 0 ? ["code"] : MARK_ORDER.filter((mark) => markCount[mark] > 0);
+  const writeMarks = (target: Mark[]) => {
     let same = 0;
     while (same < written.length && written[same] === target[same]) same++;
     while (written.length > same) out += `</${written.pop()}>`;
     for (const mark of target.slice(same)) out += `<${mark}>`;
     written = [...target];
   };
-  const activeMarks = () => [...new Set(marks)];
   const closeBlock = () => {
     if (!block) return;
     writeMarks([]);
-    out += `${filled ? "" : "<br>"}</${block}>`;
+    // ProseMirror shows an empty block, or a last line break, with a line of its own.
+    out += `${!filled || out.endsWith("<br>") ? "<br>" : ""}</${block}>`;
     block = null;
+  };
+  const push = (name: string) => {
+    out += `<${name}>`;
+    open.push(name);
+    openCount[name]++;
   };
   const openBlock = (name = "p") => {
     closeBlock();
     // Inline content straight in a list gets an item, as the parser gives it.
     const top = open.at(-1);
-    if (top === "ul" || top === "ol") {
-      out += "<li>";
-      open.push("li");
-    }
+    if (top === "ul" || top === "ol") push("li");
     out += `<${name}>`;
     block = name;
     filled = false;
@@ -130,22 +152,34 @@ function staticHtml(html: string): string {
     space = null;
     writeMarks(activeMarks());
   };
-
-  for (const [token, close, tag] of html.replace(SKIPPED, "").matchAll(TOKENS)) {
-    if (!tag) {
-      const text = token.replace(/\s+/g, " ");
-      if (text.startsWith(" ") && !space) space = activeMarks();
-      if (text.trim() === "") continue;
+  const text = (raw: string) => {
+    if (pre > 0) {
+      // In a pre, whitespace stays and each line break is a hard break.
+      const value = preStart ? raw.replace(/^\r?\n|^\r/, "") : raw;
+      preStart = false;
+      if (!block && !NOT_WS.test(value)) return;
       inline();
-      out += escapeText(text.trim());
+      for (const [index, line] of value.split(/\r?\n|\r/).entries()) {
+        if (index > 0) out += "<br>";
+        out += escapeText(line);
+      }
       filled = true;
-      if (text.endsWith(" ")) space = activeMarks();
-      continue;
+      return;
     }
-    const name = tag.toLowerCase();
-    if (MARKS[name]) {
-      if (!close) marks.push(MARKS[name]);
-      else if (marks.includes(MARKS[name])) marks.splice(marks.lastIndexOf(MARKS[name]), 1);
+    const value = raw.replace(WS_RUN, " ");
+    if (value.startsWith(" ") && !space) space = activeMarks();
+    if (!NOT_WS.test(value)) return;
+    inline();
+    out += escapeText(value.replace(/^ | $/g, ""));
+    filled = true;
+    if (value.endsWith(" ")) space = activeMarks();
+  };
+  const element = (close: boolean, name: string) => {
+    preStart = false;
+    const mark = MARKS[name];
+    if (mark) {
+      if (!close) markCount[mark]++;
+      else if (markCount[mark] > 0) markCount[mark]--;
     } else if (name === "br") {
       inline();
       out += "<br>";
@@ -156,12 +190,11 @@ function staticHtml(html: string): string {
       else openBlock(name);
     } else if (CONTAINERS.has(name)) {
       closeBlock();
-      if (!close) {
-        out += `<${name}>`;
-        open.push(name);
-      } else if (open.includes(name)) {
+      if (!close) push(name);
+      else if (openCount[name] > 0) {
         while (open.length > 0) {
-          const last = open.pop();
+          const last = open.pop() as string;
+          openCount[last]--;
           // An empty item or quote holds one empty paragraph in the editor.
           if ((last === "li" || last === "blockquote") && out.endsWith(`<${last}>`)) {
             out += EMPTY_HTML;
@@ -175,15 +208,50 @@ function staticHtml(html: string): string {
       out += "<hr>";
     } else if (FOREIGN_BLOCKS.has(name)) {
       closeBlock();
+      if (name === "pre") {
+        pre = Math.max(0, pre + (close ? -1 : 1));
+        preStart = !close;
+      }
     }
+  };
+
+  let at = 0;
+  while (at < html.length) {
+    const lt = html.indexOf("<", at);
+    if (lt === -1 || lt > at) {
+      text(html.slice(at, lt === -1 ? undefined : lt));
+      if (lt === -1) break;
+      at = lt;
+    }
+    if (html.startsWith("<!--", at)) {
+      const end = html.indexOf("-->", at + 4);
+      at = end === -1 ? html.length : end + 3;
+      continue;
+    }
+    TAG.lastIndex = at;
+    const tag = TAG.exec(html);
+    if (!tag) {
+      text("<");
+      at++;
+      continue;
+    }
+    at = TAG.lastIndex;
+    const close = tag[1] === "/";
+    const name = tag[2].toLowerCase();
+    if (!close && SKIPPED.has(name)) {
+      // Its content is not shown; an unclosed one hides the rest, as in the browser.
+      const end = lower.indexOf(`</${name}`, at);
+      if (end === -1) break;
+      const after = lower.indexOf(">", end);
+      at = after === -1 ? html.length : after + 1;
+      continue;
+    }
+    element(close, name);
   }
   closeBlock();
   while (open.length > 0) out += `</${open.pop()}>`;
   return out || EMPTY_HTML;
 }
-
-/** Whether stored HTML holds nothing the editor would show (`""`, `<p></p>`, whitespace). */
-const isEmptyHtml = (html: string) => staticHtml(html) === EMPTY_HTML;
 
 /** The editor's HTML, or "" when it holds no text, so a required check sees an empty field. */
 const htmlOf = (editor: Editor) => (editor.isEmpty ? "" : editor.getHTML());
@@ -228,6 +296,8 @@ interface RichTextEditorContextValue {
   editor: Editor | null;
   /** The HTML of the last render, shown statically until the editor mounts. */
   html: string;
+  /** `html` as the static render shows it (`staticHtml`), computed once per change. */
+  rendered: string;
   placeholder?: string;
   disabled: boolean;
   editable: boolean;
@@ -296,6 +366,8 @@ export function RichTextEditor({
 }: RichTextEditorProps) {
   const [inner, setInner] = React.useState(defaultValue);
   const html = value ?? inner;
+  // The static render and the empty check read it; one pass per change, not per use.
+  const rendered = React.useMemo(() => staticHtml(html), [html]);
   const invalid = ariaInvalid === true || ariaInvalid === "true";
   const canEdit = editable && !disabled;
 
@@ -375,8 +447,8 @@ export function RichTextEditor({
   }, [editor, value]);
 
   const context = React.useMemo(
-    () => ({ editor, html, placeholder, disabled, editable, attributes }),
-    [editor, html, placeholder, disabled, editable, attributes],
+    () => ({ editor, html, rendered, placeholder, disabled, editable, attributes }),
+    [editor, html, rendered, placeholder, disabled, editable, attributes],
   );
 
   return (
@@ -404,7 +476,7 @@ export function RichTextEditor({
         {client && <EditorEngine options={options} onEditor={setEditor} />}
         {/* A disabled field posts nothing, as a native disabled control. */}
         {name && !disabled && (
-          <input type="hidden" name={name} value={isEmptyHtml(html) ? "" : html} />
+          <input type="hidden" name={name} value={rendered === EMPTY_HTML ? "" : html} />
         )}
       </div>
     </RichTextEditorContext.Provider>
@@ -656,10 +728,10 @@ export interface RichTextEditorContentProps {
 }
 
 export function RichTextEditorContent({ className }: RichTextEditorContentProps) {
-  const { editor, html, placeholder, attributes } = useRichTextEditor("RichTextEditorContent");
+  const { editor, rendered, placeholder, attributes } = useRichTextEditor("RichTextEditorContent");
   const empty =
     useEditorState({ editor, selector: ({ editor }) => editor?.isEmpty ?? null }) ??
-    isEmptyHtml(html);
+    rendered === EMPTY_HTML;
   return (
     <div data-slot="rich-text-editor-content" className={cn(proseClasses, className)}>
       {editor ? (
@@ -671,7 +743,7 @@ export function RichTextEditorContent({ className }: RichTextEditorContentProps)
             {...attributes}
             className="ProseMirror"
             // biome-ignore lint/security/noDangerouslySetInnerHtml: staticHtml keeps only the schema's elements, without attributes.
-            dangerouslySetInnerHTML={{ __html: staticHtml(html) }}
+            dangerouslySetInnerHTML={{ __html: rendered }}
           />
         </div>
       )}
