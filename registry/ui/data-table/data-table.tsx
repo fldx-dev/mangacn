@@ -169,8 +169,8 @@ export function DataTableColumnHeader<TData extends RowData, TValue>({
 }: DataTableColumnHeaderProps<TData, TValue>) {
   const announce = React.useContext(AnnounceContext);
   const trigger = React.useRef<HTMLButtonElement>(null);
-  // Set by Hide: the table region that takes focus when the menu closes, before the column goes.
-  const hiding = React.useRef<HTMLElement | null>(null);
+  // Set by Hide: the column goes once the menu has closed, and focus goes to the table region.
+  const hiding = React.useRef<{ table: HTMLElement | null } | null>(null);
   const label = title ?? columnLabel(column);
   const canSort = column.getCanSort();
   const canHide = column.getCanHide();
@@ -189,14 +189,19 @@ export function DataTableColumnHeader<TData extends RowData, TValue>({
   // The menu and its trigger leave with the column, so the column is hidden once the menu has
   // closed, and focus goes to the table instead of the trigger (whichever comes first).
   const hide = () => {
-    hiding.current = trigger.current?.closest<HTMLElement>('[data-slot="table-container"]') ?? null;
+    hiding.current = {
+      table: trigger.current?.closest<HTMLElement>('[data-slot="table-container"]') ?? null,
+    };
   };
   const closed = (open: boolean) => {
-    const table = hiding.current;
-    if (open || !table) return;
+    const pending = hiding.current;
+    if (open || !pending) {
+      hiding.current = null;
+      return;
+    }
     column.toggleVisibility(false);
     announce({ kind: "hide", label });
-    table.focus();
+    pending.table?.focus();
   };
   return (
     <div
@@ -218,7 +223,7 @@ export function DataTableColumnHeader<TData extends RowData, TValue>({
             <ChevronsUpDownIcon className="text-muted-foreground" />
           )}
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-36" finalFocus={() => hiding.current ?? true}>
+        <DropdownMenuContent className="w-36" finalFocus={() => hiding.current?.table ?? true}>
           <DropdownMenuGroup>
             {canSort && (
               <>
