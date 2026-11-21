@@ -118,15 +118,20 @@ describe("Carousel", () => {
     expect(viewport?.querySelector('[data-slot="ink-frame"]')).toBeNull();
   });
 
-  it("makes previous and next mangacn's outlined icon buttons", () => {
+  it("makes previous and next round icon buttons outlined by the pen", () => {
     render(<Pages />);
     for (const name of ["carousel-previous", "carousel-next"]) {
       const button = slot(name);
       expect(button?.dataset.slot).toBe(name);
       expect(button?.className).toContain("size-7");
-      expect(button?.className).not.toContain("rounded-full");
-      const frame = button?.querySelector<HTMLElement>(':scope > [data-slot="ink-frame"]');
-      expect(frame).not.toBeNull();
+      expect(button?.className).toContain("rounded-full");
+      // button's rect frame is hidden; the ellipse is the arrow's one outline.
+      expect(button?.className).toContain("[&>[data-slot=ink-frame][data-shape=rect]]:hidden");
+      const frame = button?.querySelector<HTMLElement>(
+        ':scope > [data-slot="ink-frame"][data-shape="ellipse"]',
+      );
+      // Disabled until embla measures (none) or enabled (paper): the outline is drawn either way.
+      expect(["none", "paper"]).toContain(frame?.dataset.fill);
     }
     expect(screen.getByRole("button", { name: "Previous slide" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Next slide" })).toBeTruthy();

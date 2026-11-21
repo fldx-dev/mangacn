@@ -207,7 +207,7 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/calendar --overwrite`
   Docs: https://www.mangacn.com/docs/components/calendar (Markdown: https://www.mangacn.com/docs/components/calendar.md)
 - `carousel`: Stock embla carousel: previous and next are mangacn's outlined icon buttons; the viewport draws nothing, slides bring their own frames.
-  Install: `npx shadcn@latest add @mangacn/carousel --overwrite`
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/carousel --overwrite`
   Docs: https://www.mangacn.com/docs/components/carousel (Markdown: https://www.mangacn.com/docs/components/carousel.md)
 - `chart`: Stock recharts container in ink: ink axes, a tone-3 grid, a small outlined paper tooltip; pairs with chart-tones fills.
   Install: `npx shadcn@latest add @mangacn/chart --overwrite`
