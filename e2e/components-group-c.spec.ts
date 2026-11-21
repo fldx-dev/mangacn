@@ -47,6 +47,12 @@ test.describe("phone-input", () => {
     await page.keyboard.press("Enter");
     const searchBox = page.getByRole("combobox", { name: "Search countries" });
     await expect(searchBox).toBeFocused();
+    // Escape closes the list and hands focus back to the trigger.
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("listbox")).toBeHidden();
+    await expect(country(page)).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(searchBox).toBeFocused();
     await searchBox.pressSequentially("+82");
     await expect(page.getByRole("option")).toHaveText(["KR South Korea +82"]);
     await page.keyboard.press("ArrowDown");
@@ -57,6 +63,24 @@ test.describe("phone-input", () => {
     // The same digits, formatted the Korean way.
     await expect(phone(page)).toHaveValue("031-234-5678");
     await expect(phone(page)).toHaveAccessibleDescription(/South Korea, \+82/);
+  });
+
+  test("an edit inside the number keeps the caret after the same digit", async ({ page }) => {
+    await openDemo(page, "phone-input", "default");
+    const input = phone(page);
+    await input.pressSequentially("0312345678");
+    await input.press("Home");
+    for (let i = 0; i < 3; i++) await input.press("ArrowRight");
+    // Backspace right after "03-" takes the 3, not the hyphen; the caret stays after the 0.
+    await input.press("Backspace");
+    await expect(input).not.toHaveValue("03-1234-5678");
+    expect(
+      await input.evaluate((element: HTMLInputElement) => element.value.replace(/\D/g, "")),
+    ).toBe("012345678");
+    expect(await input.evaluate((element: HTMLInputElement) => element.selectionStart)).toBe(1);
+    await input.press("3");
+    await expect(input).toHaveValue("03-1234-5678");
+    expect(await input.evaluate((element: HTMLInputElement) => element.selectionStart)).toBe(2);
   });
 
   test("an incomplete number is invalid only after blur", async ({ page }) => {

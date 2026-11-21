@@ -224,9 +224,10 @@ export function PhoneInput({
   // Put the caret back after the same digit once the formatted text is in the input.
   React.useLayoutEffect(() => {
     const input = inputRef.current;
-    if (caret.current === null || !input || document.activeElement !== input) return;
-    input.setSelectionRange(caret.current, caret.current);
+    const at = caret.current;
     caret.current = null;
+    if (at === null || !input || document.activeElement !== input) return;
+    input.setSelectionRange(at, at);
   });
 
   // A submit shows an invalid number as invalid, as a blur does.
