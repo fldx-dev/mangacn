@@ -442,6 +442,35 @@ test("an embedded dialog stage works with the pointer from the start", async ({ 
   await expect(field).toHaveValue("Ink");
 });
 
+// A sidebar preview on a docs page lays the sidebar out at a desktop width, scaled to the column,
+// from a tablet's window up, as `/view` shows it there; only a phone's column shows the phone
+// layout (Task 144; blocks.spec.ts checks the 1280 px column).
+test("sidebar previews show the desktop layout from a tablet's window", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name === "w1280", "blocks.spec.ts checks w1280");
+  const phone = testInfo.project.name === "w360";
+  const frameOf = async (selector: string) => {
+    const iframe = page.locator(`${selector} iframe`).first();
+    const frame = await (await iframe.elementHandle())?.contentFrame();
+    if (!frame) throw new Error(`No frame in ${selector}`);
+    await expect(frame.locator("html")).toHaveAttribute("data-demo-ready", "true");
+    return frame;
+  };
+
+  await page.goto("/docs/blocks/sidebar-07");
+  const preview = page.locator('[data-slot="block-preview"]');
+  const block = await frameOf('[data-slot="block-preview"]');
+  await expect(preview).toHaveAttribute("data-width", phone ? "phone" : "desktop");
+  await expect.poll(() => block.evaluate(() => window.innerWidth)).toBe(phone ? 375 : 1280);
+
+  await page.goto("/docs/components/sidebar");
+  const stage = await frameOf('[data-slot="demo-stage-box"]');
+  const stageWidth = () => stage.evaluate(() => window.innerWidth);
+  if (phone) await expect.poll(stageWidth).toBeLessThan(768);
+  else await expect.poll(stageWidth).toBeGreaterThanOrEqual(768);
+});
+
 // The skip link points at content the page has from its first HTML, before any script: axe
 // counts a link to a missing id as content outside a landmark (`region`), which failed docs pages
 // whenever the scan ran before hydration.
