@@ -23,7 +23,7 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `theme-sepia`: An old tankōbon: warm aged cream paper, brown-black ink and a vermilion spot, with warm grey tones; dark is deep brown-black paper and cream ink.
   Install: `npx shadcn@latest add @mangacn/theme-sepia --yes --overwrite`
   Docs: https://www.mangacn.com/docs/theming#presets
-- `theme-weekly`: A weekly manga magazine: pale green-grey recycled newsprint, green-black ink and a magenta spot, with greys leaning green; dark is deep green-black paper and pale ink.
+- `theme-weekly`: A weekly manga magazine: pale green-grey recycled newsprint, cool slate-black ink and a magenta spot, with greys leaning green; dark is deep green-black paper and pale ink.
   Install: `npx shadcn@latest add @mangacn/theme-weekly --yes --overwrite`
   Docs: https://www.mangacn.com/docs/theming#presets
 - `theme-blueline`: A pencil draft before inking: cool white paper, blue-black ink and a clear blue spot (non-photo blue darkened only as far as text needs), with cool grey tones; dark is deep blue-black paper, cool pale ink and the pale pencil blue as its spot.
