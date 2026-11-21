@@ -1177,6 +1177,215 @@
       }
     ]
   },
+  "data-table": {
+    "DataTableProps": [
+      {
+        "id": "data-table.tsx-DataTableProps",
+        "name": "DataTableProps",
+        "entries": [
+          {
+            "name": "columns",
+            "description": "The columns, from `createColumnHelper<DataTableFeatures, TData>().columns([…])`;\n`createSelectColumn()` adds the checkboxes.",
+            "type": "DataTableColumnDef<TData, any>[]",
+            "simplifiedType": "DataTableColumnDef<TData, any>[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "data",
+            "description": "The rows: every row, or one page of them with `manualPagination`.",
+            "type": "TData[]",
+            "simplifiedType": "TData[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "label",
+            "description": "The table's accessible name, read when its scroll region takes focus.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Table\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "filterColumn",
+            "description": "The id of the column the toolbar's text field filters.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "filterPlaceholder",
+            "description": "The filter field's placeholder; defaults to \"Filter {label}…\".",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "toolbar",
+            "description": "Your controls in the toolbar, between the filter and the View menu (bulk actions).",
+            "type": "((table: DataTableInstance<TData>) => React.ReactNode) | undefined",
+            "simplifiedType": "(table: DataTableInstance<TData>) => React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "pageSizes",
+            "description": "The choices of the \"Rows per page\" select.",
+            "type": "number[] | undefined",
+            "simplifiedType": "number[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "[10, 20, 30, 40, 50]"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "getRowId",
+            "description": "A stable id per row (keeps the selection when rows move); defaults to the row's index.",
+            "type": "((row: TData, index: number) => string) | undefined",
+            "simplifiedType": "(row: TData, index: number) => string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "initialState",
+            "description": "The state at first: a sort, filters, a page size, hidden columns, picked rows.",
+            "type": "Partial<DataTableState> | undefined",
+            "simplifiedType": "Partial<DataTableState> | undefined",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "state",
+            "description": "Controlled slices of state; pair each with its `on…Change`.",
+            "type": "Partial<DataTableState> | undefined",
+            "simplifiedType": "Partial<DataTableState> | undefined",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onSortingChange",
+            "description": "",
+            "type": "((sorting: SortingState) => void) | undefined",
+            "simplifiedType": "(sorting: SortingState) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onColumnFiltersChange",
+            "description": "",
+            "type": "((columnFilters: ColumnFiltersState) => void) | undefined",
+            "simplifiedType": "(columnFilters: ColumnFiltersState) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onPaginationChange",
+            "description": "",
+            "type": "((pagination: PaginationState) => void) | undefined",
+            "simplifiedType": "(pagination: PaginationState) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onColumnVisibilityChange",
+            "description": "",
+            "type": "((columnVisibility: ColumnVisibilityState) => void) | undefined",
+            "simplifiedType": "(columnVisibility: ColumnVisibilityState) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onRowSelectionChange",
+            "description": "Hears every selection change, keyed by row id; works without `state.rowSelection`.",
+            "type": "((rowSelection: RowSelectionState) => void) | undefined",
+            "simplifiedType": "(rowSelection: RowSelectionState) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "manualSorting",
+            "description": "`data` comes sorted by the server, from `state.sorting`.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "manualFiltering",
+            "description": "`data` comes filtered by the server, from `state.columnFilters`.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "manualPagination",
+            "description": "`data` is one page, from `state.pagination`; give `rowCount` too.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "rowCount",
+            "description": "Every row on the server, for page n of m under `manualPagination`.",
+            "type": "number | undefined",
+            "simplifiedType": "number",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "loading",
+            "description": "Marks the rows busy (`aria-busy`) and mutes them while a page loads.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "Classes for the root, a column of toolbar, table and pagination.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "date-range-picker": {
     "DateRangePickerProps": [
       {

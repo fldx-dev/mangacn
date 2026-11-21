@@ -1,0 +1,75 @@
+---
+title: Data Table
+description: "Stock's data-table guide on TanStack Table v9: sort, filter, hide, select and page rows in an ink-framed table, each change announced."
+item: data-table
+---
+
+<InstallCommand item="data-table" />
+
+<CopyPrompt item="data-table" />
+
+A list of records a reader sorts, filters and pages through: a series' chapters, a chapter's
+pages, a production schedule. It is the parts of shadcn/ui's data-table guide (the column
+header, the toolbar, the view options and the pagination) on [Table](/docs/components/table),
+ported to TanStack Table v9. TanStack is the engine only; every part is drawn by mangacn's
+items. For a short, fixed list with no controls, use [Table](/docs/components/table) alone.
+
+Type your columns with `DataTableFeatures`, the TanStack Table v9 features the table
+registers, and give each column a `meta.label`: the header menu, the View menu and the
+announcements use it.
+
+```tsx
+const helper = createColumnHelper<DataTableFeatures, Chapter>();
+
+const columns = helper.columns([
+  createSelectColumn<Chapter>({ getRowLabel: (chapter) => `Chapter ${chapter.number}` }),
+  helper.accessor("title", {
+    meta: { label: "Title" },
+    header: ({ column }) => <DataTableColumnHeader column={column} />,
+  }),
+]);
+
+<DataTable label="Series chapters" columns={columns} data={chapters} filterColumn="title" />;
+```
+
+Keyboard and screen readers:
+
+- Each header is a button that opens a menu: Ascending, Descending, Hide. The sorted header
+  carries `aria-sort`.
+- Hiding a column moves focus to the table, which is a named region you can scroll with the
+  arrow keys.
+- A polite status line says what each change did: "Sorted by Title, ascending", "4 of 12
+  rows", "Page 2 of 3", "3 selected", "Pages hidden".
+- The select-all box is mixed when only some rows of the page are picked, and each row's box
+  is named by the row ("Select Chapter 12").
+- The page buttons stay focusable when they are disabled, so focus does not drop on the
+  first or last page.
+
+At 360 px the table scrolls sideways inside its frame with the first column pinned, and the
+toolbar and pagination wrap.
+
+## Examples
+
+A series' chapters: sort from any header, filter by title, hide columns, page five at a time.
+
+<DemoFrame item="data-table" demo="default" />
+
+Bulk actions on the selected rows, from the toolbar slot. The selection is controlled with
+`state.rowSelection` and `onRowSelectionChange`, keyed by `getRowId`.
+
+<DemoFrame item="data-table" demo="selection" />
+
+Server-side sorting and paging with `manualSorting`, `manualPagination` and `rowCount`: the
+demo's pretend server answers after 600 ms, and `loading` marks the rows busy meanwhile. The
+first page is part of the server render; the timer starts only from a click.
+
+<DemoFrame item="data-table" demo="server" />
+
+## Props
+
+<PropsTable item="data-table" />
+
+`DataTableColumnHeader` takes the `column` from the header context and an optional `title`.
+`DataTableToolbar`, `DataTableViewOptions` and `DataTablePagination` take the `table`; the
+toolbar also takes `filterColumn`, and the pagination `pageSizes`. `createSelectColumn` takes
+`getRowLabel`.
