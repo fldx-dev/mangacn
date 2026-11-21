@@ -1,0 +1,34 @@
+---
+title: Rich Text Editor
+description: "A tiptap editor in one hand-drawn field: a toolbar of ink toggles, headings and lists, HTML in and out, posts in a form."
+item: rich-text-editor
+---
+
+<InstallCommand item="rich-text-editor" />
+
+<CopyPrompt item="rich-text-editor" />
+
+For text that needs a little structure: an author's note, a chapter summary, a review. It is [tiptap](https://tiptap.dev)'s StarterKit under a toolbar of [Toggle Group](/docs/components/toggle-group) and [Button](/docs/components/button), in one paper frame like [Textarea](/docs/components/textarea). The value is HTML: `onValueChange` hands it over with its text (for a counter), and with `name` a hidden input posts it in a plain form. An empty editor is `""`, so a required check works. For plain text, use Textarea.
+
+The editor mounts after hydration (`immediatelyRender: false`). Until then the server's HTML shows in the same box, so the page does not move. That early render keeps only the elements the editor knows, without attributes, so stored HTML from users cannot run script there; sanitize it on the server all the same before you store it.
+
+The editor knows paragraphs, headings 2 and 3, bold, italic, strikethrough, inline code, bullet and numbered lists, quotes, horizontal rules and line breaks. Stored HTML is reduced to that set on load: links lose their link, underline and other marks are dropped, code blocks, `h1` and `h4` to `h6` become paragraphs, and attributes are removed. The next `onValueChange` emits the reduced HTML. The early render follows the editor's reading of such HTML (other blocks become paragraphs, a `pre` keeps its lines), but HTML not written by the editor may still shift slightly on load in rare cases: a list item outside a list, a `>` inside an attribute, a stray closing tag, the text of a `textarea`.
+
+The editable region is a `role="textbox"` with `aria-multiline`. A `<label>` cannot name it: give the label an `id` and pass it as `aria-labelledby` (a click on a label whose `for` matches `id` still focuses the editor). `aria-describedby` and `aria-invalid` reach the region, so a `FieldDescription` and `FieldError` work as with any input. The toolbar is one tab stop (`role="toolbar"`): the arrow keys move between tools, each toggle has `aria-pressed`, and every tool with a shortcut names it in `aria-keyshortcuts`. Mod is Ctrl, or ⌘ on macOS.
+
+- Mod-B, Mod-I, Mod-Shift-S, Mod-E: bold, italic, strikethrough, code.
+- Mod-Alt-2, Mod-Alt-3: heading 2 and 3. Mod-Shift-8, Mod-Shift-7: bullet and numbered list. Mod-Shift-B: quote.
+- Mod-Z, Mod-Shift-Z: undo and redo.
+- Tab and Shift-Tab leave the editor; they never insert a tab or indent a list.
+
+`RichTextEditorToolbar` and `RichTextEditorContent` are its two parts, for a custom layout: put them inside `RichTextEditor` in any order. `editable={false}` shows stored HTML read-only, without the toolbar (a custom layout's toolbar is turned off).
+
+## Examples
+
+<DemoFrame item="rich-text-editor" demo="default" />
+<DemoFrame item="rich-text-editor" demo="form" />
+<DemoFrame item="rich-text-editor" demo="readonly" />
+
+## Props
+
+<PropsTable item="rich-text-editor" />

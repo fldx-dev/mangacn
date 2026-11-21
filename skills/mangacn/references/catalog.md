@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 155 items in the registry. Each line gives the item's name, what it is, the one
+All 156 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -266,6 +266,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `phone-input`: An international phone field: a searchable country picker and a number formatted as you type, posted as E.164.
   Install: `npx shadcn@latest add @mangacn/phone-input --overwrite`
   Docs: https://www.mangacn.com/docs/components/phone-input (Markdown: https://www.mangacn.com/docs/components/phone-input.md)
+- `rich-text-editor`: A tiptap editor in one hand-drawn field: a toolbar of ink toggles, headings and lists, HTML in and out, posts in a form.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/rich-text-editor --overwrite`
+  Docs: https://www.mangacn.com/docs/components/rich-text-editor (Markdown: https://www.mangacn.com/docs/components/rich-text-editor.md)
 
 ## Display
 
