@@ -143,6 +143,9 @@ describe("DataTable", () => {
     expect(status()).toBe("1 selected");
     expect(all.getAttribute("aria-checked")).toBe("mixed");
     expect(all.hasAttribute("data-indeterminate")).toBe(true);
+    // Mixed hides the check icon only (not the ink frames' drawings) and shows a dash.
+    expect(all.className).toContain("data-indeterminate:[&_.lucide]:hidden");
+    expect(all.className).not.toContain("[&_svg]:hidden");
     expect(
       screen.getByRole("checkbox", { name: "Select page 3" }).closest("tr")?.dataset.state,
     ).toBe("selected");

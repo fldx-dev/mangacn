@@ -484,7 +484,7 @@ function DataTableSelectAll<TData extends RowData>({ table }: { table: DataTable
 
 /** The shipped checkbox draws a check; a mixed box hides it and shows a paper dash instead. */
 const MIXED =
-  "data-indeterminate:bg-primary data-indeterminate:text-primary-foreground data-indeterminate:[&_svg]:hidden data-indeterminate:before:absolute data-indeterminate:before:h-0.5 data-indeterminate:before:w-2 data-indeterminate:before:rounded-full data-indeterminate:before:bg-current";
+  "data-indeterminate:bg-primary data-indeterminate:text-primary-foreground data-indeterminate:[&_.lucide]:hidden data-indeterminate:before:absolute data-indeterminate:before:h-0.5 data-indeterminate:before:w-2 data-indeterminate:before:rounded-full data-indeterminate:before:bg-current";
 
 function DataTableSelectRow<TData extends RowData>({
   row,
