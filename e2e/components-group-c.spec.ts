@@ -7,6 +7,8 @@ import { waitForInk } from "./ready";
 // e2e/demos.spec.ts's.
 
 const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const skipUnless = (item: string) =>
+  test.skip(only !== undefined && !only.includes(item), "E2E_ITEMS leaves it out");
 
 async function openDemo(page: Page, item: string, demo: string) {
   const response = await page.goto(`/demo/${item}/${demo}`);
@@ -219,5 +221,163 @@ test.describe("data-table", () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
       page.viewportSize()?.width ?? 0,
     );
+  });
+});
+
+test.describe("kanban", () => {
+  skipUnless("kanban");
+
+  const live = (page: Page) => page.locator('[id^="DndLiveRegion"]');
+  const body = (page: Page, text: string) =>
+    page.locator('[data-slot="kanban-card-body"]', { hasText: text });
+  const cards = (page: Page, column: string) =>
+    page
+      .locator('[data-slot="kanban-column"]', {
+        has: page.locator('[data-slot="kanban-column-title"]', { hasText: column }),
+      })
+      .locator('[data-slot="kanban-card-body"]');
+
+  test("a keyboard move across columns, announced at each step", async ({ page }) => {
+    await openDemo(page, "kanban", "default");
+    await body(page, "Rooftop chase").focus();
+    await page.keyboard.press("Space");
+    await expect(live(page)).toHaveText(
+      "Picked up Rooftop chase. Column Pencils, position 1 of 2.",
+    );
+    await page.keyboard.press("ArrowRight");
+    await expect(live(page)).toHaveText("Moved to column Inks, position 1 of 3.");
+    await page.keyboard.press("ArrowDown");
+    await expect(live(page)).toHaveText("Moved to column Inks, position 2 of 3.");
+    // The carried card keeps the focus while it changes column.
+    await expect(body(page, "Rooftop chase")).toBeFocused();
+    await page.keyboard.press("Space");
+    await expect(live(page)).toHaveText("Dropped Rooftop chase in column Inks, position 2 of 3.");
+    await expect(cards(page, "Inks")).toHaveText([/Cold open/, /Rooftop chase/, /Dojo flashback/]);
+    await expect(cards(page, "Pencils")).toHaveText([/Night station/]);
+    await expect(body(page, "Rooftop chase")).toBeFocused();
+  });
+
+  test("Escape cancels and puts the card back", async ({ page }) => {
+    await openDemo(page, "kanban", "default");
+    await body(page, "Rooftop chase").focus();
+    await page.keyboard.press("Space");
+    await page.keyboard.press("ArrowRight");
+    await expect(cards(page, "Inks")).toHaveCount(3);
+    await page.keyboard.press("Escape");
+    await expect(live(page)).toHaveText(
+      "Cancelled. Rooftop chase returned to column Pencils, position 1 of 2.",
+    );
+    await expect(cards(page, "Pencils")).toHaveText([/Rooftop chase/, /Night station/]);
+    await expect(cards(page, "Inks")).toHaveCount(2);
+  });
+
+  test("a pointer drag moves a card to another column", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "w1280", "one pointer drag, at desktop width");
+    await openDemo(page, "kanban", "default");
+    const from = await body(page, "Rooftop chase").boundingBox();
+    const to = await cards(page, "Tones").first().boundingBox();
+    if (!from || !to) throw new Error("no boxes");
+    await page.mouse.move(from.x + 20, from.y + 10);
+    await page.mouse.down();
+    // Past the 6 px activation distance, then over the target in steps.
+    await page.mouse.move(from.x + 30, from.y + 10, { steps: 3 });
+    await page.mouse.move(to.x + 20, to.y + 5, { steps: 15 });
+    await expect(page.locator('[data-slot="kanban-overlay"]')).toBeVisible();
+    await expect(page.locator('[data-slot="kanban-card"][data-dragging]')).toHaveCount(1);
+    await page.mouse.up();
+    await expect(cards(page, "Tones")).toHaveText([/Rooftop chase/, /Title spread/]);
+    await expect(cards(page, "Pencils")).toHaveText([/Night station/]);
+  });
+
+  test("dragging near the row's edge scrolls it", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "w768", "a row wider than the screen");
+    await openDemo(page, "kanban", "default");
+    const board = page.locator('[data-slot="kanban-board"]');
+    const edge = await board.boundingBox();
+    const from = await body(page, "Epilogue").boundingBox();
+    if (!edge || !from) throw new Error("no boxes");
+    expect(await board.evaluate((element) => element.scrollLeft)).toBe(0);
+    await page.mouse.move(from.x + 20, from.y + 10);
+    await page.mouse.down();
+    await page.mouse.move(from.x + 30, from.y + 10, { steps: 3 });
+    await page.mouse.move(edge.x + edge.width - 12, from.y + 10, { steps: 10 });
+    await expect.poll(() => board.evaluate((element) => element.scrollLeft)).toBeGreaterThan(100);
+    await page.mouse.up();
+    // The card lands in a column, wherever the row stopped.
+    await expect(page.locator('[data-slot="kanban-card"][data-dragging]')).toHaveCount(0);
+    await expect(cards(page, "Script")).toHaveCount(0);
+    await expect(body(page, "Epilogue")).toHaveCount(1);
+  });
+
+  test("the row snaps column by column, one column wide at 360", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "w360", "the phone layout");
+    await openDemo(page, "kanban", "default");
+    const board = page.locator('[data-slot="kanban-board"]');
+    const layout = await board.evaluate((element) => {
+      const row = getComputedStyle(element);
+      const column = element.querySelector('[data-slot="kanban-column"]') as HTMLElement;
+      const padding = Number.parseFloat(row.paddingLeft) + Number.parseFloat(row.paddingRight);
+      return {
+        snap: row.scrollSnapType,
+        align: getComputedStyle(column).scrollSnapAlign,
+        column: column.getBoundingClientRect().width,
+        inner: element.clientWidth - padding,
+        scrolls: element.scrollWidth > element.clientWidth,
+        page: document.documentElement.scrollWidth <= window.innerWidth,
+      };
+    });
+    expect(layout.snap).toBe("x mandatory");
+    expect(layout.align).toBe("start");
+    expect(Math.abs(layout.column - layout.inner)).toBeLessThan(1);
+    expect(layout.scrolls).toBe(true);
+    expect(layout.page).toBe(true);
+    // A scroll part-way settles on the next column's start.
+    await board.evaluate((element) => element.scrollBy({ left: 200, behavior: "instant" }));
+    await expect
+      .poll(() =>
+        board.evaluate((element) => {
+          const second = element.querySelectorAll('[data-slot="kanban-column"]')[1] as HTMLElement;
+          return Math.round(
+            second.getBoundingClientRect().left - element.getBoundingClientRect().left,
+          );
+        }),
+      )
+      .toBe(8);
+  });
+
+  test.describe("tilt", () => {
+    test.use({ reducedMotion: "no-preference" });
+
+    test("the carried card tilts", async ({ page }, testInfo) => {
+      test.skip(testInfo.project.name !== "w1280", "one width");
+      await openDemo(page, "kanban", "default");
+      await body(page, "Rooftop chase").focus();
+      await page.keyboard.press("Space");
+      const face = page.locator('[data-slot="kanban-overlay-face"]');
+      await expect(face).toBeVisible();
+      expect(await face.evaluate((element) => getComputedStyle(element).rotate)).toBe("2deg");
+      await page.keyboard.press("Escape");
+    });
+  });
+
+  test("reduced motion: the carried card does not tilt", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "w1280", "one width");
+    // The suite runs with prefers-reduced-motion: reduce.
+    await openDemo(page, "kanban", "default");
+    await body(page, "Rooftop chase").focus();
+    await page.keyboard.press("Space");
+    const face = page.locator('[data-slot="kanban-overlay-face"]');
+    await expect(face).toBeVisible();
+    expect(await face.evaluate((element) => getComputedStyle(element).rotate)).toMatch(
+      /^(none|0deg)$/,
+    );
+    // Nor does it glide from place to place: dnd-kit's 250 ms keyboard transition is off.
+    await page.keyboard.press("ArrowRight");
+    const glide = await page.locator('[data-slot="kanban-overlay"]').evaluate((element) => {
+      const style = getComputedStyle(element.parentElement as HTMLElement);
+      return style.transitionProperty === "none" || /^0s(, 0s)*$/.test(style.transitionDuration);
+    });
+    expect(glide).toBe(true);
+    await page.keyboard.press("Escape");
   });
 });

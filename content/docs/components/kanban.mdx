@@ -1,0 +1,53 @@
+---
+title: Kanban
+description: "Columns of cards to drag within and between columns on dnd-kit: a full keyboard move, announced in plain words, and a Move to menu."
+item: kanban
+---
+
+<InstallCommand item="kanban" />
+
+<CopyPrompt item="kanban" />
+
+A board of work moving through stages, a chapter going from script to lettering or a list of to-dos: each column is a `card` with a count `badge`, each card an ink frame you drag within its column or into another. [dnd-kit](https://dndkit.com) (`@dnd-kit/core` and `@dnd-kit/sortable`) is the engine; everything you see is mangacn's, and no library stylesheet is imported. For steps that happen in a fixed order, use [Stepper](/docs/components/stepper).
+
+The board is controlled: pass `value` (the cards of each column, by column id) and `onValueChange`, and draw each card from its item in the column's render function. While a card is dragged the board keeps its own draft, so `onValueChange` is called once, on the drop, and a cancelled drag never calls it. A card dropped where it started does not call it either. The board takes functions (`getItemId`, the column's render function), so compose it in a client component, as the examples do.
+
+The keyboard does everything the pointer does:
+
+- Tab reaches each card; Space (or Enter) picks it up.
+- The Up and Down arrows move it one place in its column; Left and Right move it to the next column, at the same position or the column's end.
+- Space drops it; Escape puts it back where it started.
+- Each step is announced in plain words: "Picked up Rooftop chase. Column Pencils, position 1 of 2", "Moved to column Inks, position 2 of 3", "Dropped…", "Cancelled…". The instructions are tied to every card with `aria-describedby`.
+- Each card's menu lists the other columns under "Move to…", for anyone who does not drag. The card moves to the end of that column and keeps the focus.
+
+With `orderableColumns`, each column gets a grip in its header that moves the column with the same keys (Left and Right); pair it with `onColumnsChange`. A mouse starts a drag after 6 px of movement; on a touch screen a short press picks a card up, so a swipe still scrolls the board. Dragging near the edge scrolls the row.
+
+The dragged card follows the pointer slightly tilted, and a screentone placeholder marks where it will land. Under `prefers-reduced-motion` the card does not tilt and nothing animates.
+
+The columns sit in one row that scrolls sideways and snaps to each column; where the board is under 512 px wide (a phone) a column takes the whole width. The board prerenders: nothing is measured until it has hydrated, and dnd-kit's ids come from `useId`, so the server and client markup match. Column ids and card ids share one space, so keep them distinct.
+
+## Examples
+
+A chapter's production board, from script to lettering. Drag a card, or focus one and press Space.
+
+<DemoFrame item="kanban" demo="default" />
+
+Columns you reorder by their grip, with an "Add card" form in each column's footer.
+
+<DemoFrame item="kanban" demo="columns" />
+
+## Props
+
+<PropsTable item="kanban" />
+
+`KanbanColumn`:
+
+<PropsTable item="kanban" name="KanbanColumnProps" />
+
+`KanbanCard`:
+
+<PropsTable item="kanban" name="KanbanCardProps" />
+
+`KanbanOverlay`:
+
+<PropsTable item="kanban" name="KanbanOverlayProps" />
