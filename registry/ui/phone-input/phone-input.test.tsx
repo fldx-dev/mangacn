@@ -43,6 +43,17 @@ function Controlled() {
   );
 }
 
+/** A controlled parent whose country list the test changes. */
+function Parent({ countries }: { countries: PhoneInputProps["countries"] }) {
+  const [value, setValue] = React.useState("+81312345678");
+  return (
+    <>
+      <Phone countries={countries} value={value} onValueChange={(next) => setValue(next)} />
+      <output data-testid="out">{value}</output>
+    </>
+  );
+}
+
 const openPicker = async () => {
   await act(async () => {
     fireEvent.click(trigger() as HTMLElement);
@@ -252,6 +263,92 @@ describe("PhoneInput", () => {
     });
     expect(trigger()?.textContent).toContain("US");
     expect(phone().value).toBe("(415) 555-2671");
+  });
+
+  it('reads aria-invalid="false" as valid and "true" as invalid', () => {
+    const { rerender } = render(<Phone aria-invalid="false" />);
+    expect(phone().hasAttribute("aria-invalid")).toBe(false);
+    rerender(<Phone aria-invalid="true" />);
+    expect(phone().getAttribute("aria-invalid")).toBe("true");
+    rerender(<Phone aria-invalid={false} />);
+    expect(phone().hasAttribute("aria-invalid")).toBe(false);
+  });
+
+  it("keeps every described-by id, even one that reads like a class", () => {
+    render(<Phone aria-describedby="text-hint text-error" />);
+    const ids = phone().getAttribute("aria-describedby")?.split(" ") ?? [];
+    expect(ids.slice(0, 2)).toEqual(["text-hint", "text-error"]);
+    expect(ids).toHaveLength(3);
+  });
+
+  it("moves to defaultCountry, or the first listed, when countries drops the picked one", async () => {
+    const onValueChange = vi.fn();
+    const { rerender } = render(
+      <form data-testid="form">
+        <Phone name="phone" countries={["JP", "KR"]} onValueChange={onValueChange} />
+      </form>,
+    );
+    await typeInto("0312345678");
+    expect(trigger()?.textContent).toContain("JP");
+    await act(async () => {
+      rerender(
+        <form data-testid="form">
+          <Phone name="phone" countries={["FR", "KR"]} onValueChange={onValueChange} />
+        </form>,
+      );
+    });
+    expect(trigger()?.textContent).toContain("FR");
+    expect(phone().value.replace(/\D/g, "")).toBe("0312345678");
+    const posted = new FormData(screen.getByTestId("form") as HTMLFormElement).get("phone");
+    expect(posted).toBe("+33312345678");
+    expect(onValueChange).toHaveBeenLastCalledWith("+33312345678", {
+      country: "FR",
+      valid: expect.any(Boolean),
+    });
+    await act(async () => {
+      rerender(
+        <form data-testid="form">
+          <Phone
+            name="phone"
+            countries={["US", "KR"]}
+            defaultCountry="KR"
+            onValueChange={onValueChange}
+          />
+        </form>,
+      );
+    });
+    expect(trigger()?.textContent).toContain("KR");
+  });
+
+  it("follows a controlled parent when countries drops the picked country", async () => {
+    const { rerender } = render(<Parent countries={["JP", "KR"]} />);
+    expect(phone().value).toBe("03-1234-5678");
+    await act(async () => {
+      rerender(<Parent countries={["KR"]} />);
+    });
+    expect(trigger()?.textContent).toContain("KR");
+    expect(screen.getByTestId("out").textContent).toBe("+82312345678");
+    expect(phone().value.replace(/\D/g, "")).toBe("0312345678");
+  });
+
+  it("forwards ref to the tel input and keeps its own", async () => {
+    const ref = React.createRef<HTMLInputElement>();
+    render(<Phone ref={ref} defaultCountry="JP" />);
+    expect(ref.current).toBe(phone());
+    cleanup();
+    const calls: (HTMLInputElement | null)[] = [];
+    render(
+      <form data-testid="form" onSubmit={(event) => event.preventDefault()}>
+        <Phone ref={(node) => void calls.push(node)} defaultCountry="JP" />
+      </form>,
+    );
+    expect(calls.at(-1)).toBe(phone());
+    // Its own ref still finds the form: a submit marks the incomplete number invalid.
+    await typeKeys("0312");
+    act(() => {
+      fireEvent.submit(screen.getByTestId("form"));
+    });
+    expect(phone().getAttribute("aria-invalid")).toBe("true");
   });
 
   it("re-exports isValidPhoneNumber", () => {

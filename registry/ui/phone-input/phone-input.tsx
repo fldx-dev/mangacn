@@ -48,7 +48,6 @@ export interface PhoneInputProps
     | "name"
     | "autoComplete"
     | "inputMode"
-    | "ref"
     | "children"
   > {
   /** The number in E.164 (`+81312345678`), controlled; `""` when empty. */
@@ -62,7 +61,11 @@ export interface PhoneInputProps
   onValueChange?: (value: string, details: { country: CountryCode; valid: boolean }) => void;
   /** The country picked at first (ISO 3166-1 alpha-2); otherwise the first of `countries`, or `US`. */
   defaultCountry?: CountryCode;
-  /** Limits the list to these countries, in this order; otherwise all 245, by English name. */
+  /**
+   * Limits the list to these countries, in this order; otherwise all 245, by English name. When
+   * it changes and no longer holds the picked country, the picker moves to `defaultCountry` (if
+   * listed) or the first listed country, keeps the digits typed and reports the new number.
+   */
   countries?: CountryCode[];
   /** The form field name; a hidden input posts the number in E.164. */
   name?: string;
@@ -99,6 +102,13 @@ function matchCountry(country: CountryOption, query: string) {
     country.code.toLowerCase().startsWith(q) ||
     (/^\d+$/.test(dial) && country.dial.startsWith(dial))
   );
+}
+
+/** What `onValueChange` reports. */
+interface Reported {
+  value: string;
+  country: CountryCode;
+  valid: boolean;
 }
 
 interface Typed {
@@ -167,6 +177,7 @@ export function PhoneInput({
   id,
   className,
   disabled,
+  ref,
   onBlur,
   onKeyDown,
   onInvalid,
@@ -192,12 +203,34 @@ export function PhoneInput({
     const initial = value ?? defaultValue ?? "";
     return { ...read(initial, startCountry, allowed), seen: initial };
   });
-  if (value !== undefined && value !== state.seen) {
+  // A number moved to another country because `countries` dropped the picked one, until the
+  // effect below reports it.
+  const [moved, setMoved] = React.useState<Reported | null>(null);
+  if (allowed.has(startCountry) && !allowed.has(state.country)) {
+    const next = { country: startCountry, digits: nationalDigits(state.digits) };
+    const result = analyse(next, allowed);
+    setState({ ...next, seen: result.value });
+    setMoved({ value: result.value, country: next.country, valid: result.valid });
+  } else if (value !== undefined && value !== state.seen && !moved) {
     setState({ ...read(value, state.country, allowed), seen: value });
   }
+  React.useEffect(() => {
+    if (!moved) return;
+    setMoved(null);
+    onValueChange?.(moved.value, { country: moved.country, valid: moved.valid });
+  }, [moved, onValueChange]);
 
   const [touched, setTouched] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  // The item's own ref and the caller's, on the one tel input.
+  const setInput = React.useCallback(
+    (node: HTMLInputElement | null) => {
+      inputRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [ref],
+  );
   const caret = React.useRef<number | null>(null);
   const anchor = React.useRef<HTMLDivElement>(null);
   const descriptionId = React.useId();
@@ -239,7 +272,8 @@ export function PhoneInput({
     return () => form.removeEventListener("submit", onSubmit);
   }, []);
 
-  const invalid = Boolean(ariaInvalid) || (touched && state.digits !== "" && !valid);
+  const invalid =
+    ariaInvalid === true || ariaInvalid === "true" || (touched && state.digits !== "" && !valid);
 
   return (
     <div data-slot="phone-input" className={cn("w-full min-w-0", className)}>
@@ -295,7 +329,7 @@ export function PhoneInput({
           </Combobox>
         </InputGroupAddon>
         <InputGroupInput
-          ref={inputRef}
+          ref={setInput}
           id={id}
           type="tel"
           autoComplete="tel"
@@ -303,7 +337,7 @@ export function PhoneInput({
           value={text}
           disabled={disabled}
           aria-invalid={invalid || undefined}
-          aria-describedby={cn(ariaDescribedBy, descriptionId)}
+          aria-describedby={[ariaDescribedBy, descriptionId].filter(Boolean).join(" ")}
           onChange={(event) =>
             type(event.target.value, event.target.selectionStart ?? event.target.value.length)
           }

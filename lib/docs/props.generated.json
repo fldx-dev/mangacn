@@ -3065,7 +3065,7 @@
           },
           {
             "name": "countries",
-            "description": "Limits the list to these countries, in this order; otherwise all 245, by English name.",
+            "description": "Limits the list to these countries, in this order; otherwise all 245, by English name. When\nit changes and no longer holds the picked country, the picker moves to `defaultCountry` (if\nlisted) or the first listed country, keeps the digits typed and reports the new number.",
             "type": "CountryCode[] | undefined",
             "simplifiedType": "CountryCode[]",
             "tags": [],
