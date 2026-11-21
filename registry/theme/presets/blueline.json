@@ -1,11 +1,11 @@
 {
   "name": "blueline",
   "title": "Blueline",
-  "description": "A pencil draft before inking: cool white paper, blue-black ink and a deep blue spot (non-photo blue darkened to read as text), with cool grey tones; dark is deep blue-black paper, cool pale ink and the pale pencil blue as its spot.",
+  "description": "A pencil draft before inking: cool white paper, blue-black ink and a clear blue spot (non-photo blue darkened only as far as text needs), with cool grey tones; dark is deep blue-black paper, cool pale ink and the pale pencil blue as its spot.",
   "light": {
     "ink": "oklch(0.19 0.035 260)",
     "paper": "oklch(0.975 0.008 230)",
-    "spot": "oklch(0.53 0.1 228)",
+    "spot": "oklch(0.545 0.12 238)",
     "spot-foreground": "oklch(0.975 0.008 230)",
     "tone-1": "oklch(0.93 0.01 240)",
     "tone-2": "oklch(0.815 0.012 245)",

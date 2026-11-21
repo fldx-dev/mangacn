@@ -26,7 +26,7 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `theme-weekly`: A weekly manga magazine: pale green-grey recycled newsprint, green-black ink and a magenta spot, with greys leaning green; dark is deep green-black paper and pale ink.
   Install: `npx shadcn@latest add @mangacn/theme-weekly --yes --overwrite`
   Docs: https://www.mangacn.com/docs/theming#presets
-- `theme-blueline`: A pencil draft before inking: cool white paper, blue-black ink and a deep blue spot (non-photo blue darkened to read as text), with cool grey tones; dark is deep blue-black paper, cool pale ink and the pale pencil blue as its spot.
+- `theme-blueline`: A pencil draft before inking: cool white paper, blue-black ink and a clear blue spot (non-photo blue darkened only as far as text needs), with cool grey tones; dark is deep blue-black paper, cool pale ink and the pale pencil blue as its spot.
   Install: `npx shadcn@latest add @mangacn/theme-blueline --yes --overwrite`
   Docs: https://www.mangacn.com/docs/theming#presets
 - `font-display`: Ultra-bold gothic display face for SFX and headings, exposed as --font-display.
