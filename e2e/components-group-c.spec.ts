@@ -144,3 +144,80 @@ test.describe("phone-input", () => {
     expect(overflow).toBeLessThanOrEqual(0);
   });
 });
+
+test.describe("data-table", () => {
+  test.skip(only !== undefined && !only.includes("data-table"), "E2E_ITEMS leaves it out");
+
+  const status = (page: Page) => page.locator('[data-slot="data-table-status"]');
+  const firstCells = (page: Page) => page.locator("tbody tr td:first-child");
+
+  test("sorts, filters and pages, announcing each", async ({ page }) => {
+    test.skip(test.info().project.name !== "w1280", "desktop flow");
+    await openDemo(page, "data-table", "default");
+
+    await page.getByRole("button", { name: "Pages", exact: true }).click();
+    await page.getByRole("menuitem", { name: "Descending" }).click();
+    await expect(page.getByRole("columnheader", { name: /Pages/ })).toHaveAttribute(
+      "aria-sort",
+      "descending",
+    );
+    await expect(status(page)).toHaveText("Sorted by Pages, descending");
+    await expect(firstCells(page).first()).toHaveText("1");
+
+    await page.getByRole("button", { name: "Next page" }).click();
+    await expect(status(page)).toHaveText("Page 2 of 3");
+    await expect(page.locator('[data-slot="data-table-pagination"]')).toContainText("Page 2 of 3");
+
+    // Typing filters and goes back to the first page; the count is what is said.
+    await page.getByRole("searchbox", { name: "Filter by Title" }).fill("the");
+    await expect(status(page)).toHaveText("4 of 12 rows");
+    await expect(firstCells(page)).toHaveText(["1", "12", "8", "4"]);
+    await expect(page.locator('[data-slot="data-table-pagination"]')).toContainText("Page 1 of 1");
+  });
+
+  test("select-all goes from mixed to all and back, announcing the count", async ({ page }) => {
+    test.skip(test.info().project.name !== "w1280", "desktop flow");
+    await openDemo(page, "data-table", "selection");
+    const all = page.getByRole("checkbox", { name: "Select all rows on this page" });
+
+    await page.getByRole("checkbox", { name: "Select page 2" }).click();
+    await expect(status(page)).toHaveText("1 selected");
+    await expect(all).toHaveAttribute("aria-checked", "mixed");
+
+    await all.click();
+    await expect(all).toHaveAttribute("aria-checked", "true");
+    await expect(status(page)).toHaveText("5 selected");
+    await expect(page.locator('tbody tr[data-state="selected"]')).toHaveCount(5);
+
+    await all.click();
+    await expect(status(page)).toHaveText("No rows selected");
+    await expect(page.locator('tbody tr[data-state="selected"]')).toHaveCount(0);
+  });
+
+  test("at 360 the table scrolls in its frame with the first column pinned", async ({ page }) => {
+    test.skip(test.info().project.name !== "w360", "phone layout");
+    await openDemo(page, "data-table", "default");
+    const region = page.getByRole("region", { name: "Series chapters" });
+    const { scroll, client } = await region.evaluate((element) => ({
+      scroll: element.scrollWidth,
+      client: element.clientWidth,
+    }));
+    expect(scroll).toBeGreaterThan(client);
+
+    const first = page.locator("tbody tr").first().locator("td").nth(0);
+    const second = page.locator("tbody tr").first().locator("td").nth(1);
+    const before = { first: await first.boundingBox(), second: await second.boundingBox() };
+    await region.evaluate((element) => {
+      element.scrollLeft = 120;
+    });
+    await expect.poll(() => region.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+    const after = { first: await first.boundingBox(), second: await second.boundingBox() };
+    expect(Math.abs((after.first?.x ?? 0) - (before.first?.x ?? 0))).toBeLessThan(1);
+    expect(after.second?.x ?? 0).toBeLessThan((before.second?.x ?? 0) - 10);
+
+    // Nothing reaches past the page: the toolbar and the pagination wrap.
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      page.viewportSize()?.width ?? 0,
+    );
+  });
+});

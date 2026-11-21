@@ -2035,6 +2035,33 @@
           "target": "@ui/phone-input.tsx"
         }
       ]
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "Data Table",
+      "description": "Stock's data-table guide on TanStack Table v9: sort, filter, hide, select and page rows in an ink-framed table, each change announced.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "@tanstack/react-table@9.3.1", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/table.json",
+        "https://www.mangacn.com/r/checkbox.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/input.json",
+        "https://www.mangacn.com/r/select.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "data-table/data-table.tsx",
+          "type": "registry:ui",
+          "target": "@ui/data-table.tsx"
+        }
+      ]
     }
   ]
 }

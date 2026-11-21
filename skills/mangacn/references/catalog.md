@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 153 items in the registry. Each line gives the item's name, what it is, the one
+All 154 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -293,6 +293,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `timeline`: Dated events on a hand-drawn line, done, current or upcoming; alternates sides from 768 px. A server component.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/timeline --overwrite`
   Docs: https://www.mangacn.com/docs/components/timeline (Markdown: https://www.mangacn.com/docs/components/timeline.md)
+- `data-table`: Stock's data-table guide on TanStack Table v9: sort, filter, hide, select and page rows in an ink-framed table, each change announced.
+  Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/data-table --overwrite`
+  Docs: https://www.mangacn.com/docs/components/data-table (Markdown: https://www.mangacn.com/docs/components/data-table.md)
 
 ## Layout
 
