@@ -298,6 +298,25 @@ describe("RichTextEditor", () => {
     expect(renderToString(<RichTextEditor aria-label="Note" />)).toContain("<p><br></p>");
   });
 
+  it("collapses whitespace in the static HTML as the editor's parser does", () => {
+    const html = renderToString(
+      <RichTextEditor
+        aria-label="Note"
+        defaultValue={`
+          <h2>Title</h2>
+          <ul>
+            <li><p>One  <strong>two</strong>
+              three</p></li>
+          </ul>
+          <p></p>
+        `}
+      />,
+    );
+    expect(html).toContain(
+      "<h2>Title</h2><ul><li><p>One <strong>two</strong> three</p></li></ul><p><br></p>",
+    );
+  });
+
   it("reads no clock in render: the same markup on two different days", () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date(2026, 0, 1, 9, 0));

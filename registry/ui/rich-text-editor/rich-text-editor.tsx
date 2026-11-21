@@ -73,8 +73,9 @@ const STATIC_TAGS = new Set([
 /**
  * The HTML shown before the editor mounts. Stored HTML often comes from users, and this path
  * reaches the page without tiptap's parser, so it keeps only the schema's elements, with no
- * attributes, and writes every other `<`, `>` and quote as text. An empty value is one empty
- * paragraph, the height of the editor's own empty line.
+ * attributes, and writes every other `<`, `>` and quote as text. Whitespace collapses as the
+ * parser collapses it (none at a block's edges), and an empty block gets the editor's line
+ * break, so the static HTML takes the editor's height.
  */
 function staticHtml(html: string): string {
   const safe = html
@@ -84,8 +85,11 @@ function staticHtml(html: string): string {
       if (!tag) return `&#${match.charCodeAt(0)};`;
       const name = tag.toLowerCase();
       return STATIC_TAGS.has(name) ? `<${close}${name}>` : "";
-    });
-  return safe.trim() === "" ? "<p><br></p>" : safe;
+    })
+    .replace(/\s+/g, " ")
+    .replace(/ ?(<\/?(?:p|h2|h3|ul|ol|li|blockquote|hr)>) ?/g, "$1")
+    .replace(/<(p|h2|h3)><\/\1>/g, "<$1><br></$1>");
+  return safe === "" ? "<p><br></p>" : safe;
 }
 
 /** The editor's HTML, or "" when it holds no text, so a required check sees an empty field. */
