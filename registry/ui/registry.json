@@ -1660,11 +1660,12 @@
       "meta": {
         "since": "0.1.0"
       },
-      "dependencies": ["cn", "class-variance-authority", "lucide-react"],
+      "dependencies": ["cn", "class-variance-authority"],
       "registryDependencies": [
         "https://www.mangacn.com/r/button.json",
         "https://www.mangacn.com/r/use-highlighted-code.json",
-        "https://www.mangacn.com/r/ink-frame.json"
+        "https://www.mangacn.com/r/ink-frame.json",
+        "https://www.mangacn.com/r/copy-button.json"
       ],
       "files": [
         {

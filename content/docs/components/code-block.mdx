@@ -12,6 +12,8 @@ item: code-block
 
 A file, a diff or a command set the way these docs set code: a heavy ink outline, a mono title over a hand-drawn rule, numbered lines and an outlined copy button. Pass it highlighted lines from stock's `use-highlighted-code`, which installs with it: `await highlightCode(code, lang)` from `lib/highlighter.tsx` on the server, or `useHighlightedCode(code, lang)` for code that streams.
 
+`CodeBlockCopyButton` takes stock's props (`value` plus the button's) and renders mangacn's [copy button](/docs/components/copy-button), which installs with it. Unlike stock, it says when a copy fails, its state is `data-state` (`idle`, `copied` or `failed`) where stock sets `data-copied`, and each copy is announced once in a polite status region. A DOM `onCopy` handler is not passed on to the button.
+
 Tokens come out in ink with no extra setup: the highlighter's theme is drawn from your theme's `--foreground` and `--muted-foreground`, so it follows light and dark mode and every preset. Keywords are set bold and comments italic instead of coloured. To use another Shiki theme, load it in `lib/highlighter.tsx` and name it in place of `mangacn-ink`, as stock does with GitHub's.
 
 ## Examples
