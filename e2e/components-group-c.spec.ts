@@ -433,7 +433,7 @@ test.describe("rich-text-editor", () => {
     await page.getByRole("button", { name: "Send to the editor" }).click();
     await expect(page.getByRole("status")).toHaveText(`Sent ${html.length} characters of HTML.`);
 
-    // Tab leaves the list item instead of indenting it.
+    // Tab leaves the editor (the unit test covers a second list item, which Tab could indent).
     await editor.click();
     await page.keyboard.press("Tab");
     await expect(editor).not.toBeFocused();
@@ -457,7 +457,12 @@ test.describe("rich-text-editor", () => {
     page,
   }) => {
     // The docs page prerenders its demos (the stage renders on the client). Its scripts wait
-    // until the server's HTML is measured.
+    // until the server's HTML is measured. Hydrating that HTML logs nothing.
+    const errors: string[] = [];
+    page.on("console", (message) => {
+      if (message.type() === "error") errors.push(message.text());
+    });
+    page.on("pageerror", (error) => errors.push(error.message));
     let release = () => {};
     const scripts = new Promise<void>((resolve) => {
       release = resolve;
@@ -493,5 +498,6 @@ test.describe("rich-text-editor", () => {
       expect(box.height, `demo ${index} height`).toBeCloseTo(before[index].height, 0);
       expect(box.width, `demo ${index} width`).toBeCloseTo(before[index].width, 0);
     }
+    expect(errors).toEqual([]);
   });
 });
