@@ -12,7 +12,7 @@ import { paintInkFillsAsCss } from "./ink-fills";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 import { comparePixels, shoot } from "./shoot";
 
-// Page blocks on their own (`/view/<block>`, app/view/[block]) at each project's width, light
+// Page blocks on their own (`/view/<block>`, app/view) at each project's width, light
 // and dark, with the waits and axe pass of the demo stages (e2e/demos.spec.ts); then the Blocks
 // index and a page block's framed preview. Baselines are Linux-only (CI); elsewhere the pages
 // are loaded and checked without pixels.

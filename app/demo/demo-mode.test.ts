@@ -5,7 +5,7 @@ import { PRESET_ATTRIBUTE, THEME_PRESETS } from "@/lib/registry/theme-presets";
 
 // DemoMode spells the preset attribute out instead of importing it (see its comment); this keeps
 // the two in step, and every preset name within the pattern it accepts from `?theme=`.
-const source = readFileSync(path.resolve("app/demo/[item]/[demo]/demo-mode.tsx"), "utf8");
+const source = readFileSync(path.resolve("app/demo/demo-mode.tsx"), "utf8");
 
 describe("DemoMode's theme preset", () => {
   it("sets the attribute the preset stylesheet scopes to", () => {

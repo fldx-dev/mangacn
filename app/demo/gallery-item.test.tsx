@@ -1,7 +1,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { OVERLAY_ITEMS } from "@/components/docs/demo-frame";
-import { listDemos } from "@/lib/registry/demos";
+import { getDemoLoader, listDemos } from "@/lib/registry/demos";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { GalleryItem } from "./gallery-item";
 
@@ -15,6 +15,18 @@ vi.setConfig({ testTimeout: 120_000 });
 
 const demosOf = (item: string) => listDemos().filter((entry) => entry.item === item);
 
+/** The item's demo components by name, as its generated route imports them. */
+async function componentsOf(item: string) {
+  const entries = await Promise.all(
+    demosOf(item).map(async ({ demo }) => {
+      const mod = await getDemoLoader(item, demo)?.();
+      if (!mod) throw new Error(`no demo ${item}/${demo}`);
+      return [demo, mod.default] as const;
+    }),
+  );
+  return Object.fromEntries(entries);
+}
+
 describe("GalleryItem", () => {
   it("frames every demo of each of the docs' overlay items in its stage", async () => {
     // The list grows with every item whose demos open on load; a count here broke on the next merge.
@@ -22,7 +34,7 @@ describe("GalleryItem", () => {
     for (const item of OVERLAY_ITEMS) {
       const demos = demosOf(item);
       expect(demos.length, item).toBeGreaterThan(0);
-      render(await GalleryItem({ item }));
+      render(GalleryItem({ item, demos: await componentsOf(item) }));
       const frames = [...document.querySelectorAll("iframe")];
       expect(
         frames.map((frame) => frame.getAttribute("src")),
@@ -37,7 +49,7 @@ describe("GalleryItem", () => {
 
   it("renders any other item's demos inline, with no frame", async () => {
     stubResizeObserver();
-    render(await GalleryItem({ item: "button" }));
+    render(GalleryItem({ item: "button", demos: await componentsOf("button") }));
     expect(document.querySelectorAll("iframe")).toHaveLength(0);
     expect(screen.getByRole("heading", { level: 1, name: "button" })).toBeTruthy();
     const sections = document.querySelectorAll("section");

@@ -1,6 +1,5 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { useLayoutEffect } from "react";
 
 /**
@@ -22,11 +21,10 @@ const PRESET_NAME = /^[a-z][a-z0-9-]*$/;
  * the stage stays fully prerendered; `data-demo-ready` tells Playwright all have been applied.
  *
  * Also renders the stage's accessible name. It lives here, not beside the demo, because a
- * sibling there would shift the demo's `useId` values, which seed every rough.js drawing.
+ * sibling there would shift the demo's `useId` values, which seed every rough.js drawing. The
+ * routes are static (MANGA-21), so the page passes the item and demo; the gallery has no demo.
  */
-export function DemoMode() {
-  const { item, demo } = useParams<{ item: string; demo: string }>();
-
+export function DemoMode({ item, demo }: { item: string; demo?: string }) {
   useLayoutEffect(() => {
     const root = document.documentElement;
     const search = new URLSearchParams(window.location.search);

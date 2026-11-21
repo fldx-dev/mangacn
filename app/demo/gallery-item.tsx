@@ -1,16 +1,24 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { ComponentType } from "react";
 import { OVERLAY_ITEMS } from "@/components/docs/demo-frame";
 import { StageFrame } from "@/components/docs/stage-frame";
 import { loadRegistry } from "@/lib/registry";
-import { getDemoLoader, listDemos } from "@/lib/registry/demos";
+import { listDemos } from "@/lib/registry/demo-list";
 
 // Overlay items render each demo in an iframe of its stage, so two open sheets or dialogs never
 // stack on one page: the docs' list and the docs' frame, which follows `.dark` on <html>
 // (DemoMode sets it on this page).
 
 /** One item's gallery: its header and every demo, an overlay item's each in a stage frame. */
-export async function GalleryItem({ item }: { item: string }) {
+export function GalleryItem({
+  item,
+  demos: components,
+}: {
+  item: string;
+  /** The item's demos by name (its route imports them). */
+  demos: Record<string, ComponentType>;
+}) {
   const demos = listDemos().filter((d) => d.item === item);
   if (demos.length === 0) notFound();
 
@@ -22,12 +30,10 @@ export async function GalleryItem({ item }: { item: string }) {
   const previous = items[index - 1]?.name;
   const next = items[index + 1]?.name;
 
-  const rendered = await Promise.all(
-    demos.map(async ({ demo }) => {
-      const load = getDemoLoader(item, demo);
-      return { demo, Demo: load ? (await load()).default : null };
-    }),
-  );
+  const rendered = demos.map(({ demo }) => ({
+    demo,
+    Demo: Object.hasOwn(components, demo) ? components[demo] : null,
+  }));
 
   return (
     <>

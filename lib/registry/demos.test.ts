@@ -7,7 +7,9 @@ import {
   collectPages,
   DEMO_MAP_HEADER,
   DEMO_MAP_PATH,
+  renderDemoList,
   renderDemoMap,
+  renderDemoRoutes,
 } from "./demo-map";
 import { type LoadedRegistry, loadRegistry } from "./index";
 
@@ -121,6 +123,74 @@ describe("renderDemoMap", () => {
     );
     expect(source).toContain('  { block: "login", path: "registry/blocks/login/page.tsx" },');
     expect(source).toContain('  "login": () => import("@/registry/blocks/login/page"),');
+  });
+});
+
+describe("renderDemoList", () => {
+  it("renders the demos and page blocks as data, with no import", () => {
+    const source = renderDemoList(
+      [{ item: "a", demo: "default", path: "registry/ui/a/demos/default.tsx" }],
+      [{ block: "login", path: "registry/blocks/login/page.tsx" }],
+    );
+    expect(
+      source.startsWith(`${DEMO_MAP_HEADER}
+`),
+    ).toBe(true);
+    expect(source).toContain(
+      '  { item: "a", demo: "default", path: "registry/ui/a/demos/default.tsx" },',
+    );
+    expect(source).toContain('  { block: "login", path: "registry/blocks/login/page.tsx" },');
+    expect(source).not.toContain("import");
+  });
+});
+
+describe("renderDemoRoutes", () => {
+  const routes = renderDemoRoutes(
+    [
+      { item: "a", demo: "default", path: "registry/ui/a/demos/default.tsx" },
+      { item: "a", demo: "sizes", path: "registry/ui/a/demos/sizes.tsx" },
+    ],
+    [{ block: "login", path: "registry/blocks/login/page.tsx" }],
+  );
+  const byPath = new Map(routes.map((route) => [route.path, route.source]));
+
+  it("writes a view per page block, a gallery per item and a stage per demo", () => {
+    expect([...byPath.keys()]).toEqual([
+      "app/view/login/page.tsx",
+      "app/demo/a/page.tsx",
+      "app/demo/a/default/page.tsx",
+      "app/demo/a/sizes/page.tsx",
+      "app/demo/theme/specimen/page.tsx",
+    ]);
+  });
+
+  it("imports each route's own module statically, never the demo map", () => {
+    expect(byPath.get("app/view/login/page.tsx")).toContain(
+      'import Page from "@/registry/blocks/login/page";',
+    );
+    expect(byPath.get("app/demo/a/sizes/page.tsx")).toContain(
+      'import Demo from "@/registry/ui/a/demos/sizes";',
+    );
+    expect(byPath.get("app/demo/a/sizes/page.tsx")).toContain(
+      '<DemoStage item="a" demo="sizes" component={Demo} />',
+    );
+    expect(byPath.get("app/demo/a/page.tsx")).toContain('  "sizes": Demo1,');
+    for (const source of byPath.values()) {
+      expect(
+        source.startsWith(`${DEMO_MAP_HEADER}
+`),
+      ).toBe(true);
+      expect(source).not.toContain("import(");
+      expect(source).not.toContain("lib/registry/demos");
+    }
+  });
+
+  it("refuses an item that collides with an extra stage", () => {
+    expect(() =>
+      renderDemoRoutes([
+        { item: "theme", demo: "default", path: "registry/ui/theme/demos/default.tsx" },
+      ]),
+    ).toThrow(/theme/);
   });
 });
 
