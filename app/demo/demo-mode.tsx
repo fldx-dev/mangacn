@@ -25,7 +25,6 @@ const PRESET_NAME = /^[a-z][a-z0-9-]*$/;
  * routes are static (MANGA-21), so the page passes the item and demo; the gallery has no demo.
  */
 export function DemoMode({ item, demo }: { item: string; demo?: string }) {
-
   useLayoutEffect(() => {
     const root = document.documentElement;
     const search = new URLSearchParams(window.location.search);

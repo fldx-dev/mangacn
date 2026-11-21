@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { ComponentType } from "react";
 import { notFound } from "next/navigation";
+import type { ComponentType } from "react";
 import { OVERLAY_ITEMS } from "@/components/docs/demo-frame";
 import { StageFrame } from "@/components/docs/stage-frame";
 import { loadRegistry } from "@/lib/registry";

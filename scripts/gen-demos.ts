@@ -14,10 +14,10 @@ import {
   collectPages,
   DEMO_LIST_PATH,
   DEMO_MAP_PATH,
+  ROUTE_ROOTS,
   renderDemoList,
   renderDemoMap,
   renderDemoRoutes,
-  ROUTE_ROOTS,
 } from "../lib/registry/demo-map";
 import { loadRegistry } from "../lib/registry/index";
 

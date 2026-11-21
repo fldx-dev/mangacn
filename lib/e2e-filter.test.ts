@@ -154,7 +154,7 @@ describe("selectE2e", () => {
       "e2e/playwright.config.ts",
       "e2e/ready.ts",
       "app/globals.css",
-      "app/demo/[item]/[demo]/page.tsx",
+      "app/demo/demo-stage.tsx",
       "registry/theme/ink-frame/ink-frame.tsx",
       "lib/registry/demos.ts",
       "lib/e2e-filter.ts",
@@ -304,10 +304,10 @@ describe("selectE2e for page blocks", () => {
   });
 
   it("takes every page block and the site for the view route and the blocks spec", () => {
-    expect(pick(["app/view/[block]/page.tsx"])).toBe("login-01,site");
+    expect(pick(["app/view/block-view.tsx"])).toBe("login-01,site");
     expect(pick(["e2e/blocks.spec.ts"])).toBe("login-01,site");
-    expect(selectE2e(["app/view/[block]/view-mode.tsx"], sources()).reasons).toEqual([
-      "app/view/[block]/view-mode.tsx → page blocks login-01 + site",
+    expect(selectE2e(["app/view/view-mode.tsx"], sources()).reasons).toEqual([
+      "app/view/view-mode.tsx → page blocks login-01 + site",
     ]);
   });
 
