@@ -25,8 +25,16 @@ The editable region is a `role="textbox"` with `aria-multiline`. A `<label>` can
 
 ## Examples
 
+An author's note, started from stored HTML with `defaultValue`.
+
 <DemoFrame item="rich-text-editor" demo="default" />
+
+A required field in a form: the label names the editor through `aria-labelledby`, the counter reads the text `onValueChange` hands over, and an empty editor fails the check with a FieldError.
+
 <DemoFrame item="rich-text-editor" demo="form" />
+
+Stored HTML shown read-only with `editable={false}`, without the toolbar.
+
 <DemoFrame item="rich-text-editor" demo="readonly" />
 
 ## Props
