@@ -2015,6 +2015,31 @@
       ]
     },
     {
+      "name": "kanban",
+      "type": "registry:ui",
+      "title": "Kanban",
+      "description": "Columns of cards to drag within and between columns on dnd-kit: a full keyboard move, announced in plain words, and a Move to menu.",
+      "categories": ["display"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["@dnd-kit/core@6.3.1", "@dnd-kit/sortable@10.0.0", "cn", "lucide-react"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/card.json",
+        "https://www.mangacn.com/r/badge.json",
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/dropdown-menu.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
+      "files": [
+        {
+          "path": "kanban/kanban.tsx",
+          "type": "registry:ui",
+          "target": "@ui/kanban.tsx"
+        }
+      ]
+    },
+    {
       "name": "phone-input",
       "type": "registry:ui",
       "title": "Phone Input",

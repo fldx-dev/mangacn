@@ -2444,6 +2444,171 @@
       }
     ]
   },
+  "kanban": {
+    "KanbanCardProps": [
+      {
+        "id": "kanban.tsx-KanbanCardProps",
+        "name": "KanbanCardProps",
+        "entries": [
+          {
+            "name": "id",
+            "description": "The card's id: `getItemId` of its item.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "KanbanColumnProps": [
+      {
+        "id": "kanban.tsx-KanbanColumnProps",
+        "name": "KanbanColumnProps",
+        "entries": [
+          {
+            "name": "id",
+            "description": "The column's id, one of the board's `columns`.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "Under the cards, on the column's footer rule: an \"Add card\" form, a link.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "children",
+            "description": "Draws one card, a `KanbanCard`, from its item. The column calls it for each of its items\nas the drag leaves them, so a card picked up from another column shows here at once.",
+            "type": "(item: T) => React.ReactNode",
+            "simplifiedType": "(item: T) => React.ReactNode",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "KanbanOverlayProps": [
+      {
+        "id": "kanban.tsx-KanbanOverlayProps",
+        "name": "KanbanOverlayProps",
+        "entries": [
+          {
+            "name": "children",
+            "description": "Draws the card under the pointer from its item; defaults to the card's label.",
+            "type": "((item: T) => React.ReactNode) | undefined",
+            "simplifiedType": "(item: T) => React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "description": "",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "KanbanProps": [
+      {
+        "id": "kanban.tsx-KanbanProps",
+        "name": "KanbanProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The cards of each column, by column id (controlled). Pair with `onValueChange`.",
+            "type": "Record<string, T[]>",
+            "simplifiedType": "Record<string, T[]>",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called with the new board when a card is dropped somewhere new or moved from its menu.",
+            "type": "((value: Record<string, T[]>) => void) | undefined",
+            "simplifiedType": "(value: Record<string, T[]>) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "columns",
+            "description": "The columns, in order.",
+            "type": "KanbanColumnDef[]",
+            "simplifiedType": "KanbanColumnDef[]",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "onColumnsChange",
+            "description": "Called with the new column order when a column is dropped somewhere new.",
+            "type": "((columns: KanbanColumnDef[]) => void) | undefined",
+            "simplifiedType": "(columns: KanbanColumnDef[]) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "getItemId",
+            "description": "A card's unique id, the `id` its `KanbanCard` takes.",
+            "type": "(item: T) => string",
+            "simplifiedType": "(item: T) => string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "getItemLabel",
+            "description": "The words a screen reader hears for a card (\"Inks: chapter 12\"). Defaults to its id.",
+            "type": "((item: T) => string) | undefined",
+            "simplifiedType": "(item: T) => string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "orderableColumns",
+            "description": "Columns get a drag handle and can be reordered; pair with `onColumnsChange`.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "false"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "children",
+            "description": "A `KanbanColumn` for each of `columns`, then a `KanbanOverlay`.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "manga-frame": {
     "MangaFrameProps": [
       {
