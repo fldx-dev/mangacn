@@ -128,7 +128,7 @@ export function VolumeGrid({
                     />
                   </AspectRatio>
                   {volume.isNew && (
-                    <Stamp size="sm" rotate={10} lang={lang} className="absolute -top-3 -right-3">
+                    <Stamp size="md" rotate={10} lang={lang} className="absolute -top-3 -right-2">
                       {numerals === "ja" ? "最新" : "NEW"}
                     </Stamp>
                   )}
