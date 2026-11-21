@@ -8,7 +8,7 @@ item: calendar
 
 <CopyPrompt item="calendar" />
 
-A month to pick a date or a range from, for a release date, a reading schedule or a convention's days: an outlined paper card with the caption in the display face, today underlined and the picked days filled in ink. Put it in a `popover` behind a `button` for a date field; inside a `card` or `popover` it drops its own outline and uses theirs.
+A month to pick a date or a range from, for a release date, a reading schedule or a convention's days: an outlined paper card with the caption in the display face, today underlined and the picked days filled in ink. Unlike stock, whose ghost month arrows draw no border, the arrows are outlined by the pen, filled as `button` fills `buttonVariant`. Put it in a `popover` behind a `button` for a date field; inside a `card` or `popover` it drops its own outline and uses theirs.
 
 ## Examples
 
@@ -16,7 +16,7 @@ One date picked; today, the 12th, is underlined.
 
 <DemoFrame item="calendar" demo="default" />
 
-`captionLayout="dropdown"` swaps the caption for a month and a year select, boxed in ink.
+`captionLayout="dropdown"` swaps the caption for a month and a year select, each outlined by the pen as `native-select` is.
 
 <DemoFrame item="calendar" demo="dropdowns" />
 
