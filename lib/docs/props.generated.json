@@ -1365,6 +1365,20 @@
             "deprecated": false
           },
           {
+            "name": "autoResetPageIndex",
+            "description": "Goes back to the first page when the data or the filter changes; `false` keeps the page.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true (false with `manualPagination`)"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
             "name": "loading",
             "description": "Marks the rows busy (`aria-busy`) and mutes them while a page loads.",
             "type": "boolean | undefined",
