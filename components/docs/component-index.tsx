@@ -28,6 +28,9 @@ const TALL_STAGES: Readonly<Record<string, string>> = {
   questionnaire: "30rem",
   // Three dated events, wrapping to 385 px in the narrow two-column cards at 768.
   timeline: "28rem",
+  // Toolbar, five rows and the pagination, with the frames' overhang: about 490 px where the
+  // pagination wraps in the narrow two-column cards at 768.
+  "data-table": "32rem",
 };
 
 /**
