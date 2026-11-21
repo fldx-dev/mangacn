@@ -2013,6 +2013,28 @@
           "target": "@ui/timeline.tsx"
         }
       ]
+    },
+    {
+      "name": "phone-input",
+      "type": "registry:ui",
+      "title": "Phone Input",
+      "description": "An international phone field: a searchable country picker and a number formatted as you type, posted as E.164.",
+      "categories": ["form"],
+      "meta": {
+        "since": "0.1.0"
+      },
+      "dependencies": ["cn", "libphonenumber-js@1.13.17"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/combobox.json",
+        "https://www.mangacn.com/r/input-group.json"
+      ],
+      "files": [
+        {
+          "path": "phone-input/phone-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/phone-input.tsx"
+        }
+      ]
     }
   ]
 }

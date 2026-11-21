@@ -3021,6 +3021,84 @@
       }
     ]
   },
+  "phone-input": {
+    "PhoneInputProps": [
+      {
+        "id": "phone-input.tsx-PhoneInputProps",
+        "name": "PhoneInputProps",
+        "entries": [
+          {
+            "name": "value",
+            "description": "The number in E.164 (`+81312345678`), controlled; `\"\"` when empty.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultValue",
+            "description": "The number it starts with in E.164, uncontrolled.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onValueChange",
+            "description": "Called on every change with the number in E.164 (`\"\"` when empty, partial while typing), the\npicked country and whether the number is a valid one for it.",
+            "type": "((value: string, details: { country: CountryCode; valid: boolean; }) => void) | undefined",
+            "simplifiedType": "(value: string, details: { country: CountryCode; valid: boolean; }) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "defaultCountry",
+            "description": "The country picked at first (ISO 3166-1 alpha-2); otherwise the first of `countries`, or `US`.",
+            "type": "CountryCode | undefined",
+            "simplifiedType": "CountryCode | undefined",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "countries",
+            "description": "Limits the list to these countries, in this order; otherwise all 245, by English name.",
+            "type": "CountryCode[] | undefined",
+            "simplifiedType": "CountryCode[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "name",
+            "description": "The form field name; a hidden input posts the number in E.164.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "labels",
+            "description": "The picker's words: `country` names the trigger, `search` the search box, `empty` shows\nwhen no country matches.",
+            "type": "Partial<{ country: string; search: string; empty: string; }> | undefined",
+            "simplifiedType": "Partial<{ country: string; search: string; empty: string; }> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "{ country: \"Country\", search: \"Search countries\", empty: \"No country found.\" }"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "power-gauge": {
     "PowerGaugeProps": [
       {

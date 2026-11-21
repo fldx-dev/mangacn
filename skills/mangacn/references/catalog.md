@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 152 items in the registry. Each line gives the item's name, what it is, the one
+All 153 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -263,6 +263,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `file-upload`: A drop zone with a real file button, rejections with reasons and rows with progress; your app sends the files.
   Install: `npx shadcn@latest add @mangacn/ink-frame @mangacn/file-upload --overwrite`
   Docs: https://www.mangacn.com/docs/components/file-upload (Markdown: https://www.mangacn.com/docs/components/file-upload.md)
+- `phone-input`: An international phone field: a searchable country picker and a number formatted as you type, posted as E.164.
+  Install: `npx shadcn@latest add @mangacn/phone-input --overwrite`
+  Docs: https://www.mangacn.com/docs/components/phone-input (Markdown: https://www.mangacn.com/docs/components/phone-input.md)
 
 ## Display
 
