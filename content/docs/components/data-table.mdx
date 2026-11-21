@@ -39,7 +39,9 @@ Keyboard and screen readers:
 - Hiding a column moves focus to the table, which is a named region you can scroll with the
   arrow keys.
 - A polite status line says what each change did: "Sorted by Title, ascending", "4 of 12
-  rows", "Page 2 of 3", "3 selected", "Pages hidden".
+  rows", "Page 2 of 3", "3 selected", "Pages hidden". The pieces announce only inside
+  `DataTable`, which holds that line; a change made by your own `table.*` call is not
+  announced.
 - The select-all box is mixed when only some rows of the page are picked, and each row's box
   is named by the row ("Select Chapter 12").
 - The page buttons stay focusable when they are disabled, so focus does not drop on the
@@ -55,7 +57,8 @@ A series' chapters: sort from any header, filter by title, hide columns, page fi
 <DemoFrame item="data-table" demo="default" />
 
 Bulk actions on the selected rows, from the toolbar slot. The selection is controlled with
-`state.rowSelection` and `onRowSelectionChange`, keyed by `getRowId`.
+`state.rowSelection` and `onRowSelectionChange`, keyed by `getRowId`, and
+`autoResetPageIndex={false}` keeps the page when Mark done changes the data.
 
 <DemoFrame item="data-table" demo="selection" />
 

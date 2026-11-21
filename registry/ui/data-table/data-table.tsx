@@ -328,6 +328,8 @@ export function DataTableToolbar<TData extends RowData>({
             value={(column.getFilterValue() as string | undefined) ?? ""}
             onChange={(event) => {
               column.setFilterValue(event.target.value);
+              // A new filter starts from the first page, even with autoResetPageIndex off.
+              table.setPageIndex(0);
               announce({ kind: "filter" });
             }}
           />
@@ -339,6 +341,7 @@ export function DataTableToolbar<TData extends RowData>({
           size="sm"
           onClick={() => {
             table.resetColumnFilters();
+            table.setPageIndex(0);
             announce({ kind: "filter" });
           }}
         >
@@ -393,7 +396,7 @@ export function DataTablePagination<TData extends RowData>({
     >
       <p className="text-muted-foreground">
         {selectable
-          ? `${table.getSelectedRowIds().length} of ${rowCount} selected`
+          ? `${selectedCount(table)} of ${serverOwned(table) ? rowCount : table.getFilteredRowModel().rows.length} selected`
           : `${rowCount} ${rowCount === 1 ? "row" : "rows"}`}
       </p>
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
@@ -536,12 +539,32 @@ export function createSelectColumn<TData extends RowData>({
   };
 }
 
+/** Whether the server owns the rows' filtering or paging, so only the ids are known. */
+function serverOwned<TData extends RowData>(table: DataTableInstance<TData>): boolean {
+  return Boolean(table.options.manualPagination || table.options.manualFiltering);
+}
+
+/**
+ * The picked rows the reader can reach: those the filter shows (stock's count), or every picked
+ * id when the server owns the filter or the pages.
+ */
+function selectedCount<TData extends RowData>(table: DataTableInstance<TData>): number {
+  return serverOwned(table)
+    ? table.getSelectedRowIds().length
+    : table.getFilteredSelectedRowModel().rows.length;
+}
+
 /** One slice of state, held here unless `controlled` holds it; `onChange` hears every change. */
 function useSlice<T>(controlled: T | undefined, initial: T, onChange?: (value: T) => void) {
   const [own, setOwn] = React.useState(initial);
   const value = controlled ?? own;
+  // Two updates before a re-render (setPageSize then setPageIndex) each build on the one before.
+  const latest = React.useRef(value);
+  latest.current = value;
   const update = (updater: Updater<T>) => {
-    const next = functionalUpdate(updater, value);
+    const next = functionalUpdate(updater, latest.current);
+    if (Object.is(next, latest.current)) return;
+    latest.current = next;
     if (controlled === undefined) setOwn(next);
     onChange?.(next);
   };
@@ -593,6 +616,11 @@ export interface DataTableProps<TData extends RowData> {
   manualPagination?: boolean;
   /** Every row on the server, for page n of m under `manualPagination`. */
   rowCount?: number;
+  /**
+   * Goes back to the first page when the data or the filter changes; `false` keeps the page.
+   * @default true (false with `manualPagination`)
+   */
+  autoResetPageIndex?: boolean;
   /** Marks the rows busy (`aria-busy`) and mutes them while a page loads. */
   loading?: boolean;
   /** Classes for the root, a column of toolbar, table and pagination. */
@@ -602,7 +630,9 @@ export interface DataTableProps<TData extends RowData> {
 /**
  * A table over TanStack Table v9 with sorting, a column filter, column visibility, row
  * selection and pagination, in an ink frame. The first column stays pinned while the rest
- * scroll sideways.
+ * scroll sideways. The pieces (`DataTableColumnHeader`, `DataTableToolbar`,
+ * `DataTablePagination`, `createSelectColumn`) announce their changes only inside `DataTable`,
+ * which holds the status line; used elsewhere, or through `table.*` calls, they stay silent.
  */
 export function DataTable<TData extends RowData>({
   columns,
@@ -624,6 +654,7 @@ export function DataTable<TData extends RowData>({
   manualFiltering,
   manualPagination,
   rowCount,
+  autoResetPageIndex,
   loading,
   className,
 }: DataTableProps<TData>) {
@@ -667,6 +698,7 @@ export function DataTable<TData extends RowData>({
     manualFiltering,
     manualPagination,
     rowCount,
+    autoResetPageIndex,
   });
 
   // Nothing is said on load; each change through the pieces says its result.
@@ -763,7 +795,6 @@ function statusText<TData extends RowData>(
   if (!announcement) return "";
   const sorting = table.atoms.sorting.get();
   const pagination = table.atoms.pagination.get();
-  const rowSelection = table.atoms.rowSelection.get();
   const page = `page ${pagination.pageIndex + 1} of ${Math.max(table.getPageCount(), 1)}`;
   switch (announcement.kind) {
     case "sort": {
@@ -782,7 +813,7 @@ function statusText<TData extends RowData>(
     case "page-size":
       return `${pagination.pageSize} rows per page, ${page}`;
     case "select": {
-      const count = Object.values(rowSelection).filter(Boolean).length;
+      const count = selectedCount(table);
       return count === 0 ? "No rows selected" : `${count} selected`;
     }
     case "hide":

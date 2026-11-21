@@ -75,6 +75,7 @@ export default function DataTableSelectionDemo() {
         pageSizes={[5, 10]}
         state={{ rowSelection: selection }}
         onRowSelectionChange={setSelection}
+        autoResetPageIndex={false}
         toolbar={() => (
           <Button size="sm" focusableWhenDisabled disabled={picked.length === 0} onClick={markDone}>
             Mark done{picked.length > 0 ? ` (${picked.length})` : ""}

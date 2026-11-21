@@ -173,6 +173,112 @@ describe("DataTable", () => {
     expect(screen.getByText("0 of 8 selected")).toBeTruthy();
   });
 
+  it("counts the selected rows the filter shows, of the rows it shows", async () => {
+    render(<SelectionDemo />);
+    await click("Next page");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select page 6" }));
+    await act(async () => {});
+    expect(screen.getByText("1 of 8 selected")).toBeTruthy();
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "seat" } });
+    await act(async () => {});
+    // Page 6 is picked but filtered out; only "Window seat, rain" shows, on page 1 again.
+    expect(screen.getByText("Page 1 of 1")).toBeTruthy();
+    expect(screen.getByText("0 of 1 selected")).toBeTruthy();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select page 4" }));
+    await act(async () => {});
+    expect(screen.getByText("1 of 1 selected")).toBeTruthy();
+    expect(status()).toBe("1 selected");
+  });
+
+  it("keeps the selection through a sort and a filter", async () => {
+    render(<SelectionDemo />);
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select page 4" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select page 5" }));
+    await act(async () => {});
+    await pick("Scene", "Descending");
+    expect(
+      screen.getByRole("checkbox", { name: "Select page 4" }).getAttribute("aria-checked"),
+    ).toBe("true");
+    expect(
+      screen.getByRole("checkbox", { name: "Select page 5" }).getAttribute("aria-checked"),
+    ).toBe("true");
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "the" } });
+    await act(async () => {});
+    expect(
+      screen.getByRole("checkbox", { name: "Select page 5" }).getAttribute("aria-checked"),
+    ).toBe("true");
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "" } });
+    await act(async () => {});
+    expect(screen.getByText("2 of 8 selected")).toBeTruthy();
+  });
+
+  it("stays on its page when Mark done changes the data (autoResetPageIndex off)", async () => {
+    render(<SelectionDemo />);
+    await click("Next page");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select page 7" }));
+    await act(async () => {});
+    await click("Mark done (1)");
+    await act(async () => {});
+    expect(screen.getByText("Page 2 of 2")).toBeTruthy();
+    expect(firstCells().length).toBe(3);
+  });
+
+  it("applies two updates of one slice made before a re-render", async () => {
+    const onPaginationChange = vi.fn();
+    const helper = createColumnHelper<DataTableFeatures, { id: string; name: string }>();
+    const columns = helper.columns([
+      createSelectColumn<{ id: string; name: string }>({ getRowLabel: (row) => row.name }),
+      helper.accessor("name", { meta: { label: "Name" } }),
+    ]);
+    const data = Array.from({ length: 30 }, (_, index) => ({
+      id: `r${index}`,
+      name: `Row ${index}`,
+    }));
+    render(
+      <DataTable
+        columns={columns}
+        data={data}
+        getRowId={(row) => row.id}
+        filterColumn="name"
+        onPaginationChange={onPaginationChange}
+        toolbar={(table) => (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                table.setPageSize(20);
+                table.setPageIndex(0);
+              }}
+            >
+              Twenty
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                table.getRow("r0").toggleSelected(true);
+                table.getRow("r1").toggleSelected(true);
+              }}
+            >
+              Two
+            </button>
+          </>
+        )}
+      />,
+    );
+    await click("Twenty");
+    expect(bodyRows()).toHaveLength(20);
+    await click("Two");
+    expect(screen.getByText("2 of 30 selected")).toBeTruthy();
+
+    // A filter's page reset reports the new page once.
+    await click("Next page");
+    onPaginationChange.mockClear();
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "Row 1" } });
+    await act(async () => {});
+    expect(onPaginationChange).toHaveBeenCalledTimes(1);
+    expect(onPaginationChange).toHaveBeenLastCalledWith({ pageIndex: 0, pageSize: 20 });
+  });
+
   it("hides a column from its menu, moves focus to the table and announces it", async () => {
     render(<DefaultDemo />);
     await pick("Pages", "Hide");
