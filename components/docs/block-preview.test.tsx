@@ -57,6 +57,14 @@ describe("BlockPreview", () => {
     expect(await axe(baseElement, { iframes: false })).toHaveNoViolations();
   });
 
+  it("keeps an app shell at the desktop width in a 768 px window's docs column", () => {
+    const observers = stubResizeObserver();
+    render(<BlockPreview item="sidebar-07" shell />);
+    observers.drawAll(452, 576);
+    expect(width()).toBe("desktop");
+    expect(screen.getByText(/Desktop, 1280 px, scaled to 35%/)).toBeTruthy();
+  });
+
   it("opens an app shell at the phone's width in a phone's column", () => {
     const observers = stubResizeObserver();
     render(<BlockPreview item="sidebar-07" shell />);

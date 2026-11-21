@@ -245,8 +245,17 @@ export function SpreadViewer({
           // Keys mean nothing on a touch screen: hidden for a coarse pointer, shown otherwise.
           className="order-last basis-full text-center text-xs text-muted-foreground pointer-coarse:hidden @2xl:order-none @2xl:basis-auto"
         >
-          {arrow(spread.nextKey)} next, {arrow(spread.previousKey)} previous, <Kbd>Home</Kbd>{" "}
-          <Kbd>End</Kbd> first and last
+          {/* Two halves that never break inside; on controls under 400 px (a phone) the second
+              takes its own line, so the keys are not squeezed into one. */}
+          <span className="whitespace-nowrap">
+            {arrow(spread.nextKey)} next, {arrow(spread.previousKey)} previous,
+          </span>{" "}
+          <span
+            data-slot="spread-viewer-help-ends"
+            className="whitespace-nowrap @max-[25rem]:block"
+          >
+            <Kbd>Home</Kbd> <Kbd>End</Kbd> first and last
+          </span>
         </p>
         {leftIsNext ? previousButton : nextButton}
       </div>

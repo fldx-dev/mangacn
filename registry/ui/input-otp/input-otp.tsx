@@ -6,9 +6,11 @@ import * as React from "react";
 import { InkFrame } from "@/components/ink-frame";
 
 // Based on shadcn/ui Input OTP (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-12.
-// Restyled for mangacn: each slot is a paper box with its own hand-drawn outline, the active
-// slot traced again at the heavy width with an ink caret (steady under reduced motion), groups
-// parted by a hand-drawn dash; invalid slots ink in the spot colour. No CSS border, no ring.
+// Restyled for mangacn: each slot is a paper box with its own hand-drawn outline, touching its
+// neighbours as stock's slots do (they overlap by one pen width, so the shared edge is one
+// stroke), the active slot traced again at the heavy width with an ink caret (steady under
+// reduced motion), groups parted by a hand-drawn dash, the only gap; invalid slots ink in the
+// spot colour. No CSS border, no ring.
 
 /** FNV-1a over `useId()`: the slot's two outlines share it, so the heavy one lands on the light. */
 function useSlotSeed(): number {
@@ -48,7 +50,7 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="input-otp-group"
       className={cn(
-        "flex items-center gap-1 rounded-lg has-aria-invalid:[--ink:var(--destructive)]",
+        "flex items-center rounded-lg has-aria-invalid:[--ink:var(--destructive)]",
         className,
       )}
       {...props}
@@ -72,7 +74,7 @@ function InputOTPSlot({
       data-slot="input-otp-slot"
       data-active={isActive}
       className={cn(
-        "relative isolate flex size-8 items-center justify-center rounded-md bg-background text-sm transition-all outline-none has-[>[data-inked=true]]:bg-transparent! aria-invalid:[--ink:var(--destructive)] data-[active=true]:z-10",
+        "relative isolate flex size-8 items-center justify-center rounded-md bg-background not-first:-ml-(--outline-width) text-sm transition-all outline-none has-[>[data-inked=true]]:bg-transparent! aria-invalid:[--ink:var(--destructive)] data-[active=true]:z-10",
         className,
       )}
       {...props}

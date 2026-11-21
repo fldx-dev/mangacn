@@ -91,7 +91,8 @@ export async function DemoPreview({
   if (isSidebarShell(item)) {
     // The sidebar lays itself out by its window, and the docs column is narrower than its
     // 768 px breakpoint up to about a 1400 px window: the stage gets a tablet-wide window at least,
-    // scaled to the column, and only a phone-narrow column shows the phone layout (MANGA-19).
+    // scaled to the column, and only a phone's column (under SHELL_DESKTOP_MIN_BOX) shows the
+    // phone layout (MANGA-19; a 768 px window's column too since Task 144).
     return (
       <ScaledFrame
         src={`/demo/${item}/${demo}`}

@@ -98,7 +98,20 @@ describe("Calendar", () => {
     expect(screen.getByText("July 2026")).toBeTruthy();
   });
 
-  it("boxes the caption dropdowns in ink", () => {
+  it("outlines the month arrows with the pen, filled as button fills the variant", () => {
+    const arrows = () =>
+      [/previous month/i, /next month/i].map((name) => screen.getByRole("button", { name }));
+    render(<Single />);
+    for (const arrow of arrows()) expect(inked(arrow)?.dataset.fill).toBe("paper");
+    cleanup();
+    render(<Calendar mode="single" buttonVariant="default" {...month} />);
+    for (const arrow of arrows()) expect(inked(arrow)?.dataset.fill).toBe("ink");
+    cleanup();
+    render(<Calendar mode="single" buttonVariant="link" {...month} />);
+    for (const arrow of arrows()) expect(inked(arrow)).toBeNull();
+  });
+
+  it("outlines the caption dropdowns with the pen", () => {
     render(
       <Calendar
         mode="single"
@@ -108,9 +121,13 @@ describe("Calendar", () => {
         {...month}
       />,
     );
-    const labels = document.querySelectorAll<HTMLElement>(".rdp-caption_label");
-    expect(labels.length).toBe(2);
-    for (const label of labels) expect(label.className).toContain("ink-border");
+    const roots = document.querySelectorAll<HTMLElement>(".rdp-dropdown_root");
+    expect(roots.length).toBe(2);
+    for (const root of roots) {
+      expect(inked(root)?.dataset.fill).toBe("paper");
+      // The pen draws the box; the label has no CSS border of its own.
+      expect(root.querySelector(".rdp-caption_label")?.className).not.toContain("ink-border");
+    }
     expect(screen.getAllByRole("combobox")).toHaveLength(2);
   });
 

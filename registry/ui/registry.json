@@ -1466,7 +1466,10 @@
         "since": "0.1.0"
       },
       "dependencies": ["cn", "embla-carousel-react", "lucide-react"],
-      "registryDependencies": ["https://www.mangacn.com/r/button.json"],
+      "registryDependencies": [
+        "https://www.mangacn.com/r/button.json",
+        "https://www.mangacn.com/r/ink-frame.json"
+      ],
       "files": [
         {
           "path": "carousel/carousel.tsx",

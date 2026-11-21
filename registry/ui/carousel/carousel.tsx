@@ -4,12 +4,14 @@ import { cn } from "cn";
 import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
+import { InkFrame } from "@/components/ink-frame";
 import { Button } from "@/components/ui/button";
 
 // Based on shadcn/ui Carousel (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-12.
 // Restyled for mangacn: stock structure, roles and keyboard handling; previous and next are
-// mangacn's outlined icon button (drawn by the pen, so square-cornered rather than stock's
-// rounded-full); the viewport draws nothing, so each slide brings its own frame.
+// mangacn's icon button, round as stock's rounded-full: the button's own rect frame is hidden and
+// the pen draws an ellipse in its place; the viewport draws nothing, so each slide brings its own
+// frame.
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
@@ -166,6 +168,38 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Hides `button`'s rect frame, so the arrow's ellipse is its only outline. */
+const roundArrow = "rounded-full [&>[data-slot=ink-frame][data-shape=rect]]:hidden";
+
+/**
+ * A round arrow's outline, filled as `button` fills the variant (none while disabled, so the
+ * halftone shows); ghost and link draw none, as `button` does.
+ */
+function ArrowFrame({
+  variant,
+  disabled,
+}: {
+  variant: React.ComponentProps<typeof Button>["variant"];
+  disabled?: boolean;
+}) {
+  if (variant === "ghost" || variant === "link") return null;
+  const fill = disabled
+    ? "none"
+    : variant === "default"
+      ? "ink"
+      : variant === "secondary"
+        ? "tone"
+        : "paper";
+  return (
+    <InkFrame
+      as="span"
+      shape="ellipse"
+      fill={fill}
+      className="pointer-events-none absolute inset-0 -z-1 in-data-grouped:hidden"
+    />
+  );
+}
+
 function CarouselPrevious({
   className,
   variant = "outline",
@@ -173,6 +207,7 @@ function CarouselPrevious({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { orientation, scrollPrev, canScrollPrev } = useCarousel();
+  const disabled = props.disabled ?? !canScrollPrev;
 
   return (
     <Button
@@ -181,15 +216,17 @@ function CarouselPrevious({
       size={size}
       className={cn(
         "absolute touch-manipulation",
+        roundArrow,
         orientation === "horizontal"
           ? "inset-y-0 -left-12 my-auto"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
-      disabled={!canScrollPrev}
+      disabled={disabled}
       onClick={scrollPrev}
       {...props}
     >
+      <ArrowFrame variant={variant} disabled={disabled} />
       <ChevronLeftIcon />
       <span className="sr-only">Previous slide</span>
     </Button>
@@ -203,6 +240,7 @@ function CarouselNext({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { orientation, scrollNext, canScrollNext } = useCarousel();
+  const disabled = props.disabled ?? !canScrollNext;
 
   return (
     <Button
@@ -211,15 +249,17 @@ function CarouselNext({
       size={size}
       className={cn(
         "absolute touch-manipulation",
+        roundArrow,
         orientation === "horizontal"
           ? "inset-y-0 -right-12 my-auto"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
-      disabled={!canScrollNext}
+      disabled={disabled}
       onClick={scrollNext}
       {...props}
     >
+      <ArrowFrame variant={variant} disabled={disabled} />
       <ChevronRightIcon />
       <span className="sr-only">Next slide</span>
     </Button>

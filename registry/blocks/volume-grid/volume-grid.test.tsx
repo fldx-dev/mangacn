@@ -67,6 +67,8 @@ describe("VolumeGrid", () => {
     expect(screen.getByRole("link", { name: "Cover 2 Volume 2 Title 2" })).toBeTruthy();
     const newest = screen.getByRole("link", { name: "Cover 6 NEW Volume 6 Title 6" });
     expect(newest.querySelector('[data-slot="stamp"]')?.textContent).toBe("NEW");
+    // The stamp's md seal (80 px), readable on a cover.
+    expect(newest.querySelector<HTMLElement>('[data-slot="stamp"]')?.dataset.size).toBe("md");
     expect(document.querySelectorAll('[data-slot="stamp"]')).toHaveLength(1);
     // The cover, folio and text are all inside the one link; the date is printed as given.
     expect(links[0].querySelector('[data-slot="manga-frame"]')).toBeTruthy();

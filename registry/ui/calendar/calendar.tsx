@@ -3,7 +3,15 @@
 import { cn } from "cn";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
-import { type DayButton, DayPicker, getDefaultClassNames, type Locale } from "react-day-picker";
+import {
+  type DayButton,
+  DayPicker,
+  type DropdownProps,
+  getDefaultClassNames,
+  type Locale,
+  UI,
+  useDayPicker,
+} from "react-day-picker";
 import { InkFrame } from "@/components/ink-frame";
 import { Button, buttonVariants } from "@/components/ui/button";
 
@@ -12,8 +20,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 // outlined paper card (the frame is the root's first child; none inside a card or popover,
 // which draw their own), the caption in the display face, today underlined in ink, the
 // selected day and a range's ends ink-filled by the pen, a range's middle on halftone-light,
-// outside days in muted text, navigation in mangacn's button classes, and the caption
-// dropdowns boxed in ink as native-select is.
+// outside days in muted text, the month arrows in mangacn's button classes with the pen's
+// outline (stock's ghost arrows draw none; a ghost arrow is outlined in paper as `outline` is),
+// and the caption dropdowns outlined by the pen as native-select is.
 
 function Calendar({
   className,
@@ -30,6 +39,19 @@ function Calendar({
   buttonVariant?: React.ComponentProps<typeof Button>["variant"];
 }) {
   const defaultClassNames = getDefaultClassNames();
+  // The month arrows' outline, filled as `button` fills each variant; ghost, stock's default,
+  // draws paper as `outline` does, so the arrows are outlined; `link` stays bare.
+  const navFill =
+    buttonVariant === "default"
+      ? "ink"
+      : buttonVariant === "secondary"
+        ? "tone"
+        : buttonVariant === "link"
+          ? undefined
+          : "paper";
+  const navFrame = navFill && (
+    <InkFrame as="span" fill={navFill} className="pointer-events-none absolute inset-0 -z-1" />
+  );
 
   return (
     <DayPicker
@@ -75,12 +97,12 @@ function Calendar({
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
+          "size-(--cell-size) p-0 select-none hover:[--paper:var(--muted)] aria-disabled:opacity-50",
           defaultClassNames.button_previous,
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
+          "size-(--cell-size) p-0 select-none hover:[--paper:var(--muted)] aria-disabled:opacity-50",
           defaultClassNames.button_next,
         ),
         month_caption: cn(
@@ -92,7 +114,7 @@ function Calendar({
           defaultClassNames.dropdowns,
         ),
         dropdown_root: cn(
-          "relative rounded-(--cell-radius) has-focus-visible:ring-3 has-focus-visible:ring-ring/50",
+          "relative isolate rounded-(--cell-radius) has-focus-visible:ring-3 has-focus-visible:ring-ring/50",
           defaultClassNames.dropdown_root,
         ),
         dropdown: cn("absolute inset-0 bg-popover opacity-0", defaultClassNames.dropdown),
@@ -100,7 +122,7 @@ function Calendar({
           "font-display select-none",
           captionLayout === "label"
             ? "text-base tracking-wide"
-            : "flex h-(--cell-size) items-center gap-1 rounded-(--cell-radius) bg-background pr-1.5 pl-2 text-sm ink-border [&>svg]:size-3.5 [&>svg]:text-foreground",
+            : "flex h-(--cell-size) items-center gap-1 rounded-(--cell-radius) pr-1.5 pl-2 text-sm [&>svg]:size-3.5 [&>svg]:text-foreground",
           defaultClassNames.caption_label,
         ),
         month_grid: cn("w-full border-collapse", defaultClassNames.month_grid),
@@ -170,6 +192,23 @@ function Calendar({
 
           return <ChevronDownIcon className={cn("size-4", className)} {...props} />;
         },
+        // The month arrows with the pen's outline as their first child (react-day-picker's own
+        // are a bare <button>).
+        // biome-ignore lint/correctness/noComponentHookFactories: an inline override, as stock's are.
+        PreviousMonthButton: ({ children, ...props }) => (
+          <button {...props}>
+            {navFrame}
+            {children}
+          </button>
+        ),
+        // biome-ignore lint/correctness/noComponentHookFactories: an inline override, as stock's are.
+        NextMonthButton: ({ children, ...props }) => (
+          <button {...props}>
+            {navFrame}
+            {children}
+          </button>
+        ),
+        Dropdown: CalendarDropdown,
         // biome-ignore lint/correctness/noComponentHookFactories: stock's inline override, kept as stock has it.
         DayButton: ({ ...props }) => <CalendarDayButton locale={locale} {...props} />,
         // biome-ignore lint/correctness/noComponentHookFactories: stock's inline override, kept as stock has it.
@@ -186,6 +225,44 @@ function Calendar({
       }}
       {...props}
     />
+  );
+}
+
+/**
+ * react-day-picker's caption dropdown with the pen's outline: the frame is the root's first
+ * child, behind the transparent <select> and the label it shows, as native-select draws its own.
+ */
+function CalendarDropdown({ options, className, ...selectProps }: DropdownProps) {
+  const { classNames, components, styles } = useDayPicker();
+  const selectedOption = options?.find(({ value }) => value === selectProps.value);
+  return (
+    <span
+      data-disabled={selectProps.disabled}
+      className={classNames[UI.DropdownRoot]}
+      style={styles?.[UI.DropdownRoot]}
+    >
+      <InkFrame
+        as="span"
+        fill="paper"
+        className="pointer-events-none absolute inset-0 -z-1 rounded-(--cell-radius)"
+      />
+      <components.Select className={cn(classNames[UI.Dropdown], className)} {...selectProps}>
+        {options?.map(({ value, label, disabled }) => (
+          <components.Option key={value} value={value} disabled={disabled}>
+            {label}
+          </components.Option>
+        ))}
+      </components.Select>
+      <span className={classNames[UI.CaptionLabel]} style={styles?.[UI.CaptionLabel]} aria-hidden>
+        {selectedOption?.label}
+        <components.Chevron
+          orientation="down"
+          size={18}
+          className={classNames[UI.Chevron]}
+          style={styles?.[UI.Chevron]}
+        />
+      </span>
+    </span>
   );
 }
 
