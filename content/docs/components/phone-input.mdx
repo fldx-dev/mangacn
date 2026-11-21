@@ -1,0 +1,40 @@
+---
+title: Phone Input
+description: "An international phone field: a searchable country picker and a number formatted as you type, posted as E.164."
+item: phone-input
+---
+
+<InstallCommand item="phone-input" />
+
+<CopyPrompt item="phone-input" />
+
+For a phone number from anywhere: a reader's contact number, a courier's call-back line, a studio's switchboard. The country picker is [Combobox](/docs/components/combobox) in the leading addon of one [Input Group](/docs/components/input-group), and [libphonenumber-js](https://gitlab.com/catamphetamine/libphonenumber-js) (its small `/min` metadata) formats the number as you type. Countries show as their ISO code and dialling code in text, with no flags. The value is E.164 (`+81312345678`), and with `name` a hidden input posts it in a plain form. Put it inside Field with a FieldLabel.
+
+- Typing or pasting an international number (`+81 3-1234-5678`) picks its country and shows the number the national way (`03-1234-5678`).
+- Picking another country keeps the digits typed so far and formats them for that country.
+- An incomplete or wrong number is marked invalid (`aria-invalid`) only after the field loses focus or its form is submitted, never while someone is still typing.
+- The picker is Combobox with its search box in the popup: Enter or Space on the trigger opens the list, typing searches by name, ISO code or dialling code (`kr`, `+82`), Up and Down move the highlight, Enter picks and Escape closes.
+- The tel input is described by the picked country, so a screen reader says which country the number is read for.
+- On a phone screen the trigger shows only the ISO code, and the list opens as wide as the field.
+
+Country names are English and fixed in the file, so the server and every browser print the same names. `labels` renames the picker's own words.
+
+## Examples
+
+Japan picked to start with, through `defaultCountry`.
+
+<DemoFrame item="phone-input" demo="default" />
+
+A list limited to five countries with `countries`, in the order given, starting from an E.164 `defaultValue`.
+
+<DemoFrame item="phone-input" demo="countries" />
+
+A required field in a form that checks the posted value with `isValidPhoneNumber`, which the file re-exports, and shows the error in a FieldError.
+
+<DemoFrame item="phone-input" demo="form" />
+
+`isValidPhoneNumber` comes from a client component's file, so server code such as a server action can't call it from there: import it from `libphonenumber-js/min` instead.
+
+## Props
+
+<PropsTable item="phone-input" />
