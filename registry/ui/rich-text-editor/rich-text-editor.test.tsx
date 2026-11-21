@@ -1,5 +1,6 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { Editor } from "@tiptap/react";
+import * as React from "react";
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { expectDemosAccessible } from "@/lib/test/axe";
@@ -21,6 +22,12 @@ async function mounted(): Promise<Editor> {
     expect(editor).toBeDefined();
   });
   return editor as Editor;
+}
+
+/** A parent that echoes every change back as the controlled value. */
+function Controlled() {
+  const [value, setValue] = React.useState("<p>Ink</p>");
+  return <RichTextEditor aria-label="Note" value={value} onValueChange={setValue} />;
 }
 
 describe("RichTextEditor", () => {
@@ -315,6 +322,77 @@ describe("RichTextEditor", () => {
     expect(html).toContain(
       "<h2>Title</h2><ul><li><p>One <strong>two</strong> three</p></li></ul><p><br></p>",
     );
+  });
+
+  it("takes no tool when not editable, even with the toolbar in a custom layout", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <RichTextEditor
+        aria-label="Note"
+        editable={false}
+        defaultValue="<p>Ink</p>"
+        onValueChange={onValueChange}
+      >
+        <RichTextEditorToolbar />
+        <RichTextEditorContent />
+      </RichTextEditor>,
+    );
+    const editor = await mounted();
+    act(() => {
+      editor.commands.selectAll();
+    });
+    expect((tool("Bold") as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(tool("Bold"));
+    fireEvent.click(tool("Horizontal rule"));
+    expect(editor.getHTML()).toBe("<p>Ink</p>");
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  /** The static render's region, as the server writes it before tiptap mounts. */
+  function staticRegion(html: string) {
+    const host = document.createElement("div");
+    host.innerHTML = renderToString(<RichTextEditor aria-label="Note" defaultValue={html} />);
+    return host.querySelector(".ProseMirror")?.innerHTML;
+  }
+
+  it.each([
+    ["divs", "<div>a</div><div>b</div>"],
+    ["an h1 the schema lacks", "<h1>Title</h1><p>Body</p>"],
+    ["bare text in list items", "<ul><li>one</li><li>two <b>bold</b></li></ul>"],
+    ["inline text beside blocks", "loose <i>text</i><blockquote>quoted</blockquote>after"],
+  ])("blocks the static HTML as the editor's parser does: %s", async (_, html) => {
+    const before = staticRegion(html);
+    render(<RichTextEditor aria-label="Note" defaultValue={html} />);
+    const editor = await mounted();
+    expect(before).toBe(editor.getHTML());
+  });
+
+  it("keeps the cursor while a controlled value echoes each change back", async () => {
+    render(<Controlled />);
+    const editor = await mounted();
+    act(() => {
+      editor.commands.setTextSelection(2);
+    });
+    act(() => {
+      editor.commands.insertContent("X");
+    });
+    expect(editor.state.selection.from).toBe(3);
+    act(() => {
+      editor.commands.insertContent("Y");
+    });
+    expect(editor.getHTML()).toBe("<p>IXYnk</p>");
+  });
+
+  it("posts an empty string for an empty stored value", async () => {
+    render(
+      <form data-testid="form">
+        <RichTextEditor aria-label="Note" name="note" defaultValue="<p></p>" />
+      </form>,
+    );
+    const form = () => new FormData(screen.getByTestId("form") as HTMLFormElement);
+    expect(form().get("note")).toBe("");
+    await mounted();
+    expect(form().get("note")).toBe("");
   });
 
   it("reads no clock in render: the same markup on two different days", () => {

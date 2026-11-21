@@ -49,48 +49,141 @@ const extensions = [
   }),
 ];
 
-/** The elements StarterKit above can hold; the static render keeps these and drops the rest. */
-const STATIC_TAGS = new Set([
-  "p",
-  "br",
-  "h2",
-  "h3",
-  "strong",
-  "b",
-  "em",
-  "i",
-  "s",
-  "del",
-  "strike",
-  "code",
-  "ul",
-  "ol",
-  "li",
-  "blockquote",
-  "hr",
-]);
+/** Marks by tag, written as the editor writes them. */
+const MARKS: Record<string, string> = {
+  strong: "strong",
+  b: "strong",
+  em: "em",
+  i: "em",
+  s: "s",
+  del: "s",
+  strike: "s",
+  code: "code",
+};
+const TEXTBLOCKS = new Set(["p", "h2", "h3"]);
+const CONTAINERS = new Set(["ul", "ol", "li", "blockquote"]);
+/** Elements outside the schema that tiptap's parser still reads as block edges. */
+const FOREIGN_BLOCKS = new Set(
+  "address article aside caption center dd details div dl dt fieldset figcaption figure footer form h1 h4 h5 h6 header hgroup main nav pre section summary table tbody td tfoot th thead tr".split(
+    " ",
+  ),
+);
+const SKIPPED =
+  /<(script|style|template|textarea|title|iframe|noscript)\b[\s\S]*?<\/\1\s*>|<!--[\s\S]*?-->/gi;
+const TOKENS = /<(\/?)([a-z][a-z0-9]*)\b[^>]*>|[^<]+|</gi;
+const escapeText = (text: string) => text.replace(/[<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+/** The static render of an empty editor: one paragraph with the editor's line break. */
+const EMPTY_HTML = "<p><br></p>";
 
 /**
- * The HTML shown before the editor mounts. Stored HTML often comes from users, and this path
- * reaches the page without tiptap's parser, so it keeps only the schema's elements, with no
- * attributes, and writes every other `<`, `>` and quote as text. Whitespace collapses as the
- * parser collapses it (none at a block's edges), and an empty block gets the editor's line
- * break, so the static HTML takes the editor's height.
+ * The HTML shown before the editor mounts, parsed the way tiptap's parser reads it, so the static
+ * render takes the editor's shape and height. Stored HTML often comes from users and this path
+ * skips tiptap's parser, so it writes only the schema's elements, without attributes, and every
+ * other `<`, `>` and quote as text. Inline content outside a paragraph (in the document, a quote
+ * or a list item) gets one; other block elements (`div`, `h1`, `pre`…) end the paragraph;
+ * whitespace collapses, none at a block's edges; an empty block gets the editor's line break.
  */
 function staticHtml(html: string): string {
-  const safe = html
-    .replace(/<(script|style|template|textarea|title|iframe|noscript)\b[\s\S]*?<\/\1\s*>/gi, "")
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .replace(/<(\/?)([a-z][a-z0-9]*)\b[^>]*>|[<>"']/gi, (match, close: string, tag?: string) => {
-      if (!tag) return `&#${match.charCodeAt(0)};`;
-      const name = tag.toLowerCase();
-      return STATIC_TAGS.has(name) ? `<${close}${name}>` : "";
-    })
-    .replace(/\s+/g, " ")
-    .replace(/ ?(<\/?(?:p|h2|h3|ul|ol|li|blockquote|hr)>) ?/g, "$1")
-    .replace(/<(p|h2|h3)><\/\1>/g, "<$1><br></$1>");
-  return safe === "" ? "<p><br></p>" : safe;
+  let out = "";
+  let block: string | null = null;
+  let filled = false;
+  /** A collapsed space waiting for the next inline content, with the marks it had. */
+  let space: string[] | null = null;
+  let written: string[] = [];
+  const marks: string[] = [];
+  const open: string[] = [];
+
+  const writeMarks = (target: string[]) => {
+    let same = 0;
+    while (same < written.length && written[same] === target[same]) same++;
+    while (written.length > same) out += `</${written.pop()}>`;
+    for (const mark of target.slice(same)) out += `<${mark}>`;
+    written = [...target];
+  };
+  const activeMarks = () => [...new Set(marks)];
+  const closeBlock = () => {
+    if (!block) return;
+    writeMarks([]);
+    out += `${filled ? "" : "<br>"}</${block}>`;
+    block = null;
+  };
+  const openBlock = (name = "p") => {
+    closeBlock();
+    // Inline content straight in a list gets an item, as the parser gives it.
+    const top = open.at(-1);
+    if (top === "ul" || top === "ol") {
+      out += "<li>";
+      open.push("li");
+    }
+    out += `<${name}>`;
+    block = name;
+    filled = false;
+    space = null;
+  };
+  /** Opens a paragraph if none is, writes a pending space with its marks, then the marks. */
+  const inline = () => {
+    if (!block) openBlock();
+    if (space && filled) {
+      writeMarks(space);
+      out += " ";
+    }
+    space = null;
+    writeMarks(activeMarks());
+  };
+
+  for (const [token, close, tag] of html.replace(SKIPPED, "").matchAll(TOKENS)) {
+    if (!tag) {
+      const text = token.replace(/\s+/g, " ");
+      if (text.startsWith(" ") && !space) space = activeMarks();
+      if (text.trim() === "") continue;
+      inline();
+      out += escapeText(text.trim());
+      filled = true;
+      if (text.endsWith(" ")) space = activeMarks();
+      continue;
+    }
+    const name = tag.toLowerCase();
+    if (MARKS[name]) {
+      if (!close) marks.push(MARKS[name]);
+      else if (marks.includes(MARKS[name])) marks.splice(marks.lastIndexOf(MARKS[name]), 1);
+    } else if (name === "br") {
+      inline();
+      out += "<br>";
+      filled = true;
+      space = null;
+    } else if (TEXTBLOCKS.has(name)) {
+      if (close) closeBlock();
+      else openBlock(name);
+    } else if (CONTAINERS.has(name)) {
+      closeBlock();
+      if (!close) {
+        out += `<${name}>`;
+        open.push(name);
+      } else if (open.includes(name)) {
+        while (open.length > 0) {
+          const last = open.pop();
+          // An empty item or quote holds one empty paragraph in the editor.
+          if ((last === "li" || last === "blockquote") && out.endsWith(`<${last}>`)) {
+            out += EMPTY_HTML;
+          }
+          out += `</${last}>`;
+          if (last === name) break;
+        }
+      }
+    } else if (name === "hr") {
+      closeBlock();
+      out += "<hr>";
+    } else if (FOREIGN_BLOCKS.has(name)) {
+      closeBlock();
+    }
+  }
+  closeBlock();
+  while (open.length > 0) out += `</${open.pop()}>`;
+  return out || EMPTY_HTML;
 }
+
+/** Whether stored HTML holds nothing the editor would show (`""`, `<p></p>`, whitespace). */
+const isEmptyHtml = (html: string) => staticHtml(html) === EMPTY_HTML;
 
 /** The editor's HTML, or "" when it holds no text, so a required check sees an empty field. */
 const htmlOf = (editor: Editor) => (editor.isEmpty ? "" : editor.getHTML());
@@ -233,6 +326,8 @@ export function RichTextEditor({
   const [editor, setEditor] = React.useState<Editor | null>(null);
   const options: UseEditorOptions = {
     immediatelyRender: false,
+    // No tiptap stylesheet in the page: proseClasses carries the rules it would inject.
+    injectCSS: false,
     extensions,
     content: html,
     editable: canEdit,
@@ -308,7 +403,9 @@ export function RichTextEditor({
         )}
         {client && <EditorEngine options={options} onEditor={setEditor} />}
         {/* A disabled field posts nothing, as a native disabled control. */}
-        {name && !disabled && <input type="hidden" name={name} value={html} />}
+        {name && !disabled && (
+          <input type="hidden" name={name} value={isEmptyHtml(html) ? "" : html} />
+        )}
       </div>
     </RichTextEditorContext.Provider>
   );
@@ -468,15 +565,16 @@ export function RichTextEditorToolbar({
   className,
   "aria-label": ariaLabel = "Formatting",
 }: RichTextEditorToolbarProps) {
-  const { editor, disabled } = useRichTextEditor("RichTextEditorToolbar");
+  const { editor, disabled, editable } = useRichTextEditor("RichTextEditorToolbar");
   const state = useToolState(editor);
   // Until the editor mounts the tools render unpressed, in their final places and looks, and do
-  // nothing; undo and redo start off, as on a fresh editor.
-  const off = disabled;
+  // nothing; undo and redo start off, as on a fresh editor. A read-only editor (a custom layout
+  // can still show the toolbar) takes no tool.
+  const off = disabled || !editable;
   const pressed = state?.pressed ?? [];
   const blocked = state?.blocked ?? ["undo", "redo"];
   const run = (tool: Tool) => {
-    if (editor) tool.run(editor.chain()).run();
+    if (editor && !off) tool.run(editor.chain()).run();
   };
   const toggles = (tools: Tool[]) => (
     <ToggleGroup
@@ -543,9 +641,14 @@ export function RichTextEditorToolbar({
   );
 }
 
-/** Ink prose: ProseMirror's elements, styled from the theme's tokens only. */
+/**
+ * Ink prose: ProseMirror's elements, styled from the theme's tokens only. tiptap injects no CSS
+ * (`injectCSS: false`); the rules ProseMirror needs from it are here as utilities, on the static
+ * render too: its whitespace and ligatures, the zero-size separator image, a hidden selection
+ * for a selected rule, and the gap cursor as an ink line, shown only while the editor has focus.
+ */
 const proseClasses =
-  "relative text-base md:text-sm [&_.ProseMirror]:min-h-24 [&_.ProseMirror]:px-3 [&_.ProseMirror]:py-2 [&_.ProseMirror]:break-words [&_.ProseMirror]:whitespace-pre-wrap [&_.ProseMirror]:outline-none [&_.ProseMirror>*+*]:mt-2 [&_h2]:font-display [&_h2]:text-xl [&_h2]:leading-tight [&_h2]:tracking-wide [&_h3]:font-display [&_h3]:text-lg [&_h3]:leading-tight [&_h3]:tracking-wide [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li>p]:my-0.5 [&_blockquote]:border-l-(length:--outline-width-heavy) [&_blockquote]:border-ink [&_blockquote]:pl-3 [&_blockquote]:italic [&_code]:rounded-sm [&_code]:bg-muted [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.9em] [&_hr]:my-3 [&_hr]:border-0 [&_hr]:border-t-(length:--outline-width) [&_hr]:border-ink [&_s]:decoration-ink";
+  "relative text-base md:text-sm [&_.ProseMirror]:relative [&_.ProseMirror]:min-h-24 [&_.ProseMirror]:px-3 [&_.ProseMirror]:py-2 [&_.ProseMirror]:break-words [&_.ProseMirror]:whitespace-break-spaces [&_.ProseMirror]:[font-variant-ligatures:none] [&_.ProseMirror]:[font-feature-settings:'liga'_0] [&_.ProseMirror]:outline-none [&_img.ProseMirror-separator]:inline! [&_img.ProseMirror-separator]:size-0! [&_img.ProseMirror-separator]:m-0! [&_img.ProseMirror-separator]:border-0! [&_.ProseMirror-hideselection_*]:caret-transparent [&_.ProseMirror-hideselection_*]:selection:bg-transparent [&_.ProseMirror-gapcursor]:pointer-events-none [&_.ProseMirror-gapcursor]:absolute [&_.ProseMirror-gapcursor]:m-0 [&_.ProseMirror-gapcursor]:hidden [&_.ProseMirror-focused_.ProseMirror-gapcursor]:block [&_.ProseMirror-gapcursor]:after:absolute [&_.ProseMirror-gapcursor]:after:-top-0.5 [&_.ProseMirror-gapcursor]:after:block [&_.ProseMirror-gapcursor]:after:w-5 [&_.ProseMirror-gapcursor]:after:border-t-(length:--outline-width) [&_.ProseMirror-gapcursor]:after:border-ink [&_.ProseMirror>*+*]:mt-2 [&_h2]:font-display [&_h2]:text-xl [&_h2]:leading-tight [&_h2]:tracking-wide [&_h3]:font-display [&_h3]:text-lg [&_h3]:leading-tight [&_h3]:tracking-wide [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li>p]:my-0.5 [&_blockquote]:border-l-(length:--outline-width-heavy) [&_blockquote]:border-ink [&_blockquote]:pl-3 [&_blockquote]:italic [&_code]:rounded-sm [&_code]:bg-muted [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.9em] [&_hr]:my-3 [&_hr]:border-0 [&_hr]:border-t-(length:--outline-width) [&_hr]:border-ink [&_s]:decoration-ink";
 
 export interface RichTextEditorContentProps {
   /** Classes for the content area; the editable region inside grows with its text. */
@@ -556,7 +659,7 @@ export function RichTextEditorContent({ className }: RichTextEditorContentProps)
   const { editor, html, placeholder, attributes } = useRichTextEditor("RichTextEditorContent");
   const empty =
     useEditorState({ editor, selector: ({ editor }) => editor?.isEmpty ?? null }) ??
-    html.trim() === "";
+    isEmptyHtml(html);
   return (
     <div data-slot="rich-text-editor-content" className={cn(proseClasses, className)}>
       {editor ? (
