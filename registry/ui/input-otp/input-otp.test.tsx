@@ -52,6 +52,15 @@ describe("InputOTP", () => {
     expect(slots()[0]?.classList.contains("slot-class")).toBe(true);
   });
 
+  it("lets a group's slots touch, with the separator the only gap", () => {
+    render(<Code />);
+    for (const group of document.querySelectorAll<HTMLElement>('[data-slot="input-otp-group"]')) {
+      expect([...group.classList].filter((name) => name.startsWith("gap-"))).toEqual([]);
+    }
+    // Neighbours overlap by one pen width, so the edge they share is one stroke.
+    for (const slot of slots()) expect(slot.className).toContain("not-first:-ml-(--outline-width)");
+  });
+
   it("gives every slot its own paper outline and no CSS border", () => {
     render(<Code />);
     for (const slot of slots()) {
