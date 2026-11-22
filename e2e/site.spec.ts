@@ -1,9 +1,11 @@
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
 import { DOCUMENT_END_ID } from "../components/docs/page-end";
 import { BLOCKS_CATALOG, type DocItem, docItems } from "../lib/docs/catalog";
 import { loadRegistry } from "../lib/registry/index";
+import { variantMeta } from "../lib/registry/variant-meta.generated";
 import { variantEntries } from "../lib/registry/variants.generated";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 import { comparePixels, shoot } from "./shoot";
@@ -617,3 +619,158 @@ for (const reducedMotion of ["reduce", "no-preference"] as const) {
     expect(errors).toEqual([]);
   });
 }
+
+// Batch 10's docs layout (Task 162): each component page is a sidebar folder of its variants,
+// whose links scroll to the variant cards' `#c-<component>-<n>` headers, and the page footer
+// steps between pages only. Below 768 px the sidebar is Fumadocs' drawer (`#nd-sidebar-mobile`),
+// opened from the header's trigger; from 768 px it is `#nd-sidebar`.
+
+/** A component's variants as the docs show them, from its variants.json (`pnpm gen:variants`). */
+const docVariants = (component: string) =>
+  variantMeta.filter((variant) => variant.component === component);
+
+/** Loads a docs page and waits until it is hydrated: the drawer's trigger works only then. */
+async function openDocsPage(page: Page, path: string) {
+  await page.addInitScript(() => localStorage.setItem("theme", "light"));
+  const response = await page.goto(path);
+  expect(response?.status()).toBe(200);
+  await waitForInk(page);
+  await page.waitForLoadState("networkidle");
+}
+
+/** The sidebar to click in: the desktop one, or the phone drawer, opened. */
+async function openSidebar(page: Page, phone: boolean) {
+  if (!phone) return page.locator("#nd-sidebar");
+  await page.locator('#nd-subnav [aria-controls="nd-sidebar-mobile"]').click();
+  const drawer = page.locator("#nd-sidebar-mobile");
+  await expect(drawer).toBeVisible();
+  return drawer;
+}
+
+/** The docs page on screen (cacheComponents keeps the one before it, hidden). */
+const visibleDocsPage = (page: Page) => page.locator("#nd-page").filter({ visible: true });
+
+test("a sidebar variant link scrolls its card to the top", async ({ page }, testInfo) => {
+  const phone = testInfo.project.name === "w360";
+  await openDocsPage(page, "/docs/components/stamp");
+  const { label, name } = docVariants("stamp")[2];
+  const sidebar = await openSidebar(page, phone);
+  const link = sidebar.locator(`a[href="/docs/components/stamp#${name}"]`);
+  await expect(link).toHaveText(label);
+  await link.click();
+  await page.waitForURL(`**/docs/components/stamp#${name}`);
+  // On a phone the link scrolls the page under the drawer, which closes on the click
+  // (components/docs/close-drawer-on-hash.tsx): Fumadocs only closes it on a new pathname.
+  if (phone) await expect(page.locator("#nd-sidebar-mobile")).toBeHidden();
+  const heading = page.locator(`#${name}`);
+  await expect(heading).toHaveText(label);
+  // `scroll-mt-24` keeps the header just below the sticky bars. Before the click it sat far down
+  // the page, so only a header inside the band shows that the page scrolled to it.
+  const top = () => heading.evaluate((node) => Math.round(node.getBoundingClientRect().top));
+  await expect
+    .poll(async () => {
+      const y = await top();
+      return y >= 0 && y <= 140 ? "near the top" : `${y}px from the top`;
+    }, "the card's header")
+    .toBe("near the top");
+});
+
+// The card header stacks its label and title over the chip on a phone: the chip must not push
+// the row past the screen.
+test("variant card headers fit a phone's width", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "w360", "the phone layout");
+  await openDocsPage(page, "/docs/components/stamp");
+  const chips = page.locator('[data-slot="variant-card"] [data-slot="copy-install-chip"]');
+  const installable = docVariants("stamp").filter((variant) => variant.installable);
+  expect(installable.length, "stamp variants with a chip").toBeGreaterThan(0);
+  await expect(chips).toHaveCount(installable.length);
+  for (const chip of await chips.all()) await expect(chip).toBeVisible();
+  await expect(chips.first()).toHaveAccessibleName(/^Copy the install command for @mangacn\/c-/);
+  const past = await chips.evaluateAll((nodes) =>
+    nodes
+      .filter((node) => node.getBoundingClientRect().right > window.innerWidth)
+      .map((node) => node.getAttribute("aria-label")),
+  );
+  expect(past, "chips past the viewport's right edge").toEqual([]);
+  const [width, viewport] = await page.evaluate(() => [
+    document.documentElement.scrollWidth,
+    window.innerWidth,
+  ]);
+  expect(width, "no horizontal overflow").toBeLessThanOrEqual(viewport);
+});
+
+// The footer's previous and next come from the docs tree, not the sidebar's, whose variant
+// anchors would make "next" a `#c-` link into the same page.
+test("the docs footer steps between pages, never into variant anchors", async ({ page }) => {
+  /** The footer's links: the page's last block, a grid of previous and next. */
+  const footerLinks = async () => {
+    const links = visibleDocsPage(page).locator(":scope > :last-child > a");
+    await expect(links).toHaveCount(2);
+    return links.evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href")));
+  };
+
+  await openDocsPage(page, "/docs/components/button");
+  expect(await footerLinks()).toEqual(["/docs/components", "/docs/components/badge"]);
+
+  // A page in the middle of the Components folder, its neighbours read from the folder's order.
+  const meta = JSON.parse(
+    readFileSync(resolve(__dirname, "../content/docs/components/meta.json"), "utf8"),
+  ) as { pages: string[] };
+  const names = meta.pages.filter((name) => !name.startsWith("---"));
+  const middle = Math.floor(names.length / 2);
+  await openDocsPage(page, `/docs/components/${names[middle]}`);
+  expect(await footerLinks()).toEqual([
+    `/docs/components/${names[middle - 1]}`,
+    `/docs/components/${names[middle + 1]}`,
+  ]);
+});
+
+// Fumadocs' type table wrote an opened row's id to the URL with `history.replaceState(null, …)`,
+// and after a client-side navigation that made Next.js scroll to the top on the first row opened.
+// The rows have no ids now (components/docs/props-table.tsx): opening one leaves the URL and the
+// scroll position alone.
+test("opening a props row after a client-side navigation keeps the scroll", async ({
+  page,
+}, testInfo) => {
+  const phone = testInfo.project.name === "w360";
+  await openDocsPage(page, "/docs/components/speech-bubble");
+  // A marker on the window survives only a client-side navigation.
+  await page.evaluate(() => Object.assign(window, { __sameDocument: true }));
+  const sidebar = await openSidebar(page, phone);
+  await sidebar.locator('a[href="/docs/components/stamp"]').click();
+  await page.waitForURL("**/docs/components/stamp");
+  await expect(visibleDocsPage(page).locator("h1")).toHaveText(/stamp/i);
+  expect(await page.evaluate(() => "__sameDocument" in window), "a client-side navigation").toBe(
+    true,
+  );
+  await waitForInk(page);
+  await page.waitForLoadState("networkidle");
+
+  const row = visibleDocsPage(page)
+    .locator('[data-slot="props-table"] button[aria-expanded]')
+    .first();
+  await row.scrollIntoViewIfNeeded();
+  const url = page.url();
+  const before = await page.evaluate(() => window.scrollY);
+  expect(before, "the props table is below the first screen").toBeGreaterThan(0);
+  await row.click();
+  await expect(row).toHaveAttribute("aria-expanded", "true");
+  // The jump came from Next.js reacting to the history update, a few frames later: watch the
+  // position for half a second.
+  const moved = await page.evaluate(
+    (start) =>
+      new Promise<number>((done) => {
+        let far = 0;
+        const end = performance.now() + 500;
+        const watch = () => {
+          far = Math.max(far, Math.abs(window.scrollY - start));
+          if (performance.now() < end) requestAnimationFrame(watch);
+          else done(far);
+        };
+        watch();
+      }),
+    before,
+  );
+  expect(moved, "how far the page scrolled after opening the row").toBeLessThanOrEqual(1);
+  expect(page.url(), "the URL after opening the row").toBe(url);
+});
