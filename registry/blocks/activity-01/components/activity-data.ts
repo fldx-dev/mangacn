@@ -1,4 +1,4 @@
-// The demo's activity: one reader's two weeks in October 2026. Replace both constants with your
+// The variant's activity: one reader's two weeks in October 2026. Replace both constants with your
 // own data (a fetch in the page, passed down as props); nothing here reads the clock, so the page
 // renders the same on the server and the client, on any day.
 

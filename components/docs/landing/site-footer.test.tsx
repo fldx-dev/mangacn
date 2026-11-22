@@ -35,7 +35,7 @@ describe("SiteFooter", () => {
     expect(hrefs("Components")).toEqual([
       "/docs/components",
       "/docs/components#category-primitive",
-      "/demo",
+      "/gallery",
     ]);
     expect(hrefs("Project")).toEqual([
       "https://github.com/fldx-dev/mangacn",

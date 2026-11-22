@@ -1,18 +1,18 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { waitForInk } from "./ready";
 
 // Lane E's browser-only checks (SPEC-components-7 §5): tree-view's keyboard in a real browser,
 // banner's dismissal keeping focus on the page, and the stat-card grid's columns per width. The
 // catalog-driven checks (axe in both modes, no overflow at 360, the shots) are
-// e2e/demos.spec.ts's.
+// e2e/variants.spec.ts's.
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 
-async function openDemo(page: Page, item: string, demo: string) {
-  const response = await page.goto(`/demo/${item}/${demo}`);
+async function openVariant(page: Page, item: string, variant: string) {
+  const response = await page.goto(`/gallery/${item}/${variant}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 
@@ -20,7 +20,7 @@ test.describe("tree-view", () => {
   test.skip(only !== undefined && !only.includes("tree-view"), "E2E_ITEMS leaves it out");
 
   test("walks the tree with the APG keys from one tab stop", async ({ page }) => {
-    await openDemo(page, "tree-view", "default");
+    await openVariant(page, "tree-view", "default");
     const tree = page.getByRole("tree", { name: "Project files" });
     const item = (name: string) => tree.getByRole("treeitem", { name, exact: true });
 
@@ -61,7 +61,7 @@ test.describe("tree-view", () => {
   });
 
   test("truncates a long label inside its column without overflowing", async ({ page }) => {
-    await openDemo(page, "tree-view", "default");
+    await openVariant(page, "tree-view", "default");
     const label = page
       .getByRole("treeitem", { name: "series-bible-with-a-very-long-name-for-every-arc.md" })
       .locator('[data-slot="tree-view-label"]');
@@ -84,7 +84,7 @@ test.describe("banner", () => {
   test.skip(only !== undefined && !only.includes("banner"), "E2E_ITEMS leaves it out");
 
   test("dismissed from the keyboard, it hands focus on and never to the body", async ({ page }) => {
-    await openDemo(page, "banner", "default");
+    await openVariant(page, "banner", "default");
     const banner = page.getByRole("region", { name: "Announcement" });
     const close = banner.getByRole("button", { name: "Dismiss announcement" });
     await close.focus();
@@ -100,7 +100,7 @@ test.describe("banner", () => {
   });
 
   test("at 360 the action drops under the text and close stays top-right", async ({ page }) => {
-    await openDemo(page, "banner", "inverted");
+    await openVariant(page, "banner", "inverted");
     const banner = page.getByRole("region", { name: "Site news" });
     const text = await banner.locator('[data-slot="banner-content"]').boundingBox();
     const action = await banner.locator('[data-slot="banner-action"]').boundingBox();
@@ -120,7 +120,7 @@ test.describe("stat-card", () => {
   test.skip(only !== undefined && !only.includes("stat-card"), "E2E_ITEMS leaves it out");
 
   test("the grid is one column at 360, two at 768 and four at 1280", async ({ page }) => {
-    await openDemo(page, "stat-card", "grid");
+    await openVariant(page, "stat-card", "grid");
     const cards = page.locator('[data-slot="stat-card"]');
     await expect(cards).toHaveCount(4);
     const lefts = await cards.evaluateAll((elements) =>

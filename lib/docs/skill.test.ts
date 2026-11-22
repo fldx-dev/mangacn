@@ -2,12 +2,12 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { type LoadedRegistry, loadRegistry } from "@/lib/registry";
-import { collectDemos } from "@/lib/registry/demo-map";
+import { collectVariants } from "@/lib/registry/variant-map";
 import { CATEGORIES, CATEGORY_LABELS, COMPONENTS_CATALOG } from "./catalog";
 import { renderSkillCatalog, SKILL_CATALOG_HEADER, SKILL_CATALOG_PATH, SKILL_DIR } from "./skill";
 
 const registry = loadRegistry();
-const catalog = renderSkillCatalog(registry, collectDemos(registry));
+const catalog = renderSkillCatalog(registry, collectVariants(registry));
 
 describe("renderSkillCatalog", () => {
   it("lists every registry item once, with its install command and docs URL", () => {
@@ -70,8 +70,8 @@ describe("renderSkillCatalog", () => {
         source: COMPONENTS_CATALOG,
       })),
     };
-    const demos = fixture.items.map((entry) => ({ item: entry.name, demo: "default" }));
-    const fixtureCatalog = renderSkillCatalog(fixture, demos);
+    const variants = fixture.items.map((entry) => ({ item: entry.name, variant: "default" }));
+    const fixtureCatalog = renderSkillCatalog(fixture, variants);
     const sections = fixtureCatalog
       .split("\n## ")
       .slice(1)

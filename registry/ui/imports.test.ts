@@ -25,11 +25,11 @@ describe("shipped files", () => {
     expect(problems, `registryDependencies:\n${problems.join("\n")}`).toEqual([]);
   });
 
-  it("never include demos or tests", () => {
+  it("never include variants or tests", () => {
     const shipped = registry.items.flatMap((item) => item.files.map((file) => file.path));
     expect(shipped.length).toBeGreaterThan(0);
     expect(
-      shipped.filter((file) => /\/demos\/|\.test\.|__fixtures__|__parity__/.test(file)),
+      shipped.filter((file) => /\/variants\/|\.test\.|__fixtures__|__parity__/.test(file)),
     ).toEqual([]);
   });
 });

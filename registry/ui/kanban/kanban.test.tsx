@@ -3,10 +3,10 @@ import * as React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
-import KanbanColumnsDemo from "./demos/columns";
-import KanbanDefaultDemo from "./demos/default";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Kanban, KanbanCard, KanbanColumn, type KanbanColumnDef, KanbanOverlay } from "./kanban";
+import KanbanColumnsVariant from "./variants/columns";
+import KanbanDefaultVariant from "./variants/default";
 
 interface Task {
   id: string;
@@ -120,7 +120,7 @@ async function key(code: string, target: Element | Document = document) {
 }
 
 describe("Kanban", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   afterEach(() => {
     cleanup();
@@ -291,7 +291,7 @@ describe("Kanban", () => {
     });
 
     it("reorders columns with the column's handle", async () => {
-      render(<KanbanColumnsDemo />);
+      render(<KanbanColumnsVariant />);
       const handle = screen.getByRole("button", { name: "Move column Ideas" });
       handle.focus();
       await key("Space", handle);
@@ -326,8 +326,8 @@ describe("Kanban", () => {
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "Rooftop chase" }));
   });
 
-  it("adds a card from a column's form in the columns demo", () => {
-    render(<KanbanColumnsDemo />);
+  it("adds a card from a column's form in the columns variant", () => {
+    render(<KanbanColumnsVariant />);
     const input = screen.getByLabelText("New card in Done");
     fireEvent.change(input, { target: { value: "Back cover" } });
     fireEvent.submit(input);
@@ -342,16 +342,16 @@ describe("Kanban", () => {
 
   it("reads no clock in render: the same server markup on two different days", () => {
     vi.useFakeTimers({ toFake: ["Date"] });
-    for (const Demo of [KanbanDefaultDemo, KanbanColumnsDemo]) {
+    for (const Variant of [KanbanDefaultVariant, KanbanColumnsVariant]) {
       vi.setSystemTime(new Date(2026, 0, 1, 9, 0));
-      const first = renderToString(<Demo />);
+      const first = renderToString(<Variant />);
       vi.setSystemTime(new Date(2031, 6, 15, 23, 30));
-      expect(renderToString(<Demo />)).toBe(first);
+      expect(renderToString(<Variant />)).toBe(first);
     }
   });
 
   it("hydrates the prerendered board without a mismatch, with useId-based dnd-kit ids", async () => {
-    const html = renderToString(<KanbanDefaultDemo />);
+    const html = renderToString(<KanbanDefaultVariant />);
     // dnd-kit's own counter ids ("DndDescribedBy-0") would differ between server and client;
     // the board passes a useId() as DndContext's id, which dnd-kit then uses as is.
     const describedBy = html.match(/aria-describedby="([^"]+)"/)?.[1] ?? "";
@@ -361,7 +361,7 @@ describe("Kanban", () => {
     container.innerHTML = html;
     document.body.append(container);
     const errors = vi.spyOn(console, "error").mockImplementation(() => {});
-    const root = await act(async () => hydrateRoot(container, <KanbanDefaultDemo />));
+    const root = await act(async () => hydrateRoot(container, <KanbanDefaultVariant />));
     expect(errors).not.toHaveBeenCalled();
     act(() => root.unmount());
     container.remove();

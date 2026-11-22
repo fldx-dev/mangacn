@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { CHART_TONE_IDS, CHART_TONES, ChartTones, chartToneFill } from "./chart-tones";
 
 afterEach(cleanup);
@@ -86,5 +86,5 @@ describe("ChartTones", () => {
     expect(source.match(/^import .*$/gm)).toEqual(['import type * as React from "react";']);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

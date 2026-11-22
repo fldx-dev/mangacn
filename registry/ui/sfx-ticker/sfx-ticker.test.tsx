@@ -1,9 +1,9 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
-import SfxTickerDefaultDemo from "./demos/default";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { SfxTicker } from "./sfx-ticker";
+import SfxTickerDefaultVariant from "./variants/default";
 
 afterEach(() => {
   cleanup();
@@ -157,9 +157,9 @@ describe("SfxTicker", () => {
     expect(html).toContain('data-animated="true"');
   });
 
-  it("marks every Japanese word in the default demo", () => {
+  it("marks every Japanese word in the default variant", () => {
     stubReducedMotion(false);
-    const { container } = render(<SfxTickerDefaultDemo />);
+    const { container } = render(<SfxTickerDefaultVariant />);
     const words = [...container.querySelectorAll<HTMLElement>('[data-slot="sfx-text"]')];
     expect(words).toHaveLength(16);
     for (const word of words) {
@@ -167,7 +167,7 @@ describe("SfxTicker", () => {
     }
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), {
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"), {
     setup: () => stubReducedMotion(false),
   });
 });

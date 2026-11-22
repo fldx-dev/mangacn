@@ -3,7 +3,7 @@ import path from "node:path";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
-import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { activityEvents, activityStats } from "./components/activity-data";
 import {
@@ -164,6 +164,6 @@ describe("activity-01 files", () => {
   });
 });
 
-describe("demos", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), { setup: stubResizeObserver });
+describe("variants", () => {
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"), { setup: stubResizeObserver });
 });

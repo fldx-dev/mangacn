@@ -57,7 +57,7 @@ runs:
           items=all
           why="$GITHUB_EVENT_NAME on $GITHUB_REF_NAME"
           if [ "$FULL" = "true" ]; then why="$why, full=true"; fi
-          why="$why: every demo and spec"
+          why="$why: every variant and spec"
         elif [ -n "$ITEMS" ]; then
           if ! [[ "$ITEMS" =~ ^[a-z0-9,-]+$ ]]; then echo "::error::items must be names separated by commas"; exit 1; fi
           items="$ITEMS"; why="the items input"
@@ -99,9 +99,9 @@ runs:
           echo "run=false" >> "$GITHUB_OUTPUT"
           exit 0
         fi
-        # The config imports the demo map, which is generated (gitignored); the build makes it
+        # The config imports the variant map, which is generated (gitignored); the build makes it
         # again later.
-        pnpm gen:demos
+        pnpm gen:variants
         list=$(pnpm exec playwright test -c e2e/playwright.config.ts --list --pass-with-no-tests 2>&1) || true
         total=$(grep -oP '^Total: \K[0-9]+' <<< "$list" || true)
         if [ -z "$total" ]; then

@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { SpeechBubble } from "./speech-bubble";
 
@@ -122,5 +122,5 @@ describe("SpeechBubble", () => {
     expect(bubble.classList.contains("font-dialogue")).toBe(false);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

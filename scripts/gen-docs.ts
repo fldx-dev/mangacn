@@ -1,5 +1,5 @@
 /**
- * Scaffolds a page for every component-catalog and block-catalog item with demos that has none
+ * Scaffolds a page for every component-catalog and block-catalog item with variants that has none
  * yet (content/docs/components/<item>.mdx, content/docs/blocks/<block>.mdx; never overwrites
  * one), and rewrites each section's meta.json so the sidebar lists the pages: the components
  * under category separators, the blocks under group separators. See SPEC-docs-site §6,
@@ -18,8 +18,8 @@ import {
   renderItemPage,
   renderSectionMeta,
 } from "../lib/docs/catalog";
-import { collectDemos } from "../lib/registry/demo-map";
 import { loadRegistry } from "../lib/registry/index";
+import { collectVariants } from "../lib/registry/variant-map";
 
 const check = process.argv.includes("--check");
 
@@ -35,10 +35,10 @@ interface SectionState {
 let sections: SectionState[];
 try {
   const registry = loadRegistry();
-  const demos = collectDemos(registry);
+  const variants = collectVariants(registry);
   // pnpm runs package scripts from the repo root.
   sections = DOCS_SECTIONS.map((section) => {
-    const items = docItems(registry, demos, section.catalog);
+    const items = docItems(registry, variants, section.catalog);
     const metaPath = `${section.dir}/meta.json`;
     const meta = renderSectionMeta(section, items);
     return {

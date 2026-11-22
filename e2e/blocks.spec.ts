@@ -4,16 +4,16 @@ import { expect, type Page, test } from "@playwright/test";
 import { DOCUMENT_END_ID } from "../components/docs/page-end";
 import { BLOCKS_CATALOG, docItems } from "../lib/docs/catalog";
 import { isSidebarShell } from "../lib/docs/sidebar-shell";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
-import { demoEntries, pageEntries } from "../lib/registry/demos.generated";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { loadRegistry } from "../lib/registry/index";
+import { pageEntries, variantEntries } from "../lib/registry/variants.generated";
 import { AXE_DISABLED_RULES } from "../lib/test/axe-rules";
 import { paintInkFillsAsCss } from "./ink-fills";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 import { comparePixels, shoot } from "./shoot";
 
 // Page blocks on their own (`/view/<block>`, app/view) at each project's width, light
-// and dark, with the waits and axe pass of the demo stages (e2e/demos.spec.ts); then the Blocks
+// and dark, with the waits and axe pass of the variant stages (e2e/variants.spec.ts); then the Blocks
 // index and a page block's framed preview. Baselines are Linux-only (CI); elsewhere the pages
 // are loaded and checked without pixels.
 
@@ -26,14 +26,14 @@ function axeFindings(violations: AxeResults["violations"]) {
 // `E2E_ITEMS` (playwright.config.ts) keeps the named page blocks' view shots, and the index
 // checks under `site`; unset, everything runs.
 const filter = parseE2eItems(process.env.E2E_ITEMS);
-const only = selectedDemoItems(filter);
+const only = selectedVariantItems(filter);
 const views = only ? pageEntries.filter((entry) => only.includes(entry.block)) : pageEntries;
 const checkIndex = !filter || filter.has("site");
 
-/** What the Blocks index must show: one card per block with demos, in catalog order. */
+/** What the Blocks index must show: one card per block with variants, in catalog order. */
 const blockItems = docItems(
   loadRegistry(resolve(__dirname, "../registry.json")),
-  demoEntries,
+  variantEntries,
   BLOCKS_CATALOG,
 );
 
@@ -60,7 +60,7 @@ for (const { block } of views) {
       await hydrateAfterReveal(page);
       const response = await page.goto(`/view/${block}${mode === "dark" ? "?mode=dark" : ""}`);
       expect(response?.status()).toBe(200);
-      await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+      await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
       if (mode === "dark") await expect(page.locator("html")).toHaveClass(/\bdark\b/);
       await waitForInk(page);
 
@@ -106,7 +106,7 @@ for (const { block } of views) {
   }
 }
 
-const LAZY = '[data-slot="block-index"] [data-slot="lazy-demo"]';
+const LAZY = '[data-slot="block-index"] [data-slot="lazy-variant"]';
 
 /** Each preview box's height and whether it has mounted, in document order. */
 function previewBoxes(page: Page) {
@@ -149,7 +149,7 @@ if (checkIndex) {
     expect(after.map((box) => box.height)).toEqual(before.map((box) => box.height));
     expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(documentHeight);
 
-    // Inert previews: a page block's frame and every inline demo sit under `inert`, so Tab and
+    // Inert previews: a page block's frame and every inline variant sit under `inert`, so Tab and
     // the pointer pass them by.
     const live = await page
       .locator(`${LAZY} > *`)
@@ -176,7 +176,7 @@ if (checkIndex) {
       await expect(frame).toHaveAttribute("src", `/view/${block}`);
       const content = await (await frame.elementHandle())?.contentFrame();
       if (!content) throw new Error(`No frame for /view/${block}`);
-      await expect(content.locator("html")).toHaveAttribute("data-demo-ready", "true");
+      await expect(content.locator("html")).toHaveAttribute("data-variant-ready", "true");
       // A sidebar shell keeps the desktop width in a 1280 px window's column (MANGA-19).
       if (isSidebarShell(block) && test.info().project.name === "w1280") {
         await expect(preview).toHaveAttribute("data-width", "desktop");

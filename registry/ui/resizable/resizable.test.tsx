@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./resizable";
 
@@ -166,5 +166,5 @@ describe("Resizable", () => {
     expect(light?.querySelectorAll("path").length).toBeGreaterThan(0);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

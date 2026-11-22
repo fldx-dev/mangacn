@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card";
 
@@ -67,5 +67,5 @@ describe("HoverCard", () => {
     expect(frame?.querySelector("svg > g")?.getAttribute("transform")).toBe("translate(8 8)");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

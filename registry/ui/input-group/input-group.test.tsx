@@ -1,8 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import WithLabelDemo from "./demos/with-label";
 import {
   InputGroup,
   InputGroupAddon,
@@ -11,6 +10,7 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from "./input-group";
+import WithLabelVariant from "./variants/with-label";
 
 afterEach(() => {
   cleanup();
@@ -153,10 +153,10 @@ describe("InputGroup", () => {
   });
 
   it("names its input from a visible label", () => {
-    render(<WithLabelDemo />);
+    render(<WithLabelVariant />);
     const input = screen.getByRole("textbox", { name: "Artist handle" });
     expect(input.closest('[data-slot="input-group"]')).toBeTruthy();
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

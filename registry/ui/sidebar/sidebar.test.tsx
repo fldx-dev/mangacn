@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   Sidebar,
   SidebarContent,
@@ -378,5 +378,7 @@ describe("Sidebar", () => {
     );
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), { setup: () => stubViewport(1280) });
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"), {
+    setup: () => stubViewport(1280),
+  });
 });

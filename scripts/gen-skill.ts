@@ -8,8 +8,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { renderSkillCatalog, SKILL_CATALOG_PATH } from "../lib/docs/skill";
-import { collectDemos } from "../lib/registry/demo-map";
 import { loadRegistry } from "../lib/registry/index";
+import { collectVariants } from "../lib/registry/variant-map";
 
 const check = process.argv.includes("--check");
 
@@ -19,7 +19,7 @@ const file = path.resolve(SKILL_CATALOG_PATH);
 let catalog: string;
 try {
   const registry = loadRegistry();
-  catalog = renderSkillCatalog(registry, collectDemos(registry));
+  catalog = renderSkillCatalog(registry, collectVariants(registry));
 } catch (error) {
   console.error(`✗ ${(error as Error).message}`);
   process.exit(1);

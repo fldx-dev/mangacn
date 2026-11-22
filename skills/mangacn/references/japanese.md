@@ -24,7 +24,7 @@ Why it matters:
 - **Screen readers** switch to a Japanese voice instead of spelling the characters out.
 - **Vertical text** needs the language for correct glyph rotation and punctuation.
 
-A wrapper with `lang="ja"` covers its children, as the stamp and ink-mark demos do. A Latin
+A wrapper with `lang="ja"` covers its children, as the stamp and ink-mark variants do. A Latin
 word inside a Japanese line (`HEROは遅れて来るものよ。`) needs no extra markup.
 
 ## Which item uses which face
@@ -79,7 +79,7 @@ stay legible in the heavy face.
 
 ## Sample strings
 
-The docs use these; reuse them for placeholders so demos and your pages look alike:
+The docs use these; reuse them for placeholders so variants and your pages look alike:
 
 | String                                     | Meaning                             | Where                     |
 | ------------------------------------------ | ----------------------------------- | ------------------------- |

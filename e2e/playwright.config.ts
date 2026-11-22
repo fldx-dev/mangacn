@@ -1,8 +1,8 @@
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { defineConfig } from "@playwright/test";
-import { E2E_SUITES, parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
-import { pageEntries } from "../lib/registry/demos.generated";
+import { E2E_SUITES, parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
+import { pageEntries } from "../lib/registry/variants.generated";
 
 const root = path.resolve(__dirname, "..");
 
@@ -25,15 +25,15 @@ function freePort(): string {
 const port = freePort();
 const widths = [360, 768, 1280];
 
-// `E2E_ITEMS` narrows the run (lib/e2e-filter.ts): demo items for demos.spec.ts (and a page
+// `E2E_ITEMS` narrows the run (lib/e2e-filter.ts): variant items for variants.spec.ts (and a page
 // block's view shots in blocks.spec.ts, which also checks the Blocks index under `site`), and
 // the suites `site`, `mcp`, `annotations` for their specs. Unset, empty or `all` runs everything.
 const filter = parseE2eItems(process.env.E2E_ITEMS);
-const demoItems = selectedDemoItems(filter);
-const pageBlocks = demoItems?.filter((name) => pageEntries.some((page) => page.block === name));
+const variantItems = selectedVariantItems(filter);
+const pageBlocks = variantItems?.filter((name) => pageEntries.some((page) => page.block === name));
 const testIgnore = filter
   ? [
-      ...(demoItems?.length ? [] : ["**/demos.spec.ts"]),
+      ...(variantItems?.length ? [] : ["**/variants.spec.ts"]),
       ...(pageBlocks?.length || filter.has("site") ? [] : ["**/blocks.spec.ts"]),
       ...E2E_SUITES.filter((suite) => !filter.has(suite)).map((suite) => `**/${suite}.spec.ts`),
     ]
@@ -43,13 +43,13 @@ if (!process.env.TEST_WORKER_INDEX) {
   console.log(
     filter
       ? `E2E_ITEMS=${process.env.E2E_ITEMS}: ${
-          demoItems?.length ? `demos of ${demoItems.join(", ")}` : "no demos"
+          variantItems?.length ? `variants of ${variantItems.join(", ")}` : "no variants"
         }; specs ${E2E_SUITES.filter((suite) => filter.has(suite)).join(", ") || "none"}`
-      : `E2E_ITEMS${process.env.E2E_ITEMS ? `=${process.env.E2E_ITEMS}` : " unset"}: every demo and spec`,
+      : `E2E_ITEMS${process.env.E2E_ITEMS ? `=${process.env.E2E_ITEMS}` : " unset"}: every variant and spec`,
   );
 }
 
-// Visual suite over the demo stage (SPEC-components §8). Needs a production build first
+// Visual suite over the variant stage (SPEC-components §8). Needs a production build first
 // (`pnpm build`); pixel comparison only runs on Linux, where the baselines are made.
 export default defineConfig({
   testDir: ".",
@@ -76,7 +76,7 @@ export default defineConfig({
   webServer: {
     command: `pnpm start --port ${port} --hostname 127.0.0.1`,
     cwd: root,
-    url: `http://127.0.0.1:${port}/demo/button/default`,
+    url: `http://127.0.0.1:${port}/gallery/button/default`,
     reuseExistingServer: false,
     timeout: 60_000,
   },

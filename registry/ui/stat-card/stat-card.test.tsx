@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   StatCard,
   StatCardChange,
@@ -14,7 +14,7 @@ afterEach(cleanup);
 const change = () => document.querySelector<HTMLElement>('[data-slot="stat-card-change"]');
 
 describe("StatCard", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("is card's ink frame with a data-slot on every part", () => {
     render(

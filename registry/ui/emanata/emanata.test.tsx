@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Emanata } from "./emanata";
 
 afterEach(cleanup);
@@ -50,5 +50,5 @@ describe("Emanata", () => {
     expect(mark.getAttribute("class")).toContain("[&_*]:[vector-effect:non-scaling-stroke]");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

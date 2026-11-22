@@ -1,6 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { SpeedLines } from "./speed-lines";
 
 afterEach(cleanup);
@@ -68,5 +68,5 @@ describe("SpeedLines", () => {
     expect(lines.classList.contains(name)).toBe(true);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

@@ -1,6 +1,6 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { PageTurn } from "./page-turn";
 
 // motion reads `prefers-reduced-motion` through matchMedia (missing in jsdom) once, on first
@@ -87,5 +87,5 @@ describe("PageTurn", () => {
     expect(before.textContent).toBe("Page 1, edited");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Marker, MarkerContent, MarkerIcon, markerVariants } from "./marker";
 
 afterEach(() => {
@@ -83,5 +83,5 @@ describe("Marker", () => {
     expect(link.getAttribute("data-slot")).toBe("marker");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

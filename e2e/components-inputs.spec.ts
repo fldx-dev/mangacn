@@ -1,17 +1,17 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { waitForInk } from "./ready";
 
 // Lane B's browser-only checks (SPEC-components-7 §5): copy-button against the real Clipboard API
 // with the permission granted, and a real paste into tags-input. The catalog-driven checks (axe
-// in both modes, no overflow at 360, the shots) are e2e/demos.spec.ts's.
+// in both modes, no overflow at 360, the shots) are e2e/variants.spec.ts's.
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 
-async function openDemo(page: Page, item: string, demo: string) {
-  const response = await page.goto(`/demo/${item}/${demo}`);
+async function openVariant(page: Page, item: string, variant: string) {
+  const response = await page.goto(`/gallery/${item}/${variant}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 
@@ -24,7 +24,7 @@ test.describe("copy-button", () => {
     // The system clipboard is one per browser: one width, so no two tests write it at once.
     test.skip(test.info().project.name !== "w1280", "one width is enough");
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-    await openDemo(page, "copy-button", "default");
+    await openVariant(page, "copy-button", "default");
     const button = page.getByRole("button", { name: "Copy" });
     await button.click();
     await expect(page.getByRole("button", { name: "Copied" })).toHaveAttribute(
@@ -52,7 +52,7 @@ test.describe("tags-input", () => {
   test.skip(only !== undefined && !only.includes("tags-input"), "E2E_ITEMS leaves it out");
 
   test('splits a pasted "a, b, c" into three tags and announces them', async ({ page }) => {
-    await openDemo(page, "tags-input", "default");
+    await openVariant(page, "tags-input", "default");
     const input = page.getByRole("textbox", { name: "Genres" });
     await input.focus();
     await input.evaluate((element) => {

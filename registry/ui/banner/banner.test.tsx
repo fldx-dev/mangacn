@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Banner, BannerAction, BannerClose, BannerContent, BannerIcon } from "./banner";
 
 afterEach(() => {
@@ -37,7 +37,7 @@ function Example(props: React.ComponentProps<typeof Banner>) {
 const region = () => screen.queryByRole("region", { name: "Announcement" });
 
 describe("Banner", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("is a named region (not an alert) with a data-slot on every part", () => {
     render(<Example className="custom" />);

@@ -5,7 +5,7 @@ Manga-styled React components, distributed as a shadcn registry.
 [![CI](https://github.com/fldx-dev/mangacn/actions/workflows/ci.yml/badge.svg)](https://github.com/fldx-dev/mangacn/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-black.svg)](LICENSE)
 
-**Site and docs:** https://www.mangacn.com · **Gallery:** https://www.mangacn.com/demo · **Agents:** https://www.mangacn.com/docs/agents
+**Site and docs:** https://www.mangacn.com · **Gallery:** https://www.mangacn.com/gallery · **Agents:** https://www.mangacn.com/docs/agents
 
 Every item is drawn like a printed manga page: ink outlines from a rough.js pen, screentone
 greys, one spot colour (red by default), speech bubbles, panels and sound effects. Every item is a shadcn registry
@@ -132,12 +132,12 @@ pnpm dev
 ```
 
 `pnpm dev` first builds the registry into `public/r`, renders the theme CSS and maps the
-demos, then starts the docs site on http://localhost:3000. The site reads the same source
+variants, then starts the docs site on http://localhost:3000. The site reads the same source
 as the registry, so a change to an item shows in its docs page and the gallery at once.
 
 | Command                               | What it does                                                                         |
 | ------------------------------------- | ------------------------------------------------------------------------------------ |
-| `pnpm check:changed`                  | Biome on changed files, demo map, typecheck and the tests related to your diff       |
+| `pnpm check:changed`                  | Biome on changed files, variant map, typecheck and the tests related to your diff    |
 | `pnpm check`                          | The same over every file: the full local gate                                        |
 | `pnpm test:e2e:changed`               | The Playwright set your diff needs (after `pnpm build`)                              |
 | `pnpm registry:smoke --only=<items>`  | Installs items into a fresh Next app and builds it                                   |
@@ -155,11 +155,11 @@ full check loop.
 
 ```
 registry/        the catalogs: theme/ (theme, presets, fonts, ink-frame, manga-motion), ui/<item>/, blocks/<block>/, hooks/
-app/, components/, content/   the docs site (Next.js App Router, Fumadocs), the landing, /demo and /view
+app/, components/, content/   the docs site (Next.js App Router, Fumadocs), the landing, /gallery and /view
 lib/             registry loading, docs rendering, the MCP tools, the e2e filter
 skills/mangacn/  the Agent Skill and its references
-scripts/         registry build, generators (demos, docs, props, skill, theme CSS), smoke install, the loop's land
-e2e/             Playwright suites (demos, site, blocks, presets, annotations, MCP) with their baselines
+scripts/         registry build, generators (variants, docs, props, skill, theme CSS), smoke install, the loop's land
+e2e/             Playwright suites (variants, site, blocks, presets, annotations, MCP) with their baselines
 ```
 
 ## Built with

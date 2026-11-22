@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -14,11 +14,11 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger,
 } from "./context-menu";
-import ContextMenuSubmenuDemo from "./demos/submenu";
+import ContextMenuSubmenuVariant from "./variants/submenu";
 
 afterEach(cleanup);
 
-// Each demo opens a portalled menu and axe walks all of it; under a loaded full run the first
+// Each variant opens a portalled menu and axe walks all of it; under a loaded full run the first
 // case took 6 s against the 5 s default (it passes alone in well under that).
 vi.setConfig({ testTimeout: 30_000 });
 
@@ -162,8 +162,8 @@ describe("ContextMenu", () => {
     expect(ltr.getAttribute("aria-checked")).toBe("true");
   });
 
-  it("opens its submenu demo on mount, with the submenu framed like the menu", async () => {
-    render(<ContextMenuSubmenuDemo />);
+  it("opens its submenu variant on mount, with the submenu framed like the menu", async () => {
+    render(<ContextMenuSubmenuVariant />);
     await act(async () => {});
     expect(screen.getAllByRole("menu")).toHaveLength(2);
     const subTrigger = screen.getByRole("menuitem", { name: "Share" });
@@ -180,5 +180,5 @@ describe("ContextMenu", () => {
     expect(panel?.parentElement?.getAttribute("data-slot")).toBe("context-menu-trigger");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

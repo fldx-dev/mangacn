@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion";
 
 afterEach(cleanup);
@@ -71,5 +71,5 @@ describe("Accordion", () => {
     expect(second.getAttribute("aria-expanded")).toBe("false");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

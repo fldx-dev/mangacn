@@ -1,9 +1,9 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { Button, buttonVariants } from "./button";
-import ButtonLinkDemo from "./demos/link";
+import ButtonLinkVariant from "./variants/link";
 
 afterEach(() => {
   cleanup();
@@ -110,8 +110,8 @@ describe("Button", () => {
     expect(frameOf(link)?.getAttribute("data-fill")).toBe("ink");
   });
 
-  it("renders the link demo as anchors announced as links", () => {
-    render(<ButtonLinkDemo />);
+  it("renders the link variant as anchors announced as links", () => {
+    render(<ButtonLinkVariant />);
     const read = screen.getByRole("link", { name: "Read chapter 12" });
     expect(read.tagName).toBe("A");
     expect(read.getAttribute("href")).toBe("#chapter-12");
@@ -132,5 +132,5 @@ describe("Button", () => {
     expect(frame?.classList.contains("in-data-grouped:hidden")).toBe(true);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

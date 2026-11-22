@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { type TreeNode, TreeView, type TreeViewProps } from "./tree-view";
 
 afterEach(cleanup);
@@ -48,7 +48,7 @@ function press(key: string) {
 }
 
 describe("TreeView", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("is an APG tree with data-slots, levels, set sizes and positions", () => {
     renderTree({ defaultExpanded: ["a"], className: "custom" });

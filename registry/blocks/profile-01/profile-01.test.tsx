@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
 import { installedPageSource } from "@/lib/registry/page-source";
-import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import { PROFILE_BIO_MAX, profile } from "./components/profile-data";
 import { ProfileForm, validatePassword, validateProfile } from "./components/profile-form";
 import Page from "./page";
@@ -52,7 +52,7 @@ describe("profile-01 page", () => {
     }
   });
 
-  it("shows the demo data, initials in the avatar", () => {
+  it("shows the variant data, initials in the avatar", () => {
     render(<Page />);
     expect(screen.getByLabelText(/Display name/)).toHaveProperty("value", "Aiko Tanaka");
     expect(screen.getByLabelText(/Username/)).toHaveProperty("value", "aiko_reads");
@@ -250,5 +250,5 @@ describe("ProfileForm: the password", () => {
     expect(validatePassword("x", "abcdefg1", "abcdefg1")).toEqual({});
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

@@ -1,8 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import PaginationDefaultDemo from "./demos/default";
 import {
   Pagination,
   PaginationContent,
@@ -12,6 +11,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./pagination";
+import PaginationDefaultVariant from "./variants/default";
 
 afterEach(() => {
   cleanup();
@@ -77,7 +77,7 @@ describe("Pagination", () => {
   });
 
   it("announces page links as links, not buttons", () => {
-    render(<PaginationDefaultDemo />);
+    render(<PaginationDefaultVariant />);
     expect(screen.queryAllByRole("button")).toHaveLength(0);
     // Previous, 1, 5, 6, 7, 12, next.
     expect(screen.getAllByRole("link")).toHaveLength(7);
@@ -119,7 +119,7 @@ describe("Pagination", () => {
 
   it("inks every outline once measured", () => {
     const observers = stubResizeObserver();
-    render(<PaginationDefaultDemo />);
+    render(<PaginationDefaultVariant />);
     observers.drawAll(32, 32);
     const frames = document.querySelectorAll<HTMLElement>('[data-slot="ink-frame"]');
     expect(frames).toHaveLength(7);
@@ -131,5 +131,5 @@ describe("Pagination", () => {
     expect(screen.getByRole("link", { name: "Next chapter: Chapter 13" })).toBeTruthy();
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

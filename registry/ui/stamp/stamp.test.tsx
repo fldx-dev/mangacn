@@ -1,9 +1,9 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
-import StampJapaneseDemo from "./demos/japanese";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Stamp } from "./stamp";
+import StampJapaneseVariant from "./variants/japanese";
 
 // Records the options handed to rough.js, with the real generator still doing the drawing.
 const { calls } = vi.hoisted(() => ({
@@ -202,8 +202,8 @@ describe("Stamp", () => {
     expect(other).not.toEqual(first);
   });
 
-  it("keeps the Japanese demo under lang=ja", () => {
-    const { container } = render(<StampJapaneseDemo />);
+  it("keeps the Japanese variant under lang=ja", () => {
+    const { container } = render(<StampJapaneseVariant />);
     for (const stamp of container.querySelectorAll('[data-slot="stamp"]')) {
       expect(stamp.closest("[lang]")?.getAttribute("lang")).toBe("ja");
     }
@@ -211,7 +211,7 @@ describe("Stamp", () => {
 
   describe("fitting the text inside the ring", () => {
     // jsdom has no layout: give the seal and its text the sizes Chromium measures for these
-    // words in Dela Gothic One (registry/ui/stamp/demos/long-words.tsx).
+    // words in Dela Gothic One (registry/ui/stamp/variants/long-words.tsx).
     const layout = (seal: number, width: number, height: number) => {
       const size = (slot: string | undefined, sealSize: number, textSize: number) =>
         slot === "stamp" ? sealSize : slot === "stamp-text" ? textSize : 0;
@@ -340,5 +340,5 @@ describe("Stamp", () => {
     });
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

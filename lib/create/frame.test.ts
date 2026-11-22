@@ -87,12 +87,12 @@ describe("followCode", () => {
     const done = new AbortController();
     followCode(window, encode(CUSTOM), done.signal);
     expect(root().classList.contains("font-a")).toBe(true);
-    expect(root().dataset.demoReady).toBe("true");
+    expect(root().dataset.variantReady).toBe("true");
     expect(variable("--paper")).toBe(baseValues(CUSTOM.look).light.paper);
     done.abort();
     expect(root().classList.contains("font-a")).toBe(false);
     expect(root().getAttribute("style") ?? "").toBe("");
-    delete root().dataset.demoReady;
+    delete root().dataset.variantReady;
   });
 
   it("does nothing once the page has gone", () => {
@@ -100,7 +100,7 @@ describe("followCode", () => {
     done.abort();
     followCode(window, encode(CUSTOM), done.signal);
     expect(root().getAttribute("style") ?? "").toBe("");
-    expect(root().dataset.demoReady).toBeUndefined();
+    expect(root().dataset.variantReady).toBeUndefined();
   });
 
   it("in a frame, says it listens and follows the parent's codes only", () => {
@@ -136,6 +136,6 @@ describe("followCode", () => {
     send({ type: CODE_MESSAGE, code: "112" });
     expect(variable("--paper")).toBe("");
     document.removeEventListener(INK_REDRAW_EVENT, redraws);
-    delete root().dataset.demoReady;
+    delete root().dataset.variantReady;
   });
 });

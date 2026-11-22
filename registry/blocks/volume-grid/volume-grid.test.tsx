@@ -3,7 +3,7 @@ import path from "node:path";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { firstRowSize, VolumeGrid, volumeLabel } from "./volume-grid";
 
 afterEach(() => {
@@ -122,5 +122,5 @@ describe("VolumeGrid", () => {
     expect(hasUseClientDirective(source)).toBe(false);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

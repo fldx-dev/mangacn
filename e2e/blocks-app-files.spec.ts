@@ -1,12 +1,12 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 
 // Lane C's own checks (SPEC-components-8 §5.4, §5.6, §8): file-manager-01 and upload-01 walked in
 // a real browser at 360 and 1280. The catalog-driven ones (axe in both modes, one main, no
 // overflow at 360, the shots) are e2e/blocks.spec.ts's.
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 
 test.skip(({ viewport }) => viewport?.width === 768, "the lane walks 360 and 1280");
 
@@ -14,7 +14,7 @@ async function openView(page: Page, name: string) {
   await hydrateAfterReveal(page);
   const response = await page.goto(`/view/${name}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 

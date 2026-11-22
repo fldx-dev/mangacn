@@ -10,7 +10,7 @@ item: tags-input
 
 For a list people type rather than pick: genres, keywords, the email addresses of the editors to invite. Each entry becomes a Badge inside one frame; `validate` refuses a bad one with your message and `max` caps the list. When the choices are known in advance, use [Multi Select](/docs/components/multi-select) instead.
 
-No WAI-ARIA pattern fits a free-text tag field, so it follows the Authoring Practices' general rules and the chips of Combobox's `multiple` demo: a plain text input after a list of chips, each with a named remove button, and every add, removal or refusal announced once in a polite live region.
+No WAI-ARIA pattern fits a free-text tag field, so it follows the Authoring Practices' general rules and the chips of Combobox's `multiple` variant: a plain text input after a list of chips, each with a named remove button, and every add, removal or refusal announced once in a polite live region.
 
 - Enter or comma: adds the typed text as a tag.
 - Backspace in an empty input: removes the last tag.
@@ -19,8 +19,8 @@ No WAI-ARIA pattern fits a free-text tag field, so it follows the Authoring Prac
 
 ## Examples
 
-<DemoFrame item="tags-input" demo="default" />
-<DemoFrame item="tags-input" demo="validate" />
+<VariantFrame item="tags-input" variant="default" />
+<VariantFrame item="tags-input" variant="validate" />
 
 ## Props
 

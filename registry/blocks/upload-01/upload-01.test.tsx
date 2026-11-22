@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
 import { installedPageSource } from "@/lib/registry/page-source";
-import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import { uploadSeries } from "./components/upload-data";
 import { UploadForm, validateChapter } from "./components/upload-form";
 import Page from "./page";
@@ -248,6 +248,6 @@ describe("validateChapter", () => {
   });
 });
 
-describe("upload-01 demos", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+describe("upload-01 variants", () => {
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

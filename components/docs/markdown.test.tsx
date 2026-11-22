@@ -4,10 +4,10 @@ import type { MDXComponents } from "mdx/types";
 import { createElement, type FC } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { agentsSnippet, MCP_URL } from "@/lib/docs/agents";
-import { getDemoSource } from "@/lib/docs/demo-source";
 import { installCommand } from "@/lib/docs/install-command";
 import { renderMarkdownPage } from "@/lib/docs/llms";
 import { generatedProps } from "@/lib/docs/props";
+import { getVariantSource } from "@/lib/docs/variant-source";
 import { fence, getMarkdownComponents } from "./markdown";
 
 // `cacheLife` only runs inside a Next.js "use cache" scope; Vitest ignores the directive.
@@ -46,9 +46,9 @@ describe("Markdown forms of the docs components", () => {
     expect(await render("ThemePlayground")).toBe("");
   });
 
-  it("writes a demo as its source", async () => {
-    expect(await render("DemoFrame", { item: "speech-bubble", demo: "default" })).toBe(
-      `\`\`\`tsx title="speech-bubble/default.tsx"\n${getDemoSource("speech-bubble", "default")}\n\`\`\``,
+  it("writes a variant as its source", async () => {
+    expect(await render("VariantFrame", { item: "speech-bubble", variant: "default" })).toBe(
+      `\`\`\`tsx title="speech-bubble/default.tsx"\n${getVariantSource("speech-bubble", "default")}\n\`\`\``,
     );
   });
 
@@ -143,11 +143,11 @@ describe("Markdown forms of the docs components", () => {
 // site components as JSX resolved from `props.components`, opted in to Markdown.
 function Processed({ components }: { components?: MDXComponents }) {
   asMarkdown();
-  const { DemoFrame, CopyPrompt } = components as Record<string, Component>;
+  const { VariantFrame, CopyPrompt } = components as Record<string, Component>;
   return [
     "\n## Examples\n\n",
     createElement(CopyPrompt, { key: "prompt", item: "speech-bubble" }),
-    createElement(DemoFrame, { key: "demo", item: "speech-bubble", demo: "default" }),
+    createElement(VariantFrame, { key: "variant", item: "speech-bubble", variant: "default" }),
   ];
 }
 

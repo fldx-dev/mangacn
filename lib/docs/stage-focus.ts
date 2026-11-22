@@ -1,5 +1,5 @@
 /**
- * Holds script-driven focus in an embedded demo stage until the reader goes there.
+ * Holds script-driven focus in an embedded variant stage until the reader goes there.
  *
  * A stage whose popup opens on load (a dialog, a menu, a popover with a field) focuses it, as it
  * should on its own page. In an iframe on a docs page that same call pulls the reader's focus
@@ -12,7 +12,7 @@
  * since it scrolls the embedding page as well.
  *
  * Self-contained on purpose: the stage inlines this function's source as a script that runs
- * before the demo's markup arrives, so it must not reach for anything outside its own body.
+ * before the variant's markup arrives, so it must not reach for anything outside its own body.
  */
 export function holdStageFocus(win: Window & typeof globalThis): void {
   // On its own page the stage keeps its focus (the baselines and the lone stage are unchanged).

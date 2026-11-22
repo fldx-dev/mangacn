@@ -106,8 +106,8 @@ describe("ScaledFrame", () => {
     const observers = stubResizeObserver();
     const { container } = render(
       <>
-        <ScaledFrame src="/demo/sidebar/default" width={768} title="Centred" />
-        <ScaledFrame src="/demo/sidebar/default" width={768} title="Filled" fill />
+        <ScaledFrame src="/gallery/sidebar/default" width={768} title="Centred" />
+        <ScaledFrame src="/gallery/sidebar/default" width={768} title="Filled" fill />
       </>,
     );
     observers.drawAll(1000, 400);

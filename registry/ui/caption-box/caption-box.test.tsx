@@ -1,10 +1,10 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { CaptionBox } from "./caption-box";
-import CaptionBoxDefaultDemo from "./demos/default";
-import CaptionBoxInAPanelDemo from "./demos/in-a-panel";
+import CaptionBoxDefaultVariant from "./variants/default";
+import CaptionBoxInAPanelVariant from "./variants/in-a-panel";
 
 afterEach(() => {
   cleanup();
@@ -100,19 +100,19 @@ describe("CaptionBox", () => {
     expect(box.classList.contains("relative")).toBe(false);
   });
 
-  it("sits in the corners of a panel in the in-a-panel demo", () => {
-    const { container } = render(<CaptionBoxInAPanelDemo />);
+  it("sits in the corners of a panel in the in-a-panel variant", () => {
+    const { container } = render(<CaptionBoxInAPanelVariant />);
     const panel = container.querySelector<HTMLElement>('[data-slot="panel"]') as HTMLElement;
     const corners = [...panel.querySelectorAll<HTMLElement>(':scope > [data-slot="caption-box"]')];
     expect(corners.map((box) => box.dataset.corner)).toEqual(["top-left", "bottom-right"]);
     expect(panel.querySelector('[data-slot="halftone-background"]')).not.toBeNull();
   });
 
-  it("marks the Japanese sample in the default demo", () => {
-    const { container } = render(<CaptionBoxDefaultDemo />);
+  it("marks the Japanese sample in the default variant", () => {
+    const { container } = render(<CaptionBoxDefaultVariant />);
     const ja = container.querySelector<HTMLElement>('[data-slot="caption-box"][lang="ja"]');
     expect(ja?.textContent).toBe("その頃、街の反対側では……");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

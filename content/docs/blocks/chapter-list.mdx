@@ -20,15 +20,15 @@ The list is a `<nav>` named by `label` around an ordered list. Each row is one l
 
 Five chapters, newest first: three unread rows outlined, the rule, then two read rows on tone-1 with their titles struck through.
 
-<DemoFrame item="chapter-list" demo="default" />
+<VariantFrame item="chapter-list" variant="default" />
 
 `numerals="ja"` writes <span lang="ja">第12話</span>, stamps <span lang="ja">最新</span> and says the states as <span lang="ja">既読</span> and <span lang="ja">最新</span>, each under `lang="ja"`. The block cannot know the language of your titles, so put `lang="ja"` on the list (it passes through to the `<nav>`) when they are Japanese.
 
-<DemoFrame item="chapter-list" demo="japanese" />
+<VariantFrame item="chapter-list" variant="japanese" />
 
 `order="asc"` lists the series in reading order, the way a reader part way through sees it: read chapters struck through above, the next one outlined. Numbers can be strings (`"2.5"` sorts between 2 and 3), and an extra chapter never takes the stamp from the newest numbered one. Set `latest={false}` to drop the stamp.
 
-<DemoFrame item="chapter-list" demo="read-states" />
+<VariantFrame item="chapter-list" variant="read-states" />
 
 ## Props
 

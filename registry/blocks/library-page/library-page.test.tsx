@@ -3,7 +3,7 @@ import path from "node:path";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
-import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import { ContinueReading, progressText } from "./components/continue-reading";
 import { Shelf, volumeCount } from "./components/shelf";
 import Page from "./page";
@@ -146,7 +146,7 @@ describe("Shelf and ContinueReading", () => {
     ).toBe("Chapter 12, page 5 of 24");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });
 
 describe("library-page files", () => {

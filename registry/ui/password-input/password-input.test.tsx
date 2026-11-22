@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { getPasswordStrength, PasswordInput } from "./password-input";
 
 afterEach(cleanup);
@@ -22,7 +22,7 @@ describe("getPasswordStrength", () => {
 });
 
 describe("PasswordInput", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("is one input group: the input and its toggle in one frame, with slots", () => {
     render(<PasswordInput aria-label="Password" className="custom" />);

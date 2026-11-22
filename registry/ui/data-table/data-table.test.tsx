@@ -3,16 +3,16 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   createSelectColumn,
   DataTable,
   DataTableColumnHeader,
   type DataTableFeatures,
 } from "./data-table";
-import DefaultDemo from "./demos/default";
-import SelectionDemo from "./demos/selection";
-import ServerDemo from "./demos/server";
+import DefaultVariant from "./variants/default";
+import SelectionVariant from "./variants/selection";
+import ServerVariant from "./variants/server";
 
 afterEach(() => {
   cleanup();
@@ -37,10 +37,10 @@ async function click(name: string) {
 }
 
 describe("DataTable", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("renders the table in its frame with slots, a named region and a silent status", () => {
-    render(<DefaultDemo />);
+    render(<DefaultVariant />);
     const root = document.querySelector('[data-slot="data-table"]');
     expect(root?.querySelector('[data-slot="data-table-toolbar"]')).not.toBeNull();
     expect(root?.querySelector('[data-slot="data-table-pagination"]')).not.toBeNull();
@@ -56,7 +56,7 @@ describe("DataTable", () => {
   });
 
   it("pins the first column: every first cell is sticky at the start", () => {
-    render(<DefaultDemo />);
+    render(<DefaultVariant />);
     for (const cell of document.querySelectorAll("th, td")) {
       expect(cell.className).toContain("first:sticky");
       expect(cell.className).toContain("first:start-0");
@@ -64,7 +64,7 @@ describe("DataTable", () => {
   });
 
   it("sorts from the column menu, sets aria-sort and announces the order", async () => {
-    render(<DefaultDemo />);
+    render(<DefaultVariant />);
     await pick("Title", "Ascending");
     expect(header("Title").getAttribute("aria-sort")).toBe("ascending");
     expect(status()).toBe("Sorted by Title, ascending");
@@ -78,7 +78,7 @@ describe("DataTable", () => {
   });
 
   it("filters from the toolbar, announces the count and resets", async () => {
-    render(<DefaultDemo />);
+    render(<DefaultVariant />);
     const field = screen.getByRole("searchbox", { name: "Filter by Title" });
     fireEvent.change(field, { target: { value: "the" } });
     await act(async () => {});
@@ -96,7 +96,7 @@ describe("DataTable", () => {
   });
 
   it("pages with the buttons and announces page n of m; a filter's page reset says the count", async () => {
-    render(<DefaultDemo />);
+    render(<DefaultVariant />);
     expect(
       screen.getByRole("button", { name: "Previous page" }).getAttribute("aria-disabled"),
     ).toBe("true");
@@ -120,7 +120,7 @@ describe("DataTable", () => {
   });
 
   it("changes the page size from the select and announces it", async () => {
-    render(<DefaultDemo />);
+    render(<DefaultVariant />);
     const trigger = screen.getByRole("combobox", { name: "Rows per page" });
     act(() => trigger.focus());
     fireEvent.keyDown(trigger, { key: "ArrowDown" });
@@ -134,7 +134,7 @@ describe("DataTable", () => {
   });
 
   it("selects rows by name, shows a mixed select-all and announces the count", async () => {
-    render(<SelectionDemo />);
+    render(<SelectionVariant />);
     const all = screen.getByRole("checkbox", { name: "Select all rows on this page" });
     expect(all.getAttribute("aria-checked")).toBe("false");
 
@@ -162,7 +162,7 @@ describe("DataTable", () => {
   });
 
   it("runs a bulk action from the toolbar slot on the selected rows", async () => {
-    render(<SelectionDemo />);
+    render(<SelectionVariant />);
     const action = screen.getByRole("button", { name: "Mark done" });
     expect(action.getAttribute("aria-disabled")).toBe("true");
     fireEvent.click(screen.getByRole("checkbox", { name: "Select page 1" }));
@@ -174,7 +174,7 @@ describe("DataTable", () => {
   });
 
   it("counts the selected rows the filter shows, of the rows it shows", async () => {
-    render(<SelectionDemo />);
+    render(<SelectionVariant />);
     await click("Next page");
     fireEvent.click(screen.getByRole("checkbox", { name: "Select page 6" }));
     await act(async () => {});
@@ -191,7 +191,7 @@ describe("DataTable", () => {
   });
 
   it("keeps the selection through a sort and a filter", async () => {
-    render(<SelectionDemo />);
+    render(<SelectionVariant />);
     fireEvent.click(screen.getByRole("checkbox", { name: "Select page 4" }));
     fireEvent.click(screen.getByRole("checkbox", { name: "Select page 5" }));
     await act(async () => {});
@@ -213,7 +213,7 @@ describe("DataTable", () => {
   });
 
   it("stays on its page when Mark done changes the data (autoResetPageIndex off)", async () => {
-    render(<SelectionDemo />);
+    render(<SelectionVariant />);
     await click("Next page");
     fireEvent.click(screen.getByRole("checkbox", { name: "Select page 7" }));
     await act(async () => {});
@@ -280,7 +280,7 @@ describe("DataTable", () => {
   });
 
   it("hides a column from its menu, moves focus to the table and announces it", async () => {
-    render(<DefaultDemo />);
+    render(<DefaultVariant />);
     await pick("Pages", "Hide");
     expect(screen.queryByRole("columnheader", { name: /Pages/ })).toBeNull();
     expect(screen.getAllByRole("columnheader")).toHaveLength(4);
@@ -289,7 +289,7 @@ describe("DataTable", () => {
   });
 
   it("shows and hides columns from the View menu", async () => {
-    render(<DefaultDemo />);
+    render(<DefaultVariant />);
     fireEvent.click(screen.getByRole("button", { name: "View" }));
     await act(async () => {});
     const items = screen.getAllByRole("menuitemcheckbox").map((item) => item.textContent);
@@ -349,7 +349,7 @@ describe("DataTable", () => {
 
   it("server: a click starts the request; the rows arrive after the latency, busy meanwhile", async () => {
     vi.useFakeTimers();
-    render(<ServerDemo />);
+    render(<ServerVariant />);
     expect(firstCells()).toEqual(["1", "2", "3", "4", "5"]);
     expect(screen.getByText("Page 1 of 10")).toBeTruthy();
 
@@ -375,7 +375,7 @@ describe("DataTable", () => {
 
   it("server: starts no timer on render, and clears a pending one on unmount", async () => {
     vi.useFakeTimers();
-    const { unmount } = render(<ServerDemo />);
+    const { unmount } = render(<ServerVariant />);
     expect(vi.getTimerCount()).toBe(0);
     fireEvent.click(screen.getByRole("button", { name: "Next page" }));
     await act(async () => {});
@@ -386,17 +386,17 @@ describe("DataTable", () => {
 
   it("reads no clock while rendering: the same markup at two dates", () => {
     vi.useFakeTimers();
-    for (const Demo of [DefaultDemo, SelectionDemo, ServerDemo]) {
+    for (const Variant of [DefaultVariant, SelectionVariant, ServerVariant]) {
       vi.setSystemTime(new Date(2026, 0, 1, 9));
-      const first = renderToStaticMarkup(<Demo />);
+      const first = renderToStaticMarkup(<Variant />);
       vi.setSystemTime(new Date(2031, 6, 15, 23));
-      expect(renderToStaticMarkup(<Demo />)).toBe(first);
+      expect(renderToStaticMarkup(<Variant />)).toBe(first);
     }
     for (const file of [
       "data-table.tsx",
-      "demos/default.tsx",
-      "demos/selection.tsx",
-      "demos/server.tsx",
+      "variants/default.tsx",
+      "variants/selection.tsx",
+      "variants/server.tsx",
     ]) {
       const source = readFileSync(new URL(file, import.meta.url), "utf8");
       expect(source, file).not.toMatch(/new Date\(|Date\.now|Math\.random|randomUUID/);

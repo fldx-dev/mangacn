@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
       { source: "/docs/:slug*.md", destination: "/llms.mdx/:slug*" },
     ];
   },
+  // The gallery and its stages lived under /demo until batch 10 (SPEC-components-10 §5.4).
+  async redirects() {
+    return [
+      { source: "/demo", destination: "/gallery", permanent: true },
+      { source: "/demo/:path*", destination: "/gallery/:path*", permanent: true },
+    ];
+  },
   // The registry (`public/r`, built by `pnpm registry:build`): a short browser cache, a longer
   // CDN cache, and open CORS so any tool can fetch the items (lib/registry/headers.ts). Next
   // sets the JSON content type. The Create routes under /r/create/ (app/r/create) set their own:

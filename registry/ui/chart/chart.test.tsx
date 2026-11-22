@@ -2,7 +2,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import type * as React from "react";
 import { Bar, BarChart } from "recharts";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   type ChartConfig,
   ChartContainer,
@@ -165,6 +165,6 @@ describe("ChartLegendContent", () => {
   });
 });
 
-describe("Chart demos", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+describe("Chart variants", () => {
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

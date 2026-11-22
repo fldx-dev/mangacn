@@ -4,7 +4,6 @@ import type { MDXComponents } from "mdx/types";
 import type { ReactNode } from "react";
 import { agentsSnippet, MCP_CLIENTS } from "@/lib/docs/agents";
 import { BLOCKS_CATALOG, CATEGORY_LABELS, docItems, groupByCategory } from "@/lib/docs/catalog";
-import { getDemoSource } from "@/lib/docs/demo-source";
 import {
   commandFor,
   type InstallCommandProps,
@@ -13,16 +12,17 @@ import {
 } from "@/lib/docs/install-command";
 import { generatedProps, propsInterfaceName, typeTableToMarkdown } from "@/lib/docs/props";
 import { PROPS_DELTA, shadcnDocsUrl } from "@/lib/docs/props-delta";
+import { getVariantSource } from "@/lib/docs/variant-source";
 import { loadRegistry } from "@/lib/registry";
 import { groupBlocks } from "@/lib/registry/blocks";
-import { listDemos } from "@/lib/registry/demos";
 import { isStockPrimitive } from "@/lib/registry/parity";
 import { presetItemName } from "@/lib/registry/theme-presets";
-import type { DemoFrameProps } from "./demo-frame";
+import { listVariants } from "@/lib/registry/variants";
 import { itemFilesMarkdown } from "./item-files";
 import type { PropsTableProps } from "./props-table";
 import { themeLooks } from "./theme-presets";
 import { TOKENS, tokenValues } from "./token-swatches";
+import type { VariantFrameProps } from "./variant-frame";
 
 // The Markdown form of every site component a docs page uses, for `getText("processed")`
 // (`includeProcessedMarkdown` with `output: "function"`) and so for /llms-full.txt and
@@ -72,10 +72,10 @@ export function CopyPromptMarkdown() {
   return null;
 }
 
-/** A demo is its source, with the install-path imports the Code tab shows. */
-export function DemoFrameMarkdown({ item, demo }: DemoFrameProps) {
+/** A variant is its source, with the install-path imports the Code tab shows. */
+export function VariantFrameMarkdown({ item, variant }: VariantFrameProps) {
   asMarkdown();
-  return fence(getDemoSource(item, demo), "tsx", `title="${item}/${demo}.tsx"`);
+  return fence(getVariantSource(item, variant), "tsx", `title="${item}/${variant}.tsx"`);
 }
 
 /** The props as a Markdown table: generated for manga-native items, the delta for primitives. */
@@ -117,7 +117,7 @@ export async function PropsTableMarkdown({
 /** Every item as a link with its description, grouped by category in sidebar order. */
 export function ComponentIndexMarkdown() {
   asMarkdown();
-  return groupByCategory(docItems(loadRegistry(), listDemos()))
+  return groupByCategory(docItems(loadRegistry(), listVariants()))
     .map(
       ([category, group]) =>
         `\n## ${CATEGORY_LABELS[category]}\n\n${group
@@ -130,7 +130,7 @@ export function ComponentIndexMarkdown() {
 /** Every block as a link with its description, grouped as on the index. */
 export function BlockIndexMarkdown() {
   asMarkdown();
-  return groupBlocks(docItems(loadRegistry(), listDemos(), BLOCKS_CATALOG))
+  return groupBlocks(docItems(loadRegistry(), listVariants(), BLOCKS_CATALOG))
     .map(
       (group) =>
         `\n## ${group.label}\n\n${group.items
@@ -208,7 +208,7 @@ export function getMarkdownComponents(): MDXComponents {
     BlockIndex: BlockIndexMarkdown,
     BlockPreview: BlockPreviewMarkdown,
     CopyPrompt: CopyPromptMarkdown,
-    DemoFrame: DemoFrameMarkdown,
+    VariantFrame: VariantFrameMarkdown,
     ItemFiles: ItemFilesMarkdown,
     PropsTable: PropsTableMarkdown,
     ComponentIndex: ComponentIndexMarkdown,

@@ -1,7 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
-import DropdownMenuSubmenuDemo from "./demos/submenu";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -15,6 +14,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
+import DropdownMenuSubmenuVariant from "./variants/submenu";
 
 afterEach(cleanup);
 
@@ -134,8 +134,8 @@ describe("DropdownMenu", () => {
     expect(checkbox.getAttribute("aria-checked")).toBe("false");
   });
 
-  it("opens the submenu in its submenu demo", async () => {
-    render(<DropdownMenuSubmenuDemo />);
+  it("opens the submenu in its submenu variant", async () => {
+    render(<DropdownMenuSubmenuVariant />);
     await act(async () => {});
     expect(screen.getAllByRole("menu")).toHaveLength(2);
     const subTrigger = screen.getByRole("menuitem", { name: "Add to list" });
@@ -146,5 +146,5 @@ describe("DropdownMenu", () => {
     expect(frameOf(sub?.parentElement)?.getAttribute("data-fill")).toBe("paper");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

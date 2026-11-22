@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import * as React from "react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { SpreadViewer } from "./spread-viewer";
 
 // motion reads `prefers-reduced-motion` once per module through matchMedia (missing in jsdom):
@@ -236,5 +236,5 @@ describe("SpreadViewer", () => {
     expect(status()?.textContent).toBe("Pages 4–5 of 24");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

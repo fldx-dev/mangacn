@@ -1,10 +1,10 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
-import InkMarkJapaneseDemo from "./demos/japanese";
-import InkMarkRevealDemo from "./demos/reveal";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { InkMark } from "./ink-mark";
+import InkMarkJapaneseVariant from "./variants/japanese";
+import InkMarkRevealVariant from "./variants/reveal";
 
 // Records the options handed to rough.js, with the real generator still doing the drawing.
 const { calls } = vi.hoisted(() => ({
@@ -352,7 +352,7 @@ describe("InkMark", () => {
 
   it("draws the stroke on when show turns on (ink-mark.reduced-motion.test.tsx: at once)", async () => {
     layOut(TWO_LINES.slice(0, 1));
-    const { container } = render(<InkMarkRevealDemo />);
+    const { container } = render(<InkMarkRevealVariant />);
     const toggle = screen.getByRole("switch", { name: "Mark the answer" });
     const strokes = () => [...container.querySelectorAll<SVGPathElement>("path")];
     const frame = () => act(() => new Promise((resolve) => requestAnimationFrame(resolve)));
@@ -372,10 +372,12 @@ describe("InkMark", () => {
     expect(drawn).toBeLessThan(1);
   });
 
-  it("sets the Japanese demo under lang=ja", () => {
-    const { container } = render(<InkMarkJapaneseDemo />);
+  it("sets the Japanese variant under lang=ja", () => {
+    const { container } = render(<InkMarkJapaneseVariant />);
     expect(container.querySelector('[lang="ja"] [data-slot="ink-mark"]')).not.toBeNull();
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), { setup: () => layOut(TWO_LINES) });
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"), {
+    setup: () => layOut(TWO_LINES),
+  });
 });

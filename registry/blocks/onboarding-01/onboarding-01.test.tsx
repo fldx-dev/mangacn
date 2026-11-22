@@ -3,7 +3,7 @@ import path from "node:path";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
-import { axe, expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { axe, expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import { onboardingDefaults, onboardingGenres } from "./components/onboarding-data";
 import {
   OnboardingFlow,
@@ -219,6 +219,6 @@ describe("onboarding-01 files", () => {
   });
 });
 
-describe("demos", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+describe("variants", () => {
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

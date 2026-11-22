@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { SfxText } from "./sfx-text";
 
 // motion reads `prefers-reduced-motion` through matchMedia (missing in jsdom) once, on first
@@ -94,5 +94,5 @@ describe("SfxText", () => {
     expect(sfx.textContent).toBe("Kyoto!");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

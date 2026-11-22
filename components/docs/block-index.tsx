@@ -3,12 +3,12 @@ import type { ReactNode } from "react";
 import { BLOCKS_CATALOG, type DocItem, docItems } from "@/lib/docs/catalog";
 import { loadRegistry } from "@/lib/registry";
 import { groupBlocks } from "@/lib/registry/blocks";
-import { listDemos } from "@/lib/registry/demos";
+import { listVariants } from "@/lib/registry/variants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/registry/ui/card/card";
 import { ScaledView } from "./block-preview";
-import { DemoPreview } from "./demo-frame";
-import { LazyDemo } from "./lazy-demo";
+import { LazyVariant } from "./lazy-variant";
 import { PREVIEW_WIDTHS } from "./preview-widths";
+import { VariantPreview } from "./variant-frame";
 
 /**
  * Every card's preview box is this tall, before and after it mounts, so nothing moves when a
@@ -20,12 +20,12 @@ export const BLOCK_STAGE_HEIGHT = "26rem";
  * Every block as a card with a preview, under a heading per group (Manga, App, Login, Signup,
  * Sidebar; `groupBlocks`, from the block's name; a group with no block has no heading): a page
  * block's whole page from `/view/<name>` (in an inert iframe at a phone's width, scaled to the
- * card), any other block's default demo. Previews are inert: a card is a way to the block's page, which its title
- * links to, not a place to use the block. Read from the catalog and the demo map, so a new block
+ * card), any other block's default variant. Previews are inert: a card is a way to the block's page, which its title
+ * links to, not a place to use the block. Read from the catalog and the variant map, so a new block
  * shows up, in its group, without an edit here.
  */
 export async function BlockIndex() {
-  const items = docItems(loadRegistry(), listDemos(), BLOCKS_CATALOG);
+  const items = docItems(loadRegistry(), listVariants(), BLOCKS_CATALOG);
   const previews = new Map(
     await Promise.all(items.map(async (item) => [item.name, await preview(item)] as const)),
   );
@@ -74,9 +74,9 @@ async function preview(item: DocItem): Promise<ReactNode> {
   return (
     <div inert className="h-full">
       {
-        await DemoPreview({
+        await VariantPreview({
           item: item.name,
-          demo: "default",
+          variant: "default",
           height: "100%",
           className: "h-full items-start overflow-hidden p-4 sm:p-4",
           inert: true,
@@ -101,7 +101,7 @@ function BlockCard({ item, preview }: { item: DocItem; preview: ReactNode }) {
         <CardDescription>{item.description}</CardDescription>
       </CardHeader>
       <CardContent className="mt-auto">
-        <LazyDemo height={BLOCK_STAGE_HEIGHT}>{preview}</LazyDemo>
+        <LazyVariant height={BLOCK_STAGE_HEIGHT}>{preview}</LazyVariant>
       </CardContent>
     </Card>
   );

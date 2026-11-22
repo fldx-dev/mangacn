@@ -3,8 +3,8 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
 import { DOCUMENT_END_ID } from "../components/docs/page-end";
 import { BLOCKS_CATALOG, type DocItem, docItems } from "../lib/docs/catalog";
-import { demoEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
+import { variantEntries } from "../lib/registry/variants.generated";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 import { comparePixels, shoot } from "./shoot";
 
@@ -14,7 +14,7 @@ import { comparePixels, shoot } from "./shoot";
 // The landing and the two indexes (components, blocks) are shot at their first viewport
 // (`site-<page>-viewport-<mode>.png`), not whole (SPEC-components-3 §8.1). An index is never
 // shot whole: every new item moved that picture, so its cards are checked structurally below
-// and each demo (and each page block's view) has its own baseline. The landing is also shot whole (`site-home-<mode>.png`)
+// and each variant (and each page block's view) has its own baseline. The landing is also shot whole (`site-home-<mode>.png`)
 // under `SITE_FULL=1` (main, `full` dispatches); a task that changes the landing regenerates
 // that shot with a `full=true` update run.
 const VIEWPORT_SHOT = new Set(["/", "/docs/components", "/docs/blocks"]);
@@ -34,23 +34,23 @@ interface IndexPage {
   slot: "component-index" | "block-index";
   items: DocItem[];
   section: string;
-  /** Whether every inline demo must fit its fixed stage (a block's preview is clipped). */
-  demosFit: boolean;
+  /** Whether every inline variant must fit its fixed stage (a block's preview is clipped). */
+  variantsFit: boolean;
 }
 
-/** One card per documented item (the catalog items with demos), on each index. */
+/** One card per documented item (the catalog items with variants), on each index. */
 const INDEXES: Record<string, IndexPage> = {
   "/docs/components": {
     slot: "component-index",
-    items: docItems(registry, demoEntries),
+    items: docItems(registry, variantEntries),
     section: "/docs/components",
-    demosFit: true,
+    variantsFit: true,
   },
   "/docs/blocks": {
     slot: "block-index",
-    items: docItems(registry, demoEntries, BLOCKS_CATALOG),
+    items: docItems(registry, variantEntries, BLOCKS_CATALOG),
     section: "/docs/blocks",
-    demosFit: false,
+    variantsFit: false,
   },
 };
 
@@ -73,7 +73,7 @@ function slug(path: string): string {
 }
 
 /**
- * Overlay demos (dialog, sheet, tooltip, popover) render their stage in an iframe, which takes
+ * Overlay variants (dialog, sheet, tooltip, popover) render their stage in an iframe, which takes
  * `?mode=dark` once the page has hydrated: wait for that stage to load, then for its ink.
  */
 async function waitForStages(page: Page, mode: "light" | "dark") {
@@ -85,7 +85,7 @@ async function waitForStages(page: Page, mode: "light" | "dark") {
     await expect.poll(async () => (await handle?.contentFrame())?.url()).toBe(src);
     const frame = await handle?.contentFrame();
     if (!frame) throw new Error(`No frame for ${src}`);
-    await expect(frame.locator("html")).toHaveAttribute("data-demo-ready", "true");
+    await expect(frame.locator("html")).toHaveAttribute("data-variant-ready", "true");
     await waitForInk(frame);
   }
 }
@@ -133,12 +133,12 @@ async function expectIndexCards(page: Page, index: IndexPage, viewport: number) 
   ).toEqual([]);
 }
 
-/** An index's lazy demo boxes. */
-const lazyDemos = (index: IndexPage) => `[data-slot="${index.slot}"] [data-slot="lazy-demo"]`;
+/** An index's lazy variant boxes. */
+const lazyVariants = (index: IndexPage) => `[data-slot="${index.slot}"] [data-slot="lazy-variant"]`;
 
-/** The index's demo boxes against the first viewport, in page coordinates. */
-function lazyDemoCounts(page: Page, index: IndexPage) {
-  return page.locator(lazyDemos(index)).evaluateAll((nodes) => {
+/** The index's variant boxes against the first viewport, in page coordinates. */
+function lazyVariantCounts(page: Page, index: IndexPage) {
+  return page.locator(lazyVariants(index)).evaluateAll((nodes) => {
     const screen = window.innerHeight;
     const boxes = nodes.map((node) => {
       const box = node.getBoundingClientRect();
@@ -161,21 +161,22 @@ function lazyDemoCounts(page: Page, index: IndexPage) {
 }
 
 /**
- * Lazy cards (SPEC-components-3 §3, §8.2): after load every demo in the first viewport is
+ * Lazy cards (SPEC-components-3 §3, §8.2): after load every variant in the first viewport is
  * mounted and none further than one screen below it.
  */
-async function expectLazyDemosOnLoad(page: Page, index: IndexPage) {
+async function expectLazyVariantsOnLoad(page: Page, index: IndexPage) {
   await expect
     .poll(async () => {
-      const { firstViewport, firstViewportMounted } = await lazyDemoCounts(page, index);
+      const { firstViewport, firstViewportMounted } = await lazyVariantCounts(page, index);
       return firstViewport > 0 && firstViewportMounted === firstViewport;
-    }, "every demo in the first viewport mounts")
+    }, "every variant in the first viewport mounts")
     .toBe(true);
-  const { mounted, near, total } = await lazyDemoCounts(page, index);
-  expect(mounted, `mounted demos after load (${near} near the first viewport)`).toBeLessThanOrEqual(
-    near,
-  );
-  expect(mounted, "the index leaves the demos further down unmounted").toBeLessThan(total);
+  const { mounted, near, total } = await lazyVariantCounts(page, index);
+  expect(
+    mounted,
+    `mounted variants after load (${near} near the first viewport)`,
+  ).toBeLessThanOrEqual(near);
+  expect(mounted, "the index leaves the variants further down unmounted").toBeLessThan(total);
 }
 
 /**
@@ -198,11 +199,11 @@ async function expectFocusAndScrollKept(page: Page, top: number) {
 }
 
 /**
- * Scrolls the index screen by screen to the bottom; every demo mounts on the way, and none moves
+ * Scrolls the index screen by screen to the bottom; every variant mounts on the way, and none moves
  * the focus or the scroll position. Returns where the page was put last.
  */
-async function expectLazyDemosOnScroll(page: Page, index: IndexPage): Promise<number> {
-  const { total } = await lazyDemoCounts(page, index);
+async function expectLazyVariantsOnScroll(page: Page, index: IndexPage): Promise<number> {
+  const { total } = await lazyVariantCounts(page, index);
   const [height, screen] = await page.evaluate(() => [
     document.documentElement.scrollHeight,
     window.innerHeight,
@@ -216,23 +217,23 @@ async function expectLazyDemosOnScroll(page: Page, index: IndexPage): Promise<nu
   }
   await expect
     .poll(
-      async () => (await lazyDemoCounts(page, index)).mounted,
-      "every demo mounts by the bottom",
+      async () => (await lazyVariantCounts(page, index)).mounted,
+      "every variant mounts by the bottom",
     )
     .toBe(total);
   return last;
 }
 
-/** Every inline demo fits its fixed stage (`TALL_STAGES` in the index raises one that does not). */
-async function expectDemosFitStages(page: Page, index: IndexPage) {
+/** Every inline variant fits its fixed stage (`TALL_STAGES` in the index raises one that does not). */
+async function expectVariantsFitStages(page: Page, index: IndexPage) {
   const overflowing = await page
-    .locator(`${lazyDemos(index)} > section`)
+    .locator(`${lazyVariants(index)} > section`)
     .evaluateAll((nodes) =>
       nodes
         .filter((node) => node.scrollHeight > node.clientHeight + 1)
         .map((node) => `${node.getAttribute("aria-label")}: ${node.scrollHeight}px`),
     );
-  expect(overflowing, "demos taller than their stage").toEqual([]);
+  expect(overflowing, "variants taller than their stage").toEqual([]);
 }
 
 /**
@@ -240,7 +241,7 @@ async function expectDemosFitStages(page: Page, index: IndexPage) {
  * focus guards around an open popup are aria-hidden sentinels with tabindex 0 that hand focus on
  * at once; axe only lets them pass under an open dialog, so an open menu or select stage (an
  * iframe) would fail on Base UI's own markup. Inside a frame `region` is off, as on the stage
- * page itself (e2e/demos.spec.ts): a stage is a fragment, and its own content is checked there.
+ * page itself (e2e/variants.spec.ts): a stage is a fragment, and its own content is checked there.
  * A node in a frame is one whose target is a frame path (`["iframe", "…"]`). Every other node of
  * the page and of its stages is checked.
  */
@@ -295,7 +296,7 @@ async function expectPaintsWithPage(page: Page, path: string) {
 for (const path of pages) {
   for (const mode of ["light", "dark"] as const) {
     test(`${path} (${mode})`, async ({ page }) => {
-      // The component index renders every item's default demo as a card (45 and growing), so
+      // The component index renders every item's default variant as a card (45 and growing), so
       // loading, inking, screenshotting and axe-checking it takes most of the default 30 s on a
       // busy machine; the Blocks index loads a page per page block. Triple the budget for the
       // indexes; every other page keeps the default.
@@ -321,8 +322,8 @@ for (const path of pages) {
       else await expect(html).not.toHaveClass(/\bdark\b/);
       await waitForInk(page);
       if (index) {
-        // The first viewport's demos mount after hydration; then ink them and load their stages.
-        await expectLazyDemosOnLoad(page, index);
+        // The first viewport's variants mount after hydration; then ink them and load their stages.
+        await expectLazyVariantsOnLoad(page, index);
         await waitForInk(page);
       }
       await waitForStages(page, mode);
@@ -345,13 +346,13 @@ for (const path of pages) {
       }
 
       if (index) {
-        // Every demo mounted, so the checks below see the whole index.
-        const top = await expectLazyDemosOnScroll(page, index);
+        // Every variant mounted, so the checks below see the whole index.
+        const top = await expectLazyVariantsOnScroll(page, index);
         await waitForInk(page);
         await waitForStages(page, mode);
         // Late openers too (context-menu opens once its fonts are ready).
         await expectFocusAndScrollKept(page, top);
-        if (index.demosFit) await expectDemosFitStages(page, index);
+        if (index.variantsFit) await expectVariantsFitStages(page, index);
       }
 
       const viewport = page.viewportSize()?.width ?? 0;
@@ -376,7 +377,7 @@ const OVERLAY_PAGES = [
   "/docs/components/popover",
   "/docs/components/context-menu",
   "/docs/components/menubar",
-  "/demo/dialog",
+  "/gallery/dialog",
 ];
 
 for (const path of OVERLAY_PAGES) {
@@ -454,7 +455,7 @@ test("sidebar previews show the desktop layout from a tablet's window", async ({
     const iframe = page.locator(`${selector} iframe`).first();
     const frame = await (await iframe.elementHandle())?.contentFrame();
     if (!frame) throw new Error(`No frame in ${selector}`);
-    await expect(frame.locator("html")).toHaveAttribute("data-demo-ready", "true");
+    await expect(frame.locator("html")).toHaveAttribute("data-variant-ready", "true");
     return frame;
   };
 
@@ -465,7 +466,7 @@ test("sidebar previews show the desktop layout from a tablet's window", async ({
   await expect.poll(() => block.evaluate(() => window.innerWidth)).toBe(phone ? 375 : 1280);
 
   await page.goto("/docs/components/sidebar");
-  const stage = await frameOf('[data-slot="demo-stage-box"]');
+  const stage = await frameOf('[data-slot="variant-stage-box"]');
   const stageWidth = () => stage.evaluate(() => window.innerWidth);
   if (phone) await expect.poll(stageWidth).toBeLessThan(768);
   else await expect.poll(stageWidth).toBeGreaterThanOrEqual(768);
@@ -499,7 +500,7 @@ test("markdown and registry routes", async ({ request }, testInfo) => {
   const markdown = await request.get("/docs/components/button.md");
   expect(markdown.status()).toBe(200);
   expect(markdown.headers()["content-type"]).toMatch(/^text\/markdown\b/);
-  // Demo sources import each item from where `shadcn add` writes it.
+  // Variant sources import each item from where `shadcn add` writes it.
   expect(await markdown.text()).toContain('from "@/components/ui/button"');
   const bubble = await (await request.get("/docs/components/speech-bubble.md")).text();
   expect(bubble).toContain('from "@/components/speech-bubble"');

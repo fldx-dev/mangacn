@@ -283,7 +283,7 @@ async function blockFrame(page: Page, block: string): Promise<Frame> {
   await expect(element).toBeVisible();
   const frame = await (await element.elementHandle())?.contentFrame();
   if (!frame) throw new Error(`no frame for ${block}`);
-  await expect(frame.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(frame.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(frame);
   return frame;
 }
@@ -406,7 +406,7 @@ for (const mode of ["light", "dark"] as const) {
       if (mode === "dark") search.set("mode", "dark");
       const response = await page.goto(`${path}?${search}`);
       expect(response?.status()).toBe(200);
-      await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+      await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
       await waitForInk(page);
       await expectRootColour(page.mainFrame(), "paper", baseValues(CUSTOM.look)[mode].paper);
       // A whole page: its page rules apply.
@@ -431,12 +431,12 @@ for (const mode of ["light", "dark"] as const) {
 test("on a stage ?c= wins over ?theme=, and a bad code is the default look", async ({ page }) => {
   test.skip(test.info().project.name !== "w1280", "the look does not depend on the width");
   const html = page.locator("html");
-  await page.goto(`/demo/theme/specimen?theme=sepia&c=${CODES.custom}`);
-  await expect(html).toHaveAttribute("data-demo-ready", "true");
+  await page.goto(`/gallery/theme/specimen?theme=sepia&c=${CODES.custom}`);
+  await expect(html).toHaveAttribute("data-variant-ready", "true");
   expect(await html.getAttribute("data-theme-preset")).toBeNull();
   await expectRootColour(page.mainFrame(), "spot", baseValues(CUSTOM.look).light.spot);
-  await page.goto("/demo/button/default?c=1zz&mode=dark");
-  await expect(html).toHaveAttribute("data-demo-ready", "true");
+  await page.goto("/gallery/button/default?c=1zz&mode=dark");
+  await expect(html).toHaveAttribute("data-variant-ready", "true");
   expect((await html.getAttribute("style")) ?? "").toBe("");
   await expectRootColour(page.mainFrame(), "paper", baseValues({ preset: "default" }).dark.paper);
 });

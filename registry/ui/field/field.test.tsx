@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Input } from "@/registry/ui/input/input";
 import {
   Field,
@@ -153,5 +153,5 @@ describe("Field", () => {
     expect(screen.getByText("or").getAttribute("data-slot")).toBe("field-separator-content");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

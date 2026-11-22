@@ -3,8 +3,8 @@ import { expect, test } from "@playwright/test";
 import { BLOCKS_CATALOG, docItems } from "../lib/docs/catalog";
 import { parseE2eItems } from "../lib/e2e-filter";
 import { BLOCK_GROUPS, groupBlocks } from "../lib/registry/blocks";
-import { demoEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
+import { variantEntries } from "../lib/registry/variants.generated";
 
 // The App group (SPEC-components-8 §6): it sits after Manga and before the stock families, and
 // shows a heading and a sidebar separator only once it holds a block. Runs with the `site` suite.
@@ -14,7 +14,7 @@ test.skip(Boolean(filter) && !filter?.has("site"), "the index checks run with `s
 
 const order = BLOCK_GROUPS.map((group) => group.id);
 const app = groupBlocks(
-  docItems(loadRegistry(resolve(__dirname, "../registry.json")), demoEntries, BLOCKS_CATALOG),
+  docItems(loadRegistry(resolve(__dirname, "../registry.json")), variantEntries, BLOCKS_CATALOG),
 ).find((group) => group.id === "app");
 
 test("the Blocks index shows App after Manga only when it holds a block", async ({ page }) => {

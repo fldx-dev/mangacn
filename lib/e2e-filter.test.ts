@@ -8,42 +8,47 @@ import {
   importedItems,
   parseE2eItems,
   selectE2e,
-  selectedDemoItems,
+  selectedVariantItems,
 } from "./e2e-filter";
 import { PARITY_PRIMITIVES } from "./registry/parity";
 
 const ITEMS: E2eItem[] = [
-  { name: "theme", hasDemos: false, uses: ["font-display"] },
-  { name: "font-display", hasDemos: false, uses: [] },
-  { name: "ink-frame", folder: "registry/theme/ink-frame", hasDemos: true, uses: [] },
-  { name: "button", folder: "registry/ui/button", hasDemos: true, uses: ["ink-frame"] },
-  { name: "dialog", folder: "registry/ui/dialog", hasDemos: true, uses: ["button", "ink-frame"] },
-  { name: "alert-dialog", folder: "registry/ui/alert-dialog", hasDemos: true, uses: ["dialog"] },
-  { name: "slider", folder: "registry/ui/slider", hasDemos: true, uses: ["ink-frame"] },
-  { name: "toggle", folder: "registry/ui/toggle", hasDemos: true, uses: [] },
-  { name: "toggle-group", folder: "registry/ui/toggle-group", hasDemos: true, uses: ["toggle"] },
-  { name: "ink-mark", folder: "registry/ui/ink-mark", hasDemos: true, uses: [] },
-  { name: "input", folder: "registry/ui/input", hasDemos: true, uses: ["ink-frame"] },
-  { name: "textarea", folder: "registry/ui/textarea", hasDemos: true, uses: ["ink-frame"] },
+  { name: "theme", hasVariants: false, uses: ["font-display"] },
+  { name: "font-display", hasVariants: false, uses: [] },
+  { name: "ink-frame", folder: "registry/theme/ink-frame", hasVariants: true, uses: [] },
+  { name: "button", folder: "registry/ui/button", hasVariants: true, uses: ["ink-frame"] },
+  {
+    name: "dialog",
+    folder: "registry/ui/dialog",
+    hasVariants: true,
+    uses: ["button", "ink-frame"],
+  },
+  { name: "alert-dialog", folder: "registry/ui/alert-dialog", hasVariants: true, uses: ["dialog"] },
+  { name: "slider", folder: "registry/ui/slider", hasVariants: true, uses: ["ink-frame"] },
+  { name: "toggle", folder: "registry/ui/toggle", hasVariants: true, uses: [] },
+  { name: "toggle-group", folder: "registry/ui/toggle-group", hasVariants: true, uses: ["toggle"] },
+  { name: "ink-mark", folder: "registry/ui/ink-mark", hasVariants: true, uses: [] },
+  { name: "input", folder: "registry/ui/input", hasVariants: true, uses: ["ink-frame"] },
+  { name: "textarea", folder: "registry/ui/textarea", hasVariants: true, uses: ["ink-frame"] },
   {
     name: "input-group",
     folder: "registry/ui/input-group",
-    hasDemos: true,
+    hasVariants: true,
     uses: ["input", "textarea"],
   },
-  { name: "button-group", folder: "registry/ui/button-group", hasDemos: true, uses: [] },
-  { name: "scroll-area", folder: "registry/ui/scroll-area", hasDemos: true, uses: [] },
-  { name: "spinner", folder: "registry/ui/spinner", hasDemos: true, uses: [] },
-  { name: "emanata", folder: "registry/ui/emanata", hasDemos: true, uses: [] },
-  { name: "empty", folder: "registry/ui/empty", hasDemos: true, uses: ["emanata"] },
-  { name: "label", folder: "registry/ui/label", hasDemos: true, uses: [] },
-  { name: "progress", folder: "registry/ui/progress", hasDemos: true, uses: [] },
-  { name: "chapter-list", folder: "registry/blocks/chapter-list", hasDemos: true, uses: [] },
-  { name: "spread-viewer", folder: "registry/blocks/spread-viewer", hasDemos: true, uses: [] },
+  { name: "button-group", folder: "registry/ui/button-group", hasVariants: true, uses: [] },
+  { name: "scroll-area", folder: "registry/ui/scroll-area", hasVariants: true, uses: [] },
+  { name: "spinner", folder: "registry/ui/spinner", hasVariants: true, uses: [] },
+  { name: "emanata", folder: "registry/ui/emanata", hasVariants: true, uses: [] },
+  { name: "empty", folder: "registry/ui/empty", hasVariants: true, uses: ["emanata"] },
+  { name: "label", folder: "registry/ui/label", hasVariants: true, uses: [] },
+  { name: "progress", folder: "registry/ui/progress", hasVariants: true, uses: [] },
+  { name: "chapter-list", folder: "registry/blocks/chapter-list", hasVariants: true, uses: [] },
+  { name: "spread-viewer", folder: "registry/blocks/spread-viewer", hasVariants: true, uses: [] },
   {
     name: "login-01",
     folder: "registry/blocks/login-01",
-    hasDemos: true,
+    hasVariants: true,
     page: true,
     uses: ["label"],
   },
@@ -76,9 +81,9 @@ describe("E2E_ITEMS parsing", () => {
     expect(formatE2eItems(new Set())).toBe("none");
   });
 
-  it("separates demo items from suites", () => {
-    expect(selectedDemoItems(new Set(["slider", "site"]))).toEqual(["slider"]);
-    expect(selectedDemoItems(undefined)).toBeUndefined();
+  it("separates variant items from suites", () => {
+    expect(selectedVariantItems(new Set(["slider", "site"]))).toEqual(["slider"]);
+    expect(selectedVariantItems(undefined)).toBeUndefined();
   });
 });
 
@@ -86,7 +91,7 @@ describe("selectE2e", () => {
   it("takes a changed item, the items that use it, and the site", () => {
     expect(pick(["registry/ui/slider/slider.tsx"])).toBe("slider,site");
     expect(pick(["registry/ui/button/button.tsx"])).toBe("alert-dialog,button,dialog,site");
-    expect(pick(["registry/ui/toggle/demos/pressed.tsx"])).toBe("toggle,toggle-group,site");
+    expect(pick(["registry/ui/toggle/variants/pressed.tsx"])).toBe("toggle,toggle-group,site");
   });
 
   it("adds the annotations spec for ink-mark", () => {
@@ -115,7 +120,7 @@ describe("selectE2e", () => {
   });
 
   it("maps docs, MCP and spec paths to their suites", () => {
-    expect(pick(["components/docs/demo-frame.tsx", "app/(site)/page.tsx"])).toBe("site");
+    expect(pick(["components/docs/variant-frame.tsx", "app/(site)/page.tsx"])).toBe("site");
     expect(pick(["content/docs/theming.mdx"])).toBe("site,mcp,presets,create-code");
     expect(pick(["content/docs/installation.mdx"])).toBe("site,mcp,create-code");
     expect(pick(["lib/docs/props.generated.json"])).toBe("site,mcp");
@@ -154,9 +159,9 @@ describe("selectE2e", () => {
       "e2e/playwright.config.ts",
       "e2e/ready.ts",
       "app/globals.css",
-      "app/demo/demo-stage.tsx",
+      "app/gallery/variant-stage.tsx",
       "registry/theme/ink-frame/ink-frame.tsx",
-      "lib/registry/demos.ts",
+      "lib/registry/variants.ts",
       "lib/e2e-filter.ts",
       "pnpm-lock.yaml",
       "something/new.ts",
@@ -462,7 +467,7 @@ describe("item graph helpers", () => {
       'import { InkFrame } from "@/components/ink-frame";',
       'import { Button } from "@/components/ui/button";',
       'import { SfxText } from "@/registry/ui/sfx-text/sfx-text";',
-      'import { DemoFrame } from "@/components/docs/demo-frame";',
+      'import { VariantFrame } from "@/components/docs/variant-frame";',
       'import { cn } from "@/lib/utils";',
       'import { popIn } from "@/lib/manga-motion";',
     ].join("\n");

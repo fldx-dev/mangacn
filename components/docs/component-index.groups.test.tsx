@@ -5,7 +5,7 @@ import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { ComponentIndex } from "./component-index";
 
 // Fixture items for the Inputs and Display groups (SPEC-components-7 §6), which no shipped item
-// uses yet: real items with demos, re-filed under `form` and `display`, and no `layout` item.
+// uses yet: real items with variants, re-filed under `form` and `display`, and no `layout` item.
 const FIXTURE: Readonly<Record<string, Category>> = {
   badge: "display",
   "speech-bubble": "text",

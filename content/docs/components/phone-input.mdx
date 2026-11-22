@@ -23,15 +23,15 @@ Country names are English and fixed in the file, so the server and every browser
 
 Japan picked to start with, through `defaultCountry`.
 
-<DemoFrame item="phone-input" demo="default" />
+<VariantFrame item="phone-input" variant="default" />
 
 A list limited to five countries with `countries`, in the order given, starting from an E.164 `defaultValue`.
 
-<DemoFrame item="phone-input" demo="countries" />
+<VariantFrame item="phone-input" variant="countries" />
 
 A required field in a form that checks the posted value with `isValidPhoneNumber`, which the file re-exports, and shows the error in a FieldError.
 
-<DemoFrame item="phone-input" demo="form" />
+<VariantFrame item="phone-input" variant="form" />
 
 `isValidPhoneNumber` comes from a client component's file, so server code such as a server action can't call it from there: import it from `libphonenumber-js/min` instead.
 

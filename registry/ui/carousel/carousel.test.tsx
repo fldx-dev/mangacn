@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import {
   Carousel,
@@ -178,5 +178,5 @@ describe("Carousel", () => {
     expect(slot("carousel-content")?.firstElementChild?.className).toContain("flex-col");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), { setup: stubWindow });
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"), { setup: stubWindow });
 });

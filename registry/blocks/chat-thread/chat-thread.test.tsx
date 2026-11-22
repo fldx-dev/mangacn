@@ -1,9 +1,9 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { type ChatMessage, ChatThread } from "./chat-thread";
-import ChatThreadDefaultDemo from "./demos/default";
+import ChatThreadDefaultVariant from "./variants/default";
 
 // jsdom lays nothing out, so the scroller's own following cannot be seen here (its tests and
 // the e2e run cover it); the block's part is when it asks the scroller for the end.
@@ -250,7 +250,7 @@ describe("ChatThread", () => {
     });
 
     it("adds no bubble for Enter on a blank draft with useChatThread, and one for text", () => {
-      render(<ChatThreadDefaultDemo />);
+      render(<ChatThreadDefaultVariant />);
       const count = () => document.querySelectorAll('[data-slot="bubble"]').length;
       const before = count();
       fireEvent.keyDown(field(), { key: "Enter" });
@@ -322,5 +322,5 @@ describe("ChatThread", () => {
     });
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

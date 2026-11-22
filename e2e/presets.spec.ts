@@ -49,7 +49,7 @@ function specimenUrl(look: ThemeLook, mode: "light" | "dark"): string {
   if (look !== "default") search.set("theme", look);
   if (mode === "dark") search.set("mode", "dark");
   const query = search.toString();
-  return `/demo/theme/specimen${query ? `?${query}` : ""}`;
+  return `/gallery/theme/specimen${query ? `?${query}` : ""}`;
 }
 
 /**
@@ -87,7 +87,7 @@ for (const look of THEME_LOOKS) {
       const response = await page.goto(specimenUrl(look, mode));
       expect(response?.status()).toBe(200);
       const html = page.locator("html");
-      await expect(html).toHaveAttribute("data-demo-ready", "true");
+      await expect(html).toHaveAttribute("data-variant-ready", "true");
       if (look === "default") await expect(html).not.toHaveAttribute(PRESET_ATTRIBUTE);
       else await expect(html).toHaveAttribute(PRESET_ATTRIBUTE, look);
       if (mode === "dark") await expect(html).toHaveClass(/\bdark\b/);
@@ -102,7 +102,7 @@ for (const look of THEME_LOOKS) {
       expect(width, "no horizontal overflow").toBeLessThanOrEqual(page.viewportSize()?.width ?? 0);
 
       // The unit tests' rule set, as on every stage: light only, where apart from contrast both
-      // modes are one DOM. Base UI's focus guards are excluded, as in demos.spec.ts.
+      // modes are one DOM. Base UI's focus guards are excluded, as in variants.spec.ts.
       if (mode === "light") {
         const { violations } = await new AxeBuilder({ page })
           .disableRules(AXE_DISABLED_RULES)

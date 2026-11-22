@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 
 // login-02's own checks (SPEC-components-6 §3, §5.1); the catalog-driven ones (axe in both
@@ -7,7 +7,7 @@ import { hydrateAfterReveal, waitForInk } from "./ready";
 // panel of shipped items: decorative, so out of the accessibility tree; in stock's place, so
 // absent under lg, where stock hides its image; and on the theme's tokens in dark mode.
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 test.skip(only !== undefined && !only.includes("login-02"), "E2E_ITEMS leaves login-02 out");
 
 const COVER = '[aria-hidden="true"]:has([data-slot="manga-frame"])';
@@ -16,7 +16,7 @@ async function openView(page: Page, mode: "light" | "dark") {
   await hydrateAfterReveal(page);
   const response = await page.goto(`/view/login-02${mode === "dark" ? "?mode=dark" : ""}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 

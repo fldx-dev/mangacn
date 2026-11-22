@@ -1,6 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { AspectRatio } from "./aspect-ratio";
 
 afterEach(cleanup);
@@ -33,5 +33,5 @@ describe("AspectRatio", () => {
     expect(box()?.getAttribute("aria-label")).toBe("Cover");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

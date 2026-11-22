@@ -5,7 +5,7 @@
  *   `tsconfig.json`): a three-way merge of the parsed files. Arrays of named entries merge by
  *   `name`, other arrays keep ours and append what theirs added, objects merge key by key, and
  *   `fetchedAt` takes the newer date. Two different changes to one value are a real conflict.
- * - Text lists (`lib/registry/parity.ts`, `vitest.config.mts`, the DemoFrame overlay set): each
+ * - Text lists (`lib/registry/parity.ts`, `vitest.config.mts`, the VariantFrame overlay set): each
  *   conflict, re-merged without git's trimming of shared lines, keeps ours and then the entries
  *   theirs added that ours does not have. An entry is a line, or a bracketed block of lines
  *   (a `{ find, replacement }` alias), so a hunk boundary never splits one.
@@ -36,7 +36,7 @@ const JSON_FILES = [
 const TEXT_LISTS = new Set([
   "lib/registry/parity.ts",
   "vitest.config.mts",
-  "components/docs/demo-frame.tsx",
+  "components/docs/variant-frame.tsx",
 ]);
 
 /** Generated files: any side will do, the generator rewrites them after the merge. */

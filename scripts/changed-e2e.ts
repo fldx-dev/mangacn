@@ -9,7 +9,7 @@
  *                                                         (needs `pnpm build` first)
  *
  * The base defaults to origin/main (main without a remote). The filter is `all`, `none`, or a
- * comma-separated list of demo items and the suites `site`, `mcp`, `annotations`.
+ * comma-separated list of variant items and the suites `site`, `mcp`, `annotations`.
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -33,7 +33,7 @@ function filesUnder(folder: string): string[] {
   });
 }
 
-/** Every catalog item with its folder, whether it has demos, and the items it renders. */
+/** Every catalog item with its folder, whether it has variants, and the items it renders. */
 function catalogItems(): E2eItem[] {
   const registry = loadRegistry();
   const names = new Set(registry.items.map((item) => item.name));
@@ -48,7 +48,7 @@ function catalogItems(): E2eItem[] {
     return {
       name: item.name,
       folder,
-      hasDemos: folder !== undefined && existsSync(path.join(folder, "demos", "default.tsx")),
+      hasVariants: folder !== undefined && existsSync(path.join(folder, "variants", "default.tsx")),
       page: isPageBlock(item),
       uses: [...uses],
     };

@@ -1,8 +1,8 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { collectDemos } from "@/lib/registry/demo-map";
 import { loadRegistry } from "@/lib/registry/index";
+import { collectVariants } from "@/lib/registry/variant-map";
 import {
   DOCS_SECTIONS,
   docItems,
@@ -16,22 +16,22 @@ import {
 // so this reads the pages from disk, like `pnpm gen:docs --check`.
 
 const registry = loadRegistry();
-const demoEntries = collectDemos(registry);
+const variantEntries = collectVariants(registry);
 
-/** The demos a page renders, from its `<DemoFrame item="…" demo="…" />` tags. */
-function framedDemos(source: string, item: string): string[] {
-  return [...source.matchAll(/<DemoFrame\s+item="([^"]+)"\s+demo="([^"]+)"/g)]
+/** The variants a page renders, from its `<VariantFrame item="…" variant="…" />` tags. */
+function framedVariants(source: string, item: string): string[] {
+  return [...source.matchAll(/<VariantFrame\s+item="([^"]+)"\s+variant="([^"]+)"/g)]
     .filter(([, frameItem]) => frameItem === item)
-    .map(([, , demo]) => demo);
+    .map(([, , variant]) => variant);
 }
 
-function skipDemos(data: ReturnType<typeof parseFrontmatter>): string[] {
-  const skip = data.skipDemos ?? [];
+function skipVariants(data: ReturnType<typeof parseFrontmatter>): string[] {
+  const skip = data.skipVariants ?? [];
   return Array.isArray(skip) ? skip : [skip];
 }
 
 describe.each(DOCS_SECTIONS)("$dir", (section) => {
-  const items = docItems(registry, demoEntries, section.catalog);
+  const items = docItems(registry, variantEntries, section.catalog);
   // The names this section's pages may document: its own catalog's items.
   const catalogNames = new Set(
     registry.items.filter((item) => item.source === section.catalog).map((item) => item.name),
@@ -50,7 +50,7 @@ describe.each(DOCS_SECTIONS)("$dir", (section) => {
     });
 
   describe("item pages", () => {
-    it("exist for every catalog item with demos (run `pnpm gen:docs`)", () => {
+    it("exist for every catalog item with variants (run `pnpm gen:docs`)", () => {
       const slugs = new Set(pages.map((page) => page.slug));
       expect(items.filter((item) => !slugs.has(item.name)).map((item) => item.name)).toEqual([]);
     });
@@ -65,22 +65,27 @@ describe.each(DOCS_SECTIONS)("$dir", (section) => {
       expect(wrong).toEqual([]);
     });
 
-    it("render every demo in the demo map unless it is listed in `skipDemos`", () => {
+    it("render every variant in the variant map unless it is listed in `skipVariants`", () => {
       const omitted = items.flatMap((item) => {
         const page = pages.find((candidate) => candidate.slug === item.name);
         if (!page) return [];
-        const shown = new Set([...framedDemos(page.source, item.name), ...skipDemos(page.data)]);
-        return item.demos.filter((demo) => !shown.has(demo)).map((demo) => `${item.name}/${demo}`);
+        const shown = new Set([
+          ...framedVariants(page.source, item.name),
+          ...skipVariants(page.data),
+        ]);
+        return item.variants
+          .filter((variant) => !shown.has(variant))
+          .map((variant) => `${item.name}/${variant}`);
       });
       expect(omitted).toEqual([]);
     });
 
-    it("frame and skip only demos that exist", () => {
+    it("frame and skip only variants that exist", () => {
       const unknown = pages.flatMap((page) => {
-        const demos = new Set(items.find((item) => item.name === page.slug)?.demos);
-        return [...framedDemos(page.source, page.slug), ...skipDemos(page.data)]
-          .filter((demo) => !demos.has(demo))
-          .map((demo) => `${page.slug}/${demo}`);
+        const variants = new Set(items.find((item) => item.name === page.slug)?.variants);
+        return [...framedVariants(page.source, page.slug), ...skipVariants(page.data)]
+          .filter((variant) => !variants.has(variant))
+          .map((variant) => `${page.slug}/${variant}`);
       });
       expect(unknown).toEqual([]);
     });

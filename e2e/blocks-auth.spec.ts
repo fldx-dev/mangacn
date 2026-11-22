@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 
 // Lane A's own checks (SPEC-components-6 §3): the auth variants login-03 to -05 and signup-02
@@ -41,14 +41,14 @@ const BLOCKS: Record<string, AuthBlock> = {
   },
 };
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 const COVER = '[aria-hidden="true"]:has([data-slot="manga-frame"])';
 
 async function openView(page: Page, name: string, mode: "light" | "dark" = "light") {
   await hydrateAfterReveal(page);
   const response = await page.goto(`/view/${name}${mode === "dark" ? "?mode=dark" : ""}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 

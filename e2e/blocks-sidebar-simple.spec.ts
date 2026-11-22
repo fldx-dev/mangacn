@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 
 // Lane B's own checks (SPEC-components-6 §8, Task 119): the simple sidebars sidebar-01 to -06 and
@@ -17,13 +17,13 @@ const BLOCKS = [
   { name: "sidebar-14", nav: "Table of contents", collapsible: "offcanvas", side: "right" },
 ] as const;
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 
 async function openView(page: Page, name: string) {
   await hydrateAfterReveal(page);
   const response = await page.goto(`/view/${name}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 

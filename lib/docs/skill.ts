@@ -65,7 +65,7 @@ function entry(name: string, description: string, docs: string): string[] {
  */
 export function renderSkillCatalog(
   registry: LoadedRegistry,
-  demos: readonly { item: string; demo: string }[],
+  variants: readonly { item: string; variant: string }[],
 ): string {
   const foundation = registry.items
     .filter(
@@ -76,8 +76,11 @@ export function renderSkillCatalog(
     )
     .sort((a, b) => foundationRank(a) - foundationRank(b));
   // Blocks carry the one category `block`, so they group under "Blocks" after the components.
-  const components = [...docItems(registry, demos), ...docItems(registry, demos, BLOCKS_CATALOG)];
-  // Hooks have no demos and no page, so they come from their catalog, not from docItems.
+  const components = [
+    ...docItems(registry, variants),
+    ...docItems(registry, variants, BLOCKS_CATALOG),
+  ];
+  // Hooks have no variants and no page, so they come from their catalog, not from docItems.
   const hooks = registry.items.filter((item) => item.source === HOOKS_CATALOG);
   const count = foundation.length + components.length + hooks.length;
 
@@ -93,7 +96,7 @@ export function renderSkillCatalog(
     "(on the theme's line) answers the theme's own prompt, so the command runs unattended",
     "(see install.md).",
     "",
-    "A component page's Markdown (the `.md` URL) holds its props table and every demo's source:",
+    "A component page's Markdown (the `.md` URL) holds its props table and every variant's source:",
     "read it, or the MCP's `get_item`, before using a prop.",
     "",
     "## Foundation",

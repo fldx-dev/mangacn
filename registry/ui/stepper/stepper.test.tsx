@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   Stepper,
   StepperContent,
@@ -65,7 +65,7 @@ const items = () => screen.getAllByRole("listitem");
 const trigger = (name: RegExp) => screen.getByRole("button", { name });
 
 describe("Stepper", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("renders a labelled ordered list with a slot on every part", () => {
     const { container } = render(<Example defaultValue={1} />);

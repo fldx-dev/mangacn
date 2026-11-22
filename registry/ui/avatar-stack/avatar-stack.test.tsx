@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { AvatarStack } from "./avatar-stack";
 
 afterEach(cleanup);
@@ -10,7 +10,7 @@ const people = ["Aiko Mori", "Kenji Arata", "Sora Hayashi", "Yuki Tanabe", "Haru
 );
 
 describe("AvatarStack", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("composes avatar's group, avatars and count, each with its data-slot", () => {
     render(<AvatarStack items={people} className="custom" />);

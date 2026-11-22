@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -10,7 +10,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "./breadcrumb";
-import BreadcrumbLongDemo from "./demos/long";
+import BreadcrumbLongVariant from "./variants/long";
 
 afterEach(cleanup);
 
@@ -114,12 +114,12 @@ describe("Breadcrumb", () => {
   });
 
   it("lets a long trail wrap", () => {
-    render(<BreadcrumbLongDemo />);
+    render(<BreadcrumbLongVariant />);
     const list = document.querySelector('[data-slot="breadcrumb-list"]');
     expect(list?.classList.contains("flex-wrap")).toBe(true);
     expect(list?.querySelectorAll('[data-slot="breadcrumb-item"]')).toHaveLength(6);
     expect(screen.getByText("夜の街").getAttribute("lang")).toBe("ja");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

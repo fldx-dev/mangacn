@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { Reader, useReader } from "./reader";
 
@@ -43,7 +43,7 @@ const props = {
 const spread = () => screen.getByRole("region", { name: "Chapter 2" });
 const progressText = () => document.querySelector('[data-slot="reader-progress"]')?.textContent;
 
-/** A reader whose page lives in an address string, as the default demo keeps it in the URL. */
+/** A reader whose page lives in an address string, as the default variant keeps it in the URL. */
 function Addressed({ url }: { url: { read: () => string; write: (search: string) => void } }) {
   const reader = useReader({ count: pages.length, url });
   return <Reader {...props} page={reader.page} onPageChange={reader.setPage} />;
@@ -147,5 +147,5 @@ describe("Reader", () => {
     expect(document.activeElement).toBe(trigger);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

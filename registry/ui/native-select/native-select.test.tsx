@@ -1,10 +1,10 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import type { ComponentProps } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import InAFieldDemo from "./demos/in-a-field";
 import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "./native-select";
+import InAFieldVariant from "./variants/in-a-field";
 
 afterEach(() => {
   cleanup();
@@ -89,11 +89,11 @@ describe("NativeSelect", () => {
   });
 
   it("takes its name from a field's FieldLabel and its description from the hint", () => {
-    render(<InAFieldDemo />);
+    render(<InAFieldVariant />);
     const select = screen.getByRole("combobox", { name: "Release schedule" });
-    expect(select.getAttribute("aria-describedby")).toBe("native-select-demo-schedule-hint");
+    expect(select.getAttribute("aria-describedby")).toBe("native-select-variant-schedule-hint");
     expect(select.closest('[data-slot="field"]')).toBeTruthy();
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

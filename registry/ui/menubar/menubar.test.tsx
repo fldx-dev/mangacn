@@ -1,7 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
-import MenubarSubmenuDemo from "./demos/submenu";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   Menubar,
   MenubarCheckboxItem,
@@ -16,6 +15,7 @@ import {
   MenubarShortcut,
   MenubarTrigger,
 } from "./menubar";
+import MenubarSubmenuVariant from "./variants/submenu";
 
 afterEach(cleanup);
 
@@ -151,8 +151,8 @@ describe("Menubar", () => {
     expect(document.activeElement).toBe(chapter);
   });
 
-  it("opens the submenu in its submenu demo", async () => {
-    render(<MenubarSubmenuDemo />);
+  it("opens the submenu in its submenu variant", async () => {
+    render(<MenubarSubmenuVariant />);
     await act(async () => {});
     expect(screen.getAllByRole("menu")).toHaveLength(2);
     const subTrigger = screen.getByRole("menuitem", { name: "Add to list" });
@@ -163,5 +163,5 @@ describe("Menubar", () => {
     expect(frameOf(sub?.parentElement)?.getAttribute("data-fill")).toBe("paper");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

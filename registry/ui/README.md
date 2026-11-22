@@ -32,9 +32,9 @@ something here is unclear or wrong, fix this file on the same branch.
 registry/ui/<name>/
 ├─ <name>.tsx            shipped (the only file listed in files[])
 ├─ <name>.test.tsx       Vitest + Testing Library, never shipped
-└─ demos/
+└─ variants/
    ├─ default.tsx        required; default export, no props
-   └─ <variant>.tsx      optional extra demos (variants.tsx, sizes.tsx, …)
+   └─ <variant>.tsx      optional extra variants (variants.tsx, sizes.tsx, …)
 ```
 
 | Folder                    | Item type                                                        | Installs to                                               |
@@ -69,7 +69,7 @@ Add the item to `registry/ui/registry.json` (never to the root `registry.json`, 
 - `categories`: at least one of `primitive`, `layout`, `text`, `background`, `feedback`,
   `overlay`, `navigation`, `form`, `display`, `data`, `decoration`, `animation`, `block`, `hook`.
 - `meta.since`: the `package.json` version the item first ships in.
-- `files[]`: the shipped file only. Demos, tests, fixtures and `__parity__` are never listed.
+- `files[]`: the shipped file only. Variants, tests, fixtures and `__parity__` are never listed.
 - `dependencies`: every npm package the shipped file imports (`class-variance-authority`,
   `@base-ui/react`, `motion`, `cn`). Anything beyond those needs maintainer sign-off: users
   pay for it.
@@ -100,7 +100,7 @@ Enforced by `registry/ui/imports.test.ts` for every file in every catalog:
 
 Everything else fails with `file:line imports "specifier" (item): reason`: `@/app/…`,
 `@/lib/registry/…`, `@/registry/…`, docs-only `@/components/…`, relative imports into
-another item, undeclared packages, Node built-ins. Demos and tests may import anything
+another item, undeclared packages, Node built-ins. Variants and tests may import anything
 (they import the item via `@/registry/ui/<name>/<name>`), because they are not shipped.
 Blocks follow a stricter version of this table (recipe 3); a hook imports React, its declared
 packages and its own lib file only (recipe 4).
@@ -131,8 +131,8 @@ packages and its own lib file only (recipe 4).
    text in the DOM. A button that navigates is an anchor drawn as a button:
    `<Button nativeButton={false} role="link" render={<a href="…" />}>`. Base UI marks every
    non-native button `role="button"`, an `<a href>` included, so `role="link"` is needed (the
-   button page's `link` demo; the landing's `ButtonLink` wraps the same recipe).
-7. **Responsive.** Every demo renders without horizontal overflow at 360 px.
+   button page's `link` variant; the landing's `ButtonLink` wraps the same recipe).
+7. **Responsive.** Every variant renders without horizontal overflow at 360 px.
 
 Code style: double quotes, semicolons, width 100 (Biome enforces it), named exports only in
 shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` for state.
@@ -142,13 +142,13 @@ shipped files, `cva` for variants, `data-slot` on every rendered part, `data-*` 
 Work happens on short-lived branches off `main`, named by what they change, not by who or
 which task made them:
 
-| Prefix   | For                                  | Example                                           |
-| -------- | ------------------------------------ | ------------------------------------------------- |
-| `feat/`  | a new item, demo, page or capability | `feat/add-page-turn`, `feat/docs-install-command` |
-| `fix/`   | a behaviour or visual fix            | `fix/badge-label`, `fix/ink-line-ends`            |
-| `chore/` | tooling, dependencies, CI, scripts   | `chore/fast-local-loop`                           |
-| `docs/`  | site content and guides              | `docs/theming-guide`                              |
-| `test/`  | tests and baselines only             | `test/site-visual-suite`                          |
+| Prefix   | For                                     | Example                                           |
+| -------- | --------------------------------------- | ------------------------------------------------- |
+| `feat/`  | a new item, variant, page or capability | `feat/add-page-turn`, `feat/docs-install-command` |
+| `fix/`   | a behaviour or visual fix               | `fix/badge-label`, `fix/ink-line-ends`            |
+| `chore/` | tooling, dependencies, CI, scripts      | `chore/fast-local-loop`                           |
+| `docs/`  | site content and guides                 | `docs/theming-guide`                              |
+| `test/`  | tests and baselines only                | `test/site-visual-suite`                          |
 
 Slugs are kebab-case. A Claude Code session's worktree branch is named by the app
 (`claude/<slug>-<suffix>`); that local name stays local. Publish under the conventional name
@@ -293,14 +293,14 @@ Branches are merged into `main` with a merge commit and deleted afterwards.
    without it shadcn keeps the folder after `ui/` in the source path and installs
    `components/ui/<name>/<name>.tsx` next to the stock file instead of replacing it.
    `@ui/` resolves against the user's own `ui` alias.
-5. **Demo and test:** `demos/default.tsx` showing the common case, extra demos for variants
+5. **Variant and test:** `variants/default.tsx` showing the common case, extra variants for variants
    and sizes, and `<name>.test.tsx` (renders, forwards `className`, sets `data-slot`,
-   variants map to classes, and runs axe on the default demo):
+   variants map to classes, and runs axe on the default variant):
 
-   Overlays render open in their default demo (`defaultOpen`) so the baselines capture
-   them. Toasts have no open state: a `sonner` demo fires its toasts in an effect on mount
+   Overlays render open in their default variant (`defaultOpen`) so the baselines capture
+   them. Toasts have no open state: a `sonner` variant fires its toasts in an effect on mount
    (a fixed `id`, so a double effect does not stack two, and `duration: Infinity`) and
-   renders the `Toaster`; `e2e/ready.ts` waits until each toast is mounted and framed. A demo that passes `render={<Button />}` must start with `"use client"`: an
+   renders the `Toaster`; `e2e/ready.ts` waits until each toast is mounted and framed. A variant that passes `render={<Button />}` must start with `"use client"`: an
    element serialized from a server component loses the children Base UI merges into it
    (jsdom tests do not catch this; the page shows empty buttons). An item that imports a
    `registryDependencies` entry (`dialog` → `@/components/ui/button`) needs that path mapped
@@ -313,10 +313,10 @@ Branches are merged into `main` with a merge commit and deleted afterwards.
 
    ```tsx
    import { expectNoA11yViolations } from "@/lib/test/axe";
-   import ButtonDefaultDemo from "./demos/default";
+   import ButtonDefaultVariant from "./variants/default";
 
-   it("has no axe violations in its default demo", async () => {
-     await expectNoA11yViolations(<ButtonDefaultDemo />);
+   it("has no axe violations in its default variant", async () => {
+     await expectNoA11yViolations(<ButtonDefaultVariant />);
    });
    ```
 6. **Run the checks** (below).
@@ -370,13 +370,13 @@ Branches are merged into `main` with a merge commit and deleted afterwards.
    the example above; `@/lib/utils` is always available and is not a dependency), and
    `registryDependencies: ["https://www.mangacn.com/r/ink-frame.json"]` if it imports
    `InkFrame`.
-3. **Demo and test** as in recipe 1. A demo is a default export with no props that imports
+3. **Variant and test** as in recipe 1. A variant is a default export with no props that imports
    the piece from `@/registry/ui/<name>/<name>`:
 
    ```tsx
    import { Thing } from "@/registry/ui/thing/thing";
 
-   export default function ThingDefaultDemo() {
+   export default function ThingDefaultVariant() {
      return <Thing>Kyoto!</Thing>;
    }
    ```
@@ -398,7 +398,7 @@ is a whole route (stock's `login-01`) follows the steps below with the changes u
    ├─ <name>.tsx            entry (shipped, first in files[])
    ├─ <part>.ts(x)          parts (shipped): a hook, a helper (chapter-list/chapter-numeral.ts)
    ├─ <name>.test.tsx       never shipped
-   └─ demos/default.tsx     required, as for items
+   └─ variants/default.tsx     required, as for items
    ```
 
    `"use client"` only in the files that hold state; a block without state is a server
@@ -449,8 +449,8 @@ is a whole route (stock's `login-01`) follows the steps below with the changes u
    Map each declared item to its source in `tsconfig.json` `paths` and the
    `vitest.config.mts` aliases, as `@/components/ink-frame` is, so the block typechecks and
    tests in this repo.
-4. **Demo, test, page.** Demos import the block from `@/registry/blocks/<name>/<name>`. The
-   test covers the block's logic and runs axe on every demo. `pnpm gen:docs` scaffolds
+4. **Variant, test, page.** Variants import the block from `@/registry/blocks/<name>/<name>`. The
+   test covers the block's logic and runs axe on every variant. `pnpm gen:docs` scaffolds
    `content/docs/blocks/<name>.mdx` (with `<ItemFiles>`, the files one add writes) and adds it
    to the Blocks sidebar section; write the prose. The props interface is `<Pascal>Props` in
    the entry file, generated by `pnpm gen:props`; a data type the props use gets its own
@@ -472,7 +472,7 @@ registry/blocks/<name>/
 ├─ page.tsx                 the route: registry:page, target app/<route>/page.tsx (first in files[])
 ├─ components/<file>.tsx    its components: registry:component, target @components/<file>.tsx
 ├─ <name>.test.tsx          never shipped
-└─ demos/default.tsx        required: renders the page's main component (the stage shot)
+└─ variants/default.tsx        required: renders the page's main component (the stage shot)
 ```
 
 - **Where the files land.** The page at its `app/<route>/page.tsx` target (stock's: never
@@ -524,7 +524,7 @@ registry/blocks/<name>/
   heading, `aria-labelledby`). `/view/<name>` (app/view/[block]) renders it alone at full
   width, `?mode=dark` included; `e2e/blocks.spec.ts` shoots it at three widths, light and dark,
   with axe's page rules on. `pnpm gen:docs` scaffolds the docs page with `<BlockPreview>`
-  (the page framed at phone, tablet and desktop widths) in place of the demos, which its
+  (the page framed at phone, tablet and desktop widths) in place of the variants, which its
   frontmatter skips, and no props table: add `<PropsTable item="<name>" name="<Interface>" />`
   for a component that has props of its own, or for the data a project replaces (series-page's
   `## Data` prints `Series` and `SeriesHeaderProps`); `gen:props` reads the table from the
@@ -539,17 +539,17 @@ registry/blocks/<name>/
 
 The next page block, in short: a folder with `page.tsx` (`registry:page`, stock's
 `app/<route>/page.tsx` target) and `components/<file>.tsx` (`registry:component`, target
-`@components/<file>.tsx`), a default demo and a test with `expectDemosAccessible`; a catalog
+`@components/<file>.tsx`), a default variant and a test with `expectVariantsAccessible`; a catalog
 entry with its dependencies by URL; the page importing its components relatively; `PARITY_BLOCKS` and
-`pnpm gen:parity` when it is stock's; `pnpm gen:demos && pnpm gen:docs`, two sentences on the
+`pnpm gen:parity` when it is stock's; `pnpm gen:variants && pnpm gen:docs`, two sentences on the
 page, and the files in the smoke's `EXPECTED_CONTENT`. `/view/<name>` and its shots come with
-the demo map.
+the variant map.
 
 ## Recipe 4: add a hook
 
 A hook is a stock React hook that a restyled primitive needs (`use-mobile`, which `sidebar`
 reads) or hands to its users (`use-highlighted-code`, which `code-block` declares, with its
-`lib/highlighter.tsx`). It ships unchanged but for the attribution header, has **no demo, no docs page and no
+`lib/highlighter.tsx`). It ships unchanged but for the attribution header, has **no variant, no docs page and no
 index card**, and installs with the item that declares it. `use-mobile` is the reference.
 
 1. **Fetch the stock source** as in recipe 1, at the hooks path:
@@ -659,8 +659,8 @@ for it. The loop, in order, for a branch that adds or changes items:
 
 ```bash
 pnpm gen:theme                                       # once, in a fresh worktree
-pnpm check:changed                                   # while you work and before the push: Biome on changed files, demo map, typecheck, related tests
-pnpm dev                                             # then look at every new or changed demo, light and dark, at 360 px and desktop width (below)
+pnpm check:changed                                   # while you work and before the push: Biome on changed files, variant map, typecheck, related tests
+pnpm dev                                             # then look at every new or changed variant, light and dark, at 360 px and desktop width (below)
 git push -u origin HEAD:refs/heads/<type>/<slug>     # then message the orchestrator: the branch and its last commit
 ```
 
@@ -670,13 +670,13 @@ PNG. When the catalog, a props interface or a page's description changed, it run
 `pnpm gen:docs`, `pnpm gen:props` and `pnpm gen:skill` and commits what they write (each
 takes `--check` to see whether it is needed).
 
-**Every new or changed demo, by eye, before the push.** With `pnpm dev` running, open
-`http://localhost:3000/demo/<item>/<demo>` (and `?mode=dark`) in a window 360 px wide and in
+**Every new or changed variant, by eye, before the push.** With `pnpm dev` running, open
+`http://localhost:3000/gallery/<item>/<variant>` (and `?mode=dark`) in a window 360 px wide and in
 a desktop-wide one, or shoot it (`playwright screenshot` has no viewport option, so a short
 script; one URL and file each):
 
 ```bash
-pnpm exec node -e "const{chromium}=require('@playwright/test');(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:360,height:800}});await p.goto(process.argv[1]);await p.waitForTimeout(2000);await p.screenshot({path:process.argv[2],fullPage:true});await b.close()})()" "http://localhost:3000/demo/<item>/<demo>?mode=dark" <scratch>/<item>-<demo>-dark-w360.png
+pnpm exec node -e "const{chromium}=require('@playwright/test');(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:360,height:800}});await p.goto(process.argv[1]);await p.waitForTimeout(2000);await p.screenshot({path:process.argv[2],fullPage:true});await b.close()})()" "http://localhost:3000/gallery/<item>/<variant>?mode=dark" <scratch>/<item>-<variant>-dark-w360.png
 ```
 
 The file is for your eyes, not a baseline (Windows fonts differ from the runner's); write it
@@ -704,7 +704,7 @@ and pushes. Exit 20 is a failed check, with the merge commit left local. `--dry-
 the plan and changes nothing; logs go to a temporary folder named at the start.
 
 **Once per wave, on `main`.** Main's push run checks, smokes every item and takes every shot;
-a new demo has no baseline, so its `screenshots` jobs are red until the wave's one dispatch writes
+a new variant has no baseline, so its `screenshots` jobs are red until the wave's one dispatch writes
 them, which is expected between waves:
 
 ```bash
@@ -742,7 +742,7 @@ baseline are printed); one written by a single run, or differently by the two, i
 `--json` prints the same for machines; `--baselines=<dir>` compares with another folder.
 
 1. **`pnpm check:changed`** is the gate while you work: about 75 s on Windows for a one-item
-   change (Biome on your files, `gen:demos`, typecheck, the test files that import what you
+   change (Biome on your files, `gen:variants`, typecheck, the test files that import what you
    touched) against several minutes for `pnpm check` (every file, about 1,670 tests). Vitest
    reruns every test when `package.json` or its config changed. Run `pnpm check` when you
    changed shared code (`lib/registry`, the theme, `ink-frame`).
@@ -750,11 +750,11 @@ baseline are printed); one written by a single run, or differently by the two, i
    catalog from disk and pin item strings (a description in `lib/mcp/tools.test.ts`), so
    Vitest's `--changed` does not select them; the orchestrator's unit suite on the merged tree
    runs them. Run them yourself when you changed a description or a page.
-3. **Optional, when a demo misbehaves** and you want the non-pixel checks before pushing:
-   `pnpm build && pnpm test:e2e:changed` (the demo stage is a production build, about 3 min
+3. **Optional, when a variant misbehaves** and you want the non-pixel checks before pushing:
+   `pnpm build && pnpm test:e2e:changed` (the variant stage is a production build, about 3 min
    on Windows; then the visual set your diff needs, without pixels: errors, overflow, axe), or
    `pnpm check:catalog`, which adds the catalog suites and the component index's Playwright
-   pass (each default demo against its 20rem stage and its `h2` outline) and stops at the
+   pass (each default variant against its 20rem stage and its `h2` outline) and stops at the
    first failure with that step's exit code (`scripts/check-catalog.ts`).
 
 A full local `pnpm run ci` or `pnpm registry:smoke` costs 25–40 min on Windows (timed when the
@@ -777,26 +777,26 @@ unit run fell from 75 s to about 40 s on CI (jsdom set-up from 39 % of the track
 
 What a change needs before the push:
 
-| Change                                                     | before the push                                    | `test:e2e:changed` selects |
-| ---------------------------------------------------------- | -------------------------------------------------- | -------------------------- |
-| item (component, demo, catalog entry)                      | `check:changed`, every demo by eye, the generators | items, their users, `site` |
-| docs site (`content/`, `components/`, `app/`, `lib/docs/`) | `check:changed`, the docs suites, the page by eye  | `site` (+ `mcp`)           |
-| MCP (`lib/mcp/`, `app/api/mcp/`, `skills/`)                | `check:changed`, the `lib/mcp` suite               | `mcp` (3 tests, no pixels) |
-| Markdown, scripts, CI                                      | `check:changed`                                    | `none`                     |
+| Change                                                     | before the push                                       | `test:e2e:changed` selects |
+| ---------------------------------------------------------- | ----------------------------------------------------- | -------------------------- |
+| item (component, variant, catalog entry)                   | `check:changed`, every variant by eye, the generators | items, their users, `site` |
+| docs site (`content/`, `components/`, `app/`, `lib/docs/`) | `check:changed`, the docs suites, the page by eye     | `site` (+ `mcp`)           |
+| MCP (`lib/mcp/`, `app/api/mcp/`, `skills/`)                | `check:changed`, the `lib/mcp` suite                  | `mcp` (3 tests, no pixels) |
+| Markdown, scripts, CI                                      | `check:changed`                                       | `none`                     |
 
 ### The visual set (`E2E_ITEMS`)
 
-`E2E_ITEMS` is a comma-separated list of item names (their demos, and a page block's
+`E2E_ITEMS` is a comma-separated list of item names (their variants, and a page block's
 `/view/` page) and the suites `site`, `mcp`, `annotations` and `presets`; unset or `all` runs
 everything, `none` nothing. The Playwright run
-prints the filter on its first line, and a name with no demos is an error. Set it by hand
+prints the filter on its first line, and a name with no variants is an error. Set it by hand
 (`E2E_ITEMS=slider,site pnpm test:e2e`) or let `scripts/changed-e2e.ts` compute it from the
 diff against origin/main (`pnpm exec tsx scripts/changed-e2e.ts` prints it and why;
 `--paths=a,b` tries paths without changing them). The rules, in `lib/e2e-filter.ts`:
 
 - an item's folder or catalog entry → that item, every item that uses it (its
   `registryDependencies` or an import in its folder, transitively), and `site`, whose component
-  index renders every default demo; `ink-mark` and `ink-arrow` add `annotations`;
+  index renders every default variant; `ink-mark` and `ink-arrow` add `annotations`;
 - a baseline PNG → its item (a page block for `<block>-view-<mode>.png`, `site` for
   `site-*.png`, `presets` for `presets-*.png`);
 - `app/view/` or `e2e/blocks.spec.ts` → every page block and `site`; anything under
@@ -811,13 +811,13 @@ diff against origin/main (`pnpm exec tsx scripts/changed-e2e.ts` prints it and w
   target); `lib/registry/parity.ts` whose diff only appends names to `PARITY_PRIMITIVES` →
   those items; `vitest.config.mts` reaches no shot at all. The diff is read from the file's
   content at the merge base and now, not from its path;
-- everything: the suite's config, demo spec or `e2e/ready.ts`, the demo stage (`app/demo/`),
+- everything: the suite's config, variant spec or `e2e/ready.ts`, the variant stage (`app/gallery/`),
   `app/layout.tsx`, `app/globals.css`, `ink-frame`, the rest of `lib/registry/` and any other
   change to the two files above (a `compilerOptions` edit, a removed, edited or reordered
   alias or name, an alias that names no item), `lib/utils.ts`, the theme catalog or any item's
   `css`, a dependency (`pnpm-lock.yaml`, `package.json` outside `scripts`), the Next config,
   and any path no rule knows;
-- nothing: unit tests, Markdown, `scripts/` (but the demo, theme and docs generators), CI.
+- nothing: unit tests, Markdown, `scripts/` (but the variant, theme and docs generators), CI.
 
 CI (`.github/workflows/ci.yml`): push to main and pull requests always run every shot and the
 full smoke, and so does a dispatch on `main`. A `workflow_dispatch` on a branch (not part of
@@ -832,12 +832,12 @@ Coverage and its 90 % threshold are enforced in CI (`pnpm test:coverage`), not i
 it to CI. It is `pnpm run ci:checks` followed by the smoke; CI runs `ci:checks` and `ci:smoke`
 (`registry:build` then `registry:smoke`) as the parallel `checks` and `smoke` jobs.
 
-Preview a demo in isolation with `pnpm dev` and open
-`http://localhost:3000/demo/<name>/<demo>` (add `?mode=dark` for the night theme). The
-page renders that one demo centred on paper and nothing else.
+Preview a variant in isolation with `pnpm dev` and open
+`http://localhost:3000/gallery/<name>/<variant>` (add `?mode=dark` for the night theme). The
+page renders that one variant centred on paper and nothing else.
 
-`pnpm gen:demos` fails with the item name if `demos/default.tsx` is missing, and
-`pnpm test` fails if the generated map is stale; rerun `pnpm gen:demos`.
+`pnpm gen:variants` fails with the item name if `variants/default.tsx` is missing, and
+`pnpm test` fails if the generated map is stale; rerun `pnpm gen:variants`.
 
 `pnpm registry:list` (`shadcn list` against `pnpm dev` on `http://localhost:3000`) exits 0.
 Listing the live registry (`shadcn list https://www.mangacn.com/r/registry.json`) on Windows
@@ -868,21 +868,21 @@ sign-off: `pnpm gen:parity` (network; never runs in CI) writes both, then review
 
 ### Accessibility and visual snapshots
 
-- Every item test calls `expectDemosAccessible(import.meta.glob("./demos/*.tsx"))`
-  (`lib/test/axe.ts`) inside its `describe`: one case per demo, rendered with ResizeObserver
+- Every item test calls `expectVariantsAccessible(import.meta.glob("./variants/*.tsx"))`
+  (`lib/test/axe.ts`) inside its `describe`: one case per variant, rendered with ResizeObserver
   stubbed and every ink frame drawn, axe on `document.body` so portalled popups are checked
-  too. Options: `setup` (stubs the demos need before rendering: layout, matchMedia) and
-  `ready` (per demo, what to wait for before axe: an open drawer, a toast). The glob, not the
-  generated map, keeps each item test related to its own demos only under `--changed`;
-  `lib/registry/demo-axe.test.ts` fails when an item with demos has no such call, so a new
-  item cannot ship demos without axe. `expectNoA11yViolations(<ui />)` remains for one-off
+  too. Options: `setup` (stubs the variants need before rendering: layout, matchMedia) and
+  `ready` (per variant, what to wait for before axe: an open drawer, a toast). The glob, not the
+  generated map, keeps each item test related to its own variants only under `--changed`;
+  `lib/registry/variant-axe.test.ts` fails when an item with variants has no such call, so a new
+  item cannot ship variants without axe. `expectNoA11yViolations(<ui />)` remains for one-off
   states. The rules off everywhere are in `lib/test/axe-rules.ts`: `color-contrast` (no
   layout in jsdom; the theme's contrast has its own test, and the stage pages run the rule
   on its own, below), `region` and `page-has-heading-one`
-  (page-level; a demo is a fragment, shown in an iframe). jsdom cannot evaluate
+  (page-level; a variant is a fragment, shown in an iframe). jsdom cannot evaluate
   `label-content-name-mismatch` (it measures glyphs on a canvas: the "HTMLCanvasElement's
   getContext()" lines in the unit run), so the stage-page pass is where that rule bites.
-- `e2e/demos.spec.ts` opens `/demo/<item>/<demo>` and `?mode=dark` for every demo in the
+- `e2e/variants.spec.ts` opens `/gallery/<item>/<variant>` and `?mode=dark` for every variant in the
   generated map at 360, 768 and 1280 px, fails on console errors, non-200 responses,
   horizontal overflow and (light mode, every width) axe violations on the drawn stage page,
   with the same rule set and Base UI's focus guards excluded (`[data-base-ui-focus-guard]`:
@@ -892,33 +892,33 @@ sign-off: `pnpm gen:parity` (network; never runs in CI) writes both, then review
   own: the pen's fills are first painted as CSS (`e2e/ink-fills.ts`) so axe can measure text
   over them, and text it cannot measure (over a screentone, under an SFX outline) comes back
   incomplete, not failed. `CONTRAST_EXEMPTIONS` in `lib/test/axe-rules.ts` names text that may
-  stay below AA, by item, demo and selector, with a reason from a short fixed list; it is
+  stay below AA, by item, variant and selector, with a reason from a short fixed list; it is
   empty. On Linux the spec compares against
-  `e2e/__screenshots__/linux/w<width>/<item>-<demo>-<mode>.png` (`maxDiffPixelRatio` 0.01).
+  `e2e/__screenshots__/linux/w<width>/<item>-<variant>-<mode>.png` (`maxDiffPixelRatio` 0.01).
   On Windows and macOS it skips the pixel comparison, because font rendering differs.
 - `e2e/site.spec.ts` shoots each site page whole, except the landing and the component index:
   those are shot at their first viewport, from the top of the page
   (`site-home-viewport-<mode>.png`, `site-docs-components-viewport-<mode>.png`). The index is
   never shot whole (every new item moved that picture): it is checked structurally at every
-  width instead (one card per catalog item with demos, each with its title linking to its
+  width instead (one card per catalog item with variants, each with its title linking to its
   page and its description, no card past the viewport's edges, no page overflow), and every
-  demo has its own baseline. The landing is also shot whole (`site-home-<mode>.png`) under
+  variant has its own baseline. The landing is also shot whole (`site-home-<mode>.png`) under
   `SITE_FULL=1`, which CI sets on main (push or dispatch) and on `full` dispatches. New items
   do not move the landing; a change to the landing is regenerated by the wave's update run
   (or a batch proof's `full=true` run).
 - The overlay item pages and the gallery (`OVERLAY_PAGES` in `e2e/site.spec.ts`: dialog,
-  popover, context-menu, menubar and `/demo/dialog`) embed live stages whose popup opens on
+  popover, context-menu, menubar and `/gallery/dialog`) embed live stages whose popup opens on
   load. An embedded stage holds its script-driven focus and `scrollIntoView` until the reader
   interacts with it (`lib/docs/stage-focus.ts`), so the page keeps the reader's focus and
   scroll; the suite asserts that and runs its axe pass on each of those pages, stages
   included, at every width in light mode.
-- A new demo has no baseline, so `visual` on `main` fails until the wave's
+- A new variant has no baseline, so `visual` on `main` fails until the wave's
   `update-snapshots=true` dispatch writes it (the loop above); baselines are only made on CI,
   and the orchestrator commits them on `main`.
 - `visual` runs in four shards; each uploads the PNGs it rewrote, and the `baselines` job
   merges them into the one `playwright-baselines` artifact.
 - Every `InkFrame` without an explicit `seed` hashes `useId()`, and React ids depend on the
-  tree above the component. Changing the demo stage's tree (`app/demo/[item]/[demo]/page.tsx`)
+  tree above the component. Changing the variant stage's tree (`app/gallery/[item]/[variant]/page.tsx`)
   therefore changes every wobble; such a change selects every shot, and the update run
   rewrites each one that moved past the threshold. Two runs of the same commit also differ in
   a few dozen PNGs by one to a few hundred pixels (renderer antialiasing at text and stroke
@@ -943,7 +943,7 @@ sign-off: `pnpm gen:parity` (network; never runs in CI) writes both, then review
   `page-has-heading-one`: one `main`, one `h1`), contrast in both modes, no overflow and no
   console error (`<block>-view-<mode>.png`); it also checks the Blocks index and a page block's
   framed preview.
-- `e2e/presets.spec.ts` shoots the theme specimen (`/demo/theme/specimen?theme=<look>`) in
+- `e2e/presets.spec.ts` shoots the theme specimen (`/gallery/theme/specimen?theme=<look>`) in
   every look and mode at each width, with axe and contrast, and drives the Theming page's
   switch (keyboard, install line, storage, the look kept across docs pages and set before the
   article is parsed).
@@ -953,7 +953,7 @@ sign-off: `pnpm gen:parity` (network; never runs in CI) writes both, then review
 
 ## Docs page per item
 
-Every catalog item with demos has a page at `content/docs/components/<item>.mdx` (a block at
+Every catalog item with variants has a page at `content/docs/components/<item>.mdx` (a block at
 `content/docs/blocks/<block>.mdx`), and the site (`/docs/components/<item>`,
 `/docs/blocks/<block>`) is built from it. `pnpm gen:docs` writes the page for any item that
 has none (never overwriting one) and rewrites `content/docs/components/meta.json`, the sidebar
@@ -963,15 +963,15 @@ order; `pnpm gen:docs --check` fails naming every missing page or a stale meta, 
 
 The scaffold is short: frontmatter (`title`, `description` copied from the catalog, `item`),
 `<InstallCommand item="…" />`, `<CopyPrompt item="…" />`, a placeholder comment where the
-prose goes, an `## Examples` section with one `<DemoFrame item="…" demo="…" />` per demo in
-the demo map, and `## Props` with `<PropsTable item="…" />`. Replace the placeholder with
+prose goes, an `## Examples` section with one `<VariantFrame item="…" variant="…" />` per variant in
+the variant map, and `## Props` with `<PropsTable item="…" />`. Replace the placeholder with
 one or two sentences on when to use the piece and what it pairs with (see
 `speech-bubble.mdx`); Japanese samples go under `lang="ja"`. The pieces:
 
-- `DemoFrame` renders the demo inline under Preview / Code tabs, with the source as it
+- `VariantFrame` renders the variant inline under Preview / Code tabs, with the source as it
   lands in a consumer project. Overlay items (`OVERLAY_ITEMS` in
-  `components/docs/demo-frame.tsx`: the dialogs, sheets, drawers, popups and menus, sonner,
-  sidebar, navigation-menu, combobox and command) render it as an iframe of the demo stage
+  `components/docs/variant-frame.tsx`: the dialogs, sheets, drawers, popups and menus, sonner,
+  sidebar, navigation-menu, combobox and command) render it as an iframe of the variant stage
   instead, so open popups never stack on the page.
 - `PropsTable` is an `AutoTypeTable` over the item's exported props interface for a
   manga-native piece, and for a restyled primitive a link to shadcn's page plus the table of
@@ -985,8 +985,8 @@ one or two sentences on when to use the piece and what it pairs with (see
   except the prose.
 
 `lib/docs/pages.test.ts` keeps pages and catalog in step: every item has a page, every page
-names a catalog item, every demo in the map is framed or listed in the frontmatter's
-`skipDemos` (`skipDemos: ["open"]`), and the placeholder is gone. The site suite
+names a catalog item, every variant in the map is framed or listed in the frontmatter's
+`skipVariants` (`skipVariants: ["open"]`), and the placeholder is gone. The site suite
 (`e2e/site.spec.ts`) screenshots and axe-checks a sample of pages, not every item page.
 
 ### Agent Skill

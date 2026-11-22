@@ -6,8 +6,8 @@ import { waitForInk } from "./ready";
 test("a wrapped ink mark draws one mark per line and leaves the text where it was", async ({
   page,
 }) => {
-  await page.goto("/demo/ink-mark/wrapped");
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await page.goto("/gallery/ink-mark/wrapped");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 
   const result = await page.evaluate(() => {

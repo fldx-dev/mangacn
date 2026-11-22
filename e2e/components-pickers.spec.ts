@@ -14,7 +14,7 @@ test.skip(
 
 async function open(page: Page, path: string) {
   await page.goto(path);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 
@@ -45,7 +45,7 @@ async function areaValue(area: Locator) {
 test("multi-select's popup is as wide as the field, inside the viewport; Escape keeps focus", async ({
   page,
 }) => {
-  await open(page, "/demo/multi-select/default");
+  await open(page, "/gallery/multi-select/default");
   const input = page.getByRole("combobox", { name: "Genres" });
   await input.focus();
   await page.keyboard.press("ArrowDown");
@@ -67,7 +67,7 @@ test("multi-select's popup is as wide as the field, inside the viewport; Escape 
 test("color-picker's panel stays inside the viewport and Escape returns focus to the trigger", async ({
   page,
 }) => {
-  await open(page, "/demo/color-picker/default");
+  await open(page, "/gallery/color-picker/default");
   const trigger = page.getByRole("button", { name: "Accent, #e60012" });
   await trigger.click();
   const dialog = page.getByRole("dialog");
@@ -83,7 +83,7 @@ test("color-picker's panel stays inside the viewport and Escape returns focus to
 });
 
 test("color-picker's 2D area moves by keyboard, Shift for steps of 10", async ({ page }) => {
-  await open(page, "/demo/color-picker/inline");
+  await open(page, "/gallery/color-picker/inline");
   const area = page.getByRole("slider", { name: "Saturation and brightness" });
   await area.focus();
   const start = await areaValue(area);
@@ -93,12 +93,12 @@ test("color-picker's 2D area moves by keyboard, Shift for steps of 10", async ({
     saturation: start.saturation - 1,
     brightness: start.brightness - 10,
   });
-  // The value reaches the demo's readout.
+  // The value reaches the variant's readout.
   await expect(page.getByText(/^Ink: #[0-9a-f]{6}$/)).not.toHaveText("Ink: #1d2088");
 });
 
 test("color-picker's 2D area follows a pointer drag", async ({ page }) => {
-  await open(page, "/demo/color-picker/inline");
+  await open(page, "/gallery/color-picker/inline");
   const area = page.getByRole("slider", { name: "Saturation and brightness" });
   const box = await area.boundingBox();
   if (!box) throw new Error("no area box");

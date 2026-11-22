@@ -48,7 +48,7 @@ the reference setup; any framework the shadcn CLI supports works the same way.
 
 3. **Read its API before you write code.** Call `get_item` with the name, or fetch
    `https://www.mangacn.com/docs/components/<item>.md`. Both return the props table and the
-   source of every demo. Use only the props listed there; never guess a prop or a variant
+   source of every variant. Use only the props listed there; never guess a prop or a variant
    value. Restyled primitives keep shadcn's API, so stock shadcn usage is correct for them.
 
 4. **Install with the one command.** `get_install_command` returns it, and so do the catalog
@@ -64,9 +64,9 @@ the reference setup; any framework the shadcn CLI supports works the same way.
    below. Import primitives from `@/components/ui/<item>` and manga-native pieces from
    `@/components/<item>`.
 
-6. **Check the result.** Compare with the item's docs page or its demo stage,
-   `https://www.mangacn.com/demo/<item>/<demo>` (add `?mode=dark` for the night theme), which
-   renders one demo alone on paper. Then run the project's typecheck and build.
+6. **Check the result.** Compare with the item's docs page or its variant stage,
+   `https://www.mangacn.com/gallery/<item>/<variant>` (add `?mode=dark` for the night theme), which
+   renders one variant alone on paper. Then run the project's typecheck and build.
 
 ## Three rules not to break
 
@@ -82,7 +82,7 @@ the reference setup; any framework the shadcn CLI supports works the same way.
    tone greys (`text-ink`, `bg-paper`, `bg-tone-1` … `bg-tone-4`); no literal colours.
 
 3. **Japanese text goes under `lang="ja"`.** Put it on the element or its nearest wrapper,
-   as the mangacn demos do. The dialogue font stack then picks the Japanese face for kana
+   as the mangacn variants do. The dialogue font stack then picks the Japanese face for kana
    and kanji, and screen readers switch voice. See [references/japanese.md](references/japanese.md).
 
 ## Connect the MCP

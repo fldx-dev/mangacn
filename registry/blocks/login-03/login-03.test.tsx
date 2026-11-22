@@ -4,7 +4,7 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
 import { installedPageSource } from "@/lib/registry/page-source";
-import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import { LoginForm } from "./components/login-form";
 import Page from "./page";
 
@@ -54,7 +54,7 @@ describe("LoginForm", () => {
     }
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });
 
 describe("login-03 page", () => {

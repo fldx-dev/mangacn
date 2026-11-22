@@ -6,7 +6,7 @@ import type { LoadedRegistry, LoadedRegistryItem } from "./index";
 // `registry/hooks/<name>.ts`, installed into the user's hooks folder through a
 // `@hooks/<name>.ts` target. A hook may ship `registry:lib` companions where stock does
 // (use-highlighted-code's `lib/highlighter.tsx`): `registry/hooks/lib/<file>`, installed through
-// `@lib/<file>`, the place stock's copy lands. A hook has no docs page and no demo; the item that
+// `@lib/<file>`, the place stock's copy lands. A hook has no docs page and no variant; the item that
 // needs it declares it by mangacn URL and imports it from `@/hooks/<name>`.
 
 /** Repo-relative path of the hook catalog, included from the root registry.json. */

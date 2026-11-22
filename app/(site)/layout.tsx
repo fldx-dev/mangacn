@@ -3,7 +3,7 @@ import { PageTurn } from "@/components/docs/page-turn";
 import { SkipLink } from "@/components/docs/skip-link";
 
 // Site chrome provider (theme via next-themes, search dialog). Only the (site) group gets it:
-// the stage and gallery under app/demo keep their own `?mode=dark` switch (SPEC-docs-site §3.4).
+// the stage and gallery under app/gallery keep their own `?mode=dark` switch (SPEC-docs-site §3.4).
 // A navigation turns the page (components/docs/page-turn.tsx).
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (

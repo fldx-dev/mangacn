@@ -4,7 +4,7 @@ description: Set up an AI coding agent to find, install and use mangacn items th
 ---
 
 An agent can work with mangacn in three ways, and they stack: shadcn's MCP installs items,
-the mangacn docs MCP reads their props and demos, and the Agent Skill teaches the rules.
+the mangacn docs MCP reads their props and variants, and the Agent Skill teaches the rules.
 Set up the first, add the others as you need them.
 
 ## shadcn's MCP
@@ -32,7 +32,7 @@ them in and restart Codex. Ask "add the mangacn speech bubble" and the agent run
 ## The mangacn docs MCP
 
 `https://www.mangacn.com/api/mcp` serves the docs to agents: read-only, no account, streamable
-HTTP. It reads the same source as these pages, so an agent gets the real props and demos
+HTTP. It reads the same source as these pages, so an agent gets the real props and variants
 instead of guessing them.
 
 <McpConfig />
@@ -43,7 +43,7 @@ instead of guessing them.
 | `list_pages` | The `/llms.txt` index: every docs page as a Markdown link |
 | `get_page` | One docs page as Markdown, the same text as its `.md` twin |
 | `list_items` | Every registry item on one line: type, category, description, install command, docs URL |
-| `get_item` | An item's page as Markdown (install, demos, props) plus the files it writes |
+| `get_item` | An item's page as Markdown (install, variants, props) plus the files it writes |
 | `get_install_command` | One `shadcn add` line for a set of items that runs without a prompt (`--overwrite`, plus `--yes` with the theme), and the registry setup |
 | `get_skill` | The Agent Skill's `SKILL.md`, or one of its references by name |
 

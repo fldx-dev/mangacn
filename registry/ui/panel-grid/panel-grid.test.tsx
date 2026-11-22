@@ -1,7 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import props from "@/lib/docs/props.generated.json";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { PanelGrid, PanelGridItem } from "./panel-grid";
 
 afterEach(cleanup);
@@ -67,5 +67,5 @@ describe("PanelGrid", () => {
     );
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { InkArrow } from "./ink-arrow";
 
 // Records the options handed to rough.js, with the real generator still doing the drawing.
@@ -159,5 +159,5 @@ describe("InkArrow", () => {
     expect(other).not.toEqual(first);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

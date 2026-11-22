@@ -2,7 +2,7 @@
  * `pnpm check:catalog`: the checks `pnpm check:changed` does not reach (SPEC-components-4 §8.1),
  * run once before the dispatch. Vitest's `--changed` follows imports, so a catalog edit that a
  * suite reads from disk (a description pinned in lib/mcp/tools.test.ts) runs no test; and the
- * component index's own checks (a default demo taller than its 20rem stage, axe's
+ * component index's own checks (a default variant taller than its 20rem stage, axe's
  * `heading-order` under the index's sections) run only in its Playwright pass.
  *
  * Steps, stopping at the first failure, exit code that step's:

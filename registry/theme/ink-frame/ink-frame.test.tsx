@@ -1,7 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { INK_REDRAW_EVENT, InkFrame } from "./ink-frame";
 
@@ -283,7 +283,7 @@ describe("InkFrame in the browser", () => {
     expect(frame?.id).toBe("p1");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });
 
 describe("InkFrame without ResizeObserver", () => {

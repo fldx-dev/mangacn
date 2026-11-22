@@ -1,8 +1,8 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Badge, badgeVariants } from "./badge";
-import BadgeVariantsDemo from "./demos/variants";
+import BadgeVariantsVariant from "./variants/variants";
 
 afterEach(cleanup);
 
@@ -98,9 +98,9 @@ describe("Badge", () => {
   });
 
   it("marks Japanese labels with lang", () => {
-    render(<BadgeVariantsDemo />);
+    render(<BadgeVariantsVariant />);
     expect(screen.getByText("完結").getAttribute("lang")).toBe("ja");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

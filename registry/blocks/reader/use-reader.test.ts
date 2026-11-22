@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { readerProgress, readPageParam, useReader, writePageParam } from "./use-reader";
 
-/** An address held in a string, as the demo's history calls hold it in the page's URL. */
+/** An address held in a string, as the variant's history calls hold it in the page's URL. */
 function address(search = "") {
   const url = { search, read: vi.fn(() => url.search), write: vi.fn() };
   url.write.mockImplementation((next: string) => {

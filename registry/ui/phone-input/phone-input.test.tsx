@@ -1,10 +1,10 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import PhoneInputDefaultDemo from "./demos/default";
 import { isValidPhoneNumber, PhoneInput, type PhoneInputProps } from "./phone-input";
+import PhoneInputDefaultVariant from "./variants/default";
 
 afterEach(() => {
   cleanup();
@@ -71,7 +71,7 @@ const search = (value: string) =>
   });
 
 describe("PhoneInput", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("is a tel input in one input group, with the country picker in its leading addon", () => {
     render(<Phone defaultCountry="JP" className="custom" />);
@@ -372,10 +372,10 @@ describe("PhoneInput", () => {
     const markup = (html: string) => html.replace(/_r_[0-9a-z]+_/g, "_r_");
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date(2026, 0, 1, 9, 0));
-    const first = markup(render(<PhoneInputDefaultDemo />).container.innerHTML);
+    const first = markup(render(<PhoneInputDefaultVariant />).container.innerHTML);
     cleanup();
     vi.setSystemTime(new Date(2031, 6, 15, 23, 30));
-    const second = markup(render(<PhoneInputDefaultDemo />).container.innerHTML);
+    const second = markup(render(<PhoneInputDefaultVariant />).container.innerHTML);
     expect(second).toBe(first);
   });
 

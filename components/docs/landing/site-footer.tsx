@@ -21,7 +21,7 @@ const COLUMNS = [
     links: [
       { label: "All components", href: "/docs/components" },
       { label: "Primitives", href: "/docs/components#category-primitive" },
-      { label: "Gallery", href: "/demo" },
+      { label: "Gallery", href: "/gallery" },
     ],
   },
   {
@@ -59,8 +59,8 @@ export function SiteFooter() {
             End of chapter one.
           </h2>
           <p className="max-w-md text-lg text-pretty">
-            The docs pick up where this leaves off: every component with a live demo, its props and
-            the command that installs it.
+            The docs pick up where this leaves off: every component with its live variants, its
+            props and the command that installs it.
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <ButtonLink href="/docs" size="lg">

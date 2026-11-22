@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Spinner } from "./spinner";
 
 // The whole file runs as if the reader asked for reduced motion: the spinner must not depend
@@ -72,5 +72,5 @@ describe("Spinner", () => {
     expect(screen.getByRole("status", { name: "Uploading pages" })).not.toBeNull();
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

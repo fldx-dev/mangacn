@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 
 // Lane C's own checks (SPEC-components-6 §3, §8): the richer sidebars. The catalog-driven ones
@@ -12,13 +12,13 @@ import { hydrateAfterReveal, waitForInk } from "./ready";
 const SHELLS = ["sidebar-08", "sidebar-09", "sidebar-10", "sidebar-11"] as const;
 const LANE = [...SHELLS, "sidebar-13"] as const;
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 
 async function openView(page: Page, block: string) {
   await hydrateAfterReveal(page);
   const response = await page.goto(`/view/${block}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 

@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { source } from "@/lib/docs/source";
 import { absoluteUrl } from "@/lib/site";
 
-// Every indexable page: the landing, Create and each docs page. The demo stage and block views
+// Every indexable page: the landing, Create and each docs page. The variant stage and block views
 // are `noindex`, so they are left out. No `lastModified`: the docs carry no dates, and a build
 // date would claim every page changed on every deploy.
 export default function sitemap(): MetadataRoute.Sitemap {

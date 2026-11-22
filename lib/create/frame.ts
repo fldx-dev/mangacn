@@ -1,5 +1,5 @@
 /**
- * `?c=<code>` on the demo stage and the block view (Task C5): the page's root takes the
+ * `?c=<code>` on the variant stage and the block view (Task C5): the page's root takes the
  * configuration's preview variables, as the Create page's preview wrapper does, and follows a
  * new code the Create page posts to it. The stage and view mode components import this module
  * only when the URL has a code, so a page without one loads and renders exactly what it did.
@@ -56,7 +56,7 @@ export function applyCode(
 /**
  * Applies `code` (from `win`'s URL) to its document's root, adds the classes that load the extra
  * faces, and while embedded follows the codes its parent posts (same origin, from the parent
- * only); then marks the root `data-demo-ready`. Until `signal` aborts: then the root is restored
+ * only); then marks the root `data-variant-ready`. Until `signal` aborts: then the root is restored
  * (the mode component removes the ready mark). Does nothing once aborted.
  */
 export function followCode(win: Window, code: string, signal: AbortSignal): void {
@@ -85,5 +85,5 @@ export function followCode(win: Window, code: string, signal: AbortSignal): void
     for (const name of set) root.style.removeProperty(name);
     root.classList.remove(...fontClasses);
   });
-  root.dataset.demoReady = "true";
+  root.dataset.variantReady = "true";
 }

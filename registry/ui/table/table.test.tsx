@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import {
   Table,
@@ -122,7 +122,7 @@ describe("Table", () => {
   });
 
   it("stops the rule flush at the table's edges and clips its drawing there", () => {
-    // jsdom has no layout; e2e/demos.spec.ts checks the container does not scroll a table
+    // jsdom has no layout; e2e/variants.spec.ts checks the container does not scroll a table
     // that fits.
     render(<Chapters />);
     for (const row of screen.getAllByRole("row")) {
@@ -143,5 +143,5 @@ describe("Table", () => {
     expect(ruleOf(cell)?.querySelectorAll("path")).toHaveLength(1);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

@@ -3,7 +3,7 @@ import type { Editor } from "@tiptap/react";
 import * as React from "react";
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { RichTextEditor, RichTextEditorContent, RichTextEditorToolbar } from "./rich-text-editor";
 
 afterEach(() => {
@@ -31,7 +31,7 @@ function Controlled() {
 }
 
 describe("RichTextEditor", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("renders a toolbar over a multiline textbox, both named, in one frame", async () => {
     render(<RichTextEditor aria-label="Note" defaultValue="<p>Hi</p>" />);

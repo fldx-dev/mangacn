@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
 import { installedPageSource } from "@/lib/registry/page-source";
-import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import Page from "./page";
 
 const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8");
@@ -86,5 +86,5 @@ describe("sidebar-13 files", () => {
     expect(installedPageSource("sidebar-13")).toContain('from "@/components/settings-dialog"');
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

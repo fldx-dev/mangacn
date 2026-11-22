@@ -20,15 +20,15 @@ The grid is a `<nav>` named by `label` around a list. Each volume is one link, c
 
 Five volumes of a series, the newest stamped: two a row at phone width, four on a desktop.
 
-<DemoFrame item="volume-grid" demo="default" />
+<VariantFrame item="volume-grid" variant="default" />
 
 `numerals="ja"` names each volume <span lang="ja">第N巻</span> and stamps <span lang="ja">最新</span>, each under `lang="ja"`. The block cannot know the language of your titles, so put `lang="ja"` on the grid (it passes through to the `<nav>`) when they are Japanese.
 
-<DemoFrame item="volume-grid" demo="japanese" />
+<VariantFrame item="volume-grid" variant="japanese" />
 
 A long run packed tighter, three covers a row on phones and four from `sm` (`columns={{ base: 3, sm: 4 }}`); the covers past the first four load lazily.
 
-<DemoFrame item="volume-grid" demo="dense" />
+<VariantFrame item="volume-grid" variant="dense" />
 
 ## Props
 

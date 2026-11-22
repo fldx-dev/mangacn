@@ -1,10 +1,10 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import PowerGaugeStatCardDemo from "./demos/stat-card";
 import { PowerGauge } from "./power-gauge";
+import PowerGaugeStatCardVariant from "./variants/stat-card";
 
 afterEach(() => {
   cleanup();
@@ -204,7 +204,7 @@ describe("PowerGauge", () => {
   });
 
   it("gives each gauge in the stat card its own name", () => {
-    render(<PowerGaugeStatCardDemo />);
+    render(<PowerGaugeStatCardVariant />);
     const meters = screen.getAllByRole("meter");
     expect(new Set(meters.map((meter) => meter.getAttribute("aria-labelledby"))).size).toBe(3);
     for (const name of ["Power", "Speed", "Ink"]) {
@@ -213,5 +213,5 @@ describe("PowerGauge", () => {
     expect(screen.getByRole("meter", { name: "Ink" }).dataset.maxed).toBe("true");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

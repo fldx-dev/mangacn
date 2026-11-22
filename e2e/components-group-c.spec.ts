@@ -1,19 +1,19 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { waitForInk } from "./ready";
 
 // Group C's browser-only checks (SPEC-components-9 §8), one describe per lane. The
 // catalog-driven checks (axe in both modes, no overflow at every width, the shots) are
-// e2e/demos.spec.ts's.
+// e2e/variants.spec.ts's.
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 const skipUnless = (item: string) =>
   test.skip(only !== undefined && !only.includes(item), "E2E_ITEMS leaves it out");
 
-async function openDemo(page: Page, item: string, demo: string) {
-  const response = await page.goto(`/demo/${item}/${demo}`);
+async function openVariant(page: Page, item: string, variant: string) {
+  const response = await page.goto(`/gallery/${item}/${variant}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 
@@ -30,7 +30,7 @@ test.describe("phone-input", () => {
     // The system clipboard is one per browser: one width, so no two tests write it at once.
     test.skip(test.info().project.name !== "w1280", "one width is enough");
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-    await openDemo(page, "phone-input", "countries");
+    await openVariant(page, "phone-input", "countries");
     const input = page.getByRole("textbox", { name: "Studio phone" });
     await input.fill("");
     await expect(country(page)).toHaveAccessibleName("Country: France, FR +33");
@@ -42,7 +42,7 @@ test.describe("phone-input", () => {
   });
 
   test("picking another country from the keyboard keeps the digits", async ({ page }) => {
-    await openDemo(page, "phone-input", "default");
+    await openVariant(page, "phone-input", "default");
     await phone(page).pressSequentially("0312345678");
     await expect(phone(page)).toHaveValue("03-1234-5678");
     await country(page).focus();
@@ -68,7 +68,7 @@ test.describe("phone-input", () => {
   });
 
   test("an edit inside the number keeps the caret after the same digit", async ({ page }) => {
-    await openDemo(page, "phone-input", "default");
+    await openVariant(page, "phone-input", "default");
     const input = phone(page);
     await input.pressSequentially("0312345678");
     await input.press("Home");
@@ -86,7 +86,7 @@ test.describe("phone-input", () => {
   });
 
   test("an incomplete number is invalid only after blur", async ({ page }) => {
-    await openDemo(page, "phone-input", "default");
+    await openVariant(page, "phone-input", "default");
     await phone(page).pressSequentially("0312");
     await expect(phone(page)).toHaveValue("03-12");
     await expect(phone(page)).not.toHaveAttribute("aria-invalid");
@@ -101,7 +101,7 @@ test.describe("phone-input", () => {
   });
 
   test("the form posts the number in E.164", async ({ page }) => {
-    await openDemo(page, "phone-input", "form");
+    await openVariant(page, "phone-input", "form");
     const input = page.getByRole("textbox", { name: "Phone for delivery" });
     const save = page.getByRole("button", { name: "Save" });
     await save.click();
@@ -120,15 +120,15 @@ test.describe("phone-input", () => {
     page,
   }) => {
     test.skip(test.info().project.name !== "w360", "the phone width");
-    for (const demo of ["default", "countries", "form"]) {
-      await openDemo(page, "phone-input", demo);
+    for (const variant of ["default", "countries", "form"]) {
+      await openVariant(page, "phone-input", variant);
       await expect(country(page)).toHaveText(/^[A-Z]{2}$/, { useInnerText: true });
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       );
-      expect(overflow, demo).toBeLessThanOrEqual(0);
+      expect(overflow, variant).toBeLessThanOrEqual(0);
     }
-    await openDemo(page, "phone-input", "default");
+    await openVariant(page, "phone-input", "default");
     await country(page).click();
     const popup = page.locator('[data-slot="combobox-content"]');
     await expect(popup).toBeVisible();
@@ -155,7 +155,7 @@ test.describe("data-table", () => {
 
   test("sorts, filters and pages, announcing each", async ({ page }) => {
     test.skip(test.info().project.name !== "w1280", "desktop flow");
-    await openDemo(page, "data-table", "default");
+    await openVariant(page, "data-table", "default");
 
     await page.getByRole("button", { name: "Pages", exact: true }).click();
     await page.getByRole("menuitem", { name: "Descending" }).click();
@@ -179,7 +179,7 @@ test.describe("data-table", () => {
 
   test("select-all goes from mixed to all and back, announcing the count", async ({ page }) => {
     test.skip(test.info().project.name !== "w1280", "desktop flow");
-    await openDemo(page, "data-table", "selection");
+    await openVariant(page, "data-table", "selection");
     const all = page.getByRole("checkbox", { name: "Select all rows on this page" });
 
     await page.getByRole("checkbox", { name: "Select page 2" }).click();
@@ -198,7 +198,7 @@ test.describe("data-table", () => {
 
   test("at 360 the table scrolls in its frame with the first column pinned", async ({ page }) => {
     test.skip(test.info().project.name !== "w360", "phone layout");
-    await openDemo(page, "data-table", "default");
+    await openVariant(page, "data-table", "default");
     const region = page.getByRole("region", { name: "Series chapters" });
     const { scroll, client } = await region.evaluate((element) => ({
       scroll: element.scrollWidth,
@@ -238,7 +238,7 @@ test.describe("kanban", () => {
       .locator('[data-slot="kanban-card-body"]');
 
   test("a keyboard move across columns, announced at each step", async ({ page }) => {
-    await openDemo(page, "kanban", "default");
+    await openVariant(page, "kanban", "default");
     await body(page, "Rooftop chase").focus();
     await page.keyboard.press("Space");
     await expect(live(page)).toHaveText(
@@ -258,7 +258,7 @@ test.describe("kanban", () => {
   });
 
   test("Escape cancels and puts the card back", async ({ page }) => {
-    await openDemo(page, "kanban", "default");
+    await openVariant(page, "kanban", "default");
     await body(page, "Rooftop chase").focus();
     await page.keyboard.press("Space");
     await page.keyboard.press("ArrowRight");
@@ -273,7 +273,7 @@ test.describe("kanban", () => {
 
   test("a pointer drag moves a card to another column", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "w1280", "one pointer drag, at desktop width");
-    await openDemo(page, "kanban", "default");
+    await openVariant(page, "kanban", "default");
     const from = await body(page, "Rooftop chase").boundingBox();
     const to = await cards(page, "Tones").first().boundingBox();
     if (!from || !to) throw new Error("no boxes");
@@ -291,7 +291,7 @@ test.describe("kanban", () => {
 
   test("dragging near the row's edge scrolls it", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "w768", "a row wider than the screen");
-    await openDemo(page, "kanban", "default");
+    await openVariant(page, "kanban", "default");
     const board = page.locator('[data-slot="kanban-board"]');
     const edge = await board.boundingBox();
     const from = await body(page, "Epilogue").boundingBox();
@@ -311,7 +311,7 @@ test.describe("kanban", () => {
 
   test("the row snaps column by column, one column wide at 360", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "w360", "the phone layout");
-    await openDemo(page, "kanban", "default");
+    await openVariant(page, "kanban", "default");
     const board = page.locator('[data-slot="kanban-board"]');
     const layout = await board.evaluate((element) => {
       const row = getComputedStyle(element);
@@ -350,7 +350,7 @@ test.describe("kanban", () => {
 
     test("the carried card tilts", async ({ page }, testInfo) => {
       test.skip(testInfo.project.name !== "w1280", "one width");
-      await openDemo(page, "kanban", "default");
+      await openVariant(page, "kanban", "default");
       await body(page, "Rooftop chase").focus();
       await page.keyboard.press("Space");
       const face = page.locator('[data-slot="kanban-overlay-face"]');
@@ -363,7 +363,7 @@ test.describe("kanban", () => {
   test("reduced motion: the carried card does not tilt", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "w1280", "one width");
     // The suite runs with prefers-reduced-motion: reduce.
-    await openDemo(page, "kanban", "default");
+    await openVariant(page, "kanban", "default");
     await body(page, "Rooftop chase").focus();
     await page.keyboard.press("Space");
     const face = page.locator('[data-slot="kanban-overlay-face"]');
@@ -387,11 +387,11 @@ test.describe("rich-text-editor", () => {
 
   const frame = '[data-slot="rich-text-editor"]';
 
-  /** The demo with tiptap mounted: the region is contenteditable. */
-  async function openEditor(page: Page, demo: string) {
-    const response = await page.goto(`/demo/rich-text-editor/${demo}`);
+  /** The variant with tiptap mounted: the region is contenteditable. */
+  async function openEditor(page: Page, variant: string) {
+    const response = await page.goto(`/gallery/rich-text-editor/${variant}`);
     expect(response?.status()).toBe(200);
-    await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+    await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
     await expect(page.locator(".ProseMirror[contenteditable]")).toBeVisible();
     await waitForInk(page);
   }
@@ -456,7 +456,7 @@ test.describe("rich-text-editor", () => {
   test("keeps its box on hydrate: the server's HTML and the mounted editor are one size", async ({
     page,
   }) => {
-    // The docs page prerenders its demos (the stage renders on the client). Its scripts wait
+    // The docs page prerenders its variants (the stage renders on the client). Its scripts wait
     // until the server's HTML is measured. Hydrating that HTML logs nothing.
     const errors: string[] = [];
     page.on("console", (message) => {
@@ -486,7 +486,7 @@ test.describe("rich-text-editor", () => {
         .locator(frame)
         .evaluateAll((frames) => frames.map((element) => element.getBoundingClientRect().toJSON()));
     const before = await boxes();
-    // The three demos, server-rendered as static HTML: no editable region yet.
+    // The three variants, server-rendered as static HTML: no editable region yet.
     expect(before).toHaveLength(3);
     await expect(page.locator(".ProseMirror[contenteditable]")).toHaveCount(0);
 
@@ -495,8 +495,8 @@ test.describe("rich-text-editor", () => {
     await waitForInk(page);
     const after = await boxes();
     for (const [index, box] of after.entries()) {
-      expect(box.height, `demo ${index} height`).toBeCloseTo(before[index].height, 0);
-      expect(box.width, `demo ${index} width`).toBeCloseTo(before[index].width, 0);
+      expect(box.height, `variant ${index} height`).toBeCloseTo(before[index].height, 0);
+      expect(box.width, `variant ${index} width`).toBeCloseTo(before[index].width, 0);
     }
     expect(errors).toEqual([]);
   });

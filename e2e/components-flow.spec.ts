@@ -1,20 +1,20 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { waitForInk } from "./ready";
 
 // Lane D's browser-only checks (SPEC-components-7 §5): file-upload takes files through the native
 // input and a synthetic drop, rejects a too-large file with its reason and posts with a form;
 // stepper's horizontal titles under 768 px; timeline's alternate sides from 768 px. Axe, overflow
-// and the shots are e2e/demos.spec.ts's.
+// and the shots are e2e/variants.spec.ts's.
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 const skipUnless = (item: string) =>
   test.skip(only !== undefined && !only.includes(item), "E2E_ITEMS leaves it out");
 
-async function openDemo(page: Page, item: string, demo: string) {
-  const response = await page.goto(`/demo/${item}/${demo}`);
+async function openVariant(page: Page, item: string, variant: string) {
+  const response = await page.goto(`/gallery/${item}/${variant}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 
@@ -30,7 +30,7 @@ test.describe("file-upload", () => {
   test("setInputFiles adds files; a too-large file and another type are rejected", async ({
     page,
   }) => {
-    await openDemo(page, "file-upload", "default");
+    await openVariant(page, "file-upload", "default");
     const input = page.locator('input[type="file"]');
     await input.setInputFiles([
       png("page-01.png", 2048),
@@ -60,7 +60,7 @@ test.describe("file-upload", () => {
   });
 
   test("a synthetic drop adds files and marks the zone while dragging", async ({ page }) => {
-    await openDemo(page, "file-upload", "default");
+    await openVariant(page, "file-upload", "default");
     const zone = page.locator('[data-slot="file-upload-dropzone"]');
     const transfer = await page.evaluateHandle(() => {
       const data = new DataTransfer();
@@ -77,7 +77,7 @@ test.describe("file-upload", () => {
   });
 
   test("one file replaces the other and posts with the form", async ({ page }) => {
-    await openDemo(page, "file-upload", "avatar");
+    await openVariant(page, "file-upload", "avatar");
     const input = page.locator('input[type="file"][name="avatar"]');
     await input.setInputFiles(png("old.png", 1024));
     await input.setInputFiles(png("new.png", 1024));
@@ -94,7 +94,7 @@ test.describe("file-upload", () => {
   test("a rejected choice leaves the form posting the kept file, not the rejected one", async ({
     page,
   }) => {
-    await openDemo(page, "file-upload", "avatar");
+    await openVariant(page, "file-upload", "avatar");
     const input = page.locator('input[type="file"][name="avatar"]');
     await input.setInputFiles(png("kept.png", 1024));
     await input.setInputFiles(png("too-big.png", 2 * 1024 * 1024));
@@ -123,7 +123,7 @@ test.describe("stepper", () => {
   test("horizontal shows only the current title under 768 px, every title from 768", async ({
     page,
   }) => {
-    await openDemo(page, "stepper", "default");
+    await openVariant(page, "stepper", "default");
     const width = page.viewportSize()?.width ?? 0;
     const titles = page.locator('[data-slot="stepper-title"]');
     await expect(titles).toHaveCount(4);
@@ -148,7 +148,7 @@ test.describe("stepper", () => {
   });
 
   test("the vertical wizard moves with Next and Back and by choosing a step", async ({ page }) => {
-    await openDemo(page, "stepper", "vertical");
+    await openVariant(page, "stepper", "vertical");
     const items = page.locator('[data-slot="stepper-item"]');
     await expect(items.nth(1)).toHaveAttribute("aria-current", "step");
     await page.getByRole("button", { name: "Next" }).click();
@@ -163,7 +163,7 @@ test.describe("timeline", () => {
   skipUnless("timeline");
 
   test("alternate switches sides from 768 px and keeps one side below", async ({ page }) => {
-    await openDemo(page, "timeline", "alternate");
+    await openVariant(page, "timeline", "alternate");
     const width = page.viewportSize()?.width ?? 0;
     const sides = await page.locator('[data-slot="timeline-item"]').evaluateAll((items) =>
       items.map((item) => {

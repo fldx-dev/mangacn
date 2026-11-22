@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { InkSplashLoader } from "./ink-splash-loader";
 
 // motion reads `prefers-reduced-motion` through matchMedia (missing in jsdom) once, on first
@@ -65,5 +65,5 @@ describe("InkSplashLoader", () => {
     expect(blot.style.transform, blot.getAttribute("style") ?? "").toMatch(/^(none)?$/);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

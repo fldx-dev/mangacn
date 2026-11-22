@@ -1,9 +1,9 @@
 /**
  * Smoke-installs every built registry item into a throwaway Next.js + shadcn project,
  * then typechecks and builds that project. See SPEC-registry-core §7. The build prerenders
- * `app/smoke/<category>/page.tsx`, each item's default demo at install paths, under
+ * `app/smoke/<category>/page.tsx`, each item's default variant at install paths, under
  * `cacheComponents` (scripts/registry-smoke-pages.ts, SPEC-components-8 §4.1); with `--only` or
- * `--changed`, only the named items' demos.
+ * `--changed`, only the named items' variants.
  *
  * Usage: pnpm registry:build && pnpm registry:smoke
  *
@@ -67,10 +67,10 @@ import { installTarget } from "../lib/registry/install-target";
 import { loadPresets } from "../lib/registry/theme-preset-items";
 import {
   copyVariant,
-  demoFile,
   readRepoFile,
   smokeEntries,
   smokePageFiles,
+  variantFile,
   writeProjectFile,
 } from "./registry-smoke-pages";
 
@@ -1747,7 +1747,7 @@ async function main() {
       }
       if (variants.has(name)) {
         missing.push(...contentProblems(project, [name]));
-        // Its demo renders from a copy: the next sibling overwrites these install paths.
+        // Its variant renders from a copy: the next sibling overwrites these install paths.
         const source = sources.get(name);
         if (source) copyVariant(project, source);
       }
@@ -1765,7 +1765,7 @@ async function main() {
       throw new SmokeError(`Installed content check failed:\n  ${missing.join("\n  ")}`);
     }
 
-    // Every requested item's default demo on its category's page, prerendered by next build.
+    // Every requested item's default variant on its category's page, prerendered by next build.
     const { entries, skipped } = smokeEntries(
       registry.items,
       names,
@@ -1775,7 +1775,7 @@ async function main() {
     );
     for (const { file, content } of smokePageFiles(entries))
       writeProjectFile(project, file, content);
-    for (const entry of entries) owners.set(demoFile(entry), entry.name);
+    for (const entry of entries) owners.set(variantFile(entry), entry.name);
     const categories = [...new Set(entries.map((entry) => entry.category))];
     console.log(`→ smoke pages: ${entries.length} item(s) on app/smoke/{${categories.join(",")}}`);
     for (const { name, reason } of skipped) console.log(`  not rendered: ${name} (${reason})`);

@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
 import { installedPageSource } from "@/lib/registry/page-source";
-import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import { FileManager, fileKind, formatFileSize, renameProblem } from "./components/file-manager";
 import {
   fileManagerFiles,
@@ -305,6 +305,6 @@ describe("helpers", () => {
   });
 });
 
-describe("file-manager-01 demos", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+describe("file-manager-01 variants", () => {
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

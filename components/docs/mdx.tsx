@@ -8,7 +8,6 @@ import { BlockIndex } from "./block-index";
 import { BlockPreview, type BlockPreviewProps } from "./block-preview";
 import { ComponentIndex } from "./component-index";
 import { CopyPrompt } from "./copy-prompt";
-import { DemoFrame } from "./demo-frame";
 import { InstallCommand } from "./install-command";
 import { ItemFiles } from "./item-files";
 import { McpConfig } from "./mcp-config";
@@ -16,6 +15,7 @@ import { PropsTable } from "./props-table";
 import { ThemePlayground } from "./theme-playground";
 import { ThemePresets } from "./theme-presets";
 import { TokenSwatches } from "./token-swatches";
+import { VariantFrame } from "./variant-frame";
 
 /** The text of a React tree, as the code block will show it. */
 function textOf(node: ReactNode): string {
@@ -53,7 +53,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     BlockPreview: DocsBlockPreview,
     ComponentIndex,
     CopyPrompt,
-    DemoFrame,
+    VariantFrame,
     InstallCommand,
     ItemFiles,
     McpConfig,

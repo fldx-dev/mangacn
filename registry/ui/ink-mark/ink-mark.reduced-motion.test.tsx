@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import InkMarkRevealDemo from "./demos/reveal";
+import InkMarkRevealVariant from "./variants/reveal";
 
 // motion reads `prefers-reduced-motion` through matchMedia (missing in jsdom) once, on first
 // use, and caches it for the module; so this file runs with reduced motion throughout, and
@@ -34,7 +34,7 @@ const strokes = () => [...document.querySelectorAll<SVGPathElement>('[data-slot=
 
 describe("InkMark under reduced motion", () => {
   it("draws the whole mark at once when show turns on", async () => {
-    render(<InkMarkRevealDemo />);
+    render(<InkMarkRevealVariant />);
     const toggle = screen.getByRole("switch", { name: "Mark the answer" });
     fireEvent.click(toggle);
     await act(() => new Promise((resolve) => requestAnimationFrame(resolve)));

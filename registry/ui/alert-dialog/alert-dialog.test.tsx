@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./alert-dialog";
-import AlertDialogLongDemo from "./demos/long";
+import AlertDialogLongVariant from "./variants/long";
 
 afterEach(cleanup);
 
@@ -102,12 +102,12 @@ describe("AlertDialog", () => {
     expect(screen.queryByRole("alertdialog")).toBeNull();
   });
 
-  it("gives the long demo a named, focusable scroll region", () => {
-    render(<AlertDialogLongDemo />);
+  it("gives the long variant a named, focusable scroll region", () => {
+    render(<AlertDialogLongVariant />);
     const region = screen.getByRole("region", { name: "What publishing does" });
     expect(region.tabIndex).toBe(0);
     expect(region.className).toContain("overflow-y-auto");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

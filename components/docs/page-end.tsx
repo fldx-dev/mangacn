@@ -18,7 +18,7 @@
  * document, 50 to 110 ms on a slow phone and longer when the server sends the page in parts.
  * A browser that does not know `rel="expect"` paints as before.
  *
- * Every route needs it: the docs body, a page block on `/view` and a demo stage all stream
+ * Every route needs it: the docs body, a page block on `/view` and a variant stage all stream
  * inside a Suspense boundary. The link goes out through the root layout's metadata, which Next
  * renders in the head outside the body's React tree. Rendered as an element anywhere above the
  * page, it would be a new sibling, and a new sibling changes every `useId` below it and so every

@@ -1,13 +1,13 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
-import SliderDefaultDemo from "./demos/default";
-import SliderDisabledDemo from "./demos/disabled";
-import SliderRangeDemo from "./demos/range";
-import SliderVerticalDemo from "./demos/vertical";
 import { Slider } from "./slider";
+import SliderDefaultVariant from "./variants/default";
+import SliderDisabledVariant from "./variants/disabled";
+import SliderRangeVariant from "./variants/range";
+import SliderVerticalVariant from "./variants/vertical";
 
 afterEach(() => {
   cleanup();
@@ -103,13 +103,13 @@ describe("Slider", () => {
     }
   });
 
-  it("names every thumb in its demos", () => {
+  it("names every thumb in its variants", () => {
     render(
       <>
-        <SliderDefaultDemo />
-        <SliderRangeDemo />
-        <SliderVerticalDemo />
-        <SliderDisabledDemo />
+        <SliderDefaultVariant />
+        <SliderRangeVariant />
+        <SliderVerticalVariant />
+        <SliderDisabledVariant />
       </>,
     );
     const names = sliders().map((thumb) => thumb.getAttribute("aria-labelledby"));
@@ -117,5 +117,5 @@ describe("Slider", () => {
     for (const id of names) expect(document.getElementById(id ?? "")?.textContent).toBeTruthy();
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

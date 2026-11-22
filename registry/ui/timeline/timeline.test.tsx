@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   Timeline,
   TimelineContent,
@@ -42,7 +42,7 @@ function Example({ align }: { align?: "start" | "alternate" }) {
 }
 
 describe("Timeline", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("is a server component", () => {
     const source = readFileSync("registry/ui/timeline/timeline.tsx", "utf8");

@@ -56,7 +56,7 @@ export const FAQ: readonly FaqEntry[] = [
   {
     question: "Can an AI coding agent install it?",
     answer:
-      "Yes. shadcn's MCP installs mangacn items once the registry is named in components.json, the mangacn docs MCP serves the real props and demos, and the Agent Skill teaches the design rules.",
+      "Yes. shadcn's MCP installs mangacn items once the registry is named in components.json, the mangacn docs MCP serves the real props and variants, and the Agent Skill teaches the design rules.",
     more: { href: "/docs/agents", label: "Set up your agent" },
   },
   {

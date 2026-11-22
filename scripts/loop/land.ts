@@ -10,7 +10,7 @@
  * (for instance a `Co-Authored-By:` line) after a blank line when that is set. A conflict in a
  * catalog or list is resolved by `scripts/loop/resolve-catalogs.ts`; any other conflict stops
  * the land with the merge in progress. The checks: `pnpm install --frozen-lockfile`,
- * `gen:theme`, `gen:demos`, the `--check` generators, `registry:validate`, whole-tree Biome,
+ * `gen:theme`, `gen:variants`, the `--check` generators, `registry:validate`, whole-tree Biome,
  * `typecheck` and the unit suite, whose failed files get one rerun on their own (parallel
  * sessions load the machine; a file that only timed out passes alone). Logs go to a temporary
  * folder, printed at the start. `--dry-run` prints what it would do and changes nothing.
@@ -230,7 +230,7 @@ function checkAndPush(loop: Loop): number {
   const install = loop.pnpm(["install", "--frozen-lockfile"], "install.log");
   if (install && install.status !== 0) loop.failed.push("install");
   loop.pnpm(["gen:theme"], "gen-theme.log");
-  loop.pnpm(["gen:demos"], "gen-demos.log");
+  loop.pnpm(["gen:variants"], "gen-variants.log");
   for (const { name, args } of CHECKS) loop.check(name, args, `${args.join("-")}.log`);
 
   const test = loop.pnpm(["test"], "test.log");

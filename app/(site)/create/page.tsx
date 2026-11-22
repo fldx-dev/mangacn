@@ -1,6 +1,6 @@
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { Metadata } from "next";
-import ThemeSpecimen from "@/app/demo/theme-specimen";
+import ThemeSpecimen from "@/app/gallery/theme-specimen";
 import { CreatePage } from "@/components/create/create-page";
 import { baseOptions } from "@/lib/docs/layout.shared";
 import { OG_IMAGE } from "@/lib/site";
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 // The Create page: a static shell (the code is read from `?c=` on the client, so nothing here
 // waits on the request) around the interactive page. The preview shows the theme specimen, the
-// same dozen items as `/demo/theme/specimen`, rendered here on the server.
+// same dozen items as `/gallery/theme/specimen`, rendered here on the server.
 export default function Create() {
   return (
     // Named, so it stays a unique landmark beside the `main` of a page framed in the preview.

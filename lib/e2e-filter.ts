@@ -1,10 +1,10 @@
 import { mangacnItemName } from "./registry/index";
 
 /**
- * The Playwright filter (`E2E_ITEMS`): which demos and specs a change needs. `e2e/playwright.config.ts`
+ * The Playwright filter (`E2E_ITEMS`): which variants and specs a change needs. `e2e/playwright.config.ts`
  * and the specs read it; `scripts/changed-e2e.ts` computes it from a diff (Task 64).
  *
- * `E2E_ITEMS` is a comma-separated list of item names (their demos, `e2e/demos.spec.ts`) and the
+ * `E2E_ITEMS` is a comma-separated list of item names (their variants, `e2e/variants.spec.ts`) and the
  * suites below; unset, empty or `all` runs everything; `none` runs nothing.
  */
 export const E2E_SUITES = [
@@ -43,8 +43,8 @@ export function formatE2eItems(selection: ReadonlySet<string> | undefined): stri
   return [...items, ...E2E_SUITES.filter((suite) => selection.has(suite))].join(",");
 }
 
-/** The demo items in a selection (`undefined` = every item). */
-export function selectedDemoItems(
+/** The variant items in a selection (`undefined` = every item). */
+export function selectedVariantItems(
   selection: ReadonlySet<string> | undefined,
 ): string[] | undefined {
   return selection && [...selection].filter((name) => !isE2eSuite(name));
@@ -54,8 +54,8 @@ export interface E2eItem {
   name: string;
   /** Repo-relative POSIX folder of the item's files (`registry/ui/slider`); none for fonts. */
   folder?: string;
-  /** Whether `<folder>/demos/default.tsx` exists, i.e. the item has demos to screenshot. */
-  hasDemos: boolean;
+  /** Whether `<folder>/variants/default.tsx` exists, i.e. the item has variants to screenshot. */
+  hasVariants: boolean;
   /** A page block: e2e/blocks.spec.ts also shoots its whole page at `/view/<name>`. */
   page?: boolean;
   /** Catalog items this one renders: its registryDependencies plus what its files import. */
@@ -80,24 +80,24 @@ export interface E2eSelection {
 const EVERYTHING: (string | RegExp)[] = [
   // The suite's own wiring and the readiness wait every snapshot goes through.
   "e2e/playwright.config.ts",
-  "e2e/demos.spec.ts",
+  "e2e/variants.spec.ts",
   "e2e/ready.ts",
   "e2e/shoot.ts",
   // The workflow that runs the suite and its setup: a change there must show it still runs all.
   ".github/workflows/ci.yml",
   /^\.github\/actions\/e2e-setup\//,
-  // What every demo stage renders inside: the root layout, its CSS, the stage route.
+  // What every variant stage renders inside: the root layout, its CSS, the stage route.
   "app/globals.css",
   "app/layout.tsx",
   "app/mangacn-theme.css",
-  /^app\/demo\//,
-  // InkFrame draws almost every outline; the registry library builds the theme CSS and demo map.
+  /^app\/gallery\//,
+  // InkFrame draws almost every outline; the registry library builds the theme CSS and variant map.
   /^registry\/theme\/ink-frame\//,
   "registry.json",
   /^lib\/registry\//,
   "lib/e2e-filter.ts", // these rules themselves
   "lib/utils.ts",
-  "scripts/gen-demos.ts",
+  "scripts/gen-variants.ts",
   "scripts/gen-theme-css.ts",
   // Build and dependency inputs.
   "next.config.ts",
@@ -214,7 +214,7 @@ const NOTHING: (string | RegExp)[] = [
   /^tasks\//,
   /^registry\/[^/]+\/[^/]+$/, // README.md, catalog tests (registry.json is handled first)
   /^registry\/[^/]+\/__parity__\//, // the parity snapshots (unit tests read them)
-  /^e2e\/__screenshots__\//, // baselines that match no demo or page
+  /^e2e\/__screenshots__\//, // baselines that match no variant or page
   /^vitest\./,
   "biome.json",
   ".gitignore",
@@ -253,7 +253,7 @@ function packageJsonMatters(sources: E2eSources): boolean {
 
 /**
  * Items whose catalog entry differs between the two versions of a `registry/<cat>/registry.json`,
- * or `undefined` when the change reaches every demo (the theme catalog, or any item's CSS).
+ * or `undefined` when the change reaches every variant (the theme catalog, or any item's CSS).
  */
 function changedCatalogEntries(path: string, sources: E2eSources): string[] | undefined {
   const entries = (text: string | undefined) => {
@@ -279,7 +279,7 @@ function changedCatalogEntries(path: string, sources: E2eSources): string[] | un
 /**
  * The item a path alias names: `@/components/ui/<x>` and `@/components/<x>` name `<x>`,
  * `@/components/blocks/<x>/...` names block `<x>`, `@/hooks/<x>` names the item whose folder
- * holds its target (a hook has no demo of its own), and an install path that is no item's name
+ * holds its target (a hook has no variant of its own), and an install path that is no item's name
  * names the item whose folder holds its target (a page block's component, `@/components/login-form`
  * → `login-01`). `undefined` for any other alias.
  */
@@ -359,7 +359,7 @@ function appendedParityNames(sources: E2eSources): string[] | undefined {
 /** The longest item name that `file` (`toggle-group-default-dark`) starts with, plus a dash. */
 function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
   return items
-    .filter((item) => item.hasDemos && file.startsWith(`${item.name}-`))
+    .filter((item) => item.hasVariants && file.startsWith(`${item.name}-`))
     .sort((a, b) => b.name.length - a.name.length)[0]?.name;
 }
 
@@ -368,7 +368,7 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  *
  * - an item's folder (`registry/<cat>/<item>/`, tests aside) or catalog entry → that item, every
  *   item that uses it (registryDependencies or an import, transitively), and `site`, whose
- *   component index renders every item's default demo; `ink-mark`/`ink-arrow` add `annotations`
+ *   component index renders every item's default variant; `ink-mark`/`ink-arrow` add `annotations`
  * - a baseline PNG → its item (`<block>-view-<mode>.png` is a page block's view shot), `site`
  *   for `site-*.png`, `presets` for `presets-*.png`, `create` for `create-*.png`
  * - the `/view/<block>` route or e2e/blocks.spec.ts → every page block and `site`
@@ -382,7 +382,7 @@ function itemOfBaseline(file: string, items: E2eItem[]): string | undefined {
  * - other `app/`, `components/`, the site spec → `site`
  * - `tsconfig.json` that only adds path aliases → the items they name and the items that use
  *   them (no `site`); `lib/registry/parity.ts` that only appends names → those items
- * - the suite's config, demo spec or readiness wait, the demo stage, root layout and CSS,
+ * - the suite's config, variant spec or readiness wait, the variant stage, root layout and CSS,
  *   `ink-frame`, any other `tsconfig.json` or `lib/registry/` change, the theme catalog or any
  *   item's CSS, a dependency → everything
  * - the CI workflow and its e2e setup action → everything; tests, Markdown, scripts, the rest
@@ -411,11 +411,11 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
       for (const user of usedBy.get(current) ?? []) visit(user);
     };
     visit(name);
-    const withDemos = [...reached].filter((item) => byName.get(item)?.hasDemos).sort();
-    for (const item of withDemos) selected.add(item);
+    const withVariants = [...reached].filter((item) => byName.get(item)?.hasVariants).sort();
+    for (const item of withVariants) selected.add(item);
     if (site) selected.add("site");
     if (reached.has("ink-mark") || reached.has("ink-arrow")) selected.add("annotations");
-    const users = withDemos.filter((item) => item !== name);
+    const users = withVariants.filter((item) => item !== name);
     reasons.push(
       `${path} → ${name}${users.length > 0 ? ` + users ${users.join(", ")}` : ""}${site ? " + site" : ""}`,
     );
@@ -476,9 +476,9 @@ export function selectE2e(paths: string[], sources: E2eSources): E2eSelection {
       if (!named || named.some((name) => !byName.has(name))) {
         return everything(path, "not only names appended to PARITY_PRIMITIVES or PARITY_BLOCKS");
       }
-      const withDemos = named.filter((name) => byName.get(name)?.hasDemos).sort();
-      for (const name of withDemos) selected.add(name);
-      reasons.push(`${path} → ${withDemos.join(", ") || "nothing"} (parity names)`);
+      const withVariants = named.filter((name) => byName.get(name)?.hasVariants).sort();
+      for (const name of withVariants) selected.add(name);
+      reasons.push(`${path} → ${withVariants.join(", ") || "nothing"} (parity names)`);
       continue;
     }
 

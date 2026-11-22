@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 
 // Lane D's own checks (SPEC-components-6 §3, §8): sidebar-12, sidebar-15 and sidebar-16 on their
@@ -16,14 +16,14 @@ const BLOCKS = {
 } as const;
 type Block = keyof typeof BLOCKS;
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 const blocks = (Object.keys(BLOCKS) as Block[]).filter((block) => !only || only.includes(block));
 
 async function openView(page: Page, block: Block) {
   await hydrateAfterReveal(page);
   const response = await page.goto(`/view/${block}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 

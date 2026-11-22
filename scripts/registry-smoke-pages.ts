@@ -1,14 +1,14 @@
 /**
  * The smoke's prerendered pages (SPEC-components-8 §4.1, MANGA-46): `app/smoke/<category>/page.tsx`
- * in the smoke project renders the default demo of every installed item of that catalog
+ * in the smoke project renders the default variant of every installed item of that catalog
  * category, so `next build` (with `cacheComponents`, as create-next-app sets it) prerenders each
  * item and fails on a clock read during render (`new Date()`, `Date.now()`, `Math.random()`).
  *
- * A demo imports items by repo path (`@/registry/ui/button/button`); its copy in the project
+ * A variant imports items by repo path (`@/registry/ui/button/button`); its copy in the project
  * imports them by install path (`@/components/ui/button`), as `scripts/registry-rewrite-pages.ts`
  * rewrites a page block's own imports. A variant of a stock family (`login-01` … `login-05`)
  * shares its install paths with its siblings and the next one overwrites them, so its files are
- * copied to `smoke-variants/<name>/` right after its own add and its demo imports the copies.
+ * copied to `smoke-variants/<name>/` right after its own add and its variant imports the copies.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -21,11 +21,11 @@ import { importSpecifier, installTarget } from "../lib/registry/install-target";
 export const VARIANTS_DIR = "smoke-variants";
 
 /**
- * Items whose default demo cannot render in the smoke project, each with its reason, and the
+ * Items whose default variant cannot render in the smoke project, each with its reason, and the
  * minimal usage rendered in its place when there is one. Every other item renders
- * `<its folder>/demos/default.tsx`.
+ * `<its folder>/variants/default.tsx`.
  */
-export const DEMO_EXCEPTIONS: Record<string, { reason: string; usage?: string }> = {
+export const VARIANT_EXCEPTIONS: Record<string, { reason: string; usage?: string }> = {
   theme: {
     reason:
       "a theme: CSS variables in globals.css, no component; every smoke page renders under it",
@@ -49,7 +49,7 @@ export const DEMO_EXCEPTIONS: Record<string, { reason: string; usage?: string }>
     reason: "a font: a next/font loader in app/layout.tsx, which every smoke page prerenders",
   },
   "use-mobile": {
-    reason: "a hook: no demo of its own; a component that calls it",
+    reason: "a hook: no variant of its own; a component that calls it",
     usage: `"use client";
 
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -61,7 +61,7 @@ export default function UseMobileUsage() {
 `,
   },
   "use-highlighted-code": {
-    reason: "a hook: no demo of its own; a component that calls it",
+    reason: "a hook: no variant of its own; a component that calls it",
     usage: `"use client";
 
 import { useHighlightedCode } from "@/hooks/use-highlighted-code";
@@ -80,10 +80,10 @@ export default function UseHighlightedCodeUsage() {
   },
 };
 
-/** An item's default demo in the repo: `registry/ui/button/demos/default.tsx`. */
-export function defaultDemoPath(item: Pick<LoadedRegistryItem, "files">): string | undefined {
+/** An item's default variant in the repo: `registry/ui/button/variants/default.tsx`. */
+export function defaultVariantPath(item: Pick<LoadedRegistryItem, "files">): string | undefined {
   const first = item.files[0];
-  return first && path.posix.join(path.posix.dirname(first.path), "demos", "default.tsx");
+  return first && path.posix.join(path.posix.dirname(first.path), "variants", "default.tsx");
 }
 
 /**
@@ -107,11 +107,11 @@ export function installPaths(
 }
 
 /**
- * A demo's source with each `@/registry/…` import at its project path. Throws on a repo import
- * the project lacks (a site-only module, or an item outside the set): such a demo belongs in
- * DEMO_EXCEPTIONS.
+ * A variant's source with each `@/registry/…` import at its project path. Throws on a repo import
+ * the project lacks (a site-only module, or an item outside the set): such a variant belongs in
+ * VARIANT_EXCEPTIONS.
  */
-export function installDemoSource(
+export function installVariantSource(
   source: string,
   name: string,
   paths: ReadonlyMap<string, string>,
@@ -120,12 +120,14 @@ export function installDemoSource(
   let from = 0;
   for (const { specifier, start } of extractImportOffsets(source)) {
     if (specifier.startsWith(".")) {
-      throw new Error(`${name}: its default demo imports "${specifier}", a file of its own`);
+      throw new Error(`${name}: its default variant imports "${specifier}", a file of its own`);
     }
     if (!specifier.startsWith("@/registry/")) continue;
     const target = paths.get(specifier.slice(2));
     if (target === undefined) {
-      throw new Error(`${name}: its default demo imports "${specifier}", which is not installed`);
+      throw new Error(
+        `${name}: its default variant imports "${specifier}", which is not installed`,
+      );
     }
     out += `${source.slice(from, start)}@/${target}`;
     from = start + specifier.length;
@@ -176,9 +178,9 @@ export interface SmokeEntry {
 }
 
 /**
- * The entry of each item in `rendered` (catalog order), its demo's imports resolved against the
+ * The entry of each item in `rendered` (catalog order), its variant's imports resolved against the
  * `installed` items, and the items left out with their reasons.
- * An item without a default demo that DEMO_EXCEPTIONS does not list is an error, so a new item
+ * An item without a default variant that VARIANT_EXCEPTIONS does not list is an error, so a new item
  * cannot slip past the prerender.
  */
 export function smokeEntries(
@@ -197,33 +199,35 @@ export function smokeEntries(
   for (const item of items) {
     if (!rendered.includes(item.name)) continue;
     const category = item.categories?.[0] ?? "other";
-    const exception = DEMO_EXCEPTIONS[item.name];
+    const exception = VARIANT_EXCEPTIONS[item.name];
     if (exception) {
       if (exception.usage) entries.push({ name: item.name, category, source: exception.usage });
       else skipped.push({ name: item.name, reason: exception.reason });
       continue;
     }
-    const demo = defaultDemoPath(item);
-    const source = demo && read(demo);
+    const variant = defaultVariantPath(item);
+    const source = variant && read(variant);
     if (source === undefined) {
-      throw new Error(`${item.name}: no ${demo ?? "default demo"}; list it in DEMO_EXCEPTIONS`);
+      throw new Error(
+        `${item.name}: no ${variant ?? "default variant"}; list it in VARIANT_EXCEPTIONS`,
+      );
     }
     entries.push({
       name: item.name,
       category,
-      source: installDemoSource(source, item.name, paths),
+      source: installVariantSource(source, item.name, paths),
     });
   }
   return { entries, skipped };
 }
 
-/** `login-01` → `Login01Demo`. */
+/** `login-01` → `Login01Variant`. */
 function componentName(name: string): string {
   const pascal = name
     .split("-")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join("");
-  return `${pascal}Demo`;
+  return `${pascal}Variant`;
 }
 
 /** The project files of the smoke pages: each entry's module, and one page per category. */
@@ -235,10 +239,10 @@ export function smokePageFiles(
   for (const category of categories) {
     const own = entries.filter((entry) => entry.category === category);
     for (const entry of own) {
-      files.push({ file: demoFile(entry), content: entry.source });
+      files.push({ file: variantFile(entry), content: entry.source });
     }
     const imports = own
-      .map((entry) => `import ${componentName(entry.name)} from "./_demos/${entry.name}";`)
+      .map((entry) => `import ${componentName(entry.name)} from "./_variants/${entry.name}";`)
       .join("\n");
     const sections = own
       .map(
@@ -248,15 +252,15 @@ export function smokePageFiles(
       .join("\n");
     files.push({
       file: `app/smoke/${category}/page.tsx`,
-      content: `${imports}\n\n// Generated by scripts/registry-smoke.ts: every ${category} item's default demo, prerendered.\nexport default function Smoke${componentName(category).replace(/Demo$/, "")}Page() {\n  return (\n    <main>\n${sections}\n    </main>\n  );\n}\n`,
+      content: `${imports}\n\n// Generated by scripts/registry-smoke.ts: every ${category} item's default variant, prerendered.\nexport default function Smoke${componentName(category).replace(/Variant$/, "")}Page() {\n  return (\n    <main>\n${sections}\n    </main>\n  );\n}\n`,
     });
   }
   return files;
 }
 
-/** Where an entry's module is written: `app/smoke/<category>/_demos/<name>.tsx`. */
-export function demoFile(entry: Pick<SmokeEntry, "name" | "category">): string {
-  return `app/smoke/${entry.category}/_demos/${entry.name}.tsx`;
+/** Where an entry's module is written: `app/smoke/<category>/_variants/<name>.tsx`. */
+export function variantFile(entry: Pick<SmokeEntry, "name" | "category">): string {
+  return `app/smoke/${entry.category}/_variants/${entry.name}.tsx`;
 }
 
 /** Writes `content` at `file` (POSIX, project-relative), creating its folders. */

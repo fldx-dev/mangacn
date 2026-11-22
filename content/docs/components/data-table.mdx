@@ -54,19 +54,19 @@ toolbar and pagination wrap.
 
 A series' chapters: sort from any header, filter by title, hide columns, page five at a time.
 
-<DemoFrame item="data-table" demo="default" />
+<VariantFrame item="data-table" variant="default" />
 
 Bulk actions on the selected rows, from the toolbar slot. The selection is controlled with
 `state.rowSelection` and `onRowSelectionChange`, keyed by `getRowId`, and
 `autoResetPageIndex={false}` keeps the page when Mark done changes the data.
 
-<DemoFrame item="data-table" demo="selection" />
+<VariantFrame item="data-table" variant="selection" />
 
 Server-side sorting and paging with `manualSorting`, `manualPagination` and `rowCount`: the
-demo's pretend server answers after 600 ms, and `loading` marks the rows busy meanwhile. The
+variant's pretend server answers after 600 ms, and `loading` marks the rows busy meanwhile. The
 first page is part of the server render; the timer starts only from a click.
 
-<DemoFrame item="data-table" demo="server" />
+<VariantFrame item="data-table" variant="server" />
 
 ## Props
 

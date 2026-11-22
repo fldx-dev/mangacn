@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { Tabs, TabsContent, TabsList, TabsTrigger, tabsListVariants } from "./tabs";
 
@@ -95,5 +95,5 @@ describe("Tabs", () => {
     expect(framesOf(screen.getByRole("tab", { name: "Story" }))[0]?.dataset.inked).toBe("true");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

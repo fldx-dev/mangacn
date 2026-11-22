@@ -170,7 +170,7 @@ export function listItemsText(catalog: readonly CatalogEntry[], category?: strin
   );
   const scope = category ? ` in "${category}"` : "";
   return [
-    `mangacn catalog: ${entries.length} items${scope}, one per line as name · type · category: description, then whether it is a client component ("use client") or a server component, the install command and the docs page. get_item returns an item's props and demos.`,
+    `mangacn catalog: ${entries.length} items${scope}, one per line as name · type · category: description, then whether it is a client component ("use client") or a server component, the install command and the docs page. get_item returns an item's props and variants.`,
     "",
     ...lines,
     "",
@@ -296,7 +296,7 @@ export function registerCatalogTools(mcp: McpServer, read: CatalogReaders): void
     {
       title: "Get Item",
       description:
-        "Get one mangacn item's docs page as Markdown (install commands, every demo's source, the props table) plus the files it installs.",
+        "Get one mangacn item's docs page as Markdown (install commands, every variant's source, the props table) plus the files it installs.",
       inputSchema: z.object({
         name: z.string().describe('The item name, such as "speech-bubble".'),
       }),

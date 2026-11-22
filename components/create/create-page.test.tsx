@@ -305,7 +305,7 @@ describe("CreatePage preview tabs", () => {
         window.location.origin,
       ),
     );
-    expect(frame()?.getAttribute("src")).toBe("/demo/chat-thread/default?c=10");
+    expect(frame()?.getAttribute("src")).toBe("/gallery/chat-thread/default?c=10");
     // The frame says it listens: it gets the current code.
     post.mockClear();
     act(() => {

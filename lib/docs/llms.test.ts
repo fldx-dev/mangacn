@@ -89,7 +89,7 @@ function stubPage(body: string, data: Partial<MarkdownPage["data"]> = {}): Markd
   };
 }
 
-function NoDemo() {
+function NoVariant() {
   return null;
 }
 
@@ -106,7 +106,7 @@ describe("renderMarkdownPage", () => {
   });
 
   it("hands the Markdown components to getText", async () => {
-    const components = { DemoFrame: NoDemo };
+    const components = { VariantFrame: NoVariant };
     let received: unknown;
     await renderMarkdownPage(
       stubPage("", {

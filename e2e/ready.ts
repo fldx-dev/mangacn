@@ -47,7 +47,7 @@ const INKED_SLOTS = ["ink-frame", "ink-mark", "ink-arrow", "stamp", "ink-splatte
 export async function waitForInk(target: Page | Frame): Promise<void> {
   const frame = "mainFrame" in target ? target.mainFrame() : target;
   await frame.evaluate(() => document.fonts.ready);
-  // sonner adds a toast one task after `toast()` (a demo calls it in a mount effect) and the
+  // sonner adds a toast one task after `toast()` (a variant calls it in a mount effect) and the
   // Toaster portals its frame into it a render later: let that task run, then wait until every
   // toast on the page is mounted and has its frame, so the checks below see the frame.
   await frame.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));

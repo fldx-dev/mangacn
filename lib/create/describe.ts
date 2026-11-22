@@ -135,7 +135,7 @@ export function agentPrompt(
     `- In a project that already uses shadcn, run: ${commands.existingProject}`,
     "  It replaces the theme and overwrites any kit file that is already there, so check edited files first.",
     `- What the code installs, file by file: ${createMarkdownUrl(commands.code)}`,
-    `- Read the components' props and demos through the mangacn docs MCP (${SITE_ORIGIN}/api/mcp), and follow the mangacn Agent Skill (npx skills add fldx-dev/mangacn) for the design rules.`,
+    `- Read the components' props and variants through the mangacn docs MCP (${SITE_ORIGIN}/api/mcp), and follow the mangacn Agent Skill (npx skills add fldx-dev/mangacn) for the design rules.`,
     `- To change the look, make a new code at ${createPageUrl(commands.code)} rather than editing the theme's variables by hand.`,
   ].join("\n");
 }

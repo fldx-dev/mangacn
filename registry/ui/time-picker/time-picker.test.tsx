@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { TimePicker } from "./time-picker";
 
 afterEach(cleanup);
@@ -25,7 +25,7 @@ function Controlled() {
 }
 
 describe("TimePicker", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("renders a labelled group of spinbuttons with slots and one outline", () => {
     render(<TimePicker aria-label="Deadline" defaultValue="09:05" />);

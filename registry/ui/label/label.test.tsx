@@ -4,7 +4,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Label } from "./label";
 
 afterEach(cleanup);
@@ -64,5 +64,5 @@ describe("Label", () => {
     expect(html).toContain('Pen name<span aria-hidden="true" class="-ml-1.5 text-spot">*</span>');
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

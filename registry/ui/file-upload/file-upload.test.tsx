@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   FileUpload,
   FileUploadDropzone,
@@ -51,7 +51,7 @@ function Controlled() {
 }
 
 describe("FileUpload", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("renders its parts with slots; the drop zone is a group named by its instructions", () => {
     const { container } = render(<Example defaultValue={[file("a.png")]} />);

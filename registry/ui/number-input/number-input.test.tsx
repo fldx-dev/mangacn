@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { NumberInput } from "./number-input";
 
 afterEach(cleanup);
@@ -12,7 +12,7 @@ const key = (k: string, init: KeyboardEventInit = {}) =>
   });
 
 describe("NumberInput", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("renders the three parts in one frame, with every slot", () => {
     render(<NumberInput aria-label="Copies" defaultValue={3} className="custom" />);

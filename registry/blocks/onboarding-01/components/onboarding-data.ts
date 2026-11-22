@@ -1,4 +1,4 @@
-// The demo's choices and starting answers. Replace them with your own; the flow keeps its answers
+// The variant's choices and starting answers. Replace them with your own; the flow keeps its answers
 // in local state and posts nothing, so wire `onComplete` to your save.
 
 /** Where the reader mostly reads: the Profile step's radio group. */

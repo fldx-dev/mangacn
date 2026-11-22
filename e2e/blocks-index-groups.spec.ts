@@ -3,8 +3,8 @@ import { expect, type Page, test } from "@playwright/test";
 import { BLOCKS_CATALOG, docItems } from "../lib/docs/catalog";
 import { parseE2eItems } from "../lib/e2e-filter";
 import { groupBlocks } from "../lib/registry/blocks";
-import { demoEntries } from "../lib/registry/demos.generated";
 import { loadRegistry } from "../lib/registry/index";
+import { variantEntries } from "../lib/registry/variants.generated";
 
 // The Blocks index and the docs sidebar in their groups (SPEC-components-6 §6): Manga, Login,
 // Signup, Sidebar, a heading (or separator) each with the blocks under it, from the catalog and
@@ -15,7 +15,7 @@ test.skip(Boolean(filter) && !filter?.has("site"), "the index checks run with `s
 
 /** What the index and the sidebar must show: the documented blocks in their groups. */
 const groups = groupBlocks(
-  docItems(loadRegistry(resolve(__dirname, "../registry.json")), demoEntries, BLOCKS_CATALOG),
+  docItems(loadRegistry(resolve(__dirname, "../registry.json")), variantEntries, BLOCKS_CATALOG),
 ).map((group) => ({
   id: group.id,
   label: group.label,
@@ -62,7 +62,7 @@ test("the Blocks index does not shift as its previews mount", async ({ page }) =
       }
     }).observe({ type: "layout-shift" });
   });
-  const lazy = page.locator('[data-slot="block-index"] [data-slot="lazy-demo"]');
+  const lazy = page.locator('[data-slot="block-index"] [data-slot="lazy-variant"]');
   for (const box of await lazy.all()) {
     await box.scrollIntoViewIfNeeded();
     await expect(box).toHaveAttribute("data-mounted", "true");

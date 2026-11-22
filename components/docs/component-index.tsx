@@ -2,21 +2,21 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { CATEGORY_LABELS, type DocItem, docItems, groupByCategory } from "@/lib/docs/catalog";
 import { loadRegistry } from "@/lib/registry";
-import { listDemos } from "@/lib/registry/demos";
+import { listVariants } from "@/lib/registry/variants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/registry/ui/card/card";
-import { DemoPreview } from "./demo-frame";
-import { LazyDemo } from "./lazy-demo";
+import { LazyVariant } from "./lazy-variant";
+import { VariantPreview } from "./variant-frame";
 
 /**
- * A card's demo stage (the inline box or the stage iframe) is a fixed height, and so is the
- * placeholder it shows until the demo mounts, so nothing moves when a demo arrives.
+ * A card's variant stage (the inline box or the stage iframe) is a fixed height, and so is the
+ * placeholder it shows until the variant mounts, so nothing moves when a variant arrives.
  */
 const STAGE_HEIGHT = "20rem";
 
 /**
- * Default demos taller than the stage at some width (panel-grid stacks to one column at 360 px,
+ * Default variants taller than the stage at some width (panel-grid stacks to one column at 360 px,
  * card and panel wrap in the two-column grid at 768 px; two of the chat set are tall by nature). `e2e/site.spec.ts` fails, naming the
- * item, when a demo overflows its stage.
+ * item, when a variant overflows its stage.
  */
 const TALL_STAGES: Readonly<Record<string, string>> = {
   card: "30rem",
@@ -34,20 +34,20 @@ const TALL_STAGES: Readonly<Record<string, string>> = {
 };
 
 /**
- * Every documented item as a card with its default demo, grouped by category in sidebar
- * order. Read from the catalog and the demo map, so a new item shows up without an edit here.
+ * Every documented item as a card with its default variant, grouped by category in sidebar
+ * order. Read from the catalog and the variant map, so a new item shows up without an edit here.
  */
 export async function ComponentIndex() {
-  const items = docItems(loadRegistry(), listDemos());
+  const items = docItems(loadRegistry(), listVariants());
   const previews = new Map(
     await Promise.all(
       items.map(
         async (item) =>
           [
             item.name,
-            await DemoPreview({
+            await VariantPreview({
               item: item.name,
-              demo: "default",
+              variant: "default",
               height: "100%",
               className: "h-full p-4 sm:p-4",
               // Most overlay defaults open on mount; live, they pull focus and the scroll
@@ -86,7 +86,7 @@ export async function ComponentIndex() {
   );
 }
 
-// Inline demos stay interactive (overlay previews are inert), so only the title links to the
+// Inline variants stay interactive (overlay previews are inert), so only the title links to the
 // page (no card-wide overlay link).
 function IndexCard({ item, preview }: { item: DocItem; preview: ReactNode }) {
   return (
@@ -103,7 +103,7 @@ function IndexCard({ item, preview }: { item: DocItem; preview: ReactNode }) {
         <CardDescription>{item.description}</CardDescription>
       </CardHeader>
       <CardContent className="mt-auto">
-        <LazyDemo height={TALL_STAGES[item.name] ?? STAGE_HEIGHT}>{preview}</LazyDemo>
+        <LazyVariant height={TALL_STAGES[item.name] ?? STAGE_HEIGHT}>{preview}</LazyVariant>
       </CardContent>
     </Card>
   );

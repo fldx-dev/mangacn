@@ -17,7 +17,7 @@ export interface StageFrameProps {
   title: string;
   height: string;
   /**
-   * A preview, not a live demo: the frame is inert (Tab and the pointer pass it by) and so is
+   * A preview, not a live variant: the frame is inert (Tab and the pointer pass it by) and so is
    * the stage document inside it. The frame's `inert` alone does not stop a same-origin page in
    * it from focusing itself (Chromium), and a stage whose popup opens on mount would then pull
    * focus and the scroll position to the frame as it loads, and a modal would trap the Tab key.
@@ -30,7 +30,7 @@ export interface StageFrameProps {
   className?: string;
 }
 
-/** An iframe of a demo stage that follows the docs site's light or dark theme. */
+/** An iframe of a variant stage that follows the docs site's light or dark theme. */
 export function StageFrame({ src, title, height, inert, className }: StageFrameProps) {
   const dark = useSyncExternalStore(subscribe, isDark, () => false);
   const ref = useRef<HTMLIFrameElement>(null);

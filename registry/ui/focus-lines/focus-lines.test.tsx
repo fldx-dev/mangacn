@@ -1,7 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { FocusLines } from "./focus-lines";
 
 afterEach(cleanup);
@@ -82,5 +82,5 @@ describe("FocusLines", () => {
     expect(layer.classList.contains("text-tone-3")).toBe(true);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

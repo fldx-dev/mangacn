@@ -3,7 +3,7 @@ import path from "node:path";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
-import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import { SeriesHeader, type SeriesInfo } from "./components/series-header";
 import Page from "./page";
 
@@ -79,7 +79,7 @@ describe("SeriesHeader", () => {
     expect(follow.getAttribute("aria-pressed")).toBe("true");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });
 
 describe("series-page page", () => {

@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { stubGetAnimations } from "@/lib/test/animations";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { ScrollArea, ScrollBar } from "./scroll-area";
 
@@ -99,5 +99,5 @@ describe("ScrollArea", () => {
     expect(frame?.querySelectorAll("path").length).toBeGreaterThan(0);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { CopyButton } from "./copy-button";
 
 afterEach(() => {
@@ -17,7 +17,7 @@ function stubClipboard(writeText = vi.fn().mockResolvedValue(undefined)) {
 const status = () => screen.getByRole("status");
 
 describe("CopyButton", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("is mangacn's ghost icon button, idle and named Copy", () => {
     render(<CopyButton value="a" className="custom" />);

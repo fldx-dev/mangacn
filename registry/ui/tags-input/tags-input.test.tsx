@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { TagsInput } from "./tags-input";
 
 afterEach(cleanup);
@@ -27,7 +27,7 @@ function paste(text: string) {
 }
 
 describe("TagsInput", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("renders chips as a list of badges before a plain text input, with slots", () => {
     render(<TagsInput aria-label="Genres" defaultValue={["Action", "Drama"]} className="custom" />);

@@ -1,18 +1,18 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parseE2eItems, selectedDemoItems } from "../lib/e2e-filter";
+import { parseE2eItems, selectedVariantItems } from "../lib/e2e-filter";
 import { hydrateAfterReveal, waitForInk } from "./ready";
 
 // Lane B's own checks (SPEC-components-8 §5.3, §5.5): the keyboard paths of onboarding-01 and
 // activity-01 in a real browser. The catalog-driven ones (axe in both modes, one main, no
 // overflow at 360, the shots) are e2e/blocks.spec.ts's.
 
-const only = selectedDemoItems(parseE2eItems(process.env.E2E_ITEMS));
+const only = selectedVariantItems(parseE2eItems(process.env.E2E_ITEMS));
 
 async function openView(page: Page, name: string) {
   await hydrateAfterReveal(page);
   const response = await page.goto(`/view/${name}`);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("html")).toHaveAttribute("data-demo-ready", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-variant-ready", "true");
   await waitForInk(page);
 }
 

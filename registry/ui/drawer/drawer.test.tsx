@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import {
   Drawer,
@@ -114,8 +114,8 @@ describe("Drawer", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  // Every demo opens on mount; axe runs on the open drawer.
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), {
+  // Every variant opens on mount; axe runs on the open drawer.
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"), {
     ready: {
       default: async () => expect(await screen.findByRole("dialog")).toBeTruthy(),
       directions: async () => {

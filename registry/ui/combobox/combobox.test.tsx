@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import {
   Combobox,
   ComboboxContent,
@@ -9,8 +9,8 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "./combobox";
-import ComboboxMultipleDemo from "./demos/multiple";
-import ComboboxWithGroupsDemo from "./demos/with-groups";
+import ComboboxMultipleVariant from "./variants/multiple";
+import ComboboxWithGroupsVariant from "./variants/with-groups";
 
 afterEach(cleanup);
 
@@ -146,7 +146,7 @@ describe("Combobox", () => {
   });
 
   it("draws the chips field as one outline and each chip as an outlined paper chip", async () => {
-    render(<ComboboxMultipleDemo />);
+    render(<ComboboxMultipleVariant />);
     await act(async () => {});
     const chips = document.querySelector<HTMLElement>('[data-slot="combobox-chips"]');
     for (const name of chips?.classList ?? []) {
@@ -169,7 +169,7 @@ describe("Combobox", () => {
   });
 
   it("labels its groups and parts them with hand-drawn rules", async () => {
-    render(<ComboboxWithGroupsDemo />);
+    render(<ComboboxWithGroupsVariant />);
     await act(async () => {});
     expect(screen.getAllByRole("group").length).toBeGreaterThanOrEqual(3);
     const label = screen.getByText("Weekly");
@@ -182,5 +182,5 @@ describe("Combobox", () => {
     }
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

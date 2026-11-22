@@ -1,9 +1,9 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
-import PageNumberInAPageDemo from "./demos/in-a-page";
-import PageNumberWithChapterDemo from "./demos/with-chapter";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { PageNumber } from "./page-number";
+import PageNumberInAPageVariant from "./variants/in-a-page";
+import PageNumberWithChapterVariant from "./variants/with-chapter";
 
 afterEach(cleanup);
 
@@ -74,8 +74,8 @@ describe("PageNumber", () => {
     expect(folio.classList.contains("bottom-3")).toBe(true);
   });
 
-  it("pins the folio in the panel's corner with a Japanese chapter mark in the in-a-page demo", () => {
-    const { container } = render(<PageNumberInAPageDemo />);
+  it("pins the folio in the panel's corner with a Japanese chapter mark in the in-a-page variant", () => {
+    const { container } = render(<PageNumberInAPageVariant />);
     const panel = container.querySelector<HTMLElement>('[data-slot="panel"]') as HTMLElement;
     const folio = panel.querySelector<HTMLElement>(':scope > [data-slot="page-number"]');
     expect(folio?.classList.contains("absolute")).toBe(true);
@@ -83,13 +83,13 @@ describe("PageNumber", () => {
     expect(chapter?.textContent).toBe("第12話");
   });
 
-  it("shows both sides of a spread in the with-chapter demo", () => {
-    const { container } = render(<PageNumberWithChapterDemo />);
+  it("shows both sides of a spread in the with-chapter variant", () => {
+    const { container } = render(<PageNumberWithChapterVariant />);
     const sides = [...container.querySelectorAll<HTMLElement>('[data-slot="page-number"]')].map(
       (folio) => folio.dataset.side,
     );
     expect(sides).toEqual(["left", "right"]);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

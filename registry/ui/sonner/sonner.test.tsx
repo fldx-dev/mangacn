@@ -1,7 +1,7 @@
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { Toaster } from "./sonner";
 
@@ -153,8 +153,8 @@ describe("Sonner", () => {
     expect(frameOf(close)?.getAttribute("data-shape")).toBe("ellipse");
   });
 
-  // Every demo fires its toasts on mount; axe runs once they are on the page.
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), {
+  // Every variant fires its toasts on mount; axe runs once they are on the page.
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"), {
     ready: {
       default: () => framedToasts(1),
       kinds: () => framedToasts(4),

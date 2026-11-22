@@ -9,7 +9,7 @@ flags: `--overwrite` answers the overwrite question for a file already there, an
 (on the theme's line) answers the theme's own prompt, so the command runs unattended
 (see install.md).
 
-A component page's Markdown (the `.md` URL) holds its props table and every demo's source:
+A component page's Markdown (the `.md` URL) holds its props table and every variant's source:
 read it, or the MCP's `get_item`, before using a prop.
 
 ## Foundation

@@ -18,7 +18,7 @@ export interface McpDeps<C extends LoaderConfig = LoaderConfig> {
 }
 
 const INSTRUCTIONS =
-  "Read-only docs and catalog for mangacn, manga-styled React components on a shadcn registry. Find an item with list_items or search, read its props and demos with get_item before using it, install it with the line get_install_command returns, and follow the design rules from get_skill.";
+  "Read-only docs and catalog for mangacn, manga-styled React components on a shadcn registry. Find an item with list_items or search, read its props and variants with get_item before using it, install it with the line get_install_command returns, and follow the design rules from get_skill.";
 
 /** A fresh server with the seven tools; the route makes one per request (stateless). */
 export function createMcpServer<C extends LoaderConfig>(deps: McpDeps<C>): McpServer {

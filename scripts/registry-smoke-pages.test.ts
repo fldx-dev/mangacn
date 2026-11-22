@@ -3,24 +3,24 @@ import { describe, expect, it } from "vitest";
 import { loadRegistry } from "../lib/registry/index";
 import { installFamilies } from "./registry-smoke";
 import {
-  DEMO_EXCEPTIONS,
-  installDemoSource,
   installPaths,
+  installVariantSource,
   readRepoFile,
   smokeEntries,
   smokePageFiles,
+  VARIANT_EXCEPTIONS,
   variantCopies,
 } from "./registry-smoke-pages";
 
 // The smoke's prerendered pages without installing anything: every item is rendered or listed
-// with its reason, and every demo's repo imports resolve to install paths.
+// with its reason, and every variant's repo imports resolve to install paths.
 
 const registry = loadRegistry();
 const names = registry.items.map((item) => item.name);
 const variants = new Set(installFamilies(registry.items).flat());
 
 describe("smokeEntries", () => {
-  it("renders every catalog item's default demo or lists it with a reason", () => {
+  it("renders every catalog item's default variant or lists it with a reason", () => {
     const { entries, skipped } = smokeEntries(registry.items, names, names, variants, readRepoFile);
     const covered = [...entries.map((entry) => entry.name), ...skipped.map((skip) => skip.name)];
     expect(covered.sort()).toEqual([...names].sort());
@@ -29,7 +29,7 @@ describe("smokeEntries", () => {
   });
 
   it("lists only catalog items as exceptions", () => {
-    for (const name of Object.keys(DEMO_EXCEPTIONS)) expect(names).toContain(name);
+    for (const name of Object.keys(VARIANT_EXCEPTIONS)) expect(names).toContain(name);
   });
 
   it("renders only the requested items, resolving against everything installed", () => {
@@ -45,7 +45,7 @@ describe("smokeEntries", () => {
     expect(entries[0].source).toContain('from "@/components/ui/date-range-picker"');
   });
 
-  it("fails on an item without a default demo that is not listed", () => {
+  it("fails on an item without a default variant that is not listed", () => {
     const item = { name: "ghost", type: "registry:ui", source: "", files: [] };
     expect(() =>
       smokeEntries(
@@ -55,11 +55,11 @@ describe("smokeEntries", () => {
         new Set(),
         () => undefined,
       ),
-    ).toThrow(/ghost: no registry\/ui\/ghost\/demos\/default.tsx/);
+    ).toThrow(/ghost: no registry\/ui\/ghost\/variants\/default.tsx/);
   });
 });
 
-describe("installDemoSource", () => {
+describe("installVariantSource", () => {
   const paths = installPaths(
     [{ name: "button", files: [{ path: "registry/ui/button/button.tsx", type: "registry:ui" }] }],
     new Set(),
@@ -67,15 +67,15 @@ describe("installDemoSource", () => {
 
   it("rewrites repo imports to install paths and leaves the rest", () => {
     const source = `import { Button } from "@/registry/ui/button/button";\nimport { X } from "lucide-react";\n`;
-    expect(installDemoSource(source, "demo", paths)).toBe(
+    expect(installVariantSource(source, "variant", paths)).toBe(
       `import { Button } from "@/components/ui/button";\nimport { X } from "lucide-react";\n`,
     );
   });
 
   it("throws on a repo import the project lacks", () => {
     expect(() =>
-      installDemoSource(`import { Card } from "@/registry/ui/card/card";`, "demo", paths),
-    ).toThrow(/demo: .*"@\/registry\/ui\/card\/card", which is not installed/);
+      installVariantSource(`import { Card } from "@/registry/ui/card/card";`, "variant", paths),
+    ).toThrow(/variant: .*"@\/registry\/ui\/card\/card", which is not installed/);
   });
 });
 
@@ -127,22 +127,22 @@ describe("variantCopies", () => {
 });
 
 describe("smokePageFiles", () => {
-  it("writes each demo and one page per category that renders them", () => {
+  it("writes each variant and one page per category that renders them", () => {
     const files = smokePageFiles([
       { name: "date-range-picker", category: "form", source: "A" },
       { name: "stat-card", category: "display", source: "B" },
       { name: "file-upload", category: "form", source: "C" },
     ]);
     expect(files.map((file) => file.file)).toEqual([
-      "app/smoke/form/_demos/date-range-picker.tsx",
-      "app/smoke/form/_demos/file-upload.tsx",
+      "app/smoke/form/_variants/date-range-picker.tsx",
+      "app/smoke/form/_variants/file-upload.tsx",
       "app/smoke/form/page.tsx",
-      "app/smoke/display/_demos/stat-card.tsx",
+      "app/smoke/display/_variants/stat-card.tsx",
       "app/smoke/display/page.tsx",
     ]);
     const form = files.find((file) => file.file === "app/smoke/form/page.tsx")?.content ?? "";
-    expect(form).toContain('import DateRangePickerDemo from "./_demos/date-range-picker";');
-    expect(form).toContain("<FileUploadDemo />");
+    expect(form).toContain('import DateRangePickerVariant from "./_variants/date-range-picker";');
+    expect(form).toContain("<FileUploadVariant />");
     expect(form).toContain("export default function SmokeFormPage()");
   });
 });

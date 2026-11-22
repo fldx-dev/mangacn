@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import {
   Command,
@@ -12,7 +12,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "./command";
-import CommandDialogDemo from "./demos/dialog";
+import CommandDialogVariant from "./variants/dialog";
 
 // cmdk measures its list with a ResizeObserver and scrolls the selected row into view; jsdom has
 // neither.
@@ -131,7 +131,7 @@ describe("Command", () => {
   });
 
   it("opens in dialog's heavy paper, which draws the one outline", async () => {
-    render(<CommandDialogDemo />);
+    render(<CommandDialogVariant />);
     await act(async () => {});
     const dialog = screen.getByRole("dialog");
     expect(dialog.getAttribute("data-slot")).toBe("dialog-content");
@@ -142,5 +142,5 @@ describe("Command", () => {
     expect(root?.className).toContain("in-data-[slot=dialog-content]:bg-transparent");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

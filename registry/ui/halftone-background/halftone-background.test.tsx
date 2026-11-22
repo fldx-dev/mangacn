@@ -1,6 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { HalftoneBackground } from "./halftone-background";
 
 afterEach(cleanup);
@@ -53,5 +53,5 @@ describe("HalftoneBackground", () => {
     expect(dots.className).toContain("[--halftone-size:var(--halftone-bg-size)]");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

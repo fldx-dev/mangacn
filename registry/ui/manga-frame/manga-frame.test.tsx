@@ -3,7 +3,7 @@ import path from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
 import type * as React from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { MangaFrame } from "./manga-frame";
 
 afterEach(cleanup);
@@ -112,5 +112,5 @@ describe("MangaFrame", () => {
     expect(line).toMatch(/eslint-disable-line @next\/next\/no-img-element -- \S/);
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

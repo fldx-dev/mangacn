@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { Rating } from "./rating";
 
 afterEach(cleanup);
@@ -16,7 +16,7 @@ const press = (target: HTMLElement, key: string) =>
   });
 
 describe("Rating", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 
   it("is a radio group of named stars with one tab stop on the chosen one", () => {
     render(<Rating aria-label="Rating" defaultValue={3} className="custom" />);

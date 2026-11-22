@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
 import { installedPageSource } from "@/lib/registry/page-source";
-import { expectDemosAccessible, expectNoA11yViolations } from "@/lib/test/axe";
+import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
 import { settings } from "./components/settings-data";
 import { SettingsForm, validateSettings } from "./components/settings-form";
 import Page from "./page";
@@ -48,7 +48,7 @@ describe("settings-01 page", () => {
     expect(document.activeElement).toBe(screen.getByRole("heading", { name: "Reading" }));
   });
 
-  it("shows the demo data", () => {
+  it("shows the variant data", () => {
     render(<Page />);
     expect(screen.getByLabelText(/Display name/)).toHaveProperty("value", "Aiko Tanaka");
     expect(screen.getByLabelText("Email")).toHaveProperty("value", "aiko@example.com");
@@ -230,5 +230,5 @@ describe("SettingsForm", () => {
     expect(status().textContent).toBe("Settings saved");
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

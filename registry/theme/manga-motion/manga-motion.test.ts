@@ -1,9 +1,9 @@
 import { cleanup, render } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
-import MangaMotionDefaultDemo from "./demos/default";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import * as mangaMotion from "./manga-motion";
+import MangaMotionDefaultVariant from "./variants/default";
 
 afterEach(cleanup);
 
@@ -46,10 +46,10 @@ describe("manga-motion", () => {
     }
   });
 
-  it("renders the default demo", () => {
-    const { getByText } = render(createElement(MangaMotionDefaultDemo));
+  it("renders the default variant", () => {
+    const { getByText } = render(createElement(MangaMotionDefaultVariant));
     expect(getByText("Kyoto!")).toBeDefined();
   });
 
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"));
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

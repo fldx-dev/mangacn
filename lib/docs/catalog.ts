@@ -2,7 +2,7 @@ import type { LoadedRegistry } from "@/lib/registry";
 import { BLOCKS_CATALOG, groupBlocks, isPageBlock } from "@/lib/registry/blocks";
 
 // The docs document the component catalog (registry/ui/registry.json) and the block catalog
-// (registry/blocks/registry.json): one page per item that has demos, under "Components" and
+// (registry/blocks/registry.json): one page per item that has variants, under "Components" and
 // "Blocks" in the sidebar. The theme catalog (theme, fonts, ink-frame, manga-motion) is covered
 // by the installation and theming guides instead.
 export const COMPONENTS_CATALOG = "registry/ui/registry.json";
@@ -42,7 +42,7 @@ export function itemPagePath(item: { name: string; source: string }): string | n
  * Catalog categories in sidebar and index order (SPEC-docs-site §4; Inputs and Display after
  * Primitives, SPEC-components-7 §6); `block` is the block
  * catalog's one category. `hook` is the hook catalog's, last: a hook has no page, no index card
- * and no sidebar entry (no demos, and no `DOCS_SECTIONS` entry), so it only orders `list_items`
+ * and no sidebar entry (no variants, and no `DOCS_SECTIONS` entry), so it only orders `list_items`
  * and the skill catalog's Hooks group.
  */
 export const CATEGORIES = [
@@ -86,9 +86,9 @@ export interface DocItem {
   title: string;
   description: string;
   category: Category;
-  /** The item's demos, `default` first, then by name. */
-  demos: string[];
-  /** A page block (a `registry:page` route): its page shows the whole page, framed, not demos. */
+  /** The item's variants, `default` first, then by name. */
+  variants: string[];
+  /** A page block (a `registry:page` route): its page shows the whole page, framed, not variants. */
   page?: true;
 }
 
@@ -97,20 +97,22 @@ function isCategory(value: string | undefined): value is Category {
 }
 
 /**
- * Every component-catalog item that has demos, in category order and catalog order within a
+ * Every component-catalog item that has variants, in category order and catalog order within a
  * category. Throws naming an item whose first category is not one of `CATEGORIES`. `catalog`
  * picks the section: the components (the default, which the component index lists) or the blocks,
  * which come in their groups (`groupBlocks`: Manga, then each family by number).
  */
 export function docItems(
   registry: LoadedRegistry,
-  demos: readonly { item: string; demo: string }[],
+  variants: readonly { item: string; variant: string }[],
   catalog: string = COMPONENTS_CATALOG,
 ): DocItem[] {
   const items: DocItem[] = [];
   for (const entry of registry.items) {
     if (entry.source !== catalog) continue;
-    const names = demos.filter((demo) => demo.item === entry.name).map((demo) => demo.demo);
+    const names = variants
+      .filter((variant) => variant.item === entry.name)
+      .map((variant) => variant.variant);
     if (names.length === 0) continue;
     const category = entry.categories?.[0];
     if (!isCategory(category)) {
@@ -123,7 +125,7 @@ export function docItems(
       title: entry.title ?? entry.name,
       description: entry.description ?? "",
       category,
-      demos: [...names].sort((a, b) =>
+      variants: [...names].sort((a, b) =>
         a === "default" ? -1 : b === "default" ? 1 : a < b ? -1 : a > b ? 1 : 0,
       ),
       ...(isPageBlock(entry) ? { page: true as const } : {}),
@@ -152,20 +154,20 @@ function yamlScalar(value: string): string {
  * The scaffold of one item page (SPEC-docs-site §6); the author replaces the placeholder. A
  * block's page (SPEC-components-3 §5) also lists the files it installs, under the install block.
  * A page block's shows the whole page in a framed preview (`/view/<name>` at phone, tablet and
- * desktop widths) instead of its demos, which it skips, and has no props table of its own: add
+ * desktop widths) instead of its variants, which it skips, and has no props table of its own: add
  * `<PropsTable item="<name>" name="<Interface>" />` for a component's props where it has some.
  */
 export function renderItemPage(item: DocItem): string {
   const attr = `item="${item.name}"`;
   const examples = item.page
     ? [`<BlockPreview ${attr} />`]
-    : item.demos.map((demo) => `<DemoFrame ${attr} demo="${demo}" />`);
+    : item.variants.map((variant) => `<VariantFrame ${attr} variant="${variant}" />`);
   return [
     "---",
     `title: ${yamlScalar(item.title)}`,
     `description: ${yamlScalar(item.description)}`,
     `item: ${item.name}`,
-    ...(item.page ? [`skipDemos: ${JSON.stringify(item.demos)}`] : []),
+    ...(item.page ? [`skipVariants: ${JSON.stringify(item.variants)}`] : []),
     "---",
     "",
     `<InstallCommand ${attr} />`,
@@ -226,7 +228,7 @@ export interface Frontmatter {
 
 /**
  * The frontmatter of an MDX page: `key: value` lines, where a value is a plain scalar, a
- * double-quoted string or a JSON array of strings (`skipDemos: ["open"]`). Enough for the
+ * double-quoted string or a JSON array of strings (`skipVariants: ["open"]`). Enough for the
  * pages this repo writes; anything fancier is reported as an error.
  */
 export function parseFrontmatter(source: string): Frontmatter {

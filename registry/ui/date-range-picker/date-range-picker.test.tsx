@@ -4,7 +4,7 @@ import { ja } from "date-fns/locale";
 import * as React from "react";
 import type { DateRange } from "react-day-picker";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { expectDemosAccessible } from "@/lib/test/axe";
+import { expectVariantsAccessible } from "@/lib/test/axe";
 import { DateRangePicker } from "./date-range-picker";
 
 // jsdom has no matchMedia, and useIsMobile reads window.innerWidth against it (as in
@@ -54,7 +54,9 @@ function Controlled({ onValueChange }: { onValueChange?: (range?: DateRange) => 
 }
 
 describe("DateRangePicker", () => {
-  expectDemosAccessible(import.meta.glob("./demos/*.tsx"), { setup: () => stubViewport(1280) });
+  expectVariantsAccessible(import.meta.glob("./variants/*.tsx"), {
+    setup: () => stubViewport(1280),
+  });
 
   it("shows the range on a trigger that opens a dialog, with every slot", async () => {
     render(<DateRangePicker defaultValue={JUNE} />);

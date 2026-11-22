@@ -92,7 +92,7 @@ import { Stamp } from "@/components/stamp";
 
 export function CharacterCard() {
   return (
-    // A relative wrapper places the stamp over the card's corner, as the stamp demo does.
+    // A relative wrapper places the stamp over the card's corner, as the stamp variant does.
     <div className="relative w-full max-w-sm">
       <Card>
         <CardHeader>
@@ -122,8 +122,8 @@ its stock API; `shadow` is off by default and stays off.
 
 ## Checking the page
 
-- Compare each piece with its demo stage: `https://www.mangacn.com/demo/<item>/<demo>`
-  (`?mode=dark` for the night theme). Item pages list their demos.
+- Compare each piece with its variant stage: `https://www.mangacn.com/gallery/<item>/<variant>`
+  (`?mode=dark` for the night theme). Item pages list their variants.
 - Look at 360 px wide: panels stack, nothing overflows horizontally.
 - Toggle `.dark` on `<html>`: everything should follow the tokens.
 - Count the reds, find any `shadow-`, `gradient` or `border` class you added, and check every
