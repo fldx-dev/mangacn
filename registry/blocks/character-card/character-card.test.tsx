@@ -35,12 +35,21 @@ describe("CharacterCard", () => {
     const ruby = article.querySelector("ruby");
     expect(ruby?.getAttribute("lang")).toBe("ja");
     expect(ruby?.querySelector("rt")?.textContent).toBe("あまの みお");
+    expect(ruby?.querySelector("rt")?.hasAttribute("lang")).toBe(false);
     // The parentheses show only where ruby is not supported.
     expect([...(ruby?.querySelectorAll("rp") ?? [])].map((rp) => rp.textContent)).toEqual([
       "(",
       ")",
     ]);
     expect(ruby?.firstChild?.textContent).toBe("天野 ミオ");
+  });
+
+  it("puts lang=ja on the reading alone over a Latin name", () => {
+    render(<CharacterCard name="Mio Amano" reading="あまの みお" portrait={portrait} />);
+    const ruby = screen.getByRole("article", { name: "Mio Amano" }).querySelector("ruby");
+    expect(ruby?.hasAttribute("lang")).toBe(false);
+    expect(ruby?.closest("[lang]")).toBeNull();
+    expect(ruby?.querySelector("rt")?.getAttribute("lang")).toBe("ja");
   });
 
   it("puts the cast role in a caption box, the quote in a speech bubble and the status on a stamp", () => {

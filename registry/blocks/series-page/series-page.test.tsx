@@ -11,6 +11,24 @@ afterEach(cleanup);
 
 const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8");
 
+/** Text with Latin letters and no kana or kanji whose nearest `lang` is `ja`. */
+function latinTextUnderJa(root: HTMLElement): string[] {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const found: string[] = [];
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const text = node.textContent ?? "";
+    const lang = node.parentElement?.closest("[lang]")?.getAttribute("lang");
+    if (
+      lang === "ja" &&
+      /[A-Za-z]/.test(text) &&
+      !/[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/u.test(text)
+    ) {
+      found.push(text);
+    }
+  }
+  return found;
+}
+
 const info: SeriesInfo = {
   title: "Lantern Keepers",
   originalTitle: "灯守り",
@@ -120,6 +138,16 @@ describe("series-page page", () => {
     ]);
   });
 
+  it("puts lang=ja over Japanese text only, never over an English name", async () => {
+    render(<Page />);
+    const latinUnderJa = () => latinTextUnderJa(document.body);
+    expect(latinUnderJa()).toEqual([]);
+    fireEvent.click(screen.getByRole("tab", { name: "Cast" }));
+    await act(async () => {});
+    expect(screen.getAllByRole("article")).toHaveLength(3);
+    expect(latinUnderJa()).toEqual([]);
+  });
+
   it("moves between tabs with the arrow keys, as mangacn's tabs do", async () => {
     render(<Page />);
     const [volumes, chapters] = screen.getAllByRole("tab");
@@ -159,7 +187,7 @@ describe("series-page page", () => {
       fireEvent.click(screen.getByRole("tab", { name: "Cast" }));
       await act(async () => {});
       const cast = screen.getByRole("tabpanel", { name: "Cast" });
-      const readings = [...cast.querySelectorAll('ruby[lang="ja"] rt')];
+      const readings = [...cast.querySelectorAll('ruby rt[lang="ja"]')];
       expect(readings.map((rt) => rt.textContent)).toEqual([
         "あまの みお",
         "くろだ れん",

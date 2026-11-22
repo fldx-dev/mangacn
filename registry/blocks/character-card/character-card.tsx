@@ -47,6 +47,9 @@ export interface CharacterCardProps extends Omit<React.ComponentProps<"article">
   href?: string;
 }
 
+/** Kana or kanji: a name written in Japanese. */
+const JAPANESE = /[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/u;
+
 /**
  * A cast entry: the portrait in a manga-frame with an optional status stamp, the name with its
  * reading as ruby, the part they play in a caption box, a line of dialogue in a speech bubble and stats as
@@ -67,12 +70,19 @@ export function CharacterCard({
   className,
   ...props
 }: CharacterCardProps) {
-  // The ruby reads above the name; the name alone names the article.
+  // The ruby reads above the name; the name alone names the article. `lang="ja"` covers the
+  // name only when it is written in Japanese; over a Latin name it is on the reading alone.
+  const japaneseName = JAPANESE.test(name);
   const title = reading ? (
-    <ruby lang="ja">
+    <ruby lang={japaneseName ? "ja" : undefined}>
       {name}
       <rp>(</rp>
-      <rt className="font-sans text-xs font-normal tracking-wide">{reading}</rt>
+      <rt
+        lang={japaneseName ? undefined : "ja"}
+        className="font-sans text-xs font-normal tracking-wide"
+      >
+        {reading}
+      </rt>
       <rp>)</rp>
     </ruby>
   ) : (
