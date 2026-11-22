@@ -74,7 +74,7 @@ at https://www.mangacn.com/docs/blocks and the presets on the
 [Theming](https://www.mangacn.com/docs/theming#presets) page; the two hooks have no page of
 their own and are in the skill catalog and `list_items`.
 
-Each component page also lists its variants, numbered per component: all 271 install on their
+Each component page also lists its variants, numbered per component: all 328 install on their
 own as `@mangacn/c-<component>-<n>` (`npx shadcn@latest add @mangacn/c-stamp-3 --overwrite`),
 the file plus every item it imports. The numbers never change.
 
