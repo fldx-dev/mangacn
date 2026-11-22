@@ -3,7 +3,12 @@
 import { cn } from "cn";
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { Button } from "@/registry/ui/button/button";
-import { PREVIEW_WIDTHS, type PreviewWidth, SHELL_DESKTOP_MIN_BOX } from "./preview-widths";
+import {
+  PREVIEW_WIDTHS,
+  type PreviewWidth,
+  SHELL_DESKTOP_MIN_BOX,
+  SHELL_MIN_SCALE,
+} from "./preview-widths";
 import { StageFrame } from "./stage-frame";
 
 export interface ScaledFrameProps extends Omit<ComponentProps<"div">, "children"> {
@@ -123,18 +128,27 @@ export interface BlockPreviewProps {
   /** The preview box's height; the page inside is scaled to fill it. */
   height?: string;
   /**
-   * The page is an app shell whose sidebar turns into a sheet below a tablet's width: it keeps
-   * the desktop width in a docs column down to SHELL_DESKTOP_MIN_BOX, scaled, so the preview
-   * shows the sidebar beside the page. The docs MDX sets it from the registry (DocsBlockPreview).
+   * The page is an app shell whose sidebar turns into a sheet below a tablet's width: it opens at
+   * the widest of the desktop and tablet widths that scales to the docs column no smaller than
+   * SHELL_MIN_SCALE, so the preview shows the sidebar beside the page, and at the phone's width
+   * in a column narrower than SHELL_DESKTOP_MIN_BOX. The docs MDX sets it from the registry
+   * (DocsBlockPreview).
    */
   shell?: boolean;
+}
+
+/** The width a BlockPreview opens at in a box `boxWidth` wide (see BlockPreviewProps). */
+function initialSize(boxWidth: number, shell?: boolean): PreviewWidth {
+  if (!shell) return boxWidth < PREVIEW_WIDTHS[1].width ? "phone" : "desktop";
+  if (boxWidth >= PREVIEW_WIDTHS[2].width * SHELL_MIN_SCALE) return "desktop";
+  return boxWidth >= SHELL_DESKTOP_MIN_BOX ? "tablet" : "phone";
 }
 
 /**
  * A page block's whole page in a frame, at a phone's, a tablet's or a desktop's width (buttons
  * pick one), scaled down to the docs column when it is wider. A column narrower than a tablet
- * opens at the phone's width; an app shell's (`shell`), narrower than SHELL_DESKTOP_MIN_BOX.
- * The box keeps its height whatever the width.
+ * opens at the phone's width; an app shell (`shell`) opens as that prop says. The box keeps its
+ * height whatever the width.
  */
 export function BlockPreview({ item, height = "36rem", shell }: BlockPreviewProps) {
   const [size, setSize] = useState<PreviewWidth>("desktop");
@@ -143,8 +157,7 @@ export function BlockPreview({ item, height = "36rem", shell }: BlockPreviewProp
   const settled = useRef(false);
 
   const onMeasure = (width: number) => {
-    const phoneBelow = shell ? SHELL_DESKTOP_MIN_BOX : PREVIEW_WIDTHS[1].width;
-    if (!settled.current && width < phoneBelow) setSize("phone");
+    if (!settled.current) setSize(initialSize(width, shell));
     settled.current = true;
     setBoxWidth(width);
   };

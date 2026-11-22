@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { axe } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { BlockPreview, layoutWidth, ScaledFrame, ScaledView } from "./block-preview";
-import { PREVIEW_WIDTHS, SHELL_DESKTOP_MIN_BOX } from "./preview-widths";
+import { PREVIEW_WIDTHS, SHELL_DESKTOP_MIN_BOX, SHELL_MIN_SCALE } from "./preview-widths";
 
 afterEach(() => {
   cleanup();
@@ -57,17 +57,35 @@ describe("BlockPreview", () => {
     expect(await axe(baseElement, { iframes: false })).toHaveNoViolations();
   });
 
-  it("keeps an app shell at the desktop width in a 768 px window's docs column", () => {
+  it("opens an app shell at the tablet's width where the desktop's would be under half size", () => {
+    // A 768 px window's column (450, 433 with a 17 px scrollbar), a 440 and a 600 px window's.
+    for (const [box, scale] of [
+      [450, 59],
+      [433, 56],
+      [406, 53],
+      [566, 74],
+    ]) {
+      cleanup();
+      const observers = stubResizeObserver();
+      render(<BlockPreview item="sidebar-07" shell />);
+      observers.drawAll(box, 576);
+      expect(width(), `box ${box}`).toBe("tablet");
+      expect(screen.getByText(`Tablet, 768 px, scaled to ${scale}%`)).toBeTruthy();
+    }
+  });
+
+  it("keeps an app shell at the desktop width while it is at least half size", () => {
     const observers = stubResizeObserver();
     render(<BlockPreview item="sidebar-07" shell />);
-    observers.drawAll(452, 576);
+    observers.drawAll(PREVIEW_WIDTHS[2].width * SHELL_MIN_SCALE, 576);
     expect(width()).toBe("desktop");
-    expect(screen.getByText(/Desktop, 1280 px, scaled to 35%/)).toBeTruthy();
+    expect(screen.getByText("Desktop, 1280 px, scaled to 50%")).toBeTruthy();
   });
 
   it("opens an app shell at the phone's width in a phone's column", () => {
     const observers = stubResizeObserver();
     render(<BlockPreview item="sidebar-07" shell />);
+    expect(SHELL_DESKTOP_MIN_BOX).toBe(384);
     observers.drawAll(SHELL_DESKTOP_MIN_BOX - 1, 576);
     expect(width()).toBe("phone");
   });

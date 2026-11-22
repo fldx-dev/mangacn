@@ -447,7 +447,8 @@ test("an embedded dialog stage works with the pointer from the start", async ({ 
 
 // A sidebar preview on a docs page lays the sidebar out at a desktop width, scaled to the column,
 // from a tablet's window up, as `/view` shows it there; only a phone's column shows the phone
-// layout (Task 144; blocks.spec.ts checks the 1280 px column).
+// layout (Task 144; blocks.spec.ts checks the 1280 px column). A block opens at the tablet's
+// width in a 768 px window's column, where the desktop's would be under half size (Task 175).
 test("sidebar previews show the desktop layout from a tablet's window", async ({
   page,
 }, testInfo) => {
@@ -464,8 +465,8 @@ test("sidebar previews show the desktop layout from a tablet's window", async ({
   await page.goto("/docs/blocks/sidebar-07");
   const preview = page.locator('[data-slot="block-preview"]');
   const block = await frameOf('[data-slot="block-preview"]');
-  await expect(preview).toHaveAttribute("data-width", phone ? "phone" : "desktop");
-  await expect.poll(() => block.evaluate(() => window.innerWidth)).toBe(phone ? 375 : 1280);
+  await expect(preview).toHaveAttribute("data-width", phone ? "phone" : "tablet");
+  await expect.poll(() => block.evaluate(() => window.innerWidth)).toBe(phone ? 375 : 768);
 
   await page.goto("/docs/components/sidebar");
   const stage = await frameOf('[data-slot="variant-stage-box"]');

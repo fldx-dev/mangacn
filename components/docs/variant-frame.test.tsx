@@ -119,7 +119,12 @@ describe("VariantFrame", () => {
     observers.drawAll(802, 320);
     expect(box?.dataset.layoutWidth).toBe("802");
     expect(stage.style.transform).toBe("");
+    // A 768 px window's column with a classic 17 px scrollbar: still the 768 px layout.
+    observers.drawAll(399, 320);
+    expect(box?.dataset.layoutWidth).toBe("768");
     // A phone's column: the stage is the column, so the sidebar shows its phone layout.
+    observers.drawAll(362, 320);
+    expect(box?.dataset.layoutWidth).toBe("362");
     observers.drawAll(294, 320);
     expect(box?.dataset.layoutWidth).toBe("294");
     expect(stage.style.transform).toBe("");
