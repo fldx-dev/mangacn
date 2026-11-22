@@ -111,6 +111,34 @@ describe("Calendar", () => {
     for (const arrow of arrows()) expect(inked(arrow)).toBeNull();
   });
 
+  it("lays a disabled month arrow on halftone in muted text, at full opacity, outline unfilled", () => {
+    render(
+      <Calendar
+        mode="single"
+        startMonth={new Date(2026, 5)}
+        endMonth={new Date(2026, 6)}
+        {...month}
+      />,
+    );
+    const previous = screen.getByRole("button", { name: /previous month/i });
+    const next = screen.getByRole("button", { name: /next month/i });
+    expect(previous.getAttribute("aria-disabled")).toBe("true");
+    for (const cls of [
+      "aria-disabled:halftone-light",
+      "aria-disabled:text-muted-foreground",
+      "aria-disabled:bg-background",
+      "aria-disabled:opacity-100",
+      "aria-disabled:pointer-events-none",
+    ]) {
+      expect(previous.classList.contains(cls), cls).toBe(true);
+    }
+    expect(previous.className).not.toContain("opacity-50");
+    // The halftone shows through an unfilled outline; the enabled arrow keeps its paper.
+    expect(inked(previous)?.dataset.fill).toBe("none");
+    expect(next.hasAttribute("aria-disabled")).toBe(false);
+    expect(inked(next)?.dataset.fill).toBe("paper");
+  });
+
   it("outlines the caption dropdowns with the pen", () => {
     render(
       <Calendar

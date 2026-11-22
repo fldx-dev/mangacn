@@ -49,9 +49,15 @@ function Calendar({
         : buttonVariant === "link"
           ? undefined
           : "paper";
-  const navFrame = navFill && (
-    <InkFrame as="span" fill={navFill} className="pointer-events-none absolute inset-0 -z-1" />
-  );
+  // A disabled arrow shows its halftone through an unfilled outline, as a disabled button does.
+  const navFrame = (disabled: unknown) =>
+    navFill && (
+      <InkFrame
+        as="span"
+        fill={disabled ? "none" : navFill}
+        className="pointer-events-none absolute inset-0 -z-1"
+      />
+    );
 
   return (
     <DayPicker
@@ -95,14 +101,16 @@ function Calendar({
           "absolute inset-x-0 top-0 z-10 flex w-full items-center justify-between gap-1",
           defaultClassNames.nav,
         ),
+        // react-day-picker marks an arrow with no month to go to `aria-disabled`, not `disabled`,
+        // so the arrows take button's disabled look under `aria-disabled:`.
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) p-0 select-none hover:[--paper:var(--muted)] aria-disabled:opacity-50",
+          "size-(--cell-size) p-0 select-none hover:[--paper:var(--muted)] aria-disabled:pointer-events-none aria-disabled:bg-background aria-disabled:text-muted-foreground aria-disabled:opacity-100 aria-disabled:halftone-light",
           defaultClassNames.button_previous,
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) p-0 select-none hover:[--paper:var(--muted)] aria-disabled:opacity-50",
+          "size-(--cell-size) p-0 select-none hover:[--paper:var(--muted)] aria-disabled:pointer-events-none aria-disabled:bg-background aria-disabled:text-muted-foreground aria-disabled:opacity-100 aria-disabled:halftone-light",
           defaultClassNames.button_next,
         ),
         month_caption: cn(
@@ -197,14 +205,14 @@ function Calendar({
         // biome-ignore lint/correctness/noComponentHookFactories: an inline override, as stock's are.
         PreviousMonthButton: ({ children, ...props }) => (
           <button {...props}>
-            {navFrame}
+            {navFrame(props["aria-disabled"])}
             {children}
           </button>
         ),
         // biome-ignore lint/correctness/noComponentHookFactories: an inline override, as stock's are.
         NextMonthButton: ({ children, ...props }) => (
           <button {...props}>
-            {navFrame}
+            {navFrame(props["aria-disabled"])}
             {children}
           </button>
         ),
