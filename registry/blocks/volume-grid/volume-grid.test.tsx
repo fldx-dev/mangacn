@@ -69,6 +69,11 @@ describe("VolumeGrid", () => {
     expect(newest.querySelector('[data-slot="stamp"]')?.textContent).toBe("NEW");
     // The stamp's md seal (80 px), readable on a cover.
     expect(newest.querySelector<HTMLElement>('[data-slot="stamp"]')?.dataset.size).toBe("md");
+    // Tilted 10°, the 80 px seal reaches about 6.3 px past its box: inset 8 px from the cover's
+    // right edge it stays inside the grid, so a page with no side gutter does not scroll sideways.
+    const stampClasses = newest.querySelector('[data-slot="stamp"]')?.classList;
+    expect(stampClasses?.contains("right-2")).toBe(true);
+    expect([...(stampClasses ?? [])].some((c) => /^-right-|^-inset/.test(c))).toBe(false);
     expect(document.querySelectorAll('[data-slot="stamp"]')).toHaveLength(1);
     // The cover, folio and text are all inside the one link; the date is printed as given.
     expect(links[0].querySelector('[data-slot="manga-frame"]')).toBeTruthy();

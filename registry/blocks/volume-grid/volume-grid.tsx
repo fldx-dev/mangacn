@@ -127,8 +127,10 @@ export function VolumeGrid({
                       className="absolute inset-0 *:h-full"
                     />
                   </AspectRatio>
+                  {/* Inset from the right edge: the tilted seal reaches ~6 px past its box, so
+                      it stays inside the grid and a page without a side gutter cannot scroll. */}
                   {volume.isNew && (
-                    <Stamp size="md" rotate={10} lang={lang} className="absolute -top-3 -right-2">
+                    <Stamp size="md" rotate={10} lang={lang} className="absolute -top-3 right-2">
                       {numerals === "ja" ? "最新" : "NEW"}
                     </Stamp>
                   )}
