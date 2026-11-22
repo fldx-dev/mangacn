@@ -716,7 +716,12 @@ export function DataTable<TData extends RowData>({
         >
           {toolbar?.(table)}
         </DataTableToolbar>
-        <div data-slot="data-table-frame" className="relative isolate w-full min-w-0 px-2 py-1">
+        {/* One minmax(0, 1fr) track: the table adds its natural width but no minimum, so it
+            scrolls inside a narrow content-sized parent instead of widening it. */}
+        <div
+          data-slot="data-table-frame"
+          className="relative isolate grid w-full min-w-0 grid-cols-[minmax(0,1fr)] px-2 py-1"
+        >
           <InkFrame
             as="span"
             fill="paper"

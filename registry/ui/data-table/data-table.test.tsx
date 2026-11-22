@@ -55,6 +55,19 @@ describe("DataTable", () => {
     expect(document.querySelector("th[aria-sort]")).toBeNull();
   });
 
+  it("fits a narrow, content-sized parent: the rows wrap and the frame adds no minimum width", () => {
+    render(<DefaultVariant />);
+    for (const slot of ["data-table-toolbar", "data-table-pagination"]) {
+      const row = document.querySelector(`[data-slot="${slot}"]`);
+      expect(row?.classList.contains("flex-wrap")).toBe(true);
+    }
+    // A one-column grid track of minmax(0, 1fr): the frame's min-content is zero, so the table
+    // scrolls inside it instead of widening a w-fit or flex-row parent past the viewport.
+    const frame = document.querySelector('[data-slot="data-table-frame"]');
+    expect(frame?.classList.contains("grid")).toBe(true);
+    expect(frame?.classList.contains("grid-cols-[minmax(0,1fr)]")).toBe(true);
+  });
+
   it("pins the first column: every first cell is sticky at the start", () => {
     render(<DefaultVariant />);
     for (const cell of document.querySelectorAll("th, td")) {
