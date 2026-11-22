@@ -54,7 +54,7 @@ function Calendar({
     navFill && (
       <InkFrame
         as="span"
-        fill={disabled ? "none" : navFill}
+        fill={disabled === true || disabled === "true" ? "none" : navFill}
         className="pointer-events-none absolute inset-0 -z-1"
       />
     );
