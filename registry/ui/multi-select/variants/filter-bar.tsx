@@ -42,7 +42,7 @@ export default function MultiSelectFilterBarVariant() {
           />
         </Field>
         <Button type="submit" className="sm:shrink-0">
-          Show 14 series
+          Apply filters
         </Button>
       </div>
     </form>

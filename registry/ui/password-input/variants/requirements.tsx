@@ -26,7 +26,11 @@ export default function PasswordInputRequirementsVariant() {
           onChange={(event) => setPassword(event.target.value)}
           aria-describedby="password-input-studio-rules"
         />
-        <ul id="password-input-studio-rules" className="flex flex-col gap-1 text-sm">
+        <ul
+          id="password-input-studio-rules"
+          aria-live="polite"
+          className="flex flex-col gap-1 text-sm"
+        >
           {rules.map((rule) => {
             const met = rule.test(password);
             return (
