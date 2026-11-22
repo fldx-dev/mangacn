@@ -7,7 +7,8 @@ import { InkFrame } from "@/components/ink-frame";
 
 // Based on shadcn/ui Avatar (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-10-31.
 // Restyled for mangacn: an InkFrame ellipse is inked over the image, where stock draws its
-// `::after` border; no fill, so the picture shows through.
+// `::after` border; no fill, so the picture shows through. A group overlaps less than stock's
+// `-space-x-2`, by size, so the next avatar's ring never covers two-letter initials.
 
 function Avatar({
   className,
@@ -53,7 +54,7 @@ function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props)
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs",
+        "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-[10px]",
         className,
       )}
       {...props}
@@ -82,7 +83,7 @@ function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="avatar-group"
       className={cn(
-        "group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background",
+        "group/avatar-group flex -space-x-0.75 has-data-[size=lg]:-space-x-1.25 has-data-[size=sm]:-space-x-0.5 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background",
         className,
       )}
       {...props}
@@ -95,7 +96,7 @@ function AvatarGroupCount({ className, ...props }: React.ComponentProps<"div">) 
     <div
       data-slot="avatar-group-count"
       className={cn(
-        "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm text-muted-foreground ring-2 ring-background group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6 [&>svg]:size-4 group-has-data-[size=lg]/avatar-group:[&>svg]:size-5 group-has-data-[size=sm]/avatar-group:[&>svg]:size-3",
+        "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm text-muted-foreground ring-2 ring-background group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6 group-has-data-[size=sm]/avatar-group:text-[10px] [&>svg]:size-4 group-has-data-[size=lg]/avatar-group:[&>svg]:size-5 group-has-data-[size=sm]/avatar-group:[&>svg]:size-3",
         className,
       )}
       {...props}

@@ -44,5 +44,32 @@ describe("Avatar", () => {
     expect(avatar?.lastElementChild).toBe(frame);
   });
 
+  it("overlaps a group by size and steps the sm initials down, so the next ring clears them", () => {
+    render(
+      <AvatarGroup>
+        <Avatar size="sm">
+          <AvatarFallback>MK</AvatarFallback>
+        </Avatar>
+        <AvatarGroupCount>+2</AvatarGroupCount>
+      </AvatarGroup>,
+    );
+    const fallback = screen.getByText("MK");
+    const group = fallback.closest<HTMLElement>('[data-slot="avatar-group"]');
+    const classes = group?.className.split(/\s+/) ?? [];
+    // Stock's -space-x-2 hid the right third of a 24 px avatar's initials under the next ring.
+    expect(classes).not.toContain("-space-x-2");
+    expect(classes).toEqual(
+      expect.arrayContaining([
+        "-space-x-0.75",
+        "has-data-[size=lg]:-space-x-1.25",
+        "has-data-[size=sm]:-space-x-0.5",
+      ]),
+    );
+    expect(fallback.className).toContain("group-data-[size=sm]/avatar:text-[10px]");
+    expect(screen.getByText("+2").className).toContain(
+      "group-has-data-[size=sm]/avatar-group:text-[10px]",
+    );
+  });
+
   expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });
