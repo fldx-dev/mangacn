@@ -53,7 +53,30 @@ describe("Accordion", () => {
     expect(icons).toHaveLength(2);
     expect(icons[0]?.getAttribute("class")).toContain("lucide-plus");
     expect(icons[1]?.getAttribute("class")).toContain("lucide-minus");
-    expect(trigger.className).toContain("**:data-[slot=accordion-trigger-icon]:text-foreground");
+  });
+
+  it("greys a disabled item by what Base UI sets: native disabled and data-disabled", () => {
+    render(
+      <Accordion>
+        <AccordionItem value="one" disabled>
+          <AccordionTrigger>Locked question</AccordionTrigger>
+          <AccordionContent>Locked answer</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+    const trigger = screen.getByRole("button", { name: "Locked question" });
+    expect(trigger.hasAttribute("disabled")).toBe(true);
+    expect(trigger.hasAttribute("data-disabled")).toBe(true);
+    expect(trigger.hasAttribute("aria-disabled")).toBe(false);
+    expect(trigger.className).not.toContain("aria-disabled:");
+    for (const name of [
+      "data-disabled:pointer-events-none",
+      "data-disabled:text-muted-foreground",
+    ]) {
+      expect(trigger.classList.contains(name), name).toBe(true);
+    }
+    // The + / − glyph takes the trigger's colour, so it greys with the label.
+    expect(trigger.className).not.toContain("accordion-trigger-icon]:text-");
   });
 
   it("toggles with Enter and Space, like stock", async () => {

@@ -22,10 +22,7 @@ export default function AccordionDisabledItemsVariant() {
     <Accordion defaultValue={["vol-2"]} className="max-w-sm">
       {volumes.map((volume) => (
         <AccordionItem key={volume.value} value={volume.value} disabled={volume.disabled}>
-          {/* Base UI disables the trigger natively, so grey it out by its data-disabled. */}
-          <AccordionTrigger className="data-disabled:text-muted-foreground data-disabled:no-underline">
-            {volume.title}
-          </AccordionTrigger>
+          <AccordionTrigger>{volume.title}</AccordionTrigger>
           <AccordionContent>{volume.chapters}</AccordionContent>
         </AccordionItem>
       ))}
