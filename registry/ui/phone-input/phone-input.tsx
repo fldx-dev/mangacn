@@ -343,17 +343,29 @@ export function PhoneInput({
           }
           onKeyDown={(event) => {
             onKeyDown?.(event);
-            if (event.defaultPrevented || event.key !== "Backspace") return;
-            // Backspace over a formatting character (a space, a hyphen, a bracket) takes the
-            // digit before it, or the formatter would put the character straight back.
+            if (event.defaultPrevented) return;
+            // Backspace or Delete over a formatting character (a space, a hyphen, a bracket)
+            // takes the digit before or after it, or the formatter would put the character
+            // straight back.
             const input = event.currentTarget;
             const at = input.selectionStart ?? 0;
-            if (at === 0 || at !== input.selectionEnd || significant.test(text[at - 1])) return;
-            let digit = at - 1;
-            while (digit >= 0 && !significant.test(text[digit])) digit--;
-            event.preventDefault();
-            if (digit < 0) return;
-            type(text.slice(0, digit) + text.slice(digit + 1), digit);
+            if (at !== input.selectionEnd) return;
+            if (event.key === "Backspace") {
+              if (at === 0 || significant.test(text[at - 1])) return;
+              let digit = at - 1;
+              while (digit >= 0 && !significant.test(text[digit])) digit--;
+              event.preventDefault();
+              if (digit < 0) return;
+              type(text.slice(0, digit) + text.slice(digit + 1), digit);
+            } else if (event.key === "Delete") {
+              if (at >= text.length || significant.test(text[at])) return;
+              let digit = at;
+              while (digit < text.length && !significant.test(text[digit])) digit++;
+              event.preventDefault();
+              if (digit === text.length) return;
+              // The caret stays where it was, after the same digits.
+              type(text.slice(0, digit) + text.slice(digit + 1), at);
+            }
           }}
           onBlur={(event) => {
             onBlur?.(event);

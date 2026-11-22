@@ -129,6 +129,30 @@ describe("PhoneInput", () => {
     expect(phone().value).toBe("");
   });
 
+  it("Delete steps over a formatting character to the digit after it", async () => {
+    render(<Phone defaultCountry="US" />);
+    await typeInto("4155552671");
+    const input = phone();
+    input.focus();
+    const deleteAt = (at: number) =>
+      act(() => {
+        input.setSelectionRange(at, at);
+        return fireEvent.keyDown(input, { key: "Delete" });
+      });
+    // Before the space after ")": the 5 after it goes.
+    expect(input.value).toBe("(415) 555-2671");
+    expect(await deleteAt(5)).toBe(false);
+    expect(input.value).toBe("(415) 552-671");
+    // Before the hyphen: the 6 after it goes, and the caret stays before the hyphen.
+    expect(await deleteAt(9)).toBe(false);
+    expect(input.value).toBe("(415) 552-71");
+    expect(input.selectionStart).toBe(9);
+    // At the end there is nothing to delete; the browser is left to do nothing.
+    const end = input.value.length;
+    expect(await deleteAt(end)).toBe(true);
+    expect(input.value).toBe("(415) 552-71");
+  });
+
   it("picks the country from a pasted international number and shows it the national way", async () => {
     const onValueChange = vi.fn();
     render(<Phone defaultCountry="US" onValueChange={onValueChange} />);
