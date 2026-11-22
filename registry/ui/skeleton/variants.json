@@ -4,5 +4,17 @@
     "file": "default",
     "label": "Avatar & Lines",
     "title": "A round placeholder beside two text lines while content loads."
+  },
+  {
+    "n": 2,
+    "file": "chapter-list",
+    "label": "Chapter List",
+    "title": "Four loading chapter rows, each with a thumbnail, two lines and a tag."
+  },
+  {
+    "n": 3,
+    "file": "series-card",
+    "label": "Series Card",
+    "title": "A series card holding its place with a cover, author and button placeholders."
   }
 ]

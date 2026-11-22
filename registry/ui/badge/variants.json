@@ -10,5 +10,11 @@
     "file": "variants",
     "label": "All Styles",
     "title": "Every badge style in a row, then three Japanese status tags such as 連載中."
+  },
+  {
+    "n": 3,
+    "file": "chapter-list",
+    "label": "Chapter List",
+    "title": "Chapter rows with icon badges: new, early access, read and a comment link."
   }
 ]

@@ -4,5 +4,17 @@
     "file": "default",
     "label": "Chapter Status",
     "title": "A table of four chapters with status, page counts, a caption and a total."
+  },
+  {
+    "n": 2,
+    "file": "row-selection",
+    "label": "Row Selection",
+    "title": "Pages to fix with a checkbox per row, a select-all box and a count."
+  },
+  {
+    "n": 3,
+    "file": "status-badges",
+    "label": "Status Badges",
+    "title": "Followed series with a status badge and a Read button on every row."
   }
 ]

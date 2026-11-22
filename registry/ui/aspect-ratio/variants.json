@@ -4,5 +4,17 @@
     "file": "default",
     "label": "Widescreen 16:9",
     "title": "A screentoned panel held at a 16:9 ratio as its width changes."
+  },
+  {
+    "n": 2,
+    "file": "cover-grid",
+    "label": "Cover Grid",
+    "title": "Four volume covers held at 2:3 in a grid that reflows with the width."
+  },
+  {
+    "n": 3,
+    "file": "page-spread",
+    "label": "Page Spread",
+    "title": "A two-page B5 spread held at its print ratio, with a caption below."
   }
 ]

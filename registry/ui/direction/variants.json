@@ -4,5 +4,17 @@
     "file": "default",
     "label": "Arabic RTL",
     "title": "Arabic text with an ink mark and a slider, all laid out right to left."
+  },
+  {
+    "n": 2,
+    "file": "reading-order",
+    "label": "Reading Order",
+    "title": "An English reader whose page scrubber alone runs right to left, as manga reads."
+  },
+  {
+    "n": 3,
+    "file": "arabic-tabs",
+    "label": "Arabic Tabs",
+    "title": "Arabic reader tabs running right to left, with English series titles kept intact."
   }
 ]

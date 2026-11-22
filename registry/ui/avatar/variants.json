@@ -10,5 +10,11 @@
     "file": "variants",
     "label": "Sizes & Group",
     "title": "Three avatar sizes with a check badge, and a stacked group with a count."
+  },
+  {
+    "n": 3,
+    "file": "credits-list",
+    "label": "Credits List",
+    "title": "A chapter's credits: each person's avatar or initials beside their name and role."
   }
 ]

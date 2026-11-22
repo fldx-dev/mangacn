@@ -10,5 +10,11 @@
     "file": "variants",
     "label": "Shadows & Size",
     "title": "Cards with no shadow, an ink shadow and a hatched shadow, then a small card."
+  },
+  {
+    "n": 3,
+    "file": "cover-image",
+    "label": "Cover Image",
+    "title": "A series card with cover art on top, a status badge and two actions."
   }
 ]

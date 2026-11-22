@@ -10,5 +10,11 @@
     "file": "states",
     "label": "All States",
     "title": "Unchecked, checked, disabled, disabled and checked, and invalid checkboxes."
+  },
+  {
+    "n": 3,
+    "file": "task-checklist",
+    "label": "Task Checklist",
+    "title": "A chapter's tasks with descriptions, two ticked and a locked printer step."
   }
 ]
