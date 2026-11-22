@@ -59,7 +59,7 @@ export interface TagsInputProps
    */
   addOnBlur?: boolean;
   /**
-   * Turns the field and its remove buttons off.
+   * Turns the field off: the tags stay, muted and without remove buttons.
    * @default false
    */
   disabled?: boolean;
@@ -195,37 +195,48 @@ export function TagsInput({
           // biome-ignore lint/a11y/noRedundantRoles: `display: contents` drops the implicit role in some browsers.
           <ul ref={listRef} role="list" className="contents">
             {tags.map((tag, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: tags may repeat (allowDuplicates); position tells them apart.
-              <li key={`${tag}-${index}`} data-slot="tags-input-tag" className="flex min-w-0">
+              <li
+                // biome-ignore lint/suspicious/noArrayIndexKey: tags may repeat (allowDuplicates); position tells them apart.
+                key={`${tag}-${index}`}
+                data-slot="tags-input-tag"
+                data-disabled={disabled ? "" : undefined}
+                className="flex min-w-0"
+              >
+                {/* Disabled, a tag is muted text and outline on its paper (AA on paper), and has
+                    no remove button to show. */}
                 <Badge
                   variant="outline"
-                  className="h-6 max-w-full gap-1 pr-0.5 font-[family-name:inherit] text-xs tracking-normal normal-case"
+                  className={cn(
+                    "h-6 max-w-full gap-1 font-[family-name:inherit] text-xs tracking-normal normal-case group-data-disabled/tags-input:text-muted-foreground group-data-disabled/tags-input:[--ink:var(--muted-foreground)]",
+                    !disabled && "pr-0.5",
+                  )}
                 >
                   <span className="truncate">{tag}</span>
-                  <button
-                    type="button"
-                    data-slot="tags-input-tag-remove"
-                    aria-label={words.remove(tag)}
-                    disabled={disabled}
-                    className="relative inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                    onClick={() => {
-                      remove(index);
-                      inputRef.current?.focus();
-                    }}
-                    onKeyDown={(event) => {
-                      const buttons = removeButtons();
-                      const at = buttons.indexOf(event.currentTarget);
-                      if (event.key === "ArrowLeft" && at > 0) {
-                        event.preventDefault();
-                        buttons[at - 1].focus();
-                      } else if (event.key === "ArrowRight") {
-                        event.preventDefault();
-                        (buttons[at + 1] ?? inputRef.current)?.focus();
-                      }
-                    }}
-                  >
-                    <XIcon aria-hidden="true" />
-                  </button>
+                  {!disabled && (
+                    <button
+                      type="button"
+                      data-slot="tags-input-tag-remove"
+                      aria-label={words.remove(tag)}
+                      className="relative inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+                      onClick={() => {
+                        remove(index);
+                        inputRef.current?.focus();
+                      }}
+                      onKeyDown={(event) => {
+                        const buttons = removeButtons();
+                        const at = buttons.indexOf(event.currentTarget);
+                        if (event.key === "ArrowLeft" && at > 0) {
+                          event.preventDefault();
+                          buttons[at - 1].focus();
+                        } else if (event.key === "ArrowRight") {
+                          event.preventDefault();
+                          (buttons[at + 1] ?? inputRef.current)?.focus();
+                        }
+                      }}
+                    >
+                      <XIcon aria-hidden="true" />
+                    </button>
+                  )}
                 </Badge>
               </li>
             ))}

@@ -231,11 +231,26 @@ describe("TagsInput", () => {
     expect(field.getAttribute("aria-describedby")).toBe("genres-error");
   });
 
-  it("turns everything off when disabled", () => {
-    render(<TagsInput aria-label="Genres" defaultValue={["a"]} disabled />);
+  it("turns everything off when disabled: no remove buttons, muted tags", () => {
+    render(<TagsInput aria-label="Genres" defaultValue={["a", "b"]} disabled />);
     expect(input().disabled).toBe(true);
-    expect((screen.getByRole("button", { name: "Remove a" }) as HTMLButtonElement).disabled).toBe(
-      true,
-    );
+    expect(chips()).toEqual(["a", "b"]);
+    // A remove button that cannot be used is not drawn at all.
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
+    expect(document.querySelectorAll('[data-slot="tags-input-tag-remove"]')).toHaveLength(0);
+    // Each tag carries the field's disabled hook, and its badge mutes text and outline on it.
+    for (const tag of document.querySelectorAll<HTMLElement>('[data-slot="tags-input-tag"]')) {
+      expect(tag.hasAttribute("data-disabled")).toBe(true);
+      const badge = tag.querySelector<HTMLElement>('[data-slot="badge"]');
+      expect(badge?.className).toContain("group-data-disabled/tags-input:text-muted-foreground");
+      expect(badge?.className).not.toMatch(/opacity/);
+    }
+  });
+
+  it("keeps editable tags at full ink, each with its remove button", () => {
+    render(<TagsInput aria-label="Genres" defaultValue={["a"]} />);
+    const tag = document.querySelector<HTMLElement>('[data-slot="tags-input-tag"]');
+    expect(tag?.hasAttribute("data-disabled")).toBe(false);
+    expect(screen.getByRole("button", { name: "Remove a" })).not.toBeNull();
   });
 });

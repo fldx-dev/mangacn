@@ -5128,7 +5128,7 @@
           },
           {
             "name": "disabled",
-            "description": "Turns the field and its remove buttons off.",
+            "description": "Turns the field off: the tags stay, muted and without remove buttons.",
             "type": "boolean | undefined",
             "simplifiedType": "boolean",
             "tags": [
