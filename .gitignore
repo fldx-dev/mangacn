@@ -54,6 +54,7 @@ next-env.d.ts
 # route per page block, item gallery and variant stage (every folder under app/view and app/gallery)
 /lib/registry/variants.generated.ts
 /lib/registry/variant-list.generated.ts
+/lib/registry/variant-meta.generated.ts
 /app/view/*/
 /app/gallery/*/
 

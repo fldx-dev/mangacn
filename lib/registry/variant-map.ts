@@ -164,17 +164,6 @@ export const EXTRA_STAGES: readonly { item: string; variant: string; module: str
   { item: "theme", variant: "specimen", module: "@/app/gallery/theme-specimen" },
 ];
 
-/** A numbered component variant, as lib/registry/variant-items.ts lists it. */
-export interface NumberedVariant {
-  /** `c-<component>-<n>`. */
-  name: string;
-  component: string;
-  /** The variant file's name without `.tsx`. */
-  file: string;
-  /** Repo-relative POSIX path of the variant file. */
-  path: string;
-}
-
 export interface RouteFile {
   /** Repo-relative POSIX path of the route file. */
   path: string;
@@ -193,11 +182,7 @@ const moduleOf = (file: string) => `@/${file.slice(0, -".tsx".length)}`;
  * pages themselves are the shared shells next to them (app/view/block-view.tsx,
  * app/gallery/variant-stage.tsx, app/gallery/item-gallery.tsx). Throws on a name that would collide.
  */
-export function renderVariantRoutes(
-  entries: VariantEntry[],
-  pages: PageEntry[] = [],
-  numbered: readonly NumberedVariant[] = [],
-): RouteFile[] {
+export function renderVariantRoutes(entries: VariantEntry[], pages: PageEntry[] = []): RouteFile[] {
   const header = [VARIANT_MAP_HEADER, 'import type { Metadata } from "next";'];
   const files: RouteFile[] = pages.map((page) => ({
     path: `app/view/${page.block}/page.tsx`,
@@ -261,28 +246,6 @@ export function renderVariantRoutes(
         "",
         "export default function Stage() {",
         `  return <VariantStage item=${JSON.stringify(stage.item)} variant=${JSON.stringify(stage.variant)} component={Variant} />;`,
-        "}",
-        "",
-      ].join("\n"),
-    });
-  }
-  // A component variant alone at `/view/c-<component>-<n>` (SPEC-components-10 §5.4): its stage,
-  // under the install name the docs card links to.
-  for (const variant of numbered) {
-    if (pages.some((page) => page.block === variant.name)) {
-      throw new Error(`Variant "${variant.name}" collides with a page block`);
-    }
-    files.push({
-      path: `app/view/${variant.name}/page.tsx`,
-      source: [
-        ...header,
-        `import Variant from ${JSON.stringify(moduleOf(variant.path))};`,
-        'import { VariantStage, STAGE_METADATA } from "../../gallery/variant-stage";',
-        "",
-        "export const metadata: Metadata = STAGE_METADATA;",
-        "",
-        "export default function Stage() {",
-        `  return <VariantStage item=${JSON.stringify(variant.component)} variant=${JSON.stringify(variant.file)} component={Variant} />;`,
         "}",
         "",
       ].join("\n"),

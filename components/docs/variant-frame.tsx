@@ -47,12 +47,12 @@ export interface VariantFrameProps {
 /**
  * One variant: for a component, a header with its label (the sidebar's `#c-<component>-<n>`
  * anchor), its title and a chip that copies its install command; then Preview / Code tabs and a
- * link to the variant alone. Throws on an unknown variant.
+ * link to its stage. Throws on an unknown variant.
  */
 export async function VariantFrame({ item, variant, title, height }: VariantFrameProps) {
   const meta = docVariant(item, variant);
   const preview = await VariantPreview({ item, variant, title, height });
-  const alone = meta ? `/view/${meta.name}` : `/gallery/${item}/${variant}`;
+  const alone = `/gallery/${item}/${variant}`;
   const code = await highlightVariantSource(item, variant);
 
   return (

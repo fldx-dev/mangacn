@@ -27,7 +27,7 @@ describe("VariantFrame", () => {
     expect(container.querySelectorAll('[data-slot="speech-bubble"]')).toHaveLength(21);
     expect(container.querySelector("iframe")).toBeNull();
     const alone = screen.getByRole("link", { name: `Open in a new tab: ${meta?.label}` });
-    expect(alone).toHaveProperty("pathname", `/view/${meta?.name}`);
+    expect(alone).toHaveProperty("pathname", "/gallery/speech-bubble/tails");
     expect(alone.getAttribute("target")).toBe("_blank");
   });
 

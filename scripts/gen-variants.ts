@@ -5,8 +5,8 @@
  * app/gallery (MANGA-21), removing the ones that no longer have a variant. Exits non-zero naming any
  * item without variants/default.tsx. See SPEC-components §6.
  * Then writes every component variant as an installable item, public/r/c-<component>-<n>.json,
- * numbered by registry/ui/<component>/variants.json, and its page alone at
- * app/view/c-<component>-<n> (SPEC-components-10 §4, §5.4).
+ * numbered by registry/ui/<component>/variants.json, and their labels and titles as data in
+ * lib/registry/variant-meta.generated.ts for the docs (SPEC-components-10 §4).
  *
  * Usage: pnpm gen:variants (also runs in predev/prebuild)
  */
@@ -17,6 +17,8 @@ import {
   buildVariantItems,
   listComponentVariants,
   VARIANT_INDEX_FILE,
+  VARIANT_META_HEADER,
+  VARIANT_META_PATH,
 } from "../lib/registry/variant-items";
 import {
   collectPages,
@@ -41,17 +43,18 @@ function write(file: string, source: string): boolean {
 let modules: { file: string; source: string }[];
 let routes: { path: string; source: string }[];
 let built: ReturnType<typeof buildVariantItems>;
+let numbered: ReturnType<typeof listComponentVariants>;
 try {
   const registry = loadRegistry();
   const variants = collectVariants(registry);
   const pages = collectPages(registry);
-  const numbered = listComponentVariants(registry);
+  numbered = listComponentVariants(registry);
   built = buildVariantItems(numbered, registry);
   modules = [
     { file: VARIANT_MAP_PATH, source: renderVariantMap(variants, pages) },
     { file: VARIANT_LIST_PATH, source: renderVariantList(variants, pages) },
   ];
-  routes = renderVariantRoutes(variants, pages, numbered);
+  routes = renderVariantRoutes(variants, pages);
 } catch (error) {
   console.error(`✗ ${(error as Error).message}`);
   process.exit(1);
@@ -113,4 +116,29 @@ writeFileSync(
   `${JSON.stringify({ items: index }, null, 2)}\n`,
 );
 console.log(`✓ wrote ${built.items.length} variant items to public/r`);
+
+// The docs read the numbers, labels and titles from this module, not from disk: a docs route that
+// reads files traces the whole project into its server bundle (SPEC-components-10 §4.2).
+const installable = new Set(built.items.map((item) => item.name));
+const meta = numbered.map(({ component, n, file, label, title, name }) => ({
+  component,
+  n,
+  file,
+  label,
+  title,
+  name,
+  installable: installable.has(name),
+}));
+const metaSource = [
+  VARIANT_META_HEADER,
+  'import type { DocVariant } from "@/lib/docs/variant-meta";',
+  "",
+  `export const variantMeta: readonly DocVariant[] = ${JSON.stringify(meta, null, 2)};`,
+  "",
+].join("\n");
+console.log(
+  write(VARIANT_META_PATH, metaSource)
+    ? `✓ wrote ${VARIANT_META_PATH}`
+    : `✓ ${VARIANT_META_PATH} is up to date`,
+);
 for (const { name, reason } of built.skipped) console.log(`  → ${name} not installable: ${reason}`);

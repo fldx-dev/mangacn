@@ -1,32 +1,36 @@
-import { loadRegistry } from "@/lib/registry";
-import {
-  buildVariantItems,
-  type ComponentVariant,
-  listComponentVariants,
-} from "@/lib/registry/variant-items";
+import { variantMeta } from "@/lib/registry/variant-meta.generated";
 import { PACKAGE_MANAGERS, type PackageManager, RUNNERS } from "./package-managers";
 
-/** A component variant as the docs show it: its number, label and title, and whether it installs. */
-export interface DocVariant extends ComponentVariant {
-  /** False for a variant that imports a site-only file (code-block's highlighter). */
+/**
+ * A component variant as the docs show it: its install name, number, label and title, and
+ * whether it installs. Read from lib/registry/variant-meta.generated.ts, which `pnpm
+ * gen:variants` writes from registry/ui/<component>/variants.json: the docs layout and pages
+ * read no files, so their server bundles stay small (SPEC-components-10 §4.2).
+ */
+export interface DocVariant {
+  component: string;
+  n: number;
+  /** The variant file's name without `.tsx`. */
+  file: string;
+  label: string;
+  title: string;
+  /** `c-<component>-<n>`. */
+  name: string;
+  /** False for a variant that imports a file no item ships. */
   installable: boolean;
 }
 
-let variants: Map<string, DocVariant[]> | undefined;
+let byComponent: Map<string, DocVariant[]> | undefined;
 
-/** Every component's variants by component, read once from disk (server only). */
+/** Every component's variants by component, in number order. */
 function variantsByComponent(): Map<string, DocVariant[]> {
-  if (!variants) {
-    const registry = loadRegistry();
-    const list = listComponentVariants(registry);
-    const installable = new Set(buildVariantItems(list, registry).items.map((item) => item.name));
-    variants = new Map();
-    for (const variant of list) {
-      const entry = { ...variant, installable: installable.has(variant.name) };
-      variants.set(variant.component, [...(variants.get(variant.component) ?? []), entry]);
+  if (!byComponent) {
+    byComponent = new Map();
+    for (const variant of variantMeta) {
+      byComponent.set(variant.component, [...(byComponent.get(variant.component) ?? []), variant]);
     }
   }
-  return variants;
+  return byComponent;
 }
 
 /** A component's variants in number order; empty for a block or an unknown name. */
@@ -41,7 +45,7 @@ export function docVariant(component: string, file: string): DocVariant | undefi
 
 /** Every component variant, by component then number. */
 export function allDocVariants(): readonly DocVariant[] {
-  return [...variantsByComponent().values()].flat();
+  return variantMeta;
 }
 
 /** `pnpm dlx shadcn@latest add @mangacn/c-stamp-3 --overwrite` for every package manager. */
