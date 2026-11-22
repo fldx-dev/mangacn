@@ -1,3 +1,4 @@
+import { findNeighbour, type Item } from "fumadocs-core/page-tree";
 import { DocsBody, DocsDescription, DocsTitle } from "fumadocs-ui/layouts/docs/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -38,8 +39,15 @@ async function DocsContent({ params }: Pick<DocsProps, "params">) {
   // not-found page with a 200 (`dynamicParams = false` is not allowed with cacheComponents).
   if (!page) notFound();
   const MDX = page.data.body;
+  // Previous and next from the docs tree itself: the layout's tree adds each component's
+  // variant anchors as pages (lib/docs/sidebar-tree.tsx), which the footer would step through.
+  const { previous, next } = findNeighbour(source.getPageTree(), page.url);
   return (
-    <SiteDocsPage toc={page.data.toc} full={page.data.full}>
+    <SiteDocsPage
+      toc={page.data.toc}
+      full={page.data.full}
+      footer={{ items: { previous: footerItem(previous), next: footerItem(next) } }}
+    >
       <script
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD built from our own frontmatter, `<` escaped.
@@ -55,4 +63,9 @@ async function DocsContent({ params }: Pick<DocsProps, "params">) {
       </DocsBody>
     </SiteDocsPage>
   );
+}
+
+/** The fields the footer shows, so the client page gets no more of the tree than it needs. */
+function footerItem(item: Item | undefined) {
+  return item && { name: item.name, description: item.description, url: item.url };
 }
