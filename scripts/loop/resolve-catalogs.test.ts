@@ -1,10 +1,10 @@
 // @vitest-environment node
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { appendFileSync, cpSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import ts from "typescript";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import {
   entries,
   kindOf,
@@ -18,15 +18,29 @@ import {
 // Each case is a real merge conflict in a throwaway repository: a base commit, `main` and
 // `feature` changing the same files, then `git merge feature` on main, as the loop does it.
 
-// A case runs about fifteen git processes one after another. Alone that is 3 to 4 s on Windows;
-// in a full unit run on a busy machine each spawn waits for a core, and a case took 9 to 16 s
-// (MANGA-10). The default 5 s timed them out while the code was right.
+// This file runs in a process of its own (the "git" project in vitest.config.mts): among worker
+// threads on Windows, a child another file starts inherits these git pipes, and a case waited
+// 144 s for it (Task 164). A git process still costs about 100 ms on Windows, so the repository
+// with its config is made once and copied per case, and the three commits are written by one
+// `git fast-import`: three spawns per fixture, down from twelve. The resolver under test runs
+// up to 13 more in a case; the 30 s leaves room for them on a loaded machine.
 vi.setConfig({ testTimeout: 30_000 });
 
+let template: string;
 const roots: string[] = [];
+beforeAll(() => {
+  template = mkdtempSync(path.join(tmpdir(), "mangacn-resolve-template-"));
+  git(template, "init", "-q", "-b", "main");
+  appendFileSync(
+    path.join(template, ".git", "config"),
+    "[user]\n\tname = test\n\temail = test@example.invalid\n" +
+      "[core]\n\tautocrlf = false\n[commit]\n\tgpgsign = false\n",
+  );
+});
 afterEach(() => {
   for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
 });
+afterAll(() => rmSync(template, { recursive: true, force: true }));
 
 type Files = Record<string, string>;
 
@@ -34,31 +48,34 @@ function git(root: string, ...args: string[]) {
   return execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: "pipe" });
 }
 
-function write(root: string, files: Files) {
-  for (const [file, text] of Object.entries(files)) {
-    mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
-    writeFileSync(path.join(root, file), text);
-  }
+/** A `git fast-import` commit of `files` to `branch`, on top of commit `from`. */
+function commit(branch: string, mark: number, message: string, files: Files, from?: number) {
+  const data = (text: string) => `data ${Buffer.byteLength(text)}\n${text}\n`;
+  return [
+    `commit refs/heads/${branch}\nmark :${mark}\n`,
+    "committer test <test@example.invalid> 0 +0000\n",
+    data(message),
+    from === undefined ? "" : `from :${from}\n`,
+    ...Object.entries(files).map(([file, text]) => `M 100644 inline ${file}\n${data(text)}`),
+    "\n",
+  ].join("");
 }
 
 /** A repository mid-merge of `feature` into `main`, with the conflicts git left. */
 function conflict(base: Files, ours: Files, theirs: Files): string {
   const root = mkdtempSync(path.join(tmpdir(), "mangacn-resolve-test-"));
   roots.push(root);
-  git(root, "init", "-q", "-b", "main");
-  git(root, "config", "user.name", "test");
-  git(root, "config", "user.email", "test@example.invalid");
-  git(root, "config", "core.autocrlf", "false");
-  git(root, "config", "commit.gpgsign", "false");
-  write(root, base);
-  git(root, "add", "-A");
-  git(root, "commit", "-q", "-m", "base");
-  git(root, "checkout", "-q", "-b", "feature");
-  write(root, theirs);
-  git(root, "commit", "-q", "-am", "theirs");
-  git(root, "checkout", "-q", "main");
-  write(root, ours);
-  git(root, "commit", "-q", "-am", "ours");
+  cpSync(path.join(template, ".git"), path.join(root, ".git"), { recursive: true });
+  execFileSync("git", ["fast-import", "--quiet"], {
+    cwd: root,
+    stdio: "pipe",
+    input:
+      commit("main", 1, "base", base) +
+      commit("feature", 2, "theirs", theirs, 1) +
+      commit("main", 3, "ours", ours, 1),
+  });
+  // main now holds ours; check it out, as the branch the loop merges into.
+  git(root, "reset", "-q", "--hard");
   try {
     git(root, "merge", "--no-ff", "-m", "merge", "feature");
   } catch {

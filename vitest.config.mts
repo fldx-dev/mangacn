@@ -1,6 +1,9 @@
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
+
+/** The suite that builds real git repositories and runs git on them, synchronously. */
+const GIT_REPO_SUITE = "scripts/loop/resolve-catalogs.test.ts";
 
 export default defineConfig({
   plugins: [react()],
@@ -439,12 +442,25 @@ export default defineConfig({
     // CI runners are quiet, so they keep the default.
     ...(process.env.CI ? {} : { maxWorkers: "50%" }),
     setupFiles: ["./vitest.setup.ts"],
-    include: [
-      "registry/**/*.test.{ts,tsx}",
-      "lib/**/*.test.ts",
-      "components/**/*.test.{ts,tsx}",
-      "app/**/*.test.{ts,tsx}",
-      "scripts/**/*.test.ts",
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          include: [
+            "registry/**/*.test.{ts,tsx}",
+            "lib/**/*.test.ts",
+            "components/**/*.test.{ts,tsx}",
+            "app/**/*.test.{ts,tsx}",
+            "scripts/**/*.test.ts",
+          ],
+          exclude: [...configDefaults.exclude, GIT_REPO_SUITE],
+        },
+      },
+      // On Windows a child that a sibling worker thread starts inherits this suite's git pipes, and
+      // execFileSync then waits for that child to exit too: a case stalled for 144 s (Task 164).
+      // In a process of its own, only its own spawns share its handles.
+      { extends: true, test: { name: "git", include: [GIT_REPO_SUITE], pool: "forks" } },
     ],
     coverage: {
       enabled: true,

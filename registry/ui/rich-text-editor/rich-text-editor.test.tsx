@@ -406,18 +406,29 @@ describe("RichTextEditor", () => {
     expect(document.querySelector('[data-slot="rich-text-editor-placeholder"]')).toBeNull();
   });
 
+  // A quadratic pass over crafted HTML is the failure guarded here. A time limit (200 ms for 100k
+  // characters) failed under coverage on CI with the code linear, so the test checks growth: four
+  // times the input takes at most four times as long when linear (less, as the editor around it
+  // costs the same at any size), and sixteen times when quadratic.
   it.each([
-    ["nested marks", "<b>x".repeat(25_000)],
-    ["unclosed lists", `${"<ul>".repeat(12_500)}${"</li>".repeat(10_000)}`],
-    ["unterminated tags", "<a".repeat(50_000)],
-    ["unterminated script tags", "<script ".repeat(12_500)],
-    ["unclosed scripts", "<script>".repeat(12_500)],
-    ["unterminated comments", "<!--".repeat(25_000)],
-  ])("renders crafted HTML of 100k characters in linear time: %s", (_, html) => {
-    expect(html.length).toBeGreaterThanOrEqual(100_000);
-    const start = performance.now();
-    renderToString(<RichTextEditor aria-label="Note" defaultValue={html} />);
-    expect(performance.now() - start).toBeLessThan(200);
+    ["nested marks", (n: number) => "<b>x".repeat(n / 4)],
+    ["unclosed lists", (n: number) => `${"<ul>".repeat(n / 8)}${"</li>".repeat(n / 10)}`],
+    ["unterminated tags", (n: number) => "<a".repeat(n / 2)],
+    ["unterminated script tags", (n: number) => "<script ".repeat(n / 8)],
+    ["unclosed scripts", (n: number) => "<script>".repeat(n / 8)],
+    ["unterminated comments", (n: number) => "<!--".repeat(n / 4)],
+  ])("renders crafted HTML in linear time: %s", (_, craft) => {
+    const time = (html: string) => {
+      const start = performance.now();
+      renderToString(<RichTextEditor aria-label="Note" defaultValue={html} />);
+      return performance.now() - start;
+    };
+    const small = craft(50_000);
+    const large = craft(200_000);
+    expect(large.length).toBeGreaterThanOrEqual(200_000);
+    // The faster of two runs each, so a pause for garbage collection does not count.
+    const smallTime = Math.min(time(small), time(small));
+    expect(Math.min(time(large), time(large)) / smallTime).toBeLessThan(8);
   });
 
   it("hides the rest of an unclosed script or style, as the browser does", () => {
