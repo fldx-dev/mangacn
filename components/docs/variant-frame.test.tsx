@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { docVariant } from "@/lib/docs/variant-meta";
+import { docVariant, variantDisplayName } from "@/lib/docs/variant-meta";
 import { axe, expectNoA11yViolations } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { VariantFrame } from "./variant-frame";
@@ -26,7 +26,9 @@ describe("VariantFrame", () => {
     // Three shapes × seven tails, drawn in the page itself rather than an iframe.
     expect(container.querySelectorAll('[data-slot="speech-bubble"]')).toHaveLength(21);
     expect(container.querySelector("iframe")).toBeNull();
-    const alone = screen.getByRole("link", { name: `Open in a new tab: ${meta?.label}` });
+    const alone = screen.getByRole("link", {
+      name: `Open in a new tab: ${meta?.componentTitle}: ${meta?.label}`,
+    });
     expect(alone).toHaveProperty("pathname", "/gallery/speech-bubble/tails");
     expect(alone.getAttribute("target")).toBe("_blank");
   });
@@ -77,7 +79,7 @@ describe("VariantFrame", () => {
 
   it("renders an overlay item as a titled iframe of its stage", async () => {
     render(await VariantFrame({ item: "dialog", variant: "default", height: "20rem" }));
-    const frame = screen.getByTitle("dialog / default");
+    const frame = screen.getByTitle(variantDisplayName("dialog", "default"));
     expect(frame.tagName).toBe("IFRAME");
     expect(frame.getAttribute("src")).toBe("/gallery/dialog/default");
     expect(frame.style.height).toBe("20rem");
@@ -103,7 +105,7 @@ describe("VariantFrame", () => {
       await VariantFrame({ item: "sidebar", variant: "default", height: "20rem" }),
     );
     const box = container.querySelector<HTMLElement>('[data-slot="variant-stage-box"]');
-    const frame = screen.getByTitle("sidebar / default");
+    const frame = screen.getByTitle(variantDisplayName("sidebar", "default"));
     expect(frame.getAttribute("src")).toBe("/gallery/sidebar/default");
     expect(box?.style.height).toBe("20rem");
     const stage = frame.parentElement as HTMLElement;

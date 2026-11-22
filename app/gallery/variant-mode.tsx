@@ -22,9 +22,10 @@ const PRESET_NAME = /^[a-z][a-z0-9-]*$/;
  *
  * Also renders the stage's accessible name. It lives here, not beside the variant, because a
  * sibling there would shift the variant's `useId` values, which seed every rough.js drawing. The
- * routes are static (MANGA-21), so the page passes the item and variant; the gallery has no variant.
+ * routes are static (MANGA-21), so the page passes the name (`Stamp: On a Card`, or the item's
+ * name on its gallery).
  */
-export function VariantMode({ item, variant }: { item: string; variant?: string }) {
+export function VariantMode({ label }: { label: string }) {
   useLayoutEffect(() => {
     const root = document.documentElement;
     const search = new URLSearchParams(window.location.search);
@@ -53,5 +54,9 @@ export function VariantMode({ item, variant }: { item: string; variant?: string 
     };
   }, []);
 
-  return <span id="variant-stage-label" className="sr-only">{`${item} / ${variant}`}</span>;
+  return (
+    <span id="variant-stage-label" className="sr-only">
+      {label}
+    </span>
+  );
 }

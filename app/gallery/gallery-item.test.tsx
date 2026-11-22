@@ -1,6 +1,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { OVERLAY_ITEMS } from "@/components/docs/variant-frame";
+import { variantDisplayName } from "@/lib/docs/variant-meta";
 import { getVariantLoader, listVariants } from "@/lib/registry/variants";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { GalleryItem } from "./gallery-item";
@@ -41,7 +42,7 @@ describe("GalleryItem", () => {
         item,
       ).toEqual(variants.map(({ variant }) => `/gallery/${item}/${variant}`));
       // The docs' frame: named by item and variant, 32rem tall, following the page's theme.
-      expect(frames[0].getAttribute("title")).toBe(`${item} / ${variants[0].variant}`);
+      expect(frames[0].getAttribute("title")).toBe(variantDisplayName(item, variants[0].variant));
       expect(frames[0].style.height).toBe("32rem");
       cleanup();
     }

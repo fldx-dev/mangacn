@@ -24,7 +24,7 @@ export function ItemGallery({ item, variants }: ItemGalleryProps) {
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-4 py-10 text-ink sm:px-8">
       <Suspense fallback={null}>
         <GalleryItem item={item} variants={variants} />
-        <VariantMode item={item} />
+        <VariantMode label={item} />
       </Suspense>
     </main>
   );

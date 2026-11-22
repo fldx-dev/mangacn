@@ -4,7 +4,7 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { cacheLife } from "next/cache";
 import { inkDark, inkLight } from "@/lib/docs/code-theme";
 import { isSidebarShell } from "@/lib/docs/sidebar-shell";
-import { docVariant, variantInstallCommands } from "@/lib/docs/variant-meta";
+import { docVariant, variantDisplayName, variantInstallCommands } from "@/lib/docs/variant-meta";
 import { getVariantEntry, getVariantSource } from "@/lib/docs/variant-source";
 import { getVariantLoader } from "@/lib/registry/variants";
 import { ScaledFrame } from "./block-preview";
@@ -38,7 +38,7 @@ export const OVERLAY_ITEMS: ReadonlySet<string> = new Set([
 export interface VariantFrameProps {
   item: string;
   variant: string;
-  /** The iframe's accessible name (overlay items). Defaults to `<item> / <variant>`. */
+  /** The iframe's accessible name (overlay items). Defaults to `variantDisplayName`. */
   title?: string;
   /** The iframe's height (overlay items). */
   height?: string;
@@ -80,7 +80,7 @@ export async function VariantFrame({ item, variant, title, height }: VariantFram
             className="self-end text-sm text-fd-muted-foreground underline underline-offset-4 hover:text-fd-foreground"
           >
             Open in a new tab
-            <span className="sr-only">: {meta ? meta.label : `${item} / ${variant}`}</span>
+            <span className="sr-only">: {variantDisplayName(item, variant)}</span>
           </a>
         </Tab>
         <Tab value="Code">{code}</Tab>
@@ -121,7 +121,7 @@ export async function VariantPreview({
     return (
       <ScaledFrame
         src={`/gallery/${item}/${variant}`}
-        title={title ?? `${item} / ${variant}`}
+        title={title ?? variantDisplayName(item, variant)}
         width={PREVIEW_WIDTHS[1].width}
         fill
         nativeBelow={SHELL_DESKTOP_MIN_BOX}
@@ -136,7 +136,7 @@ export async function VariantPreview({
     return (
       <StageFrame
         src={`/gallery/${item}/${variant}`}
-        title={title ?? `${item} / ${variant}`}
+        title={title ?? variantDisplayName(item, variant)}
         height={height}
         inert={inert}
       />
@@ -146,7 +146,7 @@ export async function VariantPreview({
   // A variant wider than its box scrolls sideways; the box takes focus so a keyboard can scroll it.
   return (
     <section
-      aria-label={`${item} / ${variant}`}
+      aria-label={variantDisplayName(item, variant)}
       // biome-ignore lint/a11y/noNoninteractiveTabindex: a scroll container must be focusable
       tabIndex={0}
       className={cn(
@@ -171,6 +171,6 @@ async function highlightVariantSource(item: string, variant: string) {
     code: getVariantSource(item, variant),
     lang: "tsx",
     themes: { light: inkLight, dark: inkDark },
-    codeblock: { viewportProps: { "aria-label": `${item} / ${variant}: source` } },
+    codeblock: { viewportProps: { "aria-label": `${variantDisplayName(item, variant)}: source` } },
   });
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { type ComponentType, Suspense } from "react";
 import { STAGE_FOCUS_SCRIPT } from "@/lib/docs/stage-focus";
+import { variantDisplayName } from "@/lib/docs/variant-meta";
 import { VariantMode } from "./variant-mode";
 
 // Variant stage: one variant, centred on paper, no chrome. Playwright drives it now and
@@ -34,7 +35,7 @@ export function VariantStage({ item, variant, component: Component }: VariantSta
       <Suspense fallback={null}>
         <Component />
         {/* After the variant, so `data-variant-ready` means the variant is on the page too. */}
-        <VariantMode item={item} variant={variant} />
+        <VariantMode label={variantDisplayName(item, variant)} />
         {/*
           Embedded in a docs page, a stage does not take the reader's focus until they go there
           (lib/docs/stage-focus.ts). Inline, so it runs as the document is parsed, before the

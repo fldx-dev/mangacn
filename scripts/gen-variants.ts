@@ -44,11 +44,13 @@ let modules: { file: string; source: string }[];
 let routes: { path: string; source: string }[];
 let built: ReturnType<typeof buildVariantItems>;
 let numbered: ReturnType<typeof listComponentVariants>;
+let componentTitles: Map<string, string>;
 try {
   const registry = loadRegistry();
   const variants = collectVariants(registry);
   const pages = collectPages(registry);
   numbered = listComponentVariants(registry);
+  componentTitles = new Map(registry.items.map((item) => [item.name, item.title ?? item.name]));
   built = buildVariantItems(numbered, registry);
   modules = [
     { file: VARIANT_MAP_PATH, source: renderVariantMap(variants, pages) },
@@ -122,6 +124,7 @@ console.log(`✓ wrote ${built.items.length} variant items to public/r`);
 const installable = new Set(built.items.map((item) => item.name));
 const meta = numbered.map(({ component, n, file, label, title, name }) => ({
   component,
+  componentTitle: componentTitles.get(component) ?? component,
   n,
   file,
   label,

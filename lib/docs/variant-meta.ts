@@ -9,6 +9,8 @@ import { PACKAGE_MANAGERS, type PackageManager, RUNNERS } from "./package-manage
  */
 export interface DocVariant {
   component: string;
+  /** The component's catalog title, `Stamp`. */
+  componentTitle: string;
   n: number;
   /** The variant file's name without `.tsx`. */
   file: string;
@@ -41,6 +43,15 @@ export function componentVariants(component: string): readonly DocVariant[] {
 /** One variant by its component and file name, or `undefined` (a block's variant). */
 export function docVariant(component: string, file: string): DocVariant | undefined {
   return componentVariants(component).find((variant) => variant.file === file);
+}
+
+/**
+ * A variant's name for people and assistive tech: `Stamp: On a Card` for a component's
+ * variant, `chapter-list / default` for a block's (blocks have no labels).
+ */
+export function variantDisplayName(component: string, file: string): string {
+  const meta = docVariant(component, file);
+  return meta ? `${meta.componentTitle}: ${meta.label}` : `${component} / ${file}`;
 }
 
 /** Every component variant, by component then number. */

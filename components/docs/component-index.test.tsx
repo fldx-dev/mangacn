@@ -1,6 +1,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { CATEGORY_LABELS, docItems } from "@/lib/docs/catalog";
+import { variantDisplayName } from "@/lib/docs/variant-meta";
 import { loadRegistry } from "@/lib/registry";
 import { listVariants } from "@/lib/registry/variants";
 import { stubGetAnimations } from "@/lib/test/animations";
@@ -109,7 +110,7 @@ describe("ComponentIndex", () => {
 
   it("shows overlay items through their stage iframe", async () => {
     render(await ComponentIndex());
-    expect(screen.getByTitle("dialog / default").getAttribute("src")).toBe(
+    expect(screen.getByTitle(variantDisplayName("dialog", "default")).getAttribute("src")).toBe(
       "/gallery/dialog/default",
     );
     expect(document.querySelectorAll("iframe")).toHaveLength(OVERLAY_ITEMS.size);

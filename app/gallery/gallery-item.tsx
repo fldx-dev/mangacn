@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { ComponentType } from "react";
 import { StageFrame } from "@/components/docs/stage-frame";
 import { OVERLAY_ITEMS } from "@/components/docs/variant-frame";
+import { variantDisplayName } from "@/lib/docs/variant-meta";
 import { loadRegistry } from "@/lib/registry";
 import { listVariants } from "@/lib/registry/variant-list";
 
@@ -83,7 +84,7 @@ export function GalleryItem({
           {OVERLAY_ITEMS.has(item) ? (
             <StageFrame
               src={`/gallery/${item}/${variant}`}
-              title={`${item} / ${variant}`}
+              title={variantDisplayName(item, variant)}
               height="32rem"
             />
           ) : (
