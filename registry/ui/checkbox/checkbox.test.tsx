@@ -49,6 +49,26 @@ describe("Checkbox", () => {
     expect(one).toEqual(two);
   });
 
+  it("draws a minus, not a check, when indeterminate", () => {
+    render(<Checkbox aria-label="Select all" indeterminate />);
+    const checkbox = screen.getByRole("checkbox");
+    expect(checkbox.getAttribute("aria-checked")).toBe("mixed");
+    // Base UI drops data-checked on a mixed box, so it fills by data-indeterminate.
+    for (const name of [
+      "data-indeterminate:bg-primary",
+      "data-indeterminate:text-primary-foreground",
+    ]) {
+      expect(checkbox.classList.contains(name), name).toBe(true);
+    }
+    const indicator = checkbox.querySelector('[data-slot="checkbox-indicator"]');
+    expect(indicator?.hasAttribute("data-indeterminate")).toBe(true);
+    const minus = indicator?.querySelector(".lucide-minus");
+    expect(minus).not.toBeNull();
+    expect(minus?.classList.contains("in-data-indeterminate:block")).toBe(true);
+    const check = indicator?.querySelector(".lucide-check");
+    expect(check?.classList.contains("in-data-indeterminate:hidden")).toBe(true);
+  });
+
   it("toggles with Space, like stock", () => {
     render(<Checkbox aria-label="Agree" />);
     const checkbox = screen.getByRole("checkbox");

@@ -40,6 +40,7 @@ export default function TableRowSelectionVariant() {
               <Checkbox
                 aria-label="Select every page"
                 checked={allSelected}
+                indeterminate={selected.length > 0 && !allSelected}
                 onCheckedChange={(checked) =>
                   setSelected(checked ? pages.map((page) => page.number) : [])
                 }
