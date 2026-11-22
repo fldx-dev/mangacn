@@ -58,6 +58,10 @@ async function ownPropsTable(item: string, file: string, name: string) {
         path={file}
         name={name}
         shiki={{ themes: { light: inkLight, dark: inkDark } }}
+        // No table id, so no row ids: Fumadocs writes an opened row's id to the URL with
+        // `history.replaceState(null, …)`, and after a client-side navigation that null state
+        // makes Next.js scroll the page to the top on the first row opened.
+        id={undefined}
       />
     </div>
   );
