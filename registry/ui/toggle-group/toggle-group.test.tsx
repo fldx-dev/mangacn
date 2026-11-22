@@ -65,6 +65,19 @@ describe("ToggleGroup", () => {
     }
   });
 
+  it("places rules and joined corners with logical sides, so right to left mirrors them", () => {
+    render(<Group spacing={0} />);
+    for (const item of screen.getAllByRole("button")) {
+      const rule = framesOf(item).find((frame) => frame.dataset.shape === "line");
+      const classes = [...(rule?.classList ?? []), ...item.classList];
+      expect(classes.filter((name) => /(^|:)(-?(right|left)|rounded-[lr])-/.test(name))).toEqual(
+        [],
+      );
+      expect(classes.some((name) => name.includes(":-end-["))).toBe(true);
+      expect(classes).toContain("group-data-horizontal/toggle-group:rtl:-translate-x-1/2");
+    }
+  });
+
   it("presses one item at a time, or several with multiple", () => {
     render(<Group defaultValue={["page"]} />);
     const [page, spread] = screen.getAllByRole("button");
