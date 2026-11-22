@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Rushing Title",
+    "title": "Speed lines rushing past behind a shouted line of text."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Direction & Density",
+    "title": "Four tiles with left, dense right, sparse toned and off-centre speed lines."
+  }
+]

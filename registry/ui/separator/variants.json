@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Heading & Links",
+    "title": "A line under a chapter heading and short dividers between three links."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Both Orientations",
+    "title": "A horizontal separator and a vertical one between two words."
+  }
+]

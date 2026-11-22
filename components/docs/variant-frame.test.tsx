@@ -1,5 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { docVariant } from "@/lib/docs/variant-meta";
 import { axe, expectNoA11yViolations } from "@/lib/test/axe";
 import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { VariantFrame } from "./variant-frame";
@@ -18,16 +19,52 @@ afterEach(() => {
 });
 
 describe("VariantFrame", () => {
-  it("renders an inline variant in the Preview tab, with a link to its stage", async () => {
+  it("renders an inline variant in the Preview tab, with a link to the variant alone", async () => {
+    const meta = docVariant("speech-bubble", "tails");
     const { container } = render(await VariantFrame({ item: "speech-bubble", variant: "tails" }));
     expect(screen.getByRole("tab", { name: "Preview" })).toHaveProperty("ariaSelected", "true");
     // Three shapes × seven tails, drawn in the page itself rather than an iframe.
     expect(container.querySelectorAll('[data-slot="speech-bubble"]')).toHaveLength(21);
     expect(container.querySelector("iframe")).toBeNull();
-    expect(screen.getByRole("link", { name: "Open stage: speech-bubble / tails" })).toHaveProperty(
-      "pathname",
-      "/gallery/speech-bubble/tails",
+    const alone = screen.getByRole("link", { name: `Open in a new tab: ${meta?.label}` });
+    expect(alone).toHaveProperty("pathname", `/view/${meta?.name}`);
+    expect(alone.getAttribute("target")).toBe("_blank");
+  });
+
+  it("heads a component's variant with its anchored label, title and install chip", async () => {
+    const meta = docVariant("speech-bubble", "tails");
+    render(await VariantFrame({ item: "speech-bubble", variant: "tails" }));
+    const heading = screen.getByRole("heading", { level: 3, name: meta?.label });
+    expect(heading.id).toBe(meta?.name);
+    expect(screen.getByText(meta?.title ?? "")).toBeTruthy();
+    const chip = screen.getByRole("button", {
+      name: `Copy the install command for @mangacn/${meta?.name}`,
+    });
+    expect(chip.textContent).toContain(`@mangacn/${meta?.name}`);
+  });
+
+  it("copies the install line for the package manager picked in the install tabs", async () => {
+    const writeText = vi.fn(async () => {});
+    vi.stubGlobal("navigator", { ...navigator, clipboard: { writeText } });
+    window.sessionStorage.setItem("package-manager", "bun");
+    render(await VariantFrame({ item: "stamp", variant: "over-a-card" }));
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Copy the install command for @mangacn/c-stamp-3" }),
+      );
+    });
+    expect(writeText).toHaveBeenCalledWith(
+      "bunx --bun shadcn@latest add @mangacn/c-stamp-3 --overwrite",
     );
+    window.sessionStorage.removeItem("package-manager");
+  });
+
+  it("gives a block's variant no header, and links it to its gallery stage", async () => {
+    render(await VariantFrame({ item: "chapter-list", variant: "default" }));
+    expect(screen.queryByRole("heading", { level: 3 })).toBeNull();
+    expect(
+      screen.getByRole("link", { name: "Open in a new tab: chapter-list / default" }),
+    ).toHaveProperty("pathname", "/gallery/chapter-list/default");
   });
 
   it("shows the variant source with the install import in the Code tab", async () => {

@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Project Files",
+    "title": "A manga project's folders and files, with two folders open and a page selected."
+  },
+  {
+    "n": 2,
+    "file": "controlled",
+    "label": "Controlled State",
+    "title": "A series library whose open and selected items are kept by the page."
+  }
+]

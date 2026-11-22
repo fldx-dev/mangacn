@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Dropdown Links",
+    "title": "A site bar with two dropdowns of described links and a plain Library link."
+  },
+  {
+    "n": 2,
+    "file": "link-grid",
+    "label": "Two-Column Grid",
+    "title": "A Genres dropdown with six described links laid out in two columns."
+  },
+  {
+    "n": 3,
+    "file": "with-icons",
+    "label": "With Icons",
+    "title": "A My shelf dropdown whose links each carry an icon."
+  }
+]

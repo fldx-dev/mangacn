@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Page of Total",
+    "title": "A page number reading page 7 of 24."
+  },
+  {
+    "n": 2,
+    "file": "with-chapter",
+    "label": "Spread Folios",
+    "title": "Left and right page numbers of a spread, each with a chapter label."
+  },
+  {
+    "n": 3,
+    "file": "in-a-page",
+    "label": "In a Panel",
+    "title": "A folio with 第12話 pinned to the bottom-right corner of a panel."
+  }
+]

@@ -1,0 +1,237 @@
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { COMPONENTS_CATALOG } from "../docs/catalog";
+import { extractImports, packageName } from "./imports";
+import { type LoadedRegistry, type RegistryItem, registryItemUrl } from "./index";
+import { importSpecifier, installTarget } from "./install-target";
+
+// A component's variants are installable items, `c-<component>-<n>` (SPEC-components-10 §4).
+// `registry/ui/<component>/variants.json` numbers its `variants/*.tsx` files and gives each a
+// label and a title; the number is the item's identity, so it never changes and is never reused.
+
+/** One entry of a `variants.json`. */
+export interface VariantMeta {
+  n: number;
+  /** The variant file's name without `.tsx`. */
+  file: string;
+  /** Title Case, at most three words: the sidebar entry and the card heading. */
+  label: string;
+  /** One sentence: the card's sub-line and the item's description. */
+  title: string;
+}
+
+export interface ComponentVariant extends VariantMeta {
+  component: string;
+  /** `c-<component>-<n>`. */
+  name: string;
+  /** Repo-relative POSIX path of the variant file. */
+  path: string;
+}
+
+/** The index of the variant items in `public/r`, read by the smoke (`--only=c-stamp-3`). */
+export const VARIANT_INDEX_FILE = "variants.json";
+
+/** `c-stamp-3`. */
+export function variantItemName(component: string, n: number): string {
+  return `c-${component}-${n}`;
+}
+
+/** Repo-relative folder of a component's files (`registry/ui/stamp`). */
+function componentDir(item: LoadedRegistry["items"][number]): string | null {
+  const first = item.files[0];
+  return first ? path.posix.dirname(first.path) : null;
+}
+
+/** Plain code-point order, so the output is identical on every OS and locale. */
+function compare(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+/**
+ * Every component's variants, by component then number. Throws listing every problem with the
+ * metadata (see `variantProblems`), so a generator or a test fails naming the file.
+ */
+export function listComponentVariants(
+  registry: LoadedRegistry,
+  rootDir = process.cwd(),
+): ComponentVariant[] {
+  const variants: ComponentVariant[] = [];
+  const problems: string[] = [];
+  const components = registry.items
+    .filter((item) => item.source === COMPONENTS_CATALOG)
+    .sort((a, b) => compare(a.name, b.name));
+  for (const item of components) {
+    const dir = componentDir(item);
+    if (!dir) continue;
+    const metaPath = `${dir}/variants.json`;
+    const variantsDir = path.resolve(rootDir, dir, "variants");
+    const files = existsSync(variantsDir)
+      ? readdirSync(variantsDir)
+          .filter((file) => file.endsWith(".tsx"))
+          .map((file) => file.slice(0, -".tsx".length))
+      : [];
+    if (!existsSync(path.resolve(rootDir, metaPath))) {
+      problems.push(`${metaPath}: missing`);
+      continue;
+    }
+    const meta = JSON.parse(readFileSync(path.resolve(rootDir, metaPath), "utf8")) as VariantMeta[];
+    problems.push(...variantProblems(meta, files).map((problem) => `${metaPath}: ${problem}`));
+    for (const entry of [...meta].sort((a, b) => a.n - b.n)) {
+      variants.push({
+        ...entry,
+        component: item.name,
+        name: variantItemName(item.name, entry.n),
+        path: `${dir}/variants/${entry.file}.tsx`,
+      });
+    }
+  }
+  if (problems.length > 0) {
+    throw new Error(`Variant metadata problems:\n  ${problems.join("\n  ")}`);
+  }
+  return variants;
+}
+
+/**
+ * What is wrong with one component's `variants.json`, given the files in its `variants/` folder:
+ * every file listed exactly once, `n` a unique positive integer with `default` as 1, labels
+ * unique Title Case of at most three words, titles one sentence ending in a full stop.
+ */
+export function variantProblems(meta: VariantMeta[], files: string[]): string[] {
+  const problems: string[] = [];
+  const seenN = new Set<number>();
+  const seenFile = new Set<string>();
+  const seenLabel = new Set<string>();
+  for (const entry of meta) {
+    const where = `"${entry.file}"`;
+    if (!Number.isInteger(entry.n) || entry.n < 1) problems.push(`${where}: n must be 1 or more`);
+    if (seenN.has(entry.n)) problems.push(`${where}: n ${entry.n} is used twice`);
+    seenN.add(entry.n);
+    if (seenFile.has(entry.file)) problems.push(`${where}: listed twice`);
+    seenFile.add(entry.file);
+    if (!files.includes(entry.file)) problems.push(`${where}: no variants/${entry.file}.tsx`);
+    if (entry.file === "default" && entry.n !== 1) problems.push(`${where}: default must be n 1`);
+    const words = entry.label.trim().split(/\s+/);
+    if (words.length > 3) problems.push(`${where}: label "${entry.label}" has more than 3 words`);
+    if (!/^[A-Z0-9&]/.test(entry.label)) problems.push(`${where}: label must start uppercase`);
+    if (/demo(?!graphic)/i.test(entry.label)) problems.push(`${where}: label says demo`);
+    if (seenLabel.has(entry.label)) problems.push(`${where}: label "${entry.label}" is used twice`);
+    seenLabel.add(entry.label);
+    if (!/^[A-Z0-9].*[.]$/.test(entry.title)) {
+      problems.push(`${where}: title must start uppercase and end with a full stop`);
+    }
+  }
+  for (const file of files) {
+    if (!seenFile.has(file)) problems.push(`variants/${file}.tsx is not listed`);
+  }
+  return problems;
+}
+
+/** The published JSON of a variant item: a shadcn `registry:example` with its file's content. */
+export interface VariantItemJson extends RegistryItem {
+  $schema: string;
+  files: { path: string; type: string; target: string; content: string }[];
+}
+
+/** Packages every app already has; a variant never lists them. */
+const PEER_PACKAGES = new Set(["react", "react-dom", "next"]);
+
+interface Owner {
+  item: string;
+  /** The install path as an import specifier (`@/components/ui/card`). */
+  install: string;
+}
+
+/** Every shipped file by its repo specifier and by its install specifier. */
+function fileOwners(registry: LoadedRegistry): Map<string, Owner> {
+  const owners = new Map<string, Owner>();
+  for (const item of registry.items) {
+    for (const file of item.files) {
+      const owner = { item: item.name, install: importSpecifier(installTarget(file)) };
+      owners.set(importSpecifier(file.path), owner);
+      owners.set(owner.install, owner);
+    }
+  }
+  return owners;
+}
+
+/** `roughjs@4.6.6` when a catalog item pins the package that way, else the bare name. */
+function pinnedPackages(registry: LoadedRegistry): Map<string, string> {
+  const pins = new Map<string, string>();
+  for (const item of registry.items) {
+    for (const dependency of item.dependencies ?? []) {
+      pins.set(packageName(dependency), dependency);
+    }
+  }
+  return pins;
+}
+
+/**
+ * Builds the installable items of `variants`. A variant that imports a file no item ships (the
+ * site's own helpers, such as code-block's highlighter) or a relative file is left out, with
+ * the reason, since an app could not resolve that import.
+ */
+export function buildVariantItems(
+  variants: readonly ComponentVariant[],
+  registry: LoadedRegistry,
+  rootDir = process.cwd(),
+): { items: VariantItemJson[]; skipped: { name: string; reason: string }[] } {
+  const owners = fileOwners(registry);
+  const pins = pinnedPackages(registry);
+  const titles = new Map(registry.items.map((item) => [item.name, item.title ?? item.name]));
+  const items: VariantItemJson[] = [];
+  const skipped: { name: string; reason: string }[] = [];
+
+  for (const variant of variants) {
+    const source = readFileSync(path.resolve(rootDir, variant.path), "utf8");
+    const dependencies = new Set<string>();
+    const registryDependencies = new Set<string>();
+    let reason: string | null = null;
+    for (const { specifier } of extractImports(source)) {
+      if (specifier.startsWith(".")) {
+        reason = `imports the relative file "${specifier}"`;
+        break;
+      }
+      if (specifier.startsWith("@/")) {
+        const owner = owners.get(specifier);
+        if (!owner) {
+          reason = `imports "${specifier}", which no item ships`;
+          break;
+        }
+        registryDependencies.add(registryItemUrl(owner.item));
+        continue;
+      }
+      const name = packageName(specifier);
+      if (!PEER_PACKAGES.has(name)) dependencies.add(pins.get(name) ?? name);
+    }
+    if (reason) {
+      skipped.push({ name: variant.name, reason });
+      continue;
+    }
+    const content = source.replace(
+      /(["'])(@\/[A-Za-z0-9/_.-]+)\1/g,
+      (match, quote: string, specifier: string) => {
+        const owner = owners.get(specifier);
+        return owner ? `${quote}${owner.install}${quote}` : match;
+      },
+    );
+    items.push({
+      $schema: "https://ui.shadcn.com/schema/registry-item.json",
+      name: variant.name,
+      type: "registry:example",
+      title: `${titles.get(variant.component)}: ${variant.label}`,
+      description: variant.title,
+      ...(dependencies.size > 0 ? { dependencies: [...dependencies].sort(compare) } : {}),
+      registryDependencies: [...registryDependencies].sort(compare),
+      meta: { component: variant.component, n: variant.n, label: variant.label },
+      files: [
+        {
+          path: variant.path,
+          type: "registry:example",
+          target: `@components/${variant.name}.tsx`,
+          content,
+        },
+      ],
+    });
+  }
+  return { items, skipped };
+}

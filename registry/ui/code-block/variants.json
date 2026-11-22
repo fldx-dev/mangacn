@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "File with Header",
+    "title": "A highlighted TSX file with a filename header, line numbers and a copy button."
+  },
+  {
+    "n": 2,
+    "file": "command",
+    "label": "One-Line Command",
+    "title": "A single install command in a small block with a copy button."
+  },
+  {
+    "n": 3,
+    "file": "diff",
+    "label": "Diff Lines",
+    "title": "A snippet with removed, added and highlighted lines and a footer note."
+  }
+]

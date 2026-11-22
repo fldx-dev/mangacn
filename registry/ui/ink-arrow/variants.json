@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Next Chapter",
+    "title": "A hand-drawn arrow pointing at a Next chapter label."
+  },
+  {
+    "n": 2,
+    "file": "directions",
+    "label": "Directions & Lengths",
+    "title": "Arrows pointing up, down, left and right, then short, medium and long."
+  },
+  {
+    "n": 3,
+    "file": "curved",
+    "label": "Curved Callout",
+    "title": "A curved spot-colour arrow labelled Start here, pointing at a button."
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Icon Only",
+    "title": "An icon-only button that copies a registry URL to the clipboard."
+  },
+  {
+    "n": 2,
+    "file": "with-label",
+    "label": "Install Command",
+    "title": "An outline button labelled Copy beside a one-line install command."
+  }
+]

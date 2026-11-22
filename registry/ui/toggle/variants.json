@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "With Icons",
+    "title": "Two toggles with icons for furigana and SFX notes, the first one on."
+  },
+  {
+    "n": 2,
+    "file": "outline",
+    "label": "Outline Style",
+    "title": "Outlined toggles: text, pressed, icon-only and disabled."
+  },
+  {
+    "n": 3,
+    "file": "sizes",
+    "label": "Size Scale",
+    "title": "Small, default and large outlined toggles in a row."
+  }
+]

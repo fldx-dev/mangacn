@@ -1,0 +1,26 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Mixed Scripts",
+    "title": "A band of English and Japanese sound effects scrolling across the page."
+  },
+  {
+    "n": 2,
+    "file": "spot-and-speed",
+    "label": "Fast & Slow",
+    "title": "A fast ticker with spot-colour hits above a slow paper ticker."
+  },
+  {
+    "n": 3,
+    "file": "right-to-left",
+    "label": "Rightward Scroll",
+    "title": "A ticker of engine and brake sounds scrolling towards the right."
+  },
+  {
+    "n": 4,
+    "file": "sizes",
+    "label": "Small & Large",
+    "title": "A small slow ticker of footsteps above a large fast one of blasts."
+  }
+]

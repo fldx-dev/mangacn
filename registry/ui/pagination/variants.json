@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Numbered Pages",
+    "title": "Twelve pages with page 6 current, neighbours shown and ellipses between."
+  },
+  {
+    "n": 2,
+    "file": "compact",
+    "label": "Previous & Next",
+    "title": "Only previous and next links, labelled with the chapter numbers."
+  },
+  {
+    "n": 3,
+    "file": "count",
+    "label": "Page Count",
+    "title": "A page 7 of 12 count between previous and next arrows."
+  }
+]

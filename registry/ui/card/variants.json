@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Chapter Status",
+    "title": "A chapter card with a title, a link action, a progress note and a full-width button."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Shadows & Size",
+    "title": "Cards with no shadow, an ink shadow and a hatched shadow, then a small card."
+  }
+]

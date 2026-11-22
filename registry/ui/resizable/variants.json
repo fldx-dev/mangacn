@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Nested Panes",
+    "title": "A splash pane beside two stacked panes, all resizable."
+  },
+  {
+    "n": 2,
+    "file": "vertical",
+    "label": "Vertical Split",
+    "title": "A header pane above a page pane, split by a gripped handle."
+  },
+  {
+    "n": 3,
+    "file": "with-handle",
+    "label": "Grip Handle",
+    "title": "Script and storyboard panes side by side with a visible grip handle."
+  }
+]

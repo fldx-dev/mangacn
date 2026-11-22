@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Centred Burst",
+    "title": "Focus lines bursting from the centre to frame one shouted word."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Length & Count",
+    "title": "Four tiles with long lines, 24 lines, 120 tone lines and an off-centre burst."
+  },
+  {
+    "n": 3,
+    "file": "in-a-panel",
+    "label": "In a Panel",
+    "title": "Toned focus lines clipped inside the border of a panel."
+  }
+]

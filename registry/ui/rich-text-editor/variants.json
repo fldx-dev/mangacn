@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Author's Note",
+    "title": "An editable author's note with a heading and bold and italic text."
+  },
+  {
+    "n": 2,
+    "file": "form",
+    "label": "Character Count",
+    "title": "A chapter summary field with a live character count and errors on submit."
+  },
+  {
+    "n": 3,
+    "file": "readonly",
+    "label": "Stored Feedback",
+    "title": "Stored editor feedback shown read-only without the toolbar, with a quote, list and rule."
+  }
+]

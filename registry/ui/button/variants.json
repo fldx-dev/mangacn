@@ -1,0 +1,26 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Primary",
+    "title": "A single button in the default filled primary style."
+  },
+  {
+    "n": 2,
+    "file": "sizes",
+    "label": "Sizes & Icons",
+    "title": "Text buttons from extra small to large, then four icon-only button sizes."
+  },
+  {
+    "n": 3,
+    "file": "variants",
+    "label": "All Styles",
+    "title": "Every button style, including the SFX style, and three disabled buttons."
+  },
+  {
+    "n": 4,
+    "file": "link",
+    "label": "As a Link",
+    "title": "Two anchors drawn as buttons that are still announced as links."
+  }
+]

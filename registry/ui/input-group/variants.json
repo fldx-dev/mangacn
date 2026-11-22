@@ -1,0 +1,26 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Inline Addons",
+    "title": "A search field with an icon and count, and a URL field between https:// and .com."
+  },
+  {
+    "n": 2,
+    "file": "button",
+    "label": "With Buttons",
+    "title": "A read-only link with a copy button, and an email input with Subscribe."
+  },
+  {
+    "n": 3,
+    "file": "textarea",
+    "label": "Textarea Footer",
+    "title": "A letter textarea with a character count and a round send button below."
+  },
+  {
+    "n": 4,
+    "file": "with-label",
+    "label": "Labelled Handle",
+    "title": "A labelled handle input with an at-sign prefix and a text suffix."
+  }
+]

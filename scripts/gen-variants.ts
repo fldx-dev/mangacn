@@ -4,12 +4,20 @@
  * only; and one static route file per page block, item gallery and variant stage under app/view and
  * app/gallery (MANGA-21), removing the ones that no longer have a variant. Exits non-zero naming any
  * item without variants/default.tsx. See SPEC-components §6.
+ * Then writes every component variant as an installable item, public/r/c-<component>-<n>.json,
+ * numbered by registry/ui/<component>/variants.json, and its page alone at
+ * app/view/c-<component>-<n> (SPEC-components-10 §4, §5.4).
  *
  * Usage: pnpm gen:variants (also runs in predev/prebuild)
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { loadRegistry } from "../lib/registry/index";
+import {
+  buildVariantItems,
+  listComponentVariants,
+  VARIANT_INDEX_FILE,
+} from "../lib/registry/variant-items";
 import {
   collectPages,
   collectVariants,
@@ -32,15 +40,18 @@ function write(file: string, source: string): boolean {
 
 let modules: { file: string; source: string }[];
 let routes: { path: string; source: string }[];
+let built: ReturnType<typeof buildVariantItems>;
 try {
   const registry = loadRegistry();
   const variants = collectVariants(registry);
   const pages = collectPages(registry);
+  const numbered = listComponentVariants(registry);
+  built = buildVariantItems(numbered, registry);
   modules = [
     { file: VARIANT_MAP_PATH, source: renderVariantMap(variants, pages) },
     { file: VARIANT_LIST_PATH, source: renderVariantList(variants, pages) },
   ];
-  routes = renderVariantRoutes(variants, pages);
+  routes = renderVariantRoutes(variants, pages, numbered);
 } catch (error) {
   console.error(`✗ ${(error as Error).message}`);
   process.exit(1);
@@ -80,3 +91,26 @@ const written = routes.filter((route) => write(route.path, route.source)).length
 console.log(
   `✓ ${routes.length} routes under ${ROUTE_ROOTS.join(", ")} (${written} written, ${removed} stale removed)`,
 );
+
+// The installable variants, `public/r/c-<component>-<n>.json`, beside the items `shadcn build`
+// writes there (it leaves other files alone), plus `public/r/variants.json`, their index for the
+// smoke. They stay out of registry.json, so nothing that lists components lists them.
+const outputDir = path.resolve("public/r");
+mkdirSync(outputDir, { recursive: true });
+const names = new Set(built.items.map((item) => `${item.name}.json`));
+for (const file of readdirSync(outputDir)) {
+  if (/^c-.+\.json$/.test(file) && !names.has(file)) rmSync(path.join(outputDir, file));
+}
+for (const item of built.items) {
+  writeFileSync(path.join(outputDir, `${item.name}.json`), `${JSON.stringify(item, null, 2)}\n`);
+}
+const index = built.items.map(({ $schema: _schema, files, ...item }) => ({
+  ...item,
+  files: files.map(({ content: _content, ...file }) => file),
+}));
+writeFileSync(
+  path.join(outputDir, VARIANT_INDEX_FILE),
+  `${JSON.stringify({ items: index }, null, 2)}\n`,
+);
+console.log(`✓ wrote ${built.items.length} variant items to public/r`);
+for (const { name, reason } of built.skipped) console.log(`  → ${name} not installable: ${reason}`);

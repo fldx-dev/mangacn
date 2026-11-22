@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Chapter List",
+    "title": "A tall list of forty chapters scrolling inside a fixed-height frame."
+  },
+  {
+    "n": 2,
+    "file": "horizontal",
+    "label": "Volume Shelf",
+    "title": "Six volume covers in a row that scrolls sideways."
+  }
+]

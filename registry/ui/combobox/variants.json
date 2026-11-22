@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Series Search",
+    "title": "An open search box that filters a list of manga series as you type."
+  },
+  {
+    "n": 2,
+    "file": "multiple",
+    "label": "Genre Chips",
+    "title": "A multi-select that shows each chosen genre as a removable chip."
+  },
+  {
+    "n": 3,
+    "file": "with-groups",
+    "label": "Grouped Options",
+    "title": "Series grouped under Weekly, Monthly and Web headings with separators."
+  }
+]

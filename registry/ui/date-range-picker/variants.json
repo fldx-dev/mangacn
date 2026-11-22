@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "One Week",
+    "title": "A date range picker set to the week of 8 to 14 June."
+  },
+  {
+    "n": 2,
+    "file": "presets",
+    "label": "Preset Ranges",
+    "title": "Two preset ranges for a reading log: this week and a volume's release month."
+  },
+  {
+    "n": 3,
+    "file": "field",
+    "label": "Required Field",
+    "title": "A labelled field for booth dates that asks for both days on submit."
+  }
+]

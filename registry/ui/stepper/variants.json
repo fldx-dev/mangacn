@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Checkout Steps",
+    "title": "A horizontal checkout in four steps, with the payment step marked as failed."
+  },
+  {
+    "n": 2,
+    "file": "vertical",
+    "label": "Vertical Steps",
+    "title": "A vertical submission flow with each step's content and Back and Next buttons."
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Four Authors",
+    "title": "Four authors of a series shown as overlapping initial avatars."
+  },
+  {
+    "n": 2,
+    "file": "max",
+    "label": "Overflow Count",
+    "title": "Twelve readers capped at five avatars and a +7 count, in three sizes."
+  }
+]

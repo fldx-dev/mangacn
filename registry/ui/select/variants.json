@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Genre Picker",
+    "title": "A closed genre select with a placeholder and four genres."
+  },
+  {
+    "n": 2,
+    "file": "open",
+    "label": "Grouped & Open",
+    "title": "An open select with genres and formats under two labelled groups."
+  },
+  {
+    "n": 3,
+    "file": "states",
+    "label": "All States",
+    "title": "Placeholder, selected, small, disabled and invalid selects stacked in a column."
+  }
+]

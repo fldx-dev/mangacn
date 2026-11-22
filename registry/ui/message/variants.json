@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Single Message",
+    "title": "One message with an avatar, a name, a bubble and a time."
+  },
+  {
+    "n": 2,
+    "file": "thread",
+    "label": "Two-Person Thread",
+    "title": "A short exchange with grouped bubbles on the left and a read reply on the right."
+  },
+  {
+    "n": 3,
+    "file": "assistant",
+    "label": "Assistant Reply",
+    "title": "A question and an assistant answer in a ghost bubble marked Edited."
+  }
+]

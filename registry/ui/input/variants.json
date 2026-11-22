@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Email Field",
+    "title": "A labelled email input with a placeholder address."
+  },
+  {
+    "n": 2,
+    "file": "states",
+    "label": "All States",
+    "title": "Empty, filled, disabled and invalid inputs, plus a file picker for cover art."
+  }
+]

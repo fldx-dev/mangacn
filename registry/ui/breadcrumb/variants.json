@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Chapter Path",
+    "title": "A three-step trail from Home through Volume 3 to Chapter 12."
+  },
+  {
+    "n": 2,
+    "file": "long",
+    "label": "Wrapping Trail",
+    "title": "A six-step trail with long names that wraps onto a second line."
+  },
+  {
+    "n": 3,
+    "file": "ellipsis",
+    "label": "Collapsed Middle",
+    "title": "A trail that hides its middle steps behind an ellipsis."
+  }
+]

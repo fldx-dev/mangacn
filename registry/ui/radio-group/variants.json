@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Reading Direction",
+    "title": "Three reading directions as radios, with right to left chosen."
+  },
+  {
+    "n": 2,
+    "file": "states",
+    "label": "All States",
+    "title": "Unchecked, checked and invalid radios, then a disabled group."
+  }
+]

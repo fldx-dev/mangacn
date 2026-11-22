@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Monthly Readers",
+    "title": "One card with monthly readers, the change from last month and a sparkline."
+  },
+  {
+    "n": 2,
+    "file": "grid",
+    "label": "KPI Grid",
+    "title": "Four reading-app stat cards in a grid of one, two or four columns."
+  }
+]

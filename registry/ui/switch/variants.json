@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "With Label",
+    "title": "One switched-on toggle with a label for the screentone overlay."
+  },
+  {
+    "n": 2,
+    "file": "states",
+    "label": "All States",
+    "title": "Off, on, small, disabled, disabled on and invalid switches."
+  }
+]

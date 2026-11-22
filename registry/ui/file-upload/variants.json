@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Page Scans",
+    "title": "A dropzone for up to five page scans of 5 MB each, with a file list."
+  },
+  {
+    "n": 2,
+    "file": "progress",
+    "label": "Upload Progress",
+    "title": "A file list showing one finished, one uploading and one failed upload."
+  },
+  {
+    "n": 3,
+    "file": "avatar",
+    "label": "Single Picture",
+    "title": "A profile picture field that takes one PNG or JPEG up to 1 MB."
+  }
+]

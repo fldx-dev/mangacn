@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "With Label",
+    "title": "One checked box with a label to get new-chapter notifications."
+  },
+  {
+    "n": 2,
+    "file": "states",
+    "label": "All States",
+    "title": "Unchecked, checked, disabled, disabled and checked, and invalid checkboxes."
+  }
+]

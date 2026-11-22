@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Six Digits",
+    "title": "A six-slot verification code split into two groups of three."
+  },
+  {
+    "n": 2,
+    "file": "controlled",
+    "label": "Controlled PIN",
+    "title": "A four-digit PIN that accepts numbers only and echoes what you type."
+  },
+  {
+    "n": 3,
+    "file": "invalid",
+    "label": "Expired Code",
+    "title": "A filled six-digit code marked invalid, with an expired-code message."
+  }
+]

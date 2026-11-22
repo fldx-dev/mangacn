@@ -1,0 +1,26 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "With Action",
+    "title": "An outlined chapter row with a page count and a Read button."
+  },
+  {
+    "n": 2,
+    "file": "list",
+    "label": "Chapter List",
+    "title": "Three chapter rows in a list, split by thin dividers."
+  },
+  {
+    "n": 3,
+    "file": "media",
+    "label": "Icon & Image",
+    "title": "One item with an icon and an arrow button, one with a halftone thumbnail."
+  },
+  {
+    "n": 4,
+    "file": "variants",
+    "label": "All Styles",
+    "title": "Default, outline and muted items, each describing its own style."
+  }
+]

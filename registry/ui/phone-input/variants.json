@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Japan Preset",
+    "title": "An empty phone input with Japan already chosen as the country."
+  },
+  {
+    "n": 2,
+    "file": "countries",
+    "label": "Five Countries",
+    "title": "A phone input limited to five countries, holding a Paris number."
+  },
+  {
+    "n": 3,
+    "file": "form",
+    "label": "Validated Form",
+    "title": "A delivery phone field that checks the number is complete on save."
+  }
+]

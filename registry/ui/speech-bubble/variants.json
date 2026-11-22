@@ -1,0 +1,26 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Round Dialogue",
+    "title": "A round speech bubble holding one line of surprised dialogue."
+  },
+  {
+    "n": 2,
+    "file": "japanese",
+    "label": "Japanese Lines",
+    "title": "Two speech bubbles in Japanese, with tails on opposite sides."
+  },
+  {
+    "n": 3,
+    "file": "shapes",
+    "label": "Shapes & Tones",
+    "title": "Round, square, shout and whisper bubbles, a light tone and a page-font bubble."
+  },
+  {
+    "n": 4,
+    "file": "tails",
+    "label": "Tail Positions",
+    "title": "Round, square and shout bubbles with the tail at each of seven positions."
+  }
+]

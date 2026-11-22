@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Slam Entrance",
+    "title": "A large Kyoto! sound effect that slams in on load."
+  },
+  {
+    "n": 2,
+    "file": "colors",
+    "label": "Colours & Strokes",
+    "title": "Paper, ink and spot sound effects, one without a stroke, and 東京."
+  },
+  {
+    "n": 3,
+    "file": "sizes",
+    "label": "Size Scale",
+    "title": "Four sound effects from small to extra large, each tilted a little."
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Chapter Pager",
+    "title": "Previous, chapter and next buttons joined into one outlined group."
+  },
+  {
+    "n": 2,
+    "file": "select",
+    "label": "With Select",
+    "title": "A scope select, a search input and a Go button joined into one group."
+  },
+  {
+    "n": 3,
+    "file": "vertical",
+    "label": "Vertical Zoom",
+    "title": "Zoom in, fit and zoom out icon buttons stacked in a vertical group."
+  }
+]

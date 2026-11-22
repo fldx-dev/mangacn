@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Chapter Number",
+    "title": "A number input with steppers for a chapter number, starting at 12."
+  },
+  {
+    "n": 2,
+    "file": "field",
+    "label": "Labelled Field",
+    "title": "A copies-per-order field limited to 1 to 99, with a label and hint."
+  },
+  {
+    "n": 3,
+    "file": "format",
+    "label": "Currency & Percent",
+    "title": "A price in yen and a discount in percent, both formatted for display."
+  }
+]

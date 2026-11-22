@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Series Menus",
+    "title": "A bar of Series, Chapter and View menus, the first open with shortcuts."
+  },
+  {
+    "n": 2,
+    "file": "checkboxes-and-radio",
+    "label": "Radios & Checks",
+    "title": "An open View menu with reading direction radios and text checkboxes."
+  },
+  {
+    "n": 3,
+    "file": "submenu",
+    "label": "Add to List",
+    "title": "A Series menu whose Add to list item opens a submenu of reading lists."
+  }
+]

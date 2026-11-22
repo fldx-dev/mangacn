@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "With Action",
+    "title": "An empty series with no chapters and a button to start one."
+  },
+  {
+    "n": 2,
+    "file": "icon",
+    "label": "Icon & Link",
+    "title": "An all-caught-up message with an icon and a link to follow the series."
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Single File",
+    "title": "One PDF attachment with a file icon, its size and a remove button."
+  },
+  {
+    "n": 2,
+    "file": "in-a-bubble",
+    "label": "In a Message",
+    "title": "An image and a PDF attached inside a sent chat bubble."
+  },
+  {
+    "n": 3,
+    "file": "upload",
+    "label": "Upload States",
+    "title": "Three attachments on a reply: ready to send, uploading and failed with a retry."
+  }
+]

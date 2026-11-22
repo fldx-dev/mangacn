@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Two-Way Chat",
+    "title": "Two chat bubbles, one from each side, about chapter 12 storyboards."
+  },
+  {
+    "n": 2,
+    "file": "conversation",
+    "label": "Full Thread",
+    "title": "A dated chat thread with avatars, grouped bubbles, a reaction and a read receipt."
+  },
+  {
+    "n": 3,
+    "file": "variants",
+    "label": "All Styles",
+    "title": "Ghost, tinted, outline, destructive, muted and clickable chat bubbles in one review."
+  }
+]

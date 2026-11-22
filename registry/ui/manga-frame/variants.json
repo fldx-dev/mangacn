@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Captioned Image",
+    "title": "A night skyline image in an inked frame with a caption below."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Ratios & Mat",
+    "title": "The same skyline at 4/3, 3/4, 1/1 and 16/9, and on a halftone mat."
+  },
+  {
+    "n": 3,
+    "file": "lettered",
+    "label": "Lettered Title",
+    "title": "A title page lettered in English and 屋上の決闘 over speed lines, with no image."
+  }
+]

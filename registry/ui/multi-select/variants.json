@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Genre Picker",
+    "title": "A genres field with two of eight genres already picked."
+  },
+  {
+    "n": 2,
+    "file": "groups",
+    "label": "Grouped Options",
+    "title": "Tags grouped by genre, audience and format, with at most three picked."
+  }
+]

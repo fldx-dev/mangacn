@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Three Tabs",
+    "title": "Story, art and letters tabs, each with one line of content."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Line & Vertical",
+    "title": "A line tab list with a disabled tab, then two vertical tab lists."
+  }
+]

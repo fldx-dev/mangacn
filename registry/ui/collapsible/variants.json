@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Show More Notes",
+    "title": "A list of chapter notes where a button reveals the hidden ones."
+  },
+  {
+    "n": 2,
+    "file": "glyph",
+    "label": "Plus Minus Glyph",
+    "title": "Two sections with plus and minus glyph triggers, one open and one closed."
+  },
+  {
+    "n": 3,
+    "file": "card",
+    "label": "In a Card",
+    "title": "A credits section that folds open inside a chapter card."
+  }
+]

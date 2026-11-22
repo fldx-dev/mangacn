@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CATEGORY_LABELS, type DocItem, docItems, groupByCategory } from "@/lib/docs/catalog";
+import { allDocVariants, componentVariants } from "@/lib/docs/variant-meta";
 import { loadRegistry } from "@/lib/registry";
 import { listVariants } from "@/lib/registry/variants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/registry/ui/card/card";
@@ -61,6 +62,15 @@ export async function ComponentIndex() {
 
   return (
     <div data-slot="component-index" className="not-prose flex flex-col gap-12">
+      <p
+        data-slot="component-index-total"
+        className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b pb-3"
+      >
+        <span className="font-display text-xl uppercase">All Components</span>
+        <span className="text-sm text-fd-muted-foreground">
+          {items.length} components, {allDocVariants().length} variants
+        </span>
+      </p>
       {groupByCategory(items).map(([category, group]) => (
         <section
           key={category}
@@ -86,6 +96,11 @@ export async function ComponentIndex() {
   );
 }
 
+/** "1 variant", "6 variants". */
+function variantLabel(count: number): string {
+  return `${count} ${count === 1 ? "variant" : "variants"}`;
+}
+
 // Inline variants stay interactive (overlay previews are inert), so only the title links to the
 // page (no card-wide overlay link).
 function IndexCard({ item, preview }: { item: DocItem; preview: ReactNode }) {
@@ -100,6 +115,9 @@ function IndexCard({ item, preview }: { item: DocItem; preview: ReactNode }) {
             {item.title}
           </Link>
         </CardTitle>
+        <p data-slot="variant-count" className="text-xs text-fd-muted-foreground">
+          {variantLabel(componentVariants(item.name).length)}
+        </p>
         <CardDescription>{item.description}</CardDescription>
       </CardHeader>
       <CardContent className="mt-auto">

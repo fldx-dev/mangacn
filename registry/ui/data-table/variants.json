@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Chapter Table",
+    "title": "Twelve chapters with sortable columns, a title filter and five rows per page."
+  },
+  {
+    "n": 2,
+    "file": "selection",
+    "label": "Row Selection",
+    "title": "Selectable page rows with a toolbar button that marks the chosen pages done."
+  },
+  {
+    "n": 3,
+    "file": "server",
+    "label": "Server Data",
+    "title": "Forty-eight chapters sorted and paged by a pretend server with a short delay."
+  }
+]

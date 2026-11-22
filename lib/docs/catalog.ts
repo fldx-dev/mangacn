@@ -177,7 +177,7 @@ export function renderItemPage(item: DocItem): string {
     "",
     PROSE_PLACEHOLDER,
     "",
-    item.page ? "## Preview" : "## Examples",
+    item.page ? "## Preview" : "## Variants",
     "",
     ...examples,
     "",

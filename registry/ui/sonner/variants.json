@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Plain Toast",
+    "title": "A saved-chapter toast with a description, and a button that sends another."
+  },
+  {
+    "n": 2,
+    "file": "kinds",
+    "label": "All Kinds",
+    "title": "Info, warning, error and success toasts stacked open at the top."
+  },
+  {
+    "n": 3,
+    "file": "with-action",
+    "label": "Undo Action",
+    "title": "A removed-chapter toast with an Undo action and a close button."
+  }
+]

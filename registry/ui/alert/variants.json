@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Icon and Text",
+    "title": "A new-chapter notice with a book icon, a title and a line of text."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Destructive & Action",
+    "title": "A plain alert, a destructive upload error and an alert with an Undo action."
+  }
+]

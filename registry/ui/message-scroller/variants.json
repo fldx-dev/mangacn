@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Pinned to Latest",
+    "title": "A long editor and artist thread that opens at the newest note."
+  },
+  {
+    "n": 2,
+    "file": "both-directions",
+    "label": "Jump Both Ways",
+    "title": "A chapter history that opens at the top, with jump buttons to both ends."
+  },
+  {
+    "n": 3,
+    "file": "follow",
+    "label": "Auto-Follow",
+    "title": "A script that scrolls to each new panel line as a button adds it."
+  }
+]

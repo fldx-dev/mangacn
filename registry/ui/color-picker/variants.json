@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Accent Field",
+    "title": "A labelled accent colour field that opens a picker from a red swatch."
+  },
+  {
+    "n": 2,
+    "file": "inline",
+    "label": "Inline Panel",
+    "title": "An always-open picker panel without alpha, with the chosen ink hex below."
+  },
+  {
+    "n": 3,
+    "file": "swatches",
+    "label": "Ink Swatches",
+    "title": "A picker with seven print-ink swatches to choose from, set to blue."
+  }
+]

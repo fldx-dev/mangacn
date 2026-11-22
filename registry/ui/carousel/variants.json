@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Numbered Pages",
+    "title": "Five numbered pages in a carousel with previous and next arrows."
+  },
+  {
+    "n": 2,
+    "file": "manga-frames",
+    "label": "Captioned Panels",
+    "title": "Three captioned landscape panels, night to storm, in a carousel."
+  },
+  {
+    "n": 3,
+    "file": "vertical",
+    "label": "Vertical Dialogue",
+    "title": "Lines of dialogue that scroll up and down, two at a time."
+  }
+]

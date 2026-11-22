@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Pin & Border",
+    "title": "A pinned-message notice with an icon and a bordered rename notice."
+  },
+  {
+    "n": 2,
+    "file": "date",
+    "label": "Date Dividers",
+    "title": "Yesterday and Today dividers that split chat bubbles by day."
+  },
+  {
+    "n": 3,
+    "file": "unread",
+    "label": "Unread Divider",
+    "title": "A spot-colour divider marking where two new messages begin."
+  }
+]

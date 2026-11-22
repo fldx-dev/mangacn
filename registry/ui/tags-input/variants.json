@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Genre Tags",
+    "title": "A genres field holding three tags, with room to type another."
+  },
+  {
+    "n": 2,
+    "file": "validate",
+    "label": "Email Validation",
+    "title": "An invite field that takes up to five email addresses and rejects anything else."
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Review Form",
+    "title": "A four-star rating in half-star steps above a written review in a form."
+  },
+  {
+    "n": 2,
+    "file": "read-only",
+    "label": "Read-Only Scores",
+    "title": "Small read-only star ratings for three volumes of a series."
+  }
+]

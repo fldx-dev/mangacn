@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Single Splat",
+    "title": "One ink splatter at the default size and colour."
+  },
+  {
+    "n": 2,
+    "file": "kinds",
+    "label": "Splat, Drip, Dots",
+    "title": "A splat, a drip and a spray of dots, then three small spot-colour splatters."
+  },
+  {
+    "n": 3,
+    "file": "behind-sfx",
+    "label": "Behind SFX",
+    "title": "A large spot-colour splatter centred behind the Splash! sound effect."
+  }
+]

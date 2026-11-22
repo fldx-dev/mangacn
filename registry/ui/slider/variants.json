@@ -1,0 +1,26 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Single Thumb",
+    "title": "One labelled slider for screentone density, set to 60."
+  },
+  {
+    "n": 2,
+    "file": "range",
+    "label": "Page Range",
+    "title": "A two-thumb slider that picks a range of pages to export."
+  },
+  {
+    "n": 3,
+    "file": "vertical",
+    "label": "Vertical Mixer",
+    "title": "Three vertical sliders for ink, tone and paper, side by side."
+  },
+  {
+    "n": 4,
+    "file": "disabled",
+    "label": "Locked",
+    "title": "A disabled bleed slider that the printer has locked in place."
+  }
+]

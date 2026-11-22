@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Single Keys",
+    "title": "Five keyboard keys on their own: Esc, Shift, Space, J and K."
+  },
+  {
+    "n": 2,
+    "file": "group",
+    "label": "Key Combos",
+    "title": "Two key combinations, Ctrl + K and Shift + Space, joined by plus signs."
+  },
+  {
+    "n": 3,
+    "file": "sentence",
+    "label": "In a Sentence",
+    "title": "Reader shortcuts written as a sentence, with keys set inline in the text."
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Sign-In Form",
+    "title": "An email and password sign-in form with a toggle to show the password."
+  },
+  {
+    "n": 2,
+    "file": "strength",
+    "label": "Strength Meter",
+    "title": "A new password field with a meter that rates the password's strength."
+  }
+]

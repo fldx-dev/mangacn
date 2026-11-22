@@ -96,6 +96,17 @@ describe("ComponentIndex", () => {
     expect(card.querySelector('[data-slot="speech-bubble"]')).not.toBeNull();
   });
 
+  it("counts the components and the variants, in all and on each card", async () => {
+    const { container } = render(await ComponentIndex());
+    expect(container.querySelector('[data-slot="component-index-total"]')?.textContent).toBe(
+      `All Components${CARDS} components, 271 variants`,
+    );
+    const count = (item: string) =>
+      container.querySelector(`[data-item="${item}"] [data-slot="variant-count"]`)?.textContent;
+    expect(count("stamp")).toBe("6 variants");
+    expect(count("accordion")).toBe("1 variant");
+  });
+
   it("shows overlay items through their stage iframe", async () => {
     render(await ComponentIndex());
     expect(screen.getByTitle("dialog / default").getAttribute("src")).toBe(

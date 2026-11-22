@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Reader Survey",
+    "title": "A three-question reader survey with progress, letter shortcuts, skip and submit."
+  },
+  {
+    "n": 2,
+    "file": "multiple",
+    "label": "Pick Several",
+    "title": "One question that takes any number of answers, chosen by number keys."
+  },
+  {
+    "n": 3,
+    "file": "required",
+    "label": "Required & Disabled",
+    "title": "A required plan choice with descriptions, a sold-out option and an error."
+  }
+]

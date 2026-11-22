@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Chapter List",
+    "title": "A bottom drawer listing four chapters, with the current one highlighted."
+  },
+  {
+    "n": 2,
+    "file": "directions",
+    "label": "Four Edges",
+    "title": "Four drawers that open from the top, right, bottom and left edges."
+  },
+  {
+    "n": 3,
+    "file": "with-form",
+    "label": "Bookmark Form",
+    "title": "A drawer holding a bookmark form with a name field and a note."
+  }
+]

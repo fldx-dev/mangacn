@@ -16,7 +16,7 @@ It composes manga-frame, page-number, page-turn, button and kbd, draws nothing o
 
 The viewer is a `role="region"` with `aria-roledescription="spread"`, named by `label`; it takes focus so the keys work. The arrow that points the way the book reads turns to the next spread (Left in `rtl`, Right in `ltr`), the other one back, and Home and End go to the first and last. A sideways swipe of 40 px or more turns the same way: a finger moving right brings in the left-hand page, as the Left arrow does. A polite live region says where the reader is ("Pages 4–5 of 24"), each page's `img` carries its own `alt`, and the buttons are disabled at the ends. The help line under the spread names the keys, on two lines when the controls are under 400 px wide (Home and End on the second); on a touch screen (`@media (pointer: coarse)`) it is hidden, since there are no keys to press. To show it there anyway, pass `className="[&_[data-slot=spread-viewer-help]]:block"`; to hide it everywhere, `[&_[data-slot=spread-viewer-help]]:hidden`. The current pages load with `fetchpriority="high"` and the next spread is preloaded; pages further on are not rendered at all until the reader gets there.
 
-## Examples
+## Variants
 
 A 24-page chapter opened at pages 4 and 5, right to left: page 4 on the right, and the Left arrow or the left-hand button reads on.
 

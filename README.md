@@ -61,6 +61,7 @@ command. The CLI also installs straight from this repository without the registr
 | Blocks (`chapter-list`, `chat-thread`, …)         | `components/blocks/<block>/`, every file of the block                                  |
 | Page blocks (`login-01`, `series-page`, …)        | `app/<route>/page.tsx` and `components/<file>.tsx`, where stock's page blocks put them |
 | Hooks (`use-mobile`, `use-highlighted-code`)      | `hooks/<hook>.ts`, plus a hook's own lib file at `lib/<file>` (`lib/highlighter.tsx`)  |
+| Variants (`c-stamp-3`, …)                         | `components/c-<component>-<n>.tsx`, plus the items it uses                             |
 | The ink frame                                     | `components/ink-frame.tsx` (and `roughjs` in `package.json`)                           |
 | Tokens, utilities and keyframes                   | your `globals.css`                                                                     |
 | Theme presets (`theme-sepia`, …)                  | your `globals.css`, the theme's colour variables replaced in place                     |
@@ -72,6 +73,10 @@ command. The CLI also installs straight from this repository without the registr
 at https://www.mangacn.com/docs/blocks and the presets on the
 [Theming](https://www.mangacn.com/docs/theming#presets) page; the two hooks have no page of
 their own and are in the skill catalog and `list_items`.
+
+Each component page also lists its variants, numbered per component: all 271 install on their
+own as `@mangacn/c-<component>-<n>` (`npx shadcn@latest add @mangacn/c-stamp-3 --overwrite`),
+the file plus every item it imports. The numbers never change.
 
 | Group                    | Items                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

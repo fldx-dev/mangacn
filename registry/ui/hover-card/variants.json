@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Author Note",
+    "title": "An author name in a sentence that opens a short bio on hover."
+  },
+  {
+    "n": 2,
+    "file": "profile",
+    "label": "Artist Profile",
+    "title": "An artist handle that opens a card with an avatar, series and genre badges."
+  }
+]

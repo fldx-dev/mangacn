@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Labelled Bar",
+    "title": "A progress bar for inking chapter 12 with its label and percentage."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Ink & Tone",
+    "title": "Four production steps as ink and screentone bars, from full to empty."
+  }
+]

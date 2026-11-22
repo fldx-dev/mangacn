@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Toned Bars",
+    "title": "Print and digital sales as bars told apart by screentone, not colour."
+  },
+  {
+    "n": 2,
+    "file": "lines",
+    "label": "Dashed Lines",
+    "title": "Three reader trends as ink lines told apart by weight and dash."
+  },
+  {
+    "n": 3,
+    "file": "area",
+    "label": "Spot Area",
+    "title": "A spot-colour area for this week laid over a hatched average."
+  }
+]

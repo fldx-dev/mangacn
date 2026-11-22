@@ -65,6 +65,7 @@ import { SETUP_ITEMS, setCommand } from "../lib/docs/install-command";
 import { loadRegistry, mangacnItemName, REGISTRY_URL } from "../lib/registry/index";
 import { installTarget } from "../lib/registry/install-target";
 import { loadPresets } from "../lib/registry/theme-preset-items";
+import { VARIANT_INDEX_FILE } from "../lib/registry/variant-items";
 import {
   copyVariant,
   readRepoFile,
@@ -105,7 +106,7 @@ interface CatalogItem {
 }
 
 /** Item types whose every file is checked at its install target after the adds. */
-const LANDING_TYPES = ["registry:block", "registry:hook"];
+const LANDING_TYPES = ["registry:block", "registry:hook", "registry:example"];
 
 /**
  * Every file a block or a hook lists in `files[]` must land at its target: a block's
@@ -113,7 +114,8 @@ const LANDING_TYPES = ["registry:block", "registry:hook"];
  * files, and a missing target makes the CLI flatten them into `components/`, SPEC-components-3
  * §3, §7); a page block's route at its `app/<route>/page.tsx` and its components'
  * `@components/<file>` → `components/<file>`; a hook's `@hooks/<name>.ts` → `hooks/<name>.ts`,
- * where the items that declare it import it from (SPEC-components-4 §4).
+ * where the items that declare it import it from (SPEC-components-4 §4); a variant's
+ * `@components/c-<component>-<n>.tsx` → `components/c-<component>-<n>.tsx` (SPEC-components-10).
  */
 function landingProblems(project: string, items: CatalogItem[]): string[] {
   return items
@@ -1662,6 +1664,12 @@ async function main() {
     throw new SmokeError("public/r/registry.json not found. Run `pnpm registry:build` first.");
   }
   const catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as { items: CatalogItem[] };
+  // The variant items (`c-<component>-<n>`, pnpm gen:variants) have their own index, out of
+  // registry.json: a full run leaves them out, and `--only=c-stamp-3` reaches them.
+  const variantIndex = path.join(outputDir, VARIANT_INDEX_FILE);
+  const variantItems = existsSync(variantIndex)
+    ? (JSON.parse(readFileSync(variantIndex, "utf8")) as { items: CatalogItem[] }).items
+    : [];
   const listed = catalog.items.map((item) => item.name);
   for (const name of INSTALL_FIRST) {
     if (!listed.includes(name)) throw new SmokeError(`"${name}" is missing from the catalog`);
@@ -1686,8 +1694,9 @@ async function main() {
       return;
     }
   }
-  const selected = requested === undefined ? undefined : withDependencies(catalog.items, requested);
-  const items = selected ? catalog.items.filter((item) => selected.has(item.name)) : catalog.items;
+  const known = only ? [...catalog.items, ...variantItems] : catalog.items;
+  const selected = requested === undefined ? undefined : withDependencies(known, requested);
+  const items = selected ? known.filter((item) => selected.has(item.name)) : catalog.items;
   const names = familyOrder(installOrder(items, INSTALL_FIRST), items);
   // A variant's files are checked right after its own add, before a sibling overwrites them.
   const variants = new Set(installFamilies(items).flat());

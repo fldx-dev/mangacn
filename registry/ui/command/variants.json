@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Inline Palette",
+    "title": "A search box over reading and library commands, grouped under headings."
+  },
+  {
+    "n": 2,
+    "file": "dialog",
+    "label": "In a Dialog",
+    "title": "A command palette opened in a dialog, with single-key shortcuts."
+  },
+  {
+    "n": 3,
+    "file": "groups-and-shortcuts",
+    "label": "Page Shortcuts",
+    "title": "Page commands in three groups, each with an arrow or letter shortcut."
+  }
+]

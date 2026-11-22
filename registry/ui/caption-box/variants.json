@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "English & Japanese",
+    "title": "Two narration captions, one in English and one in Japanese."
+  },
+  {
+    "n": 2,
+    "file": "in-a-panel",
+    "label": "In a Panel",
+    "title": "Captions pinned to the top-left and bottom-right corners of a halftone panel."
+  },
+  {
+    "n": 3,
+    "file": "tones-and-fonts",
+    "label": "Tones & Fonts",
+    "title": "Four captions crossing paper or tone fill with dialogue or body type."
+  }
+]

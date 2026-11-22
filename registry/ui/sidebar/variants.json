@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Reader Library",
+    "title": "A reader sidebar with library links, a badge, a nested series and settings."
+  },
+  {
+    "n": 2,
+    "file": "collapsible-icons",
+    "label": "Icon Rail",
+    "title": "A studio sidebar folded to icons that show their names in tooltips."
+  },
+  {
+    "n": 3,
+    "file": "floating",
+    "label": "Floating Card",
+    "title": "A sidebar set off the edge as an outlined card with a search field."
+  }
+]

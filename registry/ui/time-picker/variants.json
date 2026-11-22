@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "24-Hour Clock",
+    "title": "An inking deadline of 18:30 shown on a 24-hour clock."
+  },
+  {
+    "n": 2,
+    "file": "twelve-hour",
+    "label": "12-Hour Clock",
+    "title": "A signing start time of 14:00 shown as hours 1 to 12 with AM and PM."
+  },
+  {
+    "n": 3,
+    "file": "field",
+    "label": "Limited Hours",
+    "title": "A release time field limited to 09:00–21:00 in 15-minute steps, showing an error for 21:30."
+  }
+]

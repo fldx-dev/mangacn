@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Script Field",
+    "title": "A labelled script textarea with a placeholder panel note."
+  },
+  {
+    "n": 2,
+    "file": "states",
+    "label": "All States",
+    "title": "Filled, disabled and invalid textareas stacked with their labels."
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Panel Actions",
+    "title": "A right-click menu on a panel with shortcuts and a destructive Report item."
+  },
+  {
+    "n": 2,
+    "file": "checkboxes-and-radio",
+    "label": "Radios & Checks",
+    "title": "A right-click menu that picks reading direction and toggles furigana and SFX."
+  },
+  {
+    "n": 3,
+    "file": "submenu",
+    "label": "Share Submenu",
+    "title": "A right-click menu whose Share item opens a submenu of copy and email options."
+  }
+]

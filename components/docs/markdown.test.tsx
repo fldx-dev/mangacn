@@ -7,6 +7,7 @@ import { agentsSnippet, MCP_URL } from "@/lib/docs/agents";
 import { installCommand } from "@/lib/docs/install-command";
 import { renderMarkdownPage } from "@/lib/docs/llms";
 import { generatedProps } from "@/lib/docs/props";
+import { docVariant } from "@/lib/docs/variant-meta";
 import { getVariantSource } from "@/lib/docs/variant-source";
 import { fence, getMarkdownComponents } from "./markdown";
 
@@ -46,9 +47,17 @@ describe("Markdown forms of the docs components", () => {
     expect(await render("ThemePlayground")).toBe("");
   });
 
-  it("writes a variant as its source", async () => {
+  it("writes a component's variant as its label, title, install line and source", async () => {
+    const meta = docVariant("speech-bubble", "default");
     expect(await render("VariantFrame", { item: "speech-bubble", variant: "default" })).toBe(
-      `\`\`\`tsx title="speech-bubble/default.tsx"\n${getVariantSource("speech-bubble", "default")}\n\`\`\``,
+      `### ${meta?.label}\n\n${meta?.title} Install it with \`pnpm dlx shadcn@latest add @mangacn/c-speech-bubble-1 --overwrite\`.\n\n` +
+        `\`\`\`tsx title="speech-bubble/default.tsx"\n${getVariantSource("speech-bubble", "default")}\n\`\`\``,
+    );
+  });
+
+  it("writes a block's variant as its source alone", async () => {
+    expect(await render("VariantFrame", { item: "chapter-list", variant: "default" })).toBe(
+      `\`\`\`tsx title="chapter-list/default.tsx"\n${getVariantSource("chapter-list", "default")}\n\`\`\``,
     );
   });
 
@@ -145,7 +154,7 @@ function Processed({ components }: { components?: MDXComponents }) {
   asMarkdown();
   const { VariantFrame, CopyPrompt } = components as Record<string, Component>;
   return [
-    "\n## Examples\n\n",
+    "\n## Variants\n\n",
     createElement(CopyPrompt, { key: "prompt", item: "speech-bubble" }),
     createElement(VariantFrame, { key: "variant", item: "speech-bubble", variant: "default" }),
   ];
@@ -165,7 +174,8 @@ describe("a page through renderMarkdownPage", () => {
       },
       md,
     );
-    expect(markdown).toContain("## Examples\n\n```tsx");
+    expect(markdown).toContain("## Variants\n\n### ");
+    expect(markdown).toContain("@mangacn/c-speech-bubble-1");
     expect(markdown).not.toContain("<CopyPrompt");
   });
 });

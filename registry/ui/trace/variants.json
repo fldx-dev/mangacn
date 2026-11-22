@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Step List",
+    "title": "Four agent steps: two done with timings, one running and one pending."
+  },
+  {
+    "n": 2,
+    "file": "in-a-message",
+    "label": "In a Reply",
+    "title": "An assistant reply that shows its steps, one folded open, before the answer."
+  },
+  {
+    "n": 3,
+    "file": "error",
+    "label": "Failed Step",
+    "title": "An export trace that stops at a failed step, with the next step still pending."
+  }
+]

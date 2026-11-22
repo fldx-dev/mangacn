@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "With Checkbox",
+    "title": "A label next to a checkbox to accept the submission terms."
+  },
+  {
+    "n": 2,
+    "file": "required",
+    "label": "Required Mark",
+    "title": "A required pen name label above its input."
+  }
+]

@@ -6,11 +6,14 @@ import { describe, expect, it } from "vitest";
 // that lists them all (SPEC-components-10 §6). "Demo" is gone from code, files, routes and copy.
 const PATTERN = /demo(?!graphic)/i;
 
-// Files that must keep the word: the lockfile's hashes, and the redirects from the old routes.
+// Files that must keep the word: the lockfile's hashes, the redirects from the old routes, and
+// the checks that reject it (this test, and the variant label check and its test).
 const ALLOWED: ReadonlySet<string> = new Set([
   "pnpm-lock.yaml",
   "next.config.ts",
   "lib/no-demo-wording.test.ts",
+  "lib/registry/variant-items.ts",
+  "lib/registry/variant-items.test.ts",
 ]);
 
 const BINARY = /\.(png|ico|jpe?g|webp|gif|woff2?|ttf|otf)$/i;

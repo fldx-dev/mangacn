@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Chapter Actions",
+    "title": "A chapter menu with shortcuts and a destructive Report item."
+  },
+  {
+    "n": 2,
+    "file": "checkboxes-and-radio",
+    "label": "Radios & Checks",
+    "title": "A settings menu with reading direction radios and two text checkboxes."
+  },
+  {
+    "n": 3,
+    "file": "submenu",
+    "label": "Add to List",
+    "title": "A series menu whose Add to list item opens a submenu of reading lists."
+  }
+]

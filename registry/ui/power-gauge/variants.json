@@ -1,0 +1,26 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Single Gauge",
+    "title": "One power gauge filled to 70 percent."
+  },
+  {
+    "n": 2,
+    "file": "segments",
+    "label": "Segmented",
+    "title": "A stamina gauge in ten segments and a focus gauge in five."
+  },
+  {
+    "n": 3,
+    "file": "stat-card",
+    "label": "Stat Card",
+    "title": "A character card with power, speed and ink gauges, the full one bursting MAX."
+  },
+  {
+    "n": 4,
+    "file": "full",
+    "label": "Maxed Out",
+    "title": "A full spot-colour gauge at 9,000 points with a burst."
+  }
+]

@@ -4,9 +4,11 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { cacheLife } from "next/cache";
 import { inkDark, inkLight } from "@/lib/docs/code-theme";
 import { isSidebarShell } from "@/lib/docs/sidebar-shell";
+import { docVariant, variantInstallCommands } from "@/lib/docs/variant-meta";
 import { getVariantEntry, getVariantSource } from "@/lib/docs/variant-source";
 import { getVariantLoader } from "@/lib/registry/variants";
 import { ScaledFrame } from "./block-preview";
+import { CopyInstallChip } from "./copy-install-chip";
 import { PREVIEW_WIDTHS, SHELL_DESKTOP_MIN_BOX } from "./preview-widths";
 import { StageFrame } from "./stage-frame";
 
@@ -42,26 +44,48 @@ export interface VariantFrameProps {
   height?: string;
 }
 
-/** One variant with Preview / Code tabs and a link to its lone stage. Throws on an unknown variant. */
+/**
+ * One variant: for a component, a header with its label (the sidebar's `#c-<component>-<n>`
+ * anchor), its title and a chip that copies its install command; then Preview / Code tabs and a
+ * link to the variant alone. Throws on an unknown variant.
+ */
 export async function VariantFrame({ item, variant, title, height }: VariantFrameProps) {
+  const meta = docVariant(item, variant);
   const preview = await VariantPreview({ item, variant, title, height });
-  const stage = `/gallery/${item}/${variant}`;
+  const alone = meta ? `/view/${meta.name}` : `/gallery/${item}/${variant}`;
   const code = await highlightVariantSource(item, variant);
 
   return (
-    <Tabs data-slot="variant-frame" items={["Preview", "Code"]} className="not-prose">
-      <Tab value="Preview" className="flex flex-col gap-2">
-        {preview}
-        <a
-          href={stage}
-          aria-label={`Open stage: ${item} / ${variant}`}
-          className="self-end text-sm text-fd-muted-foreground underline underline-offset-4 hover:text-fd-foreground"
-        >
-          Open stage
-        </a>
-      </Tab>
-      <Tab value="Code">{code}</Tab>
-    </Tabs>
+    <div data-slot="variant-card" className="not-prose flex flex-col gap-3">
+      {meta ? (
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div className="flex min-w-0 flex-col gap-1">
+            <h3 id={meta.name} className="scroll-mt-24 text-base font-semibold text-fd-foreground">
+              {meta.label}
+            </h3>
+            <p className="text-sm text-fd-muted-foreground">{meta.title}</p>
+          </div>
+          {meta.installable ? (
+            <CopyInstallChip name={meta.name} commands={variantInstallCommands(meta.name)} />
+          ) : null}
+        </div>
+      ) : null}
+      <Tabs data-slot="variant-frame" items={["Preview", "Code"]}>
+        <Tab value="Preview" className="flex flex-col gap-2">
+          {preview}
+          <a
+            href={alone}
+            target="_blank"
+            rel="noopener"
+            className="self-end text-sm text-fd-muted-foreground underline underline-offset-4 hover:text-fd-foreground"
+          >
+            Open in a new tab
+            <span className="sr-only">: {meta ? meta.label : `${item} / ${variant}`}</span>
+          </a>
+        </Tab>
+        <Tab value="Code">{code}</Tab>
+      </Tabs>
+    </div>
   );
 }
 

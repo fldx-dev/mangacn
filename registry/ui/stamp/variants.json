@@ -1,0 +1,38 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Red Seal",
+    "title": "A round red seal stamped with the word NEW."
+  },
+  {
+    "n": 2,
+    "file": "shapes-and-sizes",
+    "label": "Round & Square",
+    "title": "Round red seals in three sizes, then square ink seals at a tilt."
+  },
+  {
+    "n": 3,
+    "file": "over-a-card",
+    "label": "On a Card",
+    "title": "A round red 承認 seal pressed over the corner of a card."
+  },
+  {
+    "n": 4,
+    "file": "japanese",
+    "label": "Kanji Seals",
+    "title": "Seals in kanji: 完結 round, 検印 square and 済 in ink."
+  },
+  {
+    "n": 5,
+    "file": "long-words",
+    "label": "Long Words",
+    "title": "Longer words such as APPROVED and TOP SECRET shrunk to fit the seal."
+  },
+  {
+    "n": 6,
+    "file": "vertical",
+    "label": "Vertical Kanji",
+    "title": "Two-kanji seals such as 完結, cut top to bottom like a hanko."
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Single Page",
+    "title": "One captioned panel wrapped in a page turn, ready to turn when its key changes."
+  },
+  {
+    "n": 2,
+    "file": "pages",
+    "label": "Paged Story",
+    "title": "Three captioned pages turned with right-to-left Next and Back buttons."
+  }
+]

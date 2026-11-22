@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Delete Confirmation",
+    "title": "A confirmation to delete a chapter, with a trash icon and a destructive action."
+  },
+  {
+    "n": 2,
+    "file": "long",
+    "label": "Scrolling Body",
+    "title": "A publish confirmation whose long body scrolls while the actions stay on screen."
+  }
+]

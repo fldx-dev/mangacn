@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Captioned Scene",
+    "title": "A panel with a corner caption, a heading and a line of narration."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Tones & Shadow",
+    "title": "Halftone, line and cross-hatch panels, and one with a hatched shadow."
+  }
+]

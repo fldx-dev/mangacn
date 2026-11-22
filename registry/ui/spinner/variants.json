@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "With Text",
+    "title": "A spinner beside a short line saying a page is being inked."
+  },
+  {
+    "n": 2,
+    "file": "button",
+    "label": "In a Button",
+    "title": "Two disabled buttons with a spinner before their busy labels."
+  },
+  {
+    "n": 3,
+    "file": "sizes",
+    "label": "Size Scale",
+    "title": "Three spinners side by side, each one a step larger."
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "With Icon",
+    "title": "A news banner with a megaphone icon, a chapter release line and a close button."
+  },
+  {
+    "n": 2,
+    "file": "inverted",
+    "label": "Inverted Ink",
+    "title": "An inverted ink banner with a link as its action and a close button."
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Single Date",
+    "title": "A one-month calendar with a single date selected."
+  },
+  {
+    "n": 2,
+    "file": "dropdowns",
+    "label": "Month Dropdowns",
+    "title": "A calendar whose caption uses month and year dropdowns to jump far."
+  },
+  {
+    "n": 3,
+    "file": "range",
+    "label": "Date Range",
+    "title": "Two months side by side with a ten-day range selected."
+  }
+]

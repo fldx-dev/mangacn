@@ -12,6 +12,7 @@ import {
 } from "@/lib/docs/install-command";
 import { generatedProps, propsInterfaceName, typeTableToMarkdown } from "@/lib/docs/props";
 import { PROPS_DELTA, shadcnDocsUrl } from "@/lib/docs/props-delta";
+import { docVariant, variantInstallCommands } from "@/lib/docs/variant-meta";
 import { getVariantSource } from "@/lib/docs/variant-source";
 import { loadRegistry } from "@/lib/registry";
 import { groupBlocks } from "@/lib/registry/blocks";
@@ -72,10 +73,17 @@ export function CopyPromptMarkdown() {
   return null;
 }
 
-/** A variant is its source, with the install-path imports the Code tab shows. */
+/**
+ * A variant is its source, with the install-path imports the Code tab shows; a component's
+ * variant first gets its label, title and install line, as the card's header shows them.
+ */
 export function VariantFrameMarkdown({ item, variant }: VariantFrameProps) {
   asMarkdown();
-  return fence(getVariantSource(item, variant), "tsx", `title="${item}/${variant}.tsx"`);
+  const meta = docVariant(item, variant);
+  const header = meta
+    ? `\n### ${meta.label}\n\n${meta.title}${meta.installable ? ` Install it with \`${variantInstallCommands(meta.name).pnpm}\`.` : ""}\n`
+    : "";
+  return `${header}${fence(getVariantSource(item, variant), "tsx", `title="${item}/${variant}.tsx"`)}`;
 }
 
 /** The props as a Markdown table: generated for manga-native items, the delta for primitives. */

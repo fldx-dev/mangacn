@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Top Fade",
+    "title": "A halftone dot screen fading out towards the top behind a title."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Tones & Fades",
+    "title": "Six tiles that mix light, mid and dark dots, sizes and fade directions."
+  }
+]

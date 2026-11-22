@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Image & Initials",
+    "title": "Two avatars side by side: a drawn portrait and an initials fallback."
+  },
+  {
+    "n": 2,
+    "file": "variants",
+    "label": "Sizes & Group",
+    "title": "Three avatar sizes with a check badge, and a stacked group with a count."
+  }
+]

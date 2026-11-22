@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Two Columns",
+    "title": "Four panels in a two-column grid, from a quiet beat to a shout."
+  },
+  {
+    "n": 2,
+    "file": "spans",
+    "label": "Spanning Panels",
+    "title": "A full-width establishing shot, a tall panel and a wide panel in a grid."
+  }
+]

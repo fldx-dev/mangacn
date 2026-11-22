@@ -1,0 +1,14 @@
+[
+  {
+    "n": 1,
+    "file": "default",
+    "label": "Side Settings",
+    "title": "A sheet from the side with reader settings and Save and Close buttons."
+  },
+  {
+    "n": 2,
+    "file": "bottom",
+    "label": "From the Bottom",
+    "title": "A short sheet that slides up from the bottom with a chapter summary."
+  }
+]
