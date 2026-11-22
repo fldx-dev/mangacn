@@ -10,5 +10,11 @@
     "file": "bottom",
     "label": "From the Bottom",
     "title": "A short sheet that slides up from the bottom with a chapter summary."
+  },
+  {
+    "n": 3,
+    "file": "chapter-navigation",
+    "label": "Chapter Navigation",
+    "title": "A sheet from the left listing a volume's chapters, with the current one marked."
   }
 ]

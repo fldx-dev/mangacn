@@ -10,5 +10,11 @@
     "file": "long",
     "label": "Scrolling Body",
     "title": "A publish confirmation whose long body scrolls while the actions stay on screen."
+  },
+  {
+    "n": 3,
+    "file": "discard-draft",
+    "label": "Compact Size",
+    "title": "A small confirmation to discard an unsaved script, with two equal buttons."
   }
 ]

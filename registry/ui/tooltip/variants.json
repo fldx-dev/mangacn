@@ -4,5 +4,17 @@
     "file": "default",
     "label": "Icon Button",
     "title": "A tooltip naming an icon-only bookmark button."
+  },
+  {
+    "n": 2,
+    "file": "reader-toolbar",
+    "label": "Reader Toolbar",
+    "title": "A row of reader buttons whose tooltips name each action and its shortcut key."
+  },
+  {
+    "n": 3,
+    "file": "truncated-title",
+    "label": "Truncated Title",
+    "title": "A series title cut short by its column, shown in full in a tooltip."
   }
 ]

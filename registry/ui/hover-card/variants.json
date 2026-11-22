@@ -10,5 +10,11 @@
     "file": "profile",
     "label": "Artist Profile",
     "title": "An artist handle that opens a card with an avatar, series and genre badges."
+  },
+  {
+    "n": 3,
+    "file": "chapter-preview",
+    "label": "Chapter Preview",
+    "title": "A chapter link in a list that opens a cover and summary beside it."
   }
 ]

@@ -4,5 +4,17 @@
     "file": "default",
     "label": "Reader FAQ",
     "title": "Three reader questions in an accordion, the first one open."
+  },
+  {
+    "n": 2,
+    "file": "several-open",
+    "label": "Several Open",
+    "title": "Editor's notes on three chapters, with two of them open at once."
+  },
+  {
+    "n": 3,
+    "file": "disabled-items",
+    "label": "Disabled Items",
+    "title": "A volume list where the two unreleased volumes cannot be opened yet."
   }
 ]

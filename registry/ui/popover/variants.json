@@ -4,5 +4,17 @@
     "file": "default",
     "label": "Jump to Page",
     "title": "A popover with a title, a page count and a page number input."
+  },
+  {
+    "n": 2,
+    "file": "reading-settings",
+    "label": "Reading Settings",
+    "title": "A settings button that opens page layout choices and two reader switches."
+  },
+  {
+    "n": 3,
+    "file": "share-link",
+    "label": "Share Link",
+    "title": "A share popover with a read-only chapter link and a button to copy it."
   }
 ]

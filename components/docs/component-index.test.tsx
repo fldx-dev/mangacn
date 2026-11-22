@@ -100,12 +100,12 @@ describe("ComponentIndex", () => {
   it("counts the components and the variants, in all and on each card", async () => {
     const { container } = render(await ComponentIndex());
     expect(container.querySelector('[data-slot="component-index-total"]')?.textContent).toBe(
-      `All Components${CARDS} components, 285 variants`,
+      `All Components${CARDS} components, 296 variants`,
     );
     const count = (item: string) =>
       container.querySelector(`[data-item="${item}"] [data-slot="variant-count"]`)?.textContent;
     expect(count("stamp")).toBe("6 variants");
-    expect(count("accordion")).toBe("1 variant");
+    expect(count("accordion")).toBe("3 variants");
   });
 
   it("shows overlay items through their stage iframe", async () => {

@@ -4,5 +4,17 @@
     "file": "default",
     "label": "Rename Form",
     "title": "A dialog with one title field to rename a chapter, and Cancel and Save."
+  },
+  {
+    "n": 2,
+    "file": "report-comment",
+    "label": "Report Reasons",
+    "title": "A dialog to report a reader comment, with a radio choice of reasons."
+  },
+  {
+    "n": 3,
+    "file": "scrolling-credits",
+    "label": "Scrolling Credits",
+    "title": "A credits list for a volume that scrolls inside the dialog above a Close button."
   }
 ]
