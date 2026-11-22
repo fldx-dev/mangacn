@@ -10,5 +10,11 @@
     "file": "vertical",
     "label": "Vertical Steps",
     "title": "A vertical submission flow with each step's content and Back and Next buttons."
+  },
+  {
+    "n": 3,
+    "file": "with-icons",
+    "label": "With Icons",
+    "title": "A chapter's publish steps with an icon each and a print step not yet open."
   }
 ]

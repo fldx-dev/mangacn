@@ -10,5 +10,11 @@
     "file": "with-label",
     "label": "Install Command",
     "title": "An outline button labelled Copy beside a one-line install command."
+  },
+  {
+    "n": 3,
+    "file": "share-link",
+    "label": "Share Link",
+    "title": "A labelled, read-only chapter link with the copy button inside the field."
   }
 ]

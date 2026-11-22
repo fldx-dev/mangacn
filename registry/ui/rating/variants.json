@@ -10,5 +10,11 @@
     "file": "read-only",
     "label": "Read-Only Scores",
     "title": "Small read-only star ratings for three volumes of a series."
+  },
+  {
+    "n": 3,
+    "file": "heart-icons",
+    "label": "Heart Icons",
+    "title": "Hearts in place of stars for rating a chapter at its last page."
   }
 ]

@@ -10,5 +10,11 @@
     "file": "inverted",
     "label": "Inverted Ink",
     "title": "An inverted ink banner with a link as its action and a close button."
+  },
+  {
+    "n": 3,
+    "file": "action-button",
+    "label": "Action Button",
+    "title": "A deadline notice with no close button and a button that opens the board."
   }
 ]

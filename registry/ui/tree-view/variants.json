@@ -10,5 +10,11 @@
     "file": "controlled",
     "label": "Controlled State",
     "title": "A series library whose open and selected items are kept by the page."
+  },
+  {
+    "n": 3,
+    "file": "status-badges",
+    "label": "Status Badges",
+    "title": "A volume's chapters with a production stage badge beside each one."
   }
 ]

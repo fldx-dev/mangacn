@@ -10,5 +10,11 @@
     "file": "columns",
     "label": "Reorder Columns",
     "title": "A notes board whose columns drag to reorder, with an add-card form in each."
+  },
+  {
+    "n": 3,
+    "file": "wip-limits",
+    "label": "WIP Limits",
+    "title": "A studio board whose column footers show work limits, with one column over."
   }
 ]

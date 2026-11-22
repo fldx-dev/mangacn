@@ -100,7 +100,7 @@ describe("ComponentIndex", () => {
   it("counts the components and the variants, in all and on each card", async () => {
     const { container } = render(await ComponentIndex());
     expect(container.querySelector('[data-slot="component-index-total"]')?.textContent).toBe(
-      `All Components${CARDS} components, 309 variants`,
+      `All Components${CARDS} components, 318 variants`,
     );
     const count = (item: string) =>
       container.querySelector(`[data-item="${item}"] [data-slot="variant-count"]`)?.textContent;

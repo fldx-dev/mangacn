@@ -10,5 +10,11 @@
     "file": "max",
     "label": "Overflow Count",
     "title": "Twelve readers capped at five avatars and a +7 count, in three sizes."
+  },
+  {
+    "n": 3,
+    "file": "chapter-credits",
+    "label": "Chapter Credits",
+    "title": "A chapter list that credits each chapter's team with a small avatar stack."
   }
 ]

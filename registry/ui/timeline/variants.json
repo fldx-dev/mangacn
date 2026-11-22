@@ -10,5 +10,11 @@
     "file": "alternate",
     "label": "Alternating Sides",
     "title": "A studio's year on alternating sides, with done, current and upcoming events."
+  },
+  {
+    "n": 3,
+    "file": "with-badges",
+    "label": "With Badges",
+    "title": "A series update feed in a card, with a badge on each entry."
   }
 ]

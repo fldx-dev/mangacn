@@ -10,5 +10,11 @@
     "file": "grid",
     "label": "KPI Grid",
     "title": "Four reading-app stat cards in a grid of one, two or four columns."
+  },
+  {
+    "n": 3,
+    "file": "series-header",
+    "label": "Series Header",
+    "title": "A series page header with three small hatched-shadow cards and no sparklines."
   }
 ]
