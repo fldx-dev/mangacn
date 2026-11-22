@@ -10,5 +10,11 @@
     "file": "pages",
     "label": "Paged Story",
     "title": "Three captioned pages turned with right-to-left Next and Back buttons."
+  },
+  {
+    "n": 3,
+    "file": "left-to-right",
+    "label": "Left to Right",
+    "title": "A cover that opens onto page 1 and reads left to right, like a western book."
   }
 ]

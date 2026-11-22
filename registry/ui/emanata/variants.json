@@ -10,5 +10,11 @@
     "file": "kinds",
     "label": "Kinds & Colours",
     "title": "Sweat, anger, sparkle, surprise and puff marks, then sizes and colours."
+  },
+  {
+    "n": 3,
+    "file": "on-avatars",
+    "label": "On Avatars",
+    "title": "A cast list where each character's avatar wears the mark of their mood."
   }
 ]

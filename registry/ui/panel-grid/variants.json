@@ -10,5 +10,11 @@
     "file": "spans",
     "label": "Spanning Panels",
     "title": "A full-width establishing shot, a tall panel and a wide panel in a grid."
+  },
+  {
+    "n": 3,
+    "file": "four-koma",
+    "label": "4-Koma Strip",
+    "title": "A four-panel strip in one column, read top to bottom to the punchline."
   }
 ]

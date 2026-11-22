@@ -10,5 +10,11 @@
     "file": "sizes",
     "label": "Sizes & Colour",
     "title": "Small, medium and large loaders, and a small spot-colour one beside Saving."
+  },
+  {
+    "n": 3,
+    "file": "chapter-card",
+    "label": "Chapter Card",
+    "title": "A chapter card holding the space for its pages while they load."
   }
 ]

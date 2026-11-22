@@ -10,5 +10,11 @@
     "file": "variants",
     "label": "Tones & Fades",
     "title": "Six tiles that mix light, mid and dark dots, sizes and fade directions."
+  },
+  {
+    "n": 3,
+    "file": "behind-a-card",
+    "label": "Behind a Card",
+    "title": "A series hero card set on a dark halftone screen that frames it."
   }
 ]

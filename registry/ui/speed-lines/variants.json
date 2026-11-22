@@ -10,5 +10,11 @@
     "file": "variants",
     "label": "Direction & Density",
     "title": "Four tiles with left, dense right, sparse toned and off-centre speed lines."
+  },
+  {
+    "n": 3,
+    "file": "call-to-action",
+    "label": "Call to Action",
+    "title": "Toned speed lines behind a new chapter banner and its Read now link."
   }
 ]

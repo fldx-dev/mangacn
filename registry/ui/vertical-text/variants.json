@@ -10,5 +10,11 @@
     "file": "orientations",
     "label": "Three Orientations",
     "title": "One line of Japanese, Latin and digits set mixed, upright and sideways."
+  },
+  {
+    "n": 3,
+    "file": "volume-spines",
+    "label": "Volume Spines",
+    "title": "A shelf of four volume spines with the series title running down each."
   }
 ]

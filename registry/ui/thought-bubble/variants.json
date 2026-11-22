@@ -10,5 +10,11 @@
     "file": "variants",
     "label": "Dots & Sides",
     "title": "Thought bubbles with one or three dots, trailing left or right."
+  },
+  {
+    "n": 3,
+    "file": "in-a-panel",
+    "label": "In a Panel",
+    "title": "A spoken line and the thought behind it, side by side in a panel."
   }
 ]

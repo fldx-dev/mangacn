@@ -10,5 +10,11 @@
     "file": "variants",
     "label": "Tones & Shadow",
     "title": "Halftone, line and cross-hatch panels, and one with a hatched shadow."
+  },
+  {
+    "n": 3,
+    "file": "with-dialogue",
+    "label": "With Dialogue",
+    "title": "A toned panel with a narration caption and two characters' speech bubbles."
   }
 ]

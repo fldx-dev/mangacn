@@ -10,5 +10,11 @@
     "file": "bars",
     "label": "Plain SVG Bars",
     "title": "A hand-built SVG bar chart where each bar takes its own screentone."
+  },
+  {
+    "n": 3,
+    "file": "spot-highlight",
+    "label": "Spot Highlight",
+    "title": "Reader poll bars where your own series stands out in a spot-red tone."
   }
 ]
