@@ -10,5 +10,11 @@
     "file": "icon",
     "label": "Icon & Link",
     "title": "An all-caught-up message with an icon and a link to follow the series."
+  },
+  {
+    "n": 3,
+    "file": "no-results",
+    "label": "No Results",
+    "title": "A search that found no series, with its own icon and two ways on."
   }
 ]

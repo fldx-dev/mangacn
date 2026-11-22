@@ -10,5 +10,11 @@
     "file": "states",
     "label": "All States",
     "title": "Unchecked, checked and invalid radios, then a disabled group."
+  },
+  {
+    "n": 3,
+    "file": "with-descriptions",
+    "label": "With Descriptions",
+    "title": "Three download qualities, each with a line about its file size."
   }
 ]

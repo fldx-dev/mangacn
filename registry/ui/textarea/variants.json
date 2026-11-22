@@ -10,5 +10,11 @@
     "file": "states",
     "label": "All States",
     "title": "Filled, disabled and invalid textareas stacked with their labels."
+  },
+  {
+    "n": 3,
+    "file": "comment-box",
+    "label": "Character Count",
+    "title": "A chapter comment box that counts the characters left beside a post button."
   }
 ]

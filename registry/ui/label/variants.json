@@ -10,5 +10,11 @@
     "file": "required",
     "label": "Required Mark",
     "title": "A required pen name label above its input."
+  },
+  {
+    "n": 3,
+    "file": "disabled-field",
+    "label": "Disabled Field",
+    "title": "An editable chapter title above a locked release date whose label dims."
   }
 ]

@@ -64,7 +64,7 @@ describe("variantProblems", () => {
 describe("component variants", () => {
   it("number every variant file of every component", () => {
     // listComponentVariants throws on any metadata problem; this pins the count.
-    expect(variants).toHaveLength(274);
+    expect(variants).toHaveLength(285);
     expect(new Set(variants.map((variant) => variant.component)).size).toBe(105);
   });
 
@@ -77,7 +77,7 @@ describe("component variants", () => {
 
 describe("variant items", () => {
   it("are all installable", () => {
-    expect(items).toHaveLength(274);
+    expect(items).toHaveLength(285);
     expect(skipped).toEqual([]);
   });
 

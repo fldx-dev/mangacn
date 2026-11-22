@@ -10,5 +10,11 @@
     "file": "horizontal",
     "label": "Volume Shelf",
     "title": "Six volume covers in a row that scrolls sideways."
+  },
+  {
+    "n": 3,
+    "file": "both-directions",
+    "label": "Both Directions",
+    "title": "A storyboard of twenty-four panels that scrolls both down and sideways."
   }
 ]

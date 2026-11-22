@@ -10,5 +10,11 @@
     "file": "fieldset",
     "label": "Choice Cards",
     "title": "A reading fieldset with two radio cards and a checkbox below a divider."
+  },
+  {
+    "n": 3,
+    "file": "responsive-rows",
+    "label": "Responsive Rows",
+    "title": "Profile settings whose labels move beside their inputs once the form is wide."
   }
 ]

@@ -10,5 +10,11 @@
     "file": "states",
     "label": "All States",
     "title": "Off, on, small, disabled, disabled on and invalid switches."
+  },
+  {
+    "n": 3,
+    "file": "with-descriptions",
+    "label": "With Descriptions",
+    "title": "Notification settings with a line under each switch and one locked off."
   }
 ]

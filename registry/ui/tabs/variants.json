@@ -10,5 +10,11 @@
     "file": "variants",
     "label": "Line & Vertical",
     "title": "A line tab list with a disabled tab, then two vertical tab lists."
+  },
+  {
+    "n": 3,
+    "file": "series-page",
+    "label": "Series Page",
+    "title": "Chapters, about and reviews tabs with icons on a series page."
   }
 ]

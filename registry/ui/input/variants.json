@@ -10,5 +10,11 @@
     "file": "states",
     "label": "All States",
     "title": "Empty, filled, disabled and invalid inputs, plus a file picker for cover art."
+  },
+  {
+    "n": 3,
+    "file": "leading-icon",
+    "label": "Leading Icon",
+    "title": "A library search input with a magnifier icon set inside its left edge."
   }
 ]

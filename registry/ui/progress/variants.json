@@ -10,5 +10,11 @@
     "file": "variants",
     "label": "Ink & Tone",
     "title": "Four production steps as ink and screentone bars, from full to empty."
+  },
+  {
+    "n": 3,
+    "file": "page-count",
+    "label": "Page Count",
+    "title": "Reading progress through chapter 12, counted in pages instead of percent."
   }
 ]

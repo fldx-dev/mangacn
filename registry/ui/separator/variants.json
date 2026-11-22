@@ -10,5 +10,11 @@
     "file": "variants",
     "label": "Both Orientations",
     "title": "A horizontal separator and a vertical one between two words."
+  },
+  {
+    "n": 3,
+    "file": "in-a-toolbar",
+    "label": "In a Toolbar",
+    "title": "A reader toolbar whose groups of icon buttons are split by vertical rules."
   }
 ]
