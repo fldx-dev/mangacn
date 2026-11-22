@@ -10,5 +10,11 @@
     "file": "validate",
     "label": "Email Validation",
     "title": "An invite field that takes up to five email addresses and rejects anything else."
+  },
+  {
+    "n": 3,
+    "file": "disabled",
+    "label": "Disabled Field",
+    "title": "A series details card with locked launch genres beside editable search keywords."
   }
 ]

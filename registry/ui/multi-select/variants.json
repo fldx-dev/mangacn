@@ -10,5 +10,11 @@
     "file": "groups",
     "label": "Grouped Options",
     "title": "Tags grouped by genre, audience and format, with at most three picked."
+  },
+  {
+    "n": 3,
+    "file": "filter-bar",
+    "label": "Filter Bar",
+    "title": "A library filter bar with status and demographic fields and a submit button."
   }
 ]

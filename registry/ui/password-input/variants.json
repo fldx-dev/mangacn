@@ -10,5 +10,11 @@
     "file": "strength",
     "label": "Strength Meter",
     "title": "A new password field with a meter that rates the password's strength."
+  },
+  {
+    "n": 3,
+    "file": "requirements",
+    "label": "Requirements List",
+    "title": "A new password field with a checklist of rules that tick off as you type."
   }
 ]
