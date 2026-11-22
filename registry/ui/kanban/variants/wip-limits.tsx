@@ -1,5 +1,6 @@
 "use client";
 
+import { TriangleAlertIcon } from "lucide-react";
 import * as React from "react";
 import {
   Kanban,
@@ -47,10 +48,16 @@ function PageFace({ page }: { page: Page }) {
 function LimitNote({ count, limit }: { count: number; limit: number }) {
   const over = count > limit;
   return (
+    // Small text in spot falls under 4.5:1, so the warning is ink with a spot icon beside it.
     <p
       role="status"
-      className={over ? "text-xs font-medium text-spot" : "text-xs text-muted-foreground"}
+      className={
+        over
+          ? "flex items-center gap-1 text-xs font-medium text-foreground"
+          : "text-xs text-muted-foreground"
+      }
     >
+      {over ? <TriangleAlertIcon aria-hidden className="size-3.5 shrink-0 text-spot" /> : null}
       {over ? `Over the limit of ${limit}` : `Limit ${limit}`}
     </p>
   );

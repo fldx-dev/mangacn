@@ -23,7 +23,7 @@ export default function TableStatusBadgesVariant() {
           <TableRow>
             <TableHead>Series</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>
+            <TableHead className="pr-3">
               <span className="sr-only">Actions</span>
             </TableHead>
           </TableRow>
@@ -38,7 +38,9 @@ export default function TableStatusBadgesVariant() {
               <TableCell>
                 <Badge variant={item.variant}>{item.status}</Badge>
               </TableCell>
-              <TableCell className="text-right">
+              {/* pr-3: a button's ink outline reaches past its box; at the table's edge it would
+                  make the table scroll by half a pixel. */}
+              <TableCell className="pr-3 text-right">
                 <Button size="xs" variant="outline" aria-label={`Read ${item.title}`}>
                   Read
                 </Button>
