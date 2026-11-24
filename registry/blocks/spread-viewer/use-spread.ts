@@ -195,13 +195,14 @@ export function useSpread({
     (target: number) => {
       const list = spreadStarts(count, single);
       if (list.length === 0) return;
-      const next = list[Math.min(Math.max(target, 0), list.length - 1)];
-      if (next === first) return;
+      const position = Math.min(Math.max(target, 0), list.length - 1);
+      if (position === index) return;
+      const next = list[position];
       if (!isControlled) setOwn(next);
       onChangeRef.current?.(next);
       onPageChangeRef.current?.(next);
     },
-    [count, single, first, isControlled],
+    [count, single, index, isControlled],
   );
 
   const next = React.useCallback(() => goToSpread(index + 1), [goToSpread, index]);

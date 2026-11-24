@@ -161,6 +161,29 @@ describe("useSpread", () => {
     });
     expect(onChange).not.toHaveBeenCalled();
   });
+
+  it("keeps its callbacks across a rerender on the same spread, and turns them on a page turn", () => {
+    const { result, rerender } = renderHook(() => useSpread({ count: 5, onChange: () => {} }));
+    const before = result.current;
+    rerender();
+    for (const name of [
+      "next",
+      "previous",
+      "goTo",
+      "goToFirst",
+      "goToLast",
+      "onKeyDown",
+    ] as const) {
+      expect(result.current[name]).toBe(before[name]);
+    }
+    act(() => result.current.next());
+    expect(result.current.next).not.toBe(before.next);
+    // Going to the open spread calls nothing.
+    const onChange = vi.fn();
+    const { result: open } = renderHook(() => useSpread({ count: 5, start: 3, onChange }));
+    act(() => open.current.goTo(4));
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });
 
 describe("useSpread, controlled", () => {

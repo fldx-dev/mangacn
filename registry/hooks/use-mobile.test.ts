@@ -1,4 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
+import { createElement } from "react";
+import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 // The install path a dependent imports (tsconfig.json and vitest.config.mts map it here).
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -36,6 +38,11 @@ function stubViewport(width: number) {
   };
 }
 
+/** Renders the hook's value, for the server render. */
+function Probe() {
+  return createElement("span", null, String(useIsMobile()));
+}
+
 afterEach(() => {
   vi.unstubAllGlobals();
 });
@@ -70,5 +77,11 @@ describe("useIsMobile", () => {
     expect(viewport.listeners.size).toBe(1);
     unmount();
     expect(viewport.listeners.size).toBe(0);
+  });
+
+  it("is false on the server, whatever the viewport, and reads no matchMedia there", () => {
+    const viewport = stubViewport(375);
+    expect(renderToString(createElement(Probe))).toBe("<span>false</span>");
+    expect(viewport.queries).toEqual([]);
   });
 });

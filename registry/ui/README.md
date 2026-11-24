@@ -832,6 +832,14 @@ Coverage and its 90 % threshold are enforced in CI (`pnpm test:coverage`), not i
 it to CI. It is `pnpm run ci:checks` followed by the smoke; CI runs `ci:checks` and `ci:smoke`
 (`registry:build` then `registry:smoke`) as the parallel `checks` and `smoke` jobs.
 
+`pnpm lint:registry` (in `ci:checks`, `scripts/lint-registry.ts`) runs ESLint on every item's
+`.ts` and `.tsx` files with the config a fresh Next 16 app lints with (eslint-config-next
+core-web-vitals and typescript, React Compiler rules included): Biome passing does not mean a
+user's `npm run lint` passes after `shadcn add`. Pass files to check only those
+(`pnpm lint:registry registry/hooks/use-mobile.ts`). An error fails it; an accepted one goes in
+its `ALLOWED` map with what removes it. Its `eslint` stays on 9.x, the major create-next-app
+installs.
+
 Preview a variant in isolation with `pnpm dev` and open
 `http://localhost:3000/gallery/<name>/<variant>` (add `?mode=dark` for the night theme). The
 page renders that one variant centred on paper and nothing else.

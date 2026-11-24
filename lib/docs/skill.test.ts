@@ -33,7 +33,7 @@ describe("renderSkillCatalog", () => {
     expect(hooks).toContain("A hook installs with the item that needs it");
     expect(hooks).toContain(
       [
-        "- `use-mobile`: Stock hook useIsMobile: true below 768 px, following the viewport; sidebar reads it to become a sheet on phones.",
+        "- `use-mobile`: Hook useIsMobile, adapted from shadcn's: true below 768 px, following the viewport through useSyncExternalStore and false on the server; sidebar reads it to become a sheet on phones.",
         "  Install: `npx shadcn@latest add @mangacn/use-mobile --overwrite`",
         "  Docs: https://www.mangacn.com/r/use-mobile.json",
       ].join("\n"),

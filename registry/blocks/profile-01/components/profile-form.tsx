@@ -91,6 +91,35 @@ export interface ProfileFormProps extends React.ComponentProps<"div"> {
   onSavePassword?: (change: PasswordChange) => void;
 }
 
+/**
+ * An object URL for `file` while the form is shown. It is made when React subscribes and revoked
+ * when it unsubscribes, so an effect cleanup and its re-run (the photo changing, the form going,
+ * a hidden `<Activity>` shown again, Fast Refresh, StrictMode) always leave a live URL.
+ */
+function useObjectUrl(file: File | null): string | undefined {
+  const store = React.useMemo(() => objectUrlStore(file), [file]);
+  return React.useSyncExternalStore(store.subscribe, store.getSnapshot, noUrl);
+}
+
+function objectUrlStore(file: File | null) {
+  let url: string | undefined;
+  return {
+    subscribe(onChange: () => void) {
+      if (!file) return () => {};
+      const made = URL.createObjectURL(file);
+      url = made;
+      onChange();
+      return () => {
+        URL.revokeObjectURL(made);
+        url = undefined;
+      };
+    },
+    getSnapshot: () => url,
+  };
+}
+
+const noUrl = () => undefined;
+
 export function ProfileForm({
   defaultValues,
   onSaveProfile,
@@ -106,7 +135,6 @@ export function ProfileForm({
   const [errors, setErrors] = React.useState<ProfileErrors>({});
   const [photo, setPhoto] = React.useState<File | null>(null);
   const [photoError, setPhotoError] = React.useState("");
-  const [preview, setPreview] = React.useState<string>();
   const [current, setCurrent] = React.useState("");
   const [next, setNext] = React.useState("");
   const [confirm, setConfirm] = React.useState("");
@@ -117,16 +145,7 @@ export function ProfileForm({
   const set = <K extends keyof Profile>(key: K, value: Profile[K]) =>
     setValues((last) => ({ ...last, [key]: value }));
 
-  // The preview is the picked file's object URL, revoked when the photo changes or the form goes.
-  React.useEffect(() => {
-    if (!photo) {
-      setPreview(undefined);
-      return;
-    }
-    const url = URL.createObjectURL(photo);
-    setPreview(url);
-    return () => URL.revokeObjectURL(url);
-  }, [photo]);
+  const preview = useObjectUrl(photo);
 
   const rejectPhoto = ([rejection]: FileRejection[]) => {
     if (!rejection) return;
