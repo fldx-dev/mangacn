@@ -36,7 +36,10 @@ function itemHref(name: string): string | undefined {
 
 const LINK = "underline decoration-tone-3 underline-offset-4 hover:text-spot hover:decoration-spot";
 
-/** A link that leaves the site, drawn as the registry Button. */
+/**
+ * A link that leaves the site in a new tab, drawn as the registry Button. Base UI gives a
+ * non-native button `role="button"`; `role="link"` overrides it so it is announced as a link.
+ */
 function ExternalButton({
   href,
   children,
@@ -54,6 +57,7 @@ function ExternalButton({
       render={<a href={href} target="_blank" rel="noopener noreferrer" />}
     >
       {children}
+      <span className="sr-only"> (opens in a new tab)</span>
     </Button>
   );
 }
@@ -65,7 +69,7 @@ function Example({ example }: { example: ShowcaseExample }) {
       <div className="ink-border overflow-hidden">
         <Image
           src={example.screenshot}
-          alt={`${example.title}: home page at desktop width`}
+          alt={`${example.title} at desktop width`}
           width={1280}
           height={800}
           sizes="(min-width: 1152px) 540px, (min-width: 768px) 46vw, 92vw"
