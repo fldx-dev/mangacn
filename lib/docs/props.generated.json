@@ -2609,6 +2609,82 @@
       }
     ]
   },
+  "login-01": {
+    "LoginFormProps": [
+      {
+        "id": "login-form.tsx-LoginFormProps",
+        "name": "LoginFormProps",
+        "entries": [
+          {
+            "name": "forgotPasswordHref",
+            "description": "Where \"Forgot your password?\" goes. Without it the link is not drawn: no mangacn item\ninstalls a password-reset page.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "login-02": {
+    "LoginFormProps": [
+      {
+        "id": "login-form.tsx-LoginFormProps",
+        "name": "LoginFormProps",
+        "entries": [
+          {
+            "name": "forgotPasswordHref",
+            "description": "Where \"Forgot your password?\" goes. Without it the link is not drawn: no mangacn item\ninstalls a password-reset page.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "login-03": {
+    "LoginFormProps": [
+      {
+        "id": "login-form.tsx-LoginFormProps",
+        "name": "LoginFormProps",
+        "entries": [
+          {
+            "name": "forgotPasswordHref",
+            "description": "Where \"Forgot your password?\" goes. Without it the link is not drawn: no mangacn item\ninstalls a password-reset page.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "login-04": {
+    "LoginFormProps": [
+      {
+        "id": "login-form.tsx-LoginFormProps",
+        "name": "LoginFormProps",
+        "entries": [
+          {
+            "name": "forgotPasswordHref",
+            "description": "Where \"Forgot your password?\" goes. Without it the link is not drawn: no mangacn item\ninstalls a password-reset page.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "manga-frame": {
     "MangaFrameProps": [
       {

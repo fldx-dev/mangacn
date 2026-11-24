@@ -16,7 +16,15 @@ import { Input } from "@/components/ui/input";
 // stock's Apple and Google marks as stock draws them, in the current ink colour (no brand
 // colour), each beside its label. The title is the page's heading and names the form.
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+export interface LoginFormProps extends React.ComponentProps<"div"> {
+  /**
+   * Where "Forgot your password?" goes. Without it the link is not drawn: no mangacn item
+   * installs a password-reset page.
+   */
+  forgotPasswordHref?: string;
+}
+
+export function LoginForm({ className, forgotPasswordHref, ...props }: LoginFormProps) {
   const titleId = React.useId();
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -60,12 +68,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="/forgot-password"
-                    className="ml-auto text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
+                  {forgotPasswordHref ? (
+                    <a
+                      href={forgotPasswordHref}
+                      className="ml-auto text-sm underline-offset-4 hover:underline"
+                    >
+                      Forgot your password?
+                    </a>
+                  ) : null}
                 </div>
                 <Input id="password" name="password" type="password" required />
               </Field>

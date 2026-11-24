@@ -11,7 +11,15 @@ import { Input } from "@/components/ui/input";
 // one spot-red stamp on its corner. The items draw everything; the form only lays them out. The
 // title is the page's heading and names the form, so the form is a landmark of its own.
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+export interface LoginFormProps extends React.ComponentProps<"div"> {
+  /**
+   * Where "Forgot your password?" goes. Without it the link is not drawn: no mangacn item
+   * installs a password-reset page.
+   */
+  forgotPasswordHref?: string;
+}
+
+export function LoginForm({ className, forgotPasswordHref, ...props }: LoginFormProps) {
   const titleId = React.useId();
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -44,12 +52,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
+                  {forgotPasswordHref ? (
+                    <a
+                      href={forgotPasswordHref}
+                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    >
+                      Forgot your password?
+                    </a>
+                  ) : null}
                 </div>
                 <Input id="password" name="password" type="password" required />
               </Field>
