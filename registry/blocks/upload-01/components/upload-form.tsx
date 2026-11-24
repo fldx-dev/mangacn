@@ -125,23 +125,25 @@ export function UploadForm({ series, onPublish, className, ...props }: UploadFor
   const waiting = files.filter((file) => pageOf(file).status === "idle");
   const summary = `${done} of ${total} ${total === 1 ? "page" : "pages"} uploaded`;
 
-  // The run ends when no page is uploading any more: stop the timer and say how it went. The
-  // map holds exactly the listed pages, so the counts come from it.
-  React.useEffect(() => {
-    if (!running) return;
-    const pages = Array.from(uploads.values());
-    if (pages.some((upload) => upload.status === "uploading")) return;
-    stopTimer();
+  // The run ends when no page is uploading any more: say how it went, set while rendering (state
+  // that follows other state, not an effect), then stop the timer below. The map holds exactly
+  // the listed pages, so the counts come from it.
+  const listed = Array.from(uploads.values());
+  if (running && !listed.some((upload) => upload.status === "uploading")) {
     setRunning(false);
-    if (pages.length === 0) return;
-    const doneCount = pages.filter((upload) => upload.status === "done").length;
-    const failedCount = pages.filter((upload) => upload.status === "error").length;
-    const text = `${doneCount} of ${pages.length} ${pages.length === 1 ? "page" : "pages"} uploaded.`;
-    setAnnouncement((last) => ({
-      key: last.key + 1,
-      text: failedCount > 0 ? `${text} ${failedCount} failed.` : text,
-    }));
-  }, [running, uploads, stopTimer]);
+    if (listed.length > 0) {
+      const doneCount = listed.filter((upload) => upload.status === "done").length;
+      const failedCount = listed.filter((upload) => upload.status === "error").length;
+      const text = `${doneCount} of ${listed.length} ${listed.length === 1 ? "page" : "pages"} uploaded.`;
+      setAnnouncement((last) => ({
+        key: last.key + 1,
+        text: failedCount > 0 ? `${text} ${failedCount} failed.` : text,
+      }));
+    }
+  }
+  React.useEffect(() => {
+    if (!running) stopTimer();
+  }, [running, stopTimer]);
 
   /** Starts (or restarts) the given pages and the timer, if it is not already running. */
   const start = (pages: File[]) => {
