@@ -31,7 +31,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
         </div>
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+          <Input id="email" name="email" type="email" placeholder="m@example.com" required />
         </Field>
         <Field>
           <div className="flex items-center">
@@ -43,7 +43,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
               Forgot your password?
             </a>
           </div>
-          <Input id="password" type="password" required />
+          <Input id="password" name="password" type="password" required />
         </Field>
         <Field>
           <Button type="submit">Login</Button>

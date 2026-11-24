@@ -14,6 +14,20 @@ const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8"
 const FILES = ["page.tsx", "components/signup-form.tsx"];
 
 describe("SignupForm", () => {
+  it("submits every field under its name: FormData holds what was typed", () => {
+    const { container } = render(<SignupForm />);
+    const expected = [
+      ["email", "ana@example.com"],
+      ["password", "hunter2-ink"],
+      ["confirm-password", "hunter2-ink"],
+    ];
+    for (const [id, value] of expected) {
+      (container.querySelector(`#${id}`) as HTMLInputElement).value = value;
+    }
+    const form = container.querySelector("form") as HTMLFormElement;
+    expect([...new FormData(form).entries()]).toEqual(expected);
+  });
+
   it("is a form named by its heading, with stock's fields, buttons and links", () => {
     render(<SignupForm />);
     const heading = screen.getByRole("heading", { level: 1, name: "Create your account" });

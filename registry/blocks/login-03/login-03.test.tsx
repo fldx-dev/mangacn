@@ -13,6 +13,19 @@ afterEach(cleanup);
 const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8");
 
 describe("LoginForm", () => {
+  it("submits every field under its name: FormData holds what was typed", () => {
+    const { container } = render(<LoginForm />);
+    const expected = [
+      ["email", "ana@example.com"],
+      ["password", "hunter2-ink"],
+    ];
+    for (const [id, value] of expected) {
+      (container.querySelector(`#${id}`) as HTMLInputElement).value = value;
+    }
+    const form = container.querySelector("form") as HTMLFormElement;
+    expect([...new FormData(form).entries()]).toEqual(expected);
+  });
+
   it("is a form named by its heading: Apple, Google, then email and password", () => {
     render(<LoginForm />);
     const heading = screen.getByRole("heading", { level: 1, name: "Welcome back" });
