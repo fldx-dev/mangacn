@@ -3870,6 +3870,20 @@
             "deprecated": false
           },
           {
+            "name": "latest",
+            "description": "Stamps the series' highest-numbered chapter NEW in the drawer's chapter list, as chapter-list's\n`latest` does. Pass `false` for a finished series, whose last chapter is not new.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [
+              {
+                "name": "default",
+                "text": "true"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
             "name": "direction",
             "description": "`rtl` reads like a manga, `ltr` like a western book.",
             "type": "SpreadDirection | undefined",

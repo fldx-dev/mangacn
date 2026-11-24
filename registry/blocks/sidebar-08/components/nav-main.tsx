@@ -39,7 +39,12 @@ export function NavMain({
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible key={item.title} defaultOpen={item.isActive} render={<SidebarMenuItem />}>
-            <SidebarMenuButton tooltip={item.title} render={<a href={item.url} />}>
+            <SidebarMenuButton
+              tooltip={item.title}
+              isActive={item.isActive}
+              aria-current={item.isActive ? "page" : undefined}
+              render={<a href={item.url} />}
+            >
               {item.icon}
               <span>{item.title}</span>
             </SidebarMenuButton>

@@ -66,6 +66,30 @@ describe("ChatThread", () => {
     );
   });
 
+  it("takes avatar initials from letters and numbers only, in any script", () => {
+    const by = (id: string, name: string, n: number): ChatMessage => ({
+      id: `${id}-${n}`,
+      author: { id, name },
+      text: "Hi.",
+      at: `2026-11-11T2${n}:00:00+09:00`,
+    });
+    render(
+      <ChatThread
+        me="ren"
+        messages={[
+          by("oda", "O(da) Sensei!", 0),
+          by("mori", "森 花子", 1),
+          by("kei", "  kei  2nd ", 2),
+          by("dots", "...", 3),
+        ]}
+      />,
+    );
+    const fallbacks = [
+      ...document.querySelectorAll<HTMLElement>('[data-slot="avatar-fallback"]'),
+    ].map((fallback) => fallback.textContent);
+    expect(fallbacks).toEqual(["OS", "森花", "K2", "."]);
+  });
+
   it("groups consecutive messages of one author, one group per run and day", () => {
     render(<ChatThread messages={thread} me="ren" />);
     expect(groups().map(bubbleIds)).toEqual([["m1", "m2"], ["m3"], ["m4"], ["m5"]]);

@@ -6,7 +6,8 @@ import { stubResizeObserver } from "@/lib/test/resize-observer";
 import { INK_REDRAW_EVENT, InkFrame } from "./ink-frame";
 
 // Records the options handed to rough.js, with the real renderer still doing the drawing.
-const { pathOptions, rectangleOptions } = vi.hoisted(() => ({
+const { lineOptions, pathOptions, rectangleOptions } = vi.hoisted(() => ({
+  lineOptions: [] as Record<string, unknown>[],
   pathOptions: [] as Record<string, unknown>[],
   rectangleOptions: [] as Record<string, unknown>[],
 }));
@@ -19,6 +20,11 @@ vi.mock("roughjs", async (importOriginal) => {
         const rc = actual.default.svg(...args);
         const path = rc.path.bind(rc);
         const rectangle = rc.rectangle.bind(rc);
+        const line = rc.line.bind(rc);
+        rc.line = (x1, y1, x2, y2, options) => {
+          lineOptions.push({ ...options });
+          return line(x1, y1, x2, y2, options);
+        };
         rc.path = (d, options) => {
           pathOptions.push({ ...options });
           return path(d, options);
@@ -204,6 +210,33 @@ describe("InkFrame in the browser", () => {
     fireAll(16, 16);
     // Rectangles keep the full pen (checkboxes read fine at 16 px).
     expect(rectangleOptions.at(-1)).toMatchObject({ roughness: 1.2, maxRandomnessOffset: 1.5 });
+  });
+
+  it("calms short lines by their length and leaves long ones alone", () => {
+    render(<InkFrame shape="line" seed={3} />);
+    fireAll(2, 16);
+    // A 16 px vertical separator: a quarter of the pen, so it does not bow into a ")".
+    expect(lineOptions.at(-1)).toMatchObject({
+      roughness: 0.3,
+      bowing: 0.2,
+      maxRandomnessOffset: 0.375,
+    });
+
+    cleanup();
+    observers.reset();
+    render(<InkFrame shape="line" seed={3} />);
+    fireAll(32, 2);
+    expect(lineOptions.at(-1)).toMatchObject({ roughness: 0.6, bowing: 0.4 });
+
+    cleanup();
+    observers.reset();
+    render(<InkFrame shape="line" seed={3} />);
+    fireAll(200, 2);
+    expect(lineOptions.at(-1)).toMatchObject({
+      roughness: 1.2,
+      bowing: 0.8,
+      maxRandomnessOffset: 1.5,
+    });
   });
 
   it("hatches the body for fill hatch, with a lines fallback until drawn", () => {

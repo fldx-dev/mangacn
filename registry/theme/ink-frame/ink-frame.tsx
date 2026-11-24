@@ -139,10 +139,17 @@ function draw(
   // A 16 px radio or thought dot turns lumpy at the theme's pen settings, so ellipses under
   // 32 px scale both pen numbers down (never below half); a 16 px dot then strays, relative
   // to its radius, like a 64 px ellipse at full strength.
+  // rough.js jitters a line's ends and bend by the full pen however short it is, so a 16 px
+  // vertical separator bows into a ")"; lines under 64 px scale the pen by their length (never
+  // below a quarter), and longer ones draw as before.
   const calm =
-    shape === "ellipse" && !outline ? Math.min(1, Math.max(0.5, Math.min(width, height) / 32)) : 1;
+    shape === "ellipse" && !outline
+      ? Math.min(1, Math.max(0.5, Math.min(width, height) / 32))
+      : shape === "line"
+        ? Math.min(1, Math.max(0.25, Math.max(width, height) / 64))
+        : 1;
   const roughness = readNumber(style, "--ink-roughness", 1.2) * calm;
-  const bowing = readNumber(style, "--ink-bowing", 0.8);
+  const bowing = readNumber(style, "--ink-bowing", 0.8) * (shape === "line" ? calm : 1);
   const maxRandomnessOffset = readNumber(style, "--ink-offset", 1.5) * calm;
   // The clean pen: one stroke per edge, corners that meet.
   const pen = {
