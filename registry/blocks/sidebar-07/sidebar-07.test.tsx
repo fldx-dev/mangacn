@@ -69,6 +69,9 @@ describe("sidebar-07 page", () => {
     expect(series.getAttribute("aria-expanded")).toBe("true");
     expect(screen.getByRole("link", { name: "Ongoing" })).toBeTruthy();
     expect(chapters.getAttribute("aria-expanded")).toBe("false");
+    // The current section is marked active, not only opened; the others are not.
+    expect(series.hasAttribute("data-active")).toBe(true);
+    expect(chapters.hasAttribute("data-active")).toBe(false);
     fireEvent.click(chapters);
     expect(chapters.getAttribute("aria-expanded")).toBe("true");
     expect(screen.getByRole("link", { name: "Drafts" })).toBeTruthy();

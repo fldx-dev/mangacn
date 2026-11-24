@@ -69,7 +69,13 @@ describe("sidebar-08 page", () => {
     render(<Page />);
     const series = screen.getByRole("button", { name: "Toggle Series" });
     const chapters = screen.getByRole("button", { name: "Toggle Chapters" });
-    expect(screen.getByRole("link", { name: "Series" })).toBeTruthy();
+    // The current section's link is active and the current page; the others are neither.
+    const seriesLink = screen.getByRole("link", { name: "Series" });
+    expect(seriesLink.hasAttribute("data-active")).toBe(true);
+    expect(seriesLink.getAttribute("aria-current")).toBe("page");
+    const chaptersLink = screen.getByRole("link", { name: "Chapters" });
+    expect(chaptersLink.hasAttribute("data-active")).toBe(false);
+    expect(chaptersLink.hasAttribute("aria-current")).toBe(false);
     expect(series.getAttribute("aria-expanded")).toBe("true");
     expect(screen.getByRole("link", { name: "Ongoing" })).toBeTruthy();
     expect(chapters.getAttribute("aria-expanded")).toBe("false");
