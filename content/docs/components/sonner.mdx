@@ -8,7 +8,19 @@ item: sonner
 
 <CopyPrompt item="sonner" />
 
-Short notices that come and go, such as a saved bookmark or a failed page load, as paper cards with the heavy outline and ink glyphs for `success`, `info`, `warning` and `error` (`richColors` turns only errors spot red). Render `<Toaster />` once near your app's root and call `toast()` from `sonner` anywhere; it follows your theme through `next-themes`, as stock does.
+Short notices that come and go, such as a saved bookmark or a failed page load, as paper cards with the heavy outline and ink glyphs for `success`, `info`, `warning` and `error` (`richColors` turns only errors spot red). Render `<Toaster />` once near your app's root and call `toast()` from `sonner` anywhere.
+
+It follows your theme through `next-themes`' `useTheme()`, as stock does, so it needs a `ThemeProvider` from `next-themes` above it. Nothing here installs one: without it the toasts stay on `"system"` and ignore a light or dark switch of your own. Wrap your app in one (`attribute="class"` for the theme's `.dark` class), or pass the theme yourself: `<Toaster theme="dark" />` overrides it.
+
+```tsx title="app/layout.tsx"
+import { ThemeProvider } from "next-themes";
+import { Toaster } from "@/components/ui/sonner";
+
+<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+  {children}
+  <Toaster />
+</ThemeProvider>;
+```
 
 ## Variants
 
