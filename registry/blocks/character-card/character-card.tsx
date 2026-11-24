@@ -79,7 +79,7 @@ export function CharacterCard({
       <rp>(</rp>
       <rt
         lang={japaneseName ? undefined : "ja"}
-        className="font-sans text-xs font-normal tracking-wide"
+        className="font-dialogue text-xs font-normal tracking-wide"
       >
         {reading}
       </rt>

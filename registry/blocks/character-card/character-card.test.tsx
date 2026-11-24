@@ -42,6 +42,9 @@ describe("CharacterCard", () => {
       ")",
     ]);
     expect(ruby?.firstChild?.textContent).toBe("天野 ミオ");
+    // The kana read in the theme's dialogue face, which carries a Japanese font.
+    expect(ruby?.querySelector("rt")?.classList.contains("font-dialogue")).toBe(true);
+    expect(ruby?.querySelector("rt")?.classList.contains("font-sans")).toBe(false);
   });
 
   it("puts lang=ja on the reading alone over a Latin name", () => {
