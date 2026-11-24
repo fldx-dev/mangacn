@@ -106,7 +106,9 @@ export function ProfileForm({
   const [errors, setErrors] = React.useState<ProfileErrors>({});
   const [photo, setPhoto] = React.useState<File | null>(null);
   const [photoError, setPhotoError] = React.useState("");
-  const [preview, setPreview] = React.useState<string>();
+  // The picked photo's object URL, made when it is picked: an object, so every pick is a new value
+  // for the effect that revokes it.
+  const [preview, setPreview] = React.useState<{ url: string }>();
   const [current, setCurrent] = React.useState("");
   const [next, setNext] = React.useState("");
   const [confirm, setConfirm] = React.useState("");
@@ -117,16 +119,17 @@ export function ProfileForm({
   const set = <K extends keyof Profile>(key: K, value: Profile[K]) =>
     setValues((last) => ({ ...last, [key]: value }));
 
-  // The preview is the picked file's object URL, revoked when the photo changes or the form goes.
+  // The preview's object URL is revoked when the photo changes or the form goes.
   React.useEffect(() => {
-    if (!photo) {
-      setPreview(undefined);
-      return;
-    }
-    const url = URL.createObjectURL(photo);
-    setPreview(url);
-    return () => URL.revokeObjectURL(url);
-  }, [photo]);
+    if (!preview) return;
+    return () => URL.revokeObjectURL(preview.url);
+  }, [preview]);
+
+  const changePhoto = (file: File | null) => {
+    setPhoto(file);
+    setPreview(file ? { url: URL.createObjectURL(file) } : undefined);
+    if (file) setPhotoError("");
+  };
 
   const rejectPhoto = ([rejection]: FileRejection[]) => {
     if (!rejection) return;
@@ -194,7 +197,7 @@ export function ProfileForm({
                       {/* A wrapper, so the field stretches it and not the round avatar. */}
                       <div className="flex flex-col items-start gap-3">
                         <Avatar className="size-20 md:size-24">
-                          {preview && <AvatarImage src={preview} alt="Your new photo" />}
+                          {preview && <AvatarImage src={preview.url} alt="Your new photo" />}
                           <AvatarFallback className="font-display text-xl">
                             {initials(values.displayName)}
                           </AvatarFallback>
@@ -205,10 +208,7 @@ export function ProfileForm({
                           multiple={false}
                           maxSize={PROFILE_PHOTO_MAX_SIZE}
                           value={photo ? [photo] : []}
-                          onValueChange={(files) => {
-                            setPhoto(files[0] ?? null);
-                            if (files[0]) setPhotoError("");
-                          }}
+                          onValueChange={(files) => changePhoto(files[0] ?? null)}
                           onReject={rejectPhoto}
                           className="w-auto items-start"
                         >
