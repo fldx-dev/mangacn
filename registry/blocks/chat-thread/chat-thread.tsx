@@ -144,12 +144,17 @@ function threadRows(messages: ChatMessage[], unreadFrom?: string, timeZone?: str
   return rows;
 }
 
-/** "Hana Mori" → "HM". */
+/** "Hana Mori" → "HM", "Oda (editor)" → "OE", "森 花子" → "森花": letters and numbers only. */
 function initials(name: string): string {
-  const words = name.trim().split(/\s+/).filter(Boolean);
-  return words
+  const letters = name
+    .trim()
+    .split(/\s+/)
+    .map((word) => /[\p{L}\p{N}]/u.exec(word)?.[0])
+    .filter((letter): letter is string => Boolean(letter));
+  if (letters.length === 0) return Array.from(name.trim())[0] ?? "";
+  return letters
     .slice(0, 2)
-    .map((word) => word[0]?.toUpperCase() ?? "")
+    .map((letter) => letter.toUpperCase())
     .join("");
 }
 
