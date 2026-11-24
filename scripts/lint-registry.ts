@@ -17,29 +17,33 @@ const REGISTRIES = ["theme", "ui", "blocks", "hooks"];
 
 const LINK = "@next/next/no-html-link-for-pages";
 
-/** Rule failures accepted for now, by file. Each group says what removes it. */
-const ALLOWED: Record<string, string[]> = {
+/**
+ * Rule errors accepted for now: how many, by file and rule. More than the count fails (a new
+ * error of an accepted rule is still an error), and so does fewer (the entry is stale: lower the
+ * count, or remove the rule and then the file when it reaches 0). Each group says what removes it.
+ */
+const ALLOWED: Record<string, Record<string, number>> = {
   // A plain `<a href="/">` in a block. The upcoming link-component task (a swappable
   // `lib/link.tsx` that renders the app's router link) removes these entries.
-  "registry/blocks/login-02/page.tsx": [LINK],
-  "registry/blocks/login-03/page.tsx": [LINK],
-  "registry/blocks/login-05/components/login-form.tsx": [LINK],
-  "registry/blocks/sidebar-08/components/app-sidebar.tsx": [LINK],
-  "registry/blocks/sidebar-09/components/app-sidebar.tsx": [LINK],
-  "registry/blocks/signup-02/page.tsx": [LINK],
-  "registry/blocks/signup-03/page.tsx": [LINK],
-  "registry/blocks/signup-05/components/signup-form.tsx": [LINK],
+  "registry/blocks/login-02/page.tsx": { [LINK]: 1 },
+  "registry/blocks/login-03/page.tsx": { [LINK]: 1 },
+  "registry/blocks/login-05/components/login-form.tsx": { [LINK]: 1 },
+  "registry/blocks/sidebar-08/components/app-sidebar.tsx": { [LINK]: 1 },
+  "registry/blocks/sidebar-09/components/app-sidebar.tsx": { [LINK]: 1 },
+  "registry/blocks/signup-02/page.tsx": { [LINK]: 1 },
+  "registry/blocks/signup-03/page.tsx": { [LINK]: 1 },
+  "registry/blocks/signup-05/components/signup-form.tsx": { [LINK]: 1 },
   // Found when this check was added, outside its task (which fixed use-mobile, profile-01,
   // upload-01 and spread-viewer): a follow-up fixes each one and removes its entry.
-  "registry/ui/banner/banner.tsx": ["react-hooks/set-state-in-effect"],
-  "registry/ui/carousel/carousel.tsx": ["react-hooks/set-state-in-effect"],
-  "registry/ui/data-table/data-table.tsx": [
-    "react-hooks/refs",
-    "@typescript-eslint/no-explicit-any",
-  ],
-  "registry/ui/kanban/kanban.tsx": ["react-hooks/refs", "react-hooks/immutability"],
-  "registry/ui/phone-input/phone-input.tsx": ["react-hooks/set-state-in-effect"],
-  "registry/ui/rich-text-editor/rich-text-editor.tsx": ["react-hooks/refs"],
+  "registry/ui/banner/banner.tsx": { "react-hooks/set-state-in-effect": 1 },
+  "registry/ui/carousel/carousel.tsx": { "react-hooks/set-state-in-effect": 1 },
+  "registry/ui/data-table/data-table.tsx": {
+    "react-hooks/refs": 1,
+    "@typescript-eslint/no-explicit-any": 1,
+  },
+  "registry/ui/kanban/kanban.tsx": { "react-hooks/refs": 3, "react-hooks/immutability": 2 },
+  "registry/ui/phone-input/phone-input.tsx": { "react-hooks/set-state-in-effect": 1 },
+  "registry/ui/rich-text-editor/rich-text-editor.tsx": { "react-hooks/refs": 1 },
 };
 
 interface RegistryCatalog {
@@ -70,21 +74,52 @@ async function main() {
 
   let errors = 0;
   let allowed = 0;
+  const problems: string[] = [];
+  const print = (file: string, message: Linter.LintMessage) => {
+    const level = message.severity === 2 ? "error" : "warning";
+    const text = message.message.split("\n")[0];
+    console.log(`${file}:${message.line}:${message.column} ${level} ${message.ruleId} ${text}`);
+  };
   for (const result of results) {
     const file = relative(process.cwd(), result.filePath).replaceAll("\\", "/");
-    const allowedRules = ALLOWED[file] ?? [];
+    const expected = ALLOWED[file] ?? {};
+    const byRule = new Map<string, Linter.LintMessage[]>();
     for (const message of result.messages) {
-      if (message.ruleId && allowedRules.includes(message.ruleId)) {
-        allowed += 1;
+      if (message.severity !== 2 || !message.ruleId || !(message.ruleId in expected)) {
+        if (message.severity === 2) errors += 1;
+        print(file, message);
         continue;
       }
-      if (message.severity === 2) errors += 1;
-      const level = message.severity === 2 ? "error" : "warning";
-      const text = message.message.split("\n")[0];
-      console.log(`${file}:${message.line}:${message.column} ${level} ${message.ruleId} ${text}`);
+      byRule.set(message.ruleId, [...(byRule.get(message.ruleId) ?? []), message]);
+    }
+    for (const [rule, count] of Object.entries(expected)) {
+      const found = byRule.get(rule) ?? [];
+      if (found.length === count) {
+        allowed += count;
+        continue;
+      }
+      errors += 1;
+      if (found.length > count) {
+        for (const message of found) print(file, message);
+        problems.push(
+          `${file}: ${found.length} ${rule} error(s), ALLOWED accepts ${count}. Fix the new one(s); raise the count only for an accepted case.`,
+        );
+      } else {
+        problems.push(
+          `${file}: ${found.length} ${rule} error(s), ALLOWED accepts ${count}: stale. Set the count in scripts/lint-registry.ts to ${found.length}${found.length === 0 ? " (remove the rule, and the file when it has none left)" : ""}.`,
+        );
+      }
+    }
+  }
+  // A full run also reports an entry whose file no item ships any more.
+  if (args.length === 0) {
+    for (const file of Object.keys(ALLOWED).filter((entry) => !files.includes(entry))) {
+      errors += 1;
+      problems.push(`${file}: in ALLOWED but no item ships it: stale. Remove its entry.`);
     }
   }
 
+  for (const problem of problems) console.error(problem);
   const suffix = allowed > 0 ? ` (${allowed} allowed, see ALLOWED)` : "";
   if (errors > 0) {
     console.error(`✗ lint-registry: ${errors} error(s) in ${files.length} file(s)${suffix}`);
