@@ -16,7 +16,15 @@ import { Input } from "@/components/ui/input";
 // the form, so the form is a landmark of its own. Stock's GitHub mark stays as stock draws it,
 // in the current ink colour.
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
+export interface LoginFormProps extends React.ComponentProps<"form"> {
+  /**
+   * Where "Forgot your password?" goes. Without it the link is not drawn: no mangacn item
+   * installs a password-reset page.
+   */
+  forgotPasswordHref?: string;
+}
+
+export function LoginForm({ className, forgotPasswordHref, ...props }: LoginFormProps) {
   const titleId = React.useId();
   return (
     <form aria-labelledby={titleId} className={cn("flex flex-col gap-6", className)} {...props}>
@@ -31,19 +39,21 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
         </div>
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+          <Input id="email" name="email" type="email" placeholder="m@example.com" required />
         </Field>
         <Field>
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
-            <a
-              href="/forgot-password"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </a>
+            {forgotPasswordHref ? (
+              <a
+                href={forgotPasswordHref}
+                className="ml-auto text-sm underline-offset-4 hover:underline"
+              >
+                Forgot your password?
+              </a>
+            ) : null}
           </div>
-          <Input id="password" type="password" required />
+          <Input id="password" name="password" type="password" required />
         </Field>
         <Field>
           <Button type="submit">Login</Button>

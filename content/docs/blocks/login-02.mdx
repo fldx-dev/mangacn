@@ -16,3 +16,9 @@ Stock's split-screen login page in ink, with stock's two files and exports: the 
 ## Preview
 
 <BlockPreview item="login-02" />
+
+## Props
+
+`LoginForm` takes its root `form`'s props and `forgotPasswordHref`. No mangacn item installs a password-reset page, so the "Forgot your password?" link is drawn only when the prop is set: point it at yours with `<LoginForm forgotPasswordHref="/forgot-password" />` in `app/login/page.tsx`. Every field submits under its `id` as its `name` (`email`, `password`).
+
+<PropsTable item="login-02" name="LoginFormProps" />

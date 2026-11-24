@@ -44,12 +44,20 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>
-              <Input id="name" type="text" placeholder="John Doe" autoComplete="name" required />
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="John Doe"
+                autoComplete="name"
+                required
+              />
             </Field>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="m@example.com"
                 autoComplete="email"
@@ -61,12 +69,25 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input id="password" type="password" autoComplete="new-password" required />
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                minLength={8}
+                autoComplete="new-password"
+                required
+              />
               <FieldDescription>Must be at least 8 characters long.</FieldDescription>
             </Field>
             <Field>
               <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
-              <Input id="confirm-password" type="password" autoComplete="new-password" required />
+              <Input
+                id="confirm-password"
+                name="confirm-password"
+                type="password"
+                autoComplete="new-password"
+                required
+              />
               <FieldDescription>Please confirm your password.</FieldDescription>
             </Field>
             <FieldGroup>

@@ -13,6 +13,28 @@ afterEach(cleanup);
 const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8");
 
 describe("LoginForm", () => {
+  it("draws the forgot-password link only where forgotPasswordHref points", () => {
+    const { container, rerender } = render(<LoginForm />);
+    expect(screen.queryByRole("link", { name: "Forgot your password?" })).toBeNull();
+    rerender(<LoginForm forgotPasswordHref="/reset" />);
+    const link = screen.getByRole("link", { name: "Forgot your password?" });
+    expect(link.getAttribute("href")).toBe("/reset");
+    expect(container.querySelector("[forgotpasswordhref]")).toBeNull();
+  });
+
+  it("submits every field under its name: FormData holds what was typed", () => {
+    const { container } = render(<LoginForm />);
+    const expected = [
+      ["email", "ana@example.com"],
+      ["password", "hunter2-ink"],
+    ];
+    for (const [id, value] of expected) {
+      (container.querySelector(`#${id}`) as HTMLInputElement).value = value;
+    }
+    const form = container.querySelector("form") as HTMLFormElement;
+    expect([...new FormData(form).entries()]).toEqual(expected);
+  });
+
   it("is a form named by its heading, with an email and a password field", () => {
     render(<LoginForm />);
     const heading = screen.getByRole("heading", { level: 1, name: "Login to your account" });
@@ -28,7 +50,6 @@ describe("LoginForm", () => {
     expect(
       within(form).getByRole("button", { name: "Login with GitHub" }).getAttribute("type"),
     ).toBe("button");
-    expect(within(form).getByRole("link", { name: "Forgot your password?" })).toBeTruthy();
     expect(within(form).getByRole("link", { name: "Sign up" })).toBeTruthy();
   });
 
