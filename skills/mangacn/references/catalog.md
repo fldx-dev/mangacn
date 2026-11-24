@@ -521,7 +521,7 @@ writes the hook to the project's hooks folder (`hooks/<name>.ts`) and the item i
 (`use-highlighted-code` writes `lib/highlighter.tsx` too). Add a hook alone only to call it
 from your own components.
 
-- `use-mobile`: Stock hook useIsMobile: true below 768 px, following the viewport; sidebar reads it to become a sheet on phones.
+- `use-mobile`: Hook useIsMobile, adapted from shadcn's: true below 768 px, following the viewport through useSyncExternalStore and false on the server; sidebar reads it to become a sheet on phones.
   Install: `npx shadcn@latest add @mangacn/use-mobile --overwrite`
   Docs: https://www.mangacn.com/r/use-mobile.json
 - `use-highlighted-code`: Stock hook useHighlightedCode: shiki-highlighted lines that keep up with streaming code; ships lib/highlighter.tsx with it.

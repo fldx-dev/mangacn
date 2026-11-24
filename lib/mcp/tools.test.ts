@@ -222,7 +222,7 @@ describe("list_items", () => {
     const { text } = await call("list_items", { category: "hook" });
     expect(text).toContain('2 items in "hook"');
     expect(text).toContain(
-      `- use-mobile · registry:hook · hook: Stock hook useIsMobile: true below 768 px, following the viewport; sidebar reads it to become a sheet on phones. ${HOOK_NOTE} Install: \`pnpm dlx shadcn@latest add @mangacn/use-mobile --overwrite\`. Docs: https://www.mangacn.com/r/use-mobile.json`,
+      `- use-mobile · registry:hook · hook: Hook useIsMobile, adapted from shadcn's: true below 768 px, following the viewport through useSyncExternalStore and false on the server; sidebar reads it to become a sheet on phones. ${HOOK_NOTE} Install: \`pnpm dlx shadcn@latest add @mangacn/use-mobile --overwrite\`. Docs: https://www.mangacn.com/r/use-mobile.json`,
     );
     expect(text).not.toMatch(/(Client|Server) component/);
     expect(catalog.at(-1)?.category).toBe("hook");
