@@ -13,6 +13,7 @@ import {
   groupByDay,
   initials,
 } from "./components/activity-feed";
+import { ActivityStats } from "./components/activity-stats";
 import Page from "./page";
 
 afterEach(() => {
@@ -110,6 +111,24 @@ describe("ActivityFeed", () => {
     const { container } = render(<ActivityFeed events={activityEvents} />);
     const timeline = container.querySelector('[data-slot="timeline"]') as HTMLElement;
     expect(timeline.querySelectorAll("a, button, input, [tabindex='0']")).toHaveLength(0);
+  });
+});
+
+describe("ActivityStats", () => {
+  it("names each instance by its own heading, with no fixed id", () => {
+    render(
+      <>
+        <ActivityStats stats={activityStats} title="This week" />
+        <ActivityStats stats={activityStats} title="Last week" />
+      </>,
+    );
+    const regions = ["This week", "Last week"].map((name) => screen.getByRole("region", { name }));
+    const ids = regions.map((region) => region.getAttribute("aria-labelledby"));
+    expect(new Set(ids).size).toBe(2);
+    expect(ids).not.toContain("activity-stats-title");
+    for (const [index, region] of regions.entries()) {
+      expect(within(region).getByRole("heading", { level: 2 }).id).toBe(ids[index]);
+    }
   });
 });
 

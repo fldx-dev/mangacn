@@ -1,3 +1,4 @@
+import { useId } from "react";
 import {
   StatCard,
   StatCardChange,
@@ -19,9 +20,10 @@ export interface ActivityStatsProps {
 
 /** A row of stat cards: one column on a phone, two on a tablet, four on a desktop. */
 export function ActivityStats({ stats, title = "Overview" }: ActivityStatsProps) {
+  const titleId = useId();
   return (
-    <section aria-labelledby="activity-stats-title">
-      <h2 id="activity-stats-title" className="sr-only">
+    <section aria-labelledby={titleId}>
+      <h2 id={titleId} className="sr-only">
         {title}
       </h2>
       <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
