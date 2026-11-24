@@ -91,6 +91,35 @@ export interface ProfileFormProps extends React.ComponentProps<"div"> {
   onSavePassword?: (change: PasswordChange) => void;
 }
 
+/**
+ * An object URL for `file` while the form is shown. It is made when React subscribes and revoked
+ * when it unsubscribes, so an effect cleanup and its re-run (the photo changing, the form going,
+ * a hidden `<Activity>` shown again, Fast Refresh, StrictMode) always leave a live URL.
+ */
+function useObjectUrl(file: File | null): string | undefined {
+  const store = React.useMemo(() => objectUrlStore(file), [file]);
+  return React.useSyncExternalStore(store.subscribe, store.getSnapshot, noUrl);
+}
+
+function objectUrlStore(file: File | null) {
+  let url: string | undefined;
+  return {
+    subscribe(onChange: () => void) {
+      if (!file) return () => {};
+      const made = URL.createObjectURL(file);
+      url = made;
+      onChange();
+      return () => {
+        URL.revokeObjectURL(made);
+        url = undefined;
+      };
+    },
+    getSnapshot: () => url,
+  };
+}
+
+const noUrl = () => undefined;
+
 export function ProfileForm({
   defaultValues,
   onSaveProfile,
@@ -106,9 +135,6 @@ export function ProfileForm({
   const [errors, setErrors] = React.useState<ProfileErrors>({});
   const [photo, setPhoto] = React.useState<File | null>(null);
   const [photoError, setPhotoError] = React.useState("");
-  // The picked photo's object URL, made when it is picked: an object, so every pick is a new value
-  // for the effect that revokes it.
-  const [preview, setPreview] = React.useState<{ url: string }>();
   const [current, setCurrent] = React.useState("");
   const [next, setNext] = React.useState("");
   const [confirm, setConfirm] = React.useState("");
@@ -119,17 +145,7 @@ export function ProfileForm({
   const set = <K extends keyof Profile>(key: K, value: Profile[K]) =>
     setValues((last) => ({ ...last, [key]: value }));
 
-  // The preview's object URL is revoked when the photo changes or the form goes.
-  React.useEffect(() => {
-    if (!preview) return;
-    return () => URL.revokeObjectURL(preview.url);
-  }, [preview]);
-
-  const changePhoto = (file: File | null) => {
-    setPhoto(file);
-    setPreview(file ? { url: URL.createObjectURL(file) } : undefined);
-    if (file) setPhotoError("");
-  };
+  const preview = useObjectUrl(photo);
 
   const rejectPhoto = ([rejection]: FileRejection[]) => {
     if (!rejection) return;
@@ -197,7 +213,7 @@ export function ProfileForm({
                       {/* A wrapper, so the field stretches it and not the round avatar. */}
                       <div className="flex flex-col items-start gap-3">
                         <Avatar className="size-20 md:size-24">
-                          {preview && <AvatarImage src={preview.url} alt="Your new photo" />}
+                          {preview && <AvatarImage src={preview} alt="Your new photo" />}
                           <AvatarFallback className="font-display text-xl">
                             {initials(values.displayName)}
                           </AvatarFallback>
@@ -208,7 +224,10 @@ export function ProfileForm({
                           multiple={false}
                           maxSize={PROFILE_PHOTO_MAX_SIZE}
                           value={photo ? [photo] : []}
-                          onValueChange={(files) => changePhoto(files[0] ?? null)}
+                          onValueChange={(files) => {
+                            setPhoto(files[0] ?? null);
+                            if (files[0]) setPhotoError("");
+                          }}
                           onReject={rejectPhoto}
                           className="w-auto items-start"
                         >

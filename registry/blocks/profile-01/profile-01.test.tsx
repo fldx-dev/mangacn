@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { Activity } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
@@ -14,13 +15,14 @@ const createObjectURL = vi.fn((_: Blob) => "blob:preview");
 const revokeObjectURL = vi.fn();
 
 beforeEach(() => {
-  createObjectURL.mockClear();
-  revokeObjectURL.mockClear();
+  createObjectURL.mockReset();
+  revokeObjectURL.mockReset();
   vi.stubGlobal("URL", Object.assign(URL, { createObjectURL, revokeObjectURL }));
 });
 
 afterEach(() => {
   cleanup();
+  vi.unstubAllGlobals();
   vi.useRealTimers();
 });
 
@@ -145,6 +147,40 @@ describe("ProfileForm: the photo", () => {
     expect(revokeObjectURL).toHaveBeenCalledTimes(1);
     unmount();
     expect(revokeObjectURL).toHaveBeenCalledTimes(2);
+  });
+
+  it("shows a live preview URL after its effects are cleaned up and run again (Activity, StrictMode)", async () => {
+    let made = 0;
+    const revoked = new Set<string>();
+    createObjectURL.mockImplementation(() => `blob:preview-${++made}`);
+    revokeObjectURL.mockImplementation((url: string) => revoked.add(url));
+    // jsdom loads no image: report it decoded, so the avatar draws its img.
+    vi.stubGlobal(
+      "Image",
+      class {
+        complete = true;
+        naturalWidth = 1;
+      },
+    );
+    const view = (mode: "visible" | "hidden") => (
+      <Activity mode={mode}>
+        <ProfileForm defaultValues={profile} />
+      </Activity>
+    );
+    const { rerender } = render(view("visible"), { reactStrictMode: true });
+    pick([fileOf("me.png", "image/png", 50_000)]);
+    const live = async () => {
+      const img = await screen.findByAltText("Your new photo");
+      const src = img.getAttribute("src") ?? "";
+      expect(src).toMatch(/^blob:preview-/);
+      expect(revoked.has(src)).toBe(false);
+    };
+    await waitFor(live);
+    // A hidden Activity cleans the effects up (revoking the URL); shown again, they run again.
+    rerender(view("hidden"));
+    rerender(view("visible"));
+    await waitFor(live);
+    expect(revoked.size).toBeGreaterThan(0);
   });
 });
 
