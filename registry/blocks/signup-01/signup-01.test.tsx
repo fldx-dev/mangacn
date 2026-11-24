@@ -13,6 +13,13 @@ afterEach(cleanup);
 const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8");
 
 describe("SignupForm", () => {
+  it("holds the password to the 8 characters its description asks for", () => {
+    const { container } = render(<SignupForm />);
+    expect(container.textContent).toContain("Must be at least 8 characters long.");
+    const password = container.querySelector("#password") as HTMLInputElement;
+    expect(password.getAttribute("minlength")).toBe("8");
+  });
+
   it("submits every field under its name: FormData holds what was typed", () => {
     const { container } = render(<SignupForm />);
     const expected = [

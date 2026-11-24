@@ -42,7 +42,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"form">
         </Field>
         <Field>
           <FieldLabel htmlFor="password">Password</FieldLabel>
-          <Input id="password" name="password" type="password" required />
+          <Input id="password" name="password" type="password" minLength={8} required />
           <FieldDescription>Must be at least 8 characters long.</FieldDescription>
         </Field>
         <Field>

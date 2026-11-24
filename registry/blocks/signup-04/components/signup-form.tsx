@@ -49,7 +49,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input id="password" name="password" type="password" required />
+                    <Input id="password" name="password" type="password" minLength={8} required />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>

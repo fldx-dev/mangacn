@@ -73,6 +73,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                 id="password"
                 name="password"
                 type="password"
+                minLength={8}
                 autoComplete="new-password"
                 required
               />
