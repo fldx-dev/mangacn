@@ -147,5 +147,26 @@ describe("Reader", () => {
     expect(document.activeElement).toBe(trigger);
   });
 
+  it("stamps the latest chapter in the drawer unless latest is false", async () => {
+    stubResizeObserver();
+    const latestRow = async (latest?: boolean) => {
+      render(<Reader {...props} latest={latest} />);
+      fireEvent.click(screen.getByRole("button", { name: "Chapters" }));
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      });
+      const dialog = screen.getByRole("dialog");
+      const row = dialog.querySelector('[data-slot="chapter-list-row"][data-latest="true"]');
+      const stamped = within(dialog).queryByText("NEW") !== null;
+      cleanup();
+      return { row: row?.textContent ?? null, stamped };
+    };
+    const byDefault = await latestRow();
+    expect(byDefault.row).toContain("Paper Lanterns");
+    expect(byDefault.stamped).toBe(true);
+    // A finished series: its last chapter is not new.
+    expect(await latestRow(false)).toEqual({ row: null, stamped: false });
+  });
+
   expectVariantsAccessible(import.meta.glob("./variants/*.tsx"));
 });

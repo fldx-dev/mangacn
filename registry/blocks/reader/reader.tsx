@@ -48,6 +48,12 @@ export interface ReaderProps
   /** Every chapter of the series, for the drawer's chapter list (as chapter-list takes them). */
   chapters: Chapter[];
   /**
+   * Stamps the series' highest-numbered chapter NEW in the drawer's chapter list, as chapter-list's
+   * `latest` does. Pass `false` for a finished series, whose last chapter is not new.
+   * @default true
+   */
+  latest?: boolean;
+  /**
    * `rtl` reads like a manga, `ltr` like a western book.
    * @default "rtl"
    */
@@ -86,6 +92,7 @@ export function Reader({
   chapter,
   pages,
   chapters,
+  latest,
   direction = "rtl",
   page,
   onPageChange,
@@ -127,7 +134,7 @@ export function Reader({
                 <DrawerDescription>{`Reading ${chapterName}, ${reader.progress}`}</DrawerDescription>
               </DrawerHeader>
               <div className="min-h-0 overflow-y-auto px-4 py-1">
-                <ChapterList chapters={chapters} label={`${series} chapters`} />
+                <ChapterList chapters={chapters} latest={latest} label={`${series} chapters`} />
               </div>
               <DrawerFooter className="flex-row items-center justify-between gap-3">
                 <p
