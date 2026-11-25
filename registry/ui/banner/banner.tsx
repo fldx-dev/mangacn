@@ -122,14 +122,17 @@ export function Banner({
     if (!open && root?.contains(root.ownerDocument.activeElement)) nextFocusTarget(root)?.focus();
   }, [open]);
 
+  // Opened again after it was gone: back in the DOM on this render. Adjusted while rendering, not
+  // in an effect, so the reopened banner never waits a commit for its state.
+  if (open && gone) setGone(false);
+
   React.useEffect(() => {
-    if (open) {
-      setGone(false);
-      return;
-    }
+    if (open) return;
     const reduce = typeof window !== "undefined" && window.matchMedia?.(REDUCE_QUERY).matches;
+    // Under reduced motion it goes at once, here, after the layout effect above has handed focus
+    // on. Only while its body is mounted; without one it is gone already.
     if (reduce) {
-      setGone(true);
+      if (bodyRef.current) setGone(true);
       return;
     }
     const timer = setTimeout(() => setGone(true), COLLAPSE_MS);

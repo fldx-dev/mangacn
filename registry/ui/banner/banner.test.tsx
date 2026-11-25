@@ -166,6 +166,45 @@ describe("Banner", () => {
     expect(document.activeElement).toBe(screen.getByRole("link", { name: "After" }));
   });
 
+  it("hands focus on and goes at once when a controlled open turns false under reduced motion", () => {
+    stubReducedMotion(true);
+    const { rerender } = render(
+      <>
+        <Example open />
+        <a href="#next">After</a>
+      </>,
+    );
+    screen.getByRole("link", { name: "Read it" }).focus();
+    rerender(
+      <>
+        <Example open={false} />
+        <a href="#next">After</a>
+      </>,
+    );
+    expect(document.activeElement).toBe(screen.getByRole("link", { name: "After" }));
+    expect(region()).toBeNull();
+  });
+
+  it("collapses again, not at once, when it closes after reopening", () => {
+    vi.useFakeTimers();
+    const { rerender } = render(<Example open />);
+    rerender(<Example open={false} />);
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(region()).toBeNull();
+    rerender(<Example open />);
+    expect(region()?.dataset.state).toBe("open");
+    rerender(<Example open={false} />);
+    expect(document.querySelector<HTMLElement>('[data-slot="banner"]')?.dataset.state).toBe(
+      "closed",
+    );
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(region()).toBeNull();
+  });
+
   it("skips display: none and visibility: hidden candidates when it hands focus on", () => {
     stubReducedMotion(true);
     render(
