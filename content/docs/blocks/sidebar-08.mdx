@@ -21,7 +21,18 @@ The page is a server component and the five sidebar files are client components,
 
 ## Props
 
-`AppSidebar` takes the sidebar's own props and the data it draws. Every data prop defaults to the studio's sample, so the page renders as above until you pass your own: `<AppSidebar label="Workspace" brand={brand} navMain={sections} projects={projects} navSecondary={links} user={user} />` in `app/dashboard/page.tsx`. `label` names the navigation landmark (`Studio` by default).
+`AppSidebar` takes the sidebar's own props and the data it draws. Every data prop defaults to the studio's sample, so the page renders as above until you pass your own in `app/dashboard/page.tsx`. `label` names the navigation landmark (`Studio` by default).
+
+```tsx
+<AppSidebar
+  label="Workspace"
+  brand={brand}
+  navMain={sections}
+  projects={projects}
+  navSecondary={links}
+  user={user}
+/>
+```
 
 The account menu's items (Upgrade to Pro, Account, Billing, Notifications, Log out) do nothing until `userActions` gives them handlers, such as `userActions={{ onLogout }}`; `NavUser` takes the same handlers as props. The page is a server component and cannot pass functions to the client sidebar, so pass `userActions` from a client component of your own that renders `AppSidebar`.
 
