@@ -355,6 +355,41 @@ describe("PhoneInput", () => {
     expect(phone().value.replace(/\D/g, "")).toBe("0312345678");
   });
 
+  it("reports a move once, even when each render passes a new onValueChange", async () => {
+    const spy = vi.fn();
+    const { rerender } = render(
+      <Phone countries={["JP", "KR"]} onValueChange={(...args) => spy(...args)} />,
+    );
+    await typeInto("0312345678");
+    spy.mockClear();
+    await act(async () => {
+      rerender(<Phone countries={["KR"]} onValueChange={(...args) => spy(...args)} />);
+    });
+    await act(async () => {
+      rerender(<Phone countries={["KR"]} onValueChange={(...args) => spy(...args)} />);
+    });
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith("+82312345678", { country: "KR", valid: expect.any(Boolean) });
+  });
+
+  it("shows the parent's value again when a controlled parent keeps it after a move", async () => {
+    const onValueChange = vi.fn();
+    const { rerender } = render(
+      <Phone value="+81312345678" countries={["JP", "KR"]} onValueChange={onValueChange} />,
+    );
+    expect(phone().value).toBe("03-1234-5678");
+    await act(async () => {
+      rerender(<Phone value="+81312345678" countries={["KR"]} onValueChange={onValueChange} />);
+    });
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange).toHaveBeenCalledWith("+82312345678", {
+      country: "KR",
+      valid: expect.any(Boolean),
+    });
+    expect(trigger()?.textContent).toContain("KR");
+    expect(phone().value).toBe("+81 3 1234 5678");
+  });
+
   it("forwards ref to the tel input and keeps its own", async () => {
     const ref = React.createRef<HTMLInputElement>();
     render(<Phone ref={ref} defaultCountry="JP" />);
