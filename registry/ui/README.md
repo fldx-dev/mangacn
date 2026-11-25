@@ -131,7 +131,8 @@ packages and its own lib file only (recipe 4).
    text in the DOM. A button that navigates is an anchor drawn as a button:
    `<Button nativeButton={false} role="link" render={<a href="…" />}>`. Base UI marks every
    non-native button `role="button"`, an `<a href>` included, so `role="link"` is needed (the
-   button page's `link` variant; the landing's `ButtonLink` wraps the same recipe).
+   button page's `link` variant; the landing's `ButtonLink` wraps the same recipe). In a block,
+   a link to a route of the app is `Link` from `@/lib/link` instead (recipe 3).
 7. **Responsive.** Every variant renders without horizontal overflow at 360 px.
 
 Code style: double quotes, semicolons, width 100 (Biome enforces it), named exports only in
@@ -449,6 +450,12 @@ is a whole route (stock's `login-01`) follows the steps below with the changes u
    Map each declared item to its source in `tsconfig.json` `paths` and the
    `vitest.config.mts` aliases, as `@/components/ink-frame` is, so the block typechecks and
    tests in this repo.
+   **Links.** A link to a route of the user's app (`href="/signup"`, `item.url`, a prop like
+   `chapter.href`) is `Link` from `@/lib/link`, also inside a Base UI `render` prop
+   (`render={<Link href={item.url} />}`), and the block declares
+   `https://www.mangacn.com/r/link.json`. The user swaps that one file for `next/link` or their
+   router's link (the installation guide's "Client-side navigation"). A link that leaves the app
+   stays `<a>`: `target="_blank"`, `mailto:`, a `#fragment` on the same page.
 4. **Variant, test, page.** Variants import the block from `@/registry/blocks/<name>/<name>`. The
    test covers the block's logic and runs axe on every variant. `pnpm gen:docs` scaffolds
    `content/docs/blocks/<name>.mdx` (with `<ItemFiles>`, the files one add writes) and adds it

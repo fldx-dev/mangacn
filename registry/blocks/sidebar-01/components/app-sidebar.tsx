@@ -11,6 +11,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 import { SearchForm } from "./search-form";
 import { VersionSwitcher } from "./version-switcher";
 
@@ -167,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton isActive={item.isActive} render={<a href={item.url} />}>
+                    <SidebarMenuButton isActive={item.isActive} render={<Link href={item.url} />}>
                       {item.title}
                     </SidebarMenuButton>
                   </SidebarMenuItem>

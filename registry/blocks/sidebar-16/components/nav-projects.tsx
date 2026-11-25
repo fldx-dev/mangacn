@@ -18,6 +18,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-16 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // The studio's series, each with a menu of its own named by its series.
@@ -38,7 +39,7 @@ export function NavProjects({
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton render={<a href={item.url} />}>
+            <SidebarMenuButton render={<Link href={item.url} />}>
               {item.icon}
               <span>{item.name}</span>
             </SidebarMenuButton>

@@ -13,6 +13,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "@/lib/link";
 import {
   type Chapter,
   type ChapterNumerals,
@@ -124,7 +125,7 @@ export function ChapterList({
                     <ItemTitle className="line-clamp-none block w-auto text-base wrap-break-word">
                       {/* Named by the number and its own text (title, then the hidden state); its
                         ::after covers the row, so the whole card is the link's hit area. */}
-                      <a
+                      <Link
                         id={linkId}
                         href={chapter.href}
                         aria-labelledby={`${numberId} ${linkId}`}
@@ -150,7 +151,7 @@ export function ChapterList({
                             {`, ${words.latest}`}
                           </span>
                         )}
-                      </a>
+                      </Link>
                     </ItemTitle>
                     {chapter.date && (
                       <ItemDescription className="text-xs">{chapter.date}</ItemDescription>

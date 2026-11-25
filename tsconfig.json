@@ -44,6 +44,7 @@
       "@/hooks/use-mobile": ["./registry/hooks/use-mobile.ts"],
       "@/hooks/use-highlighted-code": ["./registry/hooks/use-highlighted-code.ts"],
       "@/lib/highlighter": ["./registry/hooks/lib/highlighter.tsx"],
+      "@/lib/link": ["./registry/theme/link/link.tsx"],
       "@/components/ui/input-group": ["./registry/ui/input-group/input-group.tsx"],
       "@/components/ui/badge": ["./registry/ui/badge/badge.tsx"],
       "@/components/ui/dialog": ["./registry/ui/dialog/dialog.tsx"],

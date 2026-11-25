@@ -10,6 +10,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { Link } from "@/lib/link";
 
 /** What an empty shelf says, and the one thing it offers to do. */
 export interface ShelfEmpty {
@@ -93,7 +94,7 @@ export function Shelf({
               <Button
                 nativeButton={false}
                 role="link"
-                render={<a href={empty.action.href} />}
+                render={<Link href={empty.action.href} />}
                 size="sm"
               >
                 {empty.action.label}

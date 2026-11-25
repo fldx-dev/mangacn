@@ -9,6 +9,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui signup-02 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // Stock's form on the paper of the split screen, in ink: the title in the display face, the
@@ -65,7 +66,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"form">
             Sign up with GitHub
           </Button>
           <FieldDescription className="px-6 text-center">
-            Already have an account? <a href="/login">Sign in</a>
+            Already have an account? <Link href="/login">Sign in</Link>
           </FieldDescription>
         </Field>
       </FieldGroup>

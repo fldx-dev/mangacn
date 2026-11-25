@@ -6,6 +6,7 @@ import { PowerGauge } from "@/components/power-gauge";
 import { SpeechBubble } from "@/components/speech-bubble";
 import { Stamp } from "@/components/stamp";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "@/lib/link";
 
 /** The character's picture. */
 export interface CharacterPortrait {
@@ -122,12 +123,12 @@ export function CharacterCard({
                   // Its ::after covers the card, so the whole card is the link's hit area. Named by
                   // its content, the name and its reading: an `aria-label` of the name alone left
                   // the visible reading out and failed WCAG 2.5.3 Label in Name.
-                  <a
+                  <Link
                     href={href}
                     className="outline-none after:absolute after:inset-0 hover:text-spot"
                   >
                     {title}
-                  </a>
+                  </Link>
                 ) : (
                   title
                 )}

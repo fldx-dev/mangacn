@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui login-01 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-12.
 // Drawn in ink: the card on paper at the heavy outline width, the title in the display face, and
@@ -53,12 +54,12 @@ export function LoginForm({ className, forgotPasswordHref, ...props }: LoginForm
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   {forgotPasswordHref ? (
-                    <a
+                    <Link
                       href={forgotPasswordHref}
                       className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                     >
                       Forgot your password?
-                    </a>
+                    </Link>
                   ) : null}
                 </div>
                 <Input id="password" name="password" type="password" required />
@@ -69,7 +70,7 @@ export function LoginForm({ className, forgotPasswordHref, ...props }: LoginForm
                   Login with Google
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="/signup">Sign up</a>
+                  Don&apos;t have an account? <Link href="/signup">Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

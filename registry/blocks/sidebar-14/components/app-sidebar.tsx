@@ -13,6 +13,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-14 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // Stock's table of contents with a manga studio's handbook in stock's shape: every section with
@@ -172,7 +173,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu>
               {data.navMain.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton render={<a href={item.url} className="font-medium" />}>
+                  <SidebarMenuButton render={<Link href={item.url} className="font-medium" />}>
                     {item.title}
                   </SidebarMenuButton>
                   {item.items?.length ? (
@@ -181,7 +182,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <SidebarMenuSubItem key={item.title}>
                           <SidebarMenuSubButton
                             isActive={item.isActive}
-                            render={<a href={item.url} />}
+                            render={<Link href={item.url} />}
                           >
                             {item.title}
                           </SidebarMenuSubButton>

@@ -16,6 +16,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-03 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // Stock's documentation sidebar with a manga studio's handbook in stock's shape: each section a
@@ -171,7 +172,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<a href="/dashboard" />}>
+            <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
               <Avatar>
                 <AvatarFallback>
                   <BookOpenIcon className="size-4" />
@@ -190,7 +191,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {data.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton render={<a href={item.url} className="font-medium" />}>
+                <SidebarMenuButton render={<Link href={item.url} className="font-medium" />}>
                   {item.title}
                 </SidebarMenuButton>
                 {item.items?.length ? (
@@ -199,7 +200,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuSubItem key={item.title}>
                         <SidebarMenuSubButton
                           isActive={item.isActive}
-                          render={<a href={item.url} />}
+                          render={<Link href={item.url} />}
                         >
                           {item.title}
                         </SidebarMenuSubButton>

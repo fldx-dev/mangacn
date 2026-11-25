@@ -20,6 +20,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
+import { Link } from "@/lib/link";
 import { NavUser } from "./nav-user";
 
 // Based on shadcn/ui sidebar-09 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
@@ -177,7 +178,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" className="md:h-8 md:p-0" render={<a href="/" />}>
+              <SidebarMenuButton size="lg" className="md:h-8 md:p-0" render={<Link href="/" />}>
                 <Avatar>
                   <AvatarFallback>
                     <PenToolIcon className="size-4" />

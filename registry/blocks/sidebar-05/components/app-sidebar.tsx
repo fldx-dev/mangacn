@@ -17,6 +17,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 import { SearchForm } from "./search-form";
 
 // Based on shadcn/ui sidebar-05 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
@@ -175,7 +176,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<a href="/dashboard" />}>
+            <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
               <Avatar>
                 <AvatarFallback>
                   <BookOpenIcon className="size-4" />
@@ -212,7 +213,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <SidebarMenuSubItem key={item.title}>
                           <SidebarMenuSubButton
                             isActive={item.isActive}
-                            render={<a href={item.url} />}
+                            render={<Link href={item.url} />}
                           >
                             {item.title}
                           </SidebarMenuSubButton>

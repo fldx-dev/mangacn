@@ -89,6 +89,7 @@ the set.
 | Manga-native pieces (`speech-bubble`, `panel`, …) | `components/<item>.tsx` |
 | Blocks (`chapter-list`, `spread-viewer`) | `components/blocks/<block>/` |
 | The ink frame | `components/ink-frame.tsx` |
+| The link blocks navigate with | `lib/link.tsx` |
 | Tokens, utilities and keyframes | your `globals.css` |
 | Font loaders (`next/font/google`) | your root `layout.tsx` |
 
@@ -96,6 +97,49 @@ Everything is plain source in your project. Edit it as you would your own code.
 
 </Step>
 </Steps>
+
+## Client-side navigation
+
+Every block that links to a route in your app (a sidebar's menu, a login page's "Sign up", a
+character card, a volume cover) renders that link through one file, `lib/link.tsx`, which the
+block installs with it. Out of the box it is a plain `<a>` that passes every prop and the ref
+through, so the blocks work in any React app, and each click is a full page load. Links that
+leave the app (a file opened in a new tab, a `mailto:` address, a `#section` on the same page)
+stay plain `<a>` in the blocks.
+
+To navigate on the client, make `lib/link.tsx` your router's link. It is the only file to
+change: no block takes a link prop.
+
+In Next.js, replace the file with one line. `next/link` renders the same `<a>`, prefetches the
+route and also handles external URLs, and with it eslint-config-next's
+`@next/next/no-html-link-for-pages` passes on the blocks:
+
+```tsx title="lib/link.tsx"
+export { default as Link } from "next/link";
+```
+
+React Router's `Link` takes `to`, not `href`, so wrap it. The blocks pass `href`; the wrapper
+hands an absolute URL to a plain `<a>`, since `to` is for routes:
+
+```tsx title="lib/link.tsx"
+import type * as React from "react";
+import { Link as RouterLink } from "react-router";
+
+export function Link({ href = "", ...props }: React.ComponentProps<"a">) {
+  if (/^([a-z][a-z\d+.-]*:|\/\/)/i.test(href)) return <a href={href} {...props} />;
+  return <RouterLink to={href} {...props} />;
+}
+```
+
+Any other router works the same way: export a `Link` that takes the props of an `<a>` and
+renders an anchor. Keep the ref: the sidebar's buttons and the button-styled links render the
+link through Base UI's `render` prop, which passes it a ref.
+
+<Callout title="Adding a block again writes the default back">
+  Every install line carries `--overwrite`, so a later `add` of any block that links writes the
+  plain `<a>` back over your `lib/link.tsx`. After an add, check `git diff lib/link.tsx` and keep
+  your version.
+</Callout>
 
 ## Without the registry entry
 

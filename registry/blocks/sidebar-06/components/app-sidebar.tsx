@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 import { NavMain } from "./nav-main";
 import { SidebarOptInForm } from "./sidebar-opt-in-form";
 
@@ -170,7 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<a href="/dashboard" />}>
+            <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
               <Avatar>
                 <AvatarFallback>
                   <BookOpenIcon className="size-4" />

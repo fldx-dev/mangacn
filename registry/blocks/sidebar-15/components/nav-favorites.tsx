@@ -23,6 +23,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-15 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // The editor's favourite notes, each with a menu of its own named by its note.
@@ -43,7 +44,7 @@ export function NavFavorites({
       <SidebarMenu>
         {favorites.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton render={<a href={item.url} title={item.name} />}>
+            <SidebarMenuButton render={<Link href={item.url} title={item.name} />}>
               <span>{item.emoji}</span>
               <span>{item.name}</span>
             </SidebarMenuButton>

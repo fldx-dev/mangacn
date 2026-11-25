@@ -9,6 +9,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui login-02 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // Stock's form on the paper of the split screen, in ink: the title in the display face, the
@@ -45,12 +46,12 @@ export function LoginForm({ className, forgotPasswordHref, ...props }: LoginForm
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
             {forgotPasswordHref ? (
-              <a
+              <Link
                 href={forgotPasswordHref}
                 className="ml-auto text-sm underline-offset-4 hover:underline"
               >
                 Forgot your password?
-              </a>
+              </Link>
             ) : null}
           </div>
           <Input id="password" name="password" type="password" required />
@@ -71,9 +72,9 @@ export function LoginForm({ className, forgotPasswordHref, ...props }: LoginForm
           </Button>
           <FieldDescription className="text-center">
             Don&apos;t have an account?{" "}
-            <a href="/signup" className="underline underline-offset-4">
+            <Link href="/signup" className="underline underline-offset-4">
               Sign up
-            </a>
+            </Link>
           </FieldDescription>
         </Field>
       </FieldGroup>
