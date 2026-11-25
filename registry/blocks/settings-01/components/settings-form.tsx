@@ -76,6 +76,13 @@ export interface SettingsFormProps extends Omit<React.ComponentProps<"div">, "on
   onSave?: (values: Settings) => void;
   /** Called when the reader confirms the account deletion. */
   onDeleteAccount?: () => void;
+  /**
+   * The sections shown, in their fixed order; the others, and their links in the section nav,
+   * are not drawn, and Save skips their checks. Drop `account` when the app edits the display
+   * name in profile-01 (it takes email, language and time zone with it).
+   * @default ["account", "notifications", "reading", "danger"]
+   */
+  sections?: SettingsSection[];
 }
 
 const SECTIONS = [
@@ -85,18 +92,23 @@ const SECTIONS = [
   { key: "danger", title: "Danger zone" },
 ] as const;
 
-type SectionKey = (typeof SECTIONS)[number]["key"];
+/** A section of the settings form. */
+export type SettingsSection = (typeof SECTIONS)[number]["key"];
+
+const ALL_SECTIONS: SettingsSection[] = SECTIONS.map(({ key }) => key);
 
 export function SettingsForm({
   defaultValues,
   onSave,
   onDeleteAccount,
+  sections = ALL_SECTIONS,
   className,
   ...props
 }: SettingsFormProps) {
   const id = React.useId();
+  const shown = (key: SettingsSection) => sections.includes(key);
   const fieldId = (name: string) => `${id}-${name}`;
-  const headingId = (key: SectionKey) => `${id}-${key}`;
+  const headingId = (key: SettingsSection) => `${id}-${key}`;
 
   const [values, setValues] = React.useState(defaultValues);
   const [errors, setErrors] = React.useState<Errors>({});
@@ -117,7 +129,8 @@ export function SettingsForm({
 
   const save = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const next = validateSettings(values);
+    // A hidden section's fields cannot be fixed, so they are not checked.
+    const next = shown("account") ? validateSettings(values) : {};
     setErrors(next);
     if (next.displayName) displayNameRef.current?.focus();
     else if (next.email) emailRef.current?.focus();
@@ -132,7 +145,7 @@ export function SettingsForm({
     setErrors({});
   };
 
-  const sectionHeading = (key: SectionKey, title: string) => (
+  const sectionHeading = (key: SettingsSection, title: string) => (
     <CardTitle>
       <h2 id={headingId(key)} tabIndex={-1} className="scroll-mt-6 font-display text-lg uppercase">
         {title}
@@ -150,7 +163,7 @@ export function SettingsForm({
     >
       <nav aria-label="Settings sections" className="xl:sticky xl:top-6">
         <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm xl:flex-col xl:gap-3">
-          {SECTIONS.map(({ key, title }) => (
+          {SECTIONS.filter(({ key }) => shown(key)).map(({ key, title }) => (
             <li key={key}>
               <a
                 href={`#${headingId(key)}`}
@@ -172,179 +185,185 @@ export function SettingsForm({
           onSubmit={save}
           className="flex min-w-0 flex-col gap-6"
         >
-          <section aria-labelledby={headingId("account")}>
-            <Card>
-              <CardHeader>
-                {sectionHeading("account", "Account")}
-                <CardDescription>Who you are on the site, and where you read.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FieldSet>
-                  <FieldGroup>
-                    <Field data-invalid={errors.displayName ? true : undefined}>
-                      <FieldLabel htmlFor={fieldId("display-name")}>
-                        Display name <span className="text-muted-foreground">(required)</span>
-                      </FieldLabel>
-                      <Input
-                        ref={displayNameRef}
-                        id={fieldId("display-name")}
-                        name="displayName"
-                        autoComplete="nickname"
-                        required
-                        value={values.displayName}
-                        onChange={(event) => set("displayName", event.target.value)}
-                        aria-invalid={errors.displayName ? true : undefined}
-                        aria-describedby={
-                          errors.displayName ? fieldId("display-name-error") : undefined
-                        }
+          {shown("account") ? (
+            <section aria-labelledby={headingId("account")}>
+              <Card>
+                <CardHeader>
+                  {sectionHeading("account", "Account")}
+                  <CardDescription>Who you are on the site, and where you read.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldSet>
+                    <FieldGroup>
+                      <Field data-invalid={errors.displayName ? true : undefined}>
+                        <FieldLabel htmlFor={fieldId("display-name")}>
+                          Display name <span className="text-muted-foreground">(required)</span>
+                        </FieldLabel>
+                        <Input
+                          ref={displayNameRef}
+                          id={fieldId("display-name")}
+                          name="displayName"
+                          autoComplete="nickname"
+                          required
+                          value={values.displayName}
+                          onChange={(event) => set("displayName", event.target.value)}
+                          aria-invalid={errors.displayName ? true : undefined}
+                          aria-describedby={
+                            errors.displayName ? fieldId("display-name-error") : undefined
+                          }
+                        />
+                        <FieldError id={fieldId("display-name-error")}>
+                          {errors.displayName}
+                        </FieldError>
+                      </Field>
+                      <Field data-invalid={errors.email ? true : undefined}>
+                        <FieldLabel htmlFor={fieldId("email")}>Email</FieldLabel>
+                        <Input
+                          ref={emailRef}
+                          id={fieldId("email")}
+                          name="email"
+                          type="email"
+                          autoComplete="email"
+                          value={values.email}
+                          onChange={(event) => set("email", event.target.value)}
+                          aria-invalid={errors.email ? true : undefined}
+                          aria-describedby={errors.email ? fieldId("email-error") : undefined}
+                        />
+                        <FieldError id={fieldId("email-error")}>{errors.email}</FieldError>
+                      </Field>
+                      <SettingsSelect
+                        id={fieldId("language")}
+                        label="Language"
+                        name="language"
+                        options={settingsLanguages}
+                        value={values.language}
+                        onValueChange={(value) => set("language", value)}
                       />
-                      <FieldError id={fieldId("display-name-error")}>
-                        {errors.displayName}
-                      </FieldError>
-                    </Field>
-                    <Field data-invalid={errors.email ? true : undefined}>
-                      <FieldLabel htmlFor={fieldId("email")}>Email</FieldLabel>
-                      <Input
-                        ref={emailRef}
-                        id={fieldId("email")}
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        value={values.email}
-                        onChange={(event) => set("email", event.target.value)}
-                        aria-invalid={errors.email ? true : undefined}
-                        aria-describedby={errors.email ? fieldId("email-error") : undefined}
+                      <SettingsSelect
+                        id={fieldId("time-zone")}
+                        label="Time zone"
+                        name="timeZone"
+                        options={settingsTimeZones}
+                        value={values.timeZone}
+                        onValueChange={(value) => set("timeZone", value)}
                       />
-                      <FieldError id={fieldId("email-error")}>{errors.email}</FieldError>
-                    </Field>
-                    <SettingsSelect
-                      id={fieldId("language")}
-                      label="Language"
-                      name="language"
-                      options={settingsLanguages}
-                      value={values.language}
-                      onValueChange={(value) => set("language", value)}
-                    />
-                    <SettingsSelect
-                      id={fieldId("time-zone")}
-                      label="Time zone"
-                      name="timeZone"
-                      options={settingsTimeZones}
-                      value={values.timeZone}
-                      onValueChange={(value) => set("timeZone", value)}
-                    />
-                  </FieldGroup>
-                </FieldSet>
-              </CardContent>
-            </Card>
-          </section>
+                    </FieldGroup>
+                  </FieldSet>
+                </CardContent>
+              </Card>
+            </section>
+          ) : null}
 
-          <section aria-labelledby={headingId("notifications")}>
-            <Card>
-              <CardHeader>
-                {sectionHeading("notifications", "Notifications")}
-                <CardDescription>What we tell you about, and how often.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FieldSet>
-                  <FieldGroup>
-                    <SettingsSwitch
-                      id={fieldId("new-chapters")}
-                      name="newChapters"
-                      label="New chapters"
-                      description="A series you follow publishes a chapter."
-                      checked={values.notifications.newChapters}
-                      onCheckedChange={(checked) => setNotification("newChapters", checked)}
-                    />
-                    <SettingsSwitch
-                      id={fieldId("replies")}
-                      name="replies"
-                      label="Replies"
-                      description="Someone answers one of your comments."
-                      checked={values.notifications.replies}
-                      onCheckedChange={(checked) => setNotification("replies", checked)}
-                    />
-                    <SettingsSwitch
-                      id={fieldId("weekly-digest")}
-                      name="weeklyDigest"
-                      label="Weekly digest"
-                      description="The week's new volumes from your shelves."
-                      checked={values.notifications.weeklyDigest}
-                      onCheckedChange={(checked) => setNotification("weeklyDigest", checked)}
-                    />
-                    <Separator />
-                    <SettingsRadios
-                      id={fieldId("email-frequency")}
-                      label="Email frequency"
-                      name="emailFrequency"
-                      options={settingsEmailFrequencies}
-                      value={values.emailFrequency}
-                      onValueChange={(value) => set("emailFrequency", value as EmailFrequency)}
-                    />
-                  </FieldGroup>
-                </FieldSet>
-              </CardContent>
-            </Card>
-          </section>
-
-          <section aria-labelledby={headingId("reading")}>
-            <Card>
-              <CardHeader>
-                {sectionHeading("reading", "Reading")}
-                <CardDescription>How the reader opens a chapter.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FieldSet>
-                  <FieldGroup>
-                    <Field>
-                      <FieldTitle id={fieldId("direction-label")}>Reading direction</FieldTitle>
-                      {/* A wrapper, so the field stretches it and not the group. */}
-                      <div>
-                        <ToggleGroup
-                          aria-labelledby={fieldId("direction-label")}
-                          variant="outline"
-                          spacing={0}
-                          value={[values.readingDirection]}
-                          // A single toggle group can be emptied; a direction is always set.
-                          onValueChange={(next: string[]) => {
-                            if (next[0]) set("readingDirection", next[0] as ReadingDirection);
-                          }}
-                        >
-                          <ToggleGroupItem value="rtl">Right to left</ToggleGroupItem>
-                          <ToggleGroupItem value="ltr">Left to right</ToggleGroupItem>
-                        </ToggleGroup>
-                      </div>
-                      <input
-                        type="hidden"
-                        name="readingDirection"
-                        value={values.readingDirection}
+          {shown("notifications") ? (
+            <section aria-labelledby={headingId("notifications")}>
+              <Card>
+                <CardHeader>
+                  {sectionHeading("notifications", "Notifications")}
+                  <CardDescription>What we tell you about, and how often.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldSet>
+                    <FieldGroup>
+                      <SettingsSwitch
+                        id={fieldId("new-chapters")}
+                        name="newChapters"
+                        label="New chapters"
+                        description="A series you follow publishes a chapter."
+                        checked={values.notifications.newChapters}
+                        onCheckedChange={(checked) => setNotification("newChapters", checked)}
                       />
-                    </Field>
-                    <SettingsRadios
-                      id={fieldId("page-layout")}
-                      label="Page layout"
-                      name="pageLayout"
-                      options={[
-                        { label: "Single page", value: "single" },
-                        { label: "Two-page spread", value: "spread" },
-                      ]}
-                      value={values.pageLayout}
-                      onValueChange={(value) => set("pageLayout", value as PageLayout)}
-                    />
-                    <Separator />
-                    <SettingsSwitch
-                      id={fieldId("content-warnings")}
-                      name="contentWarnings"
-                      label="Content warnings"
-                      description="Ask before opening a chapter marked for mature readers."
-                      checked={values.contentWarnings}
-                      onCheckedChange={(checked) => set("contentWarnings", checked)}
-                    />
-                  </FieldGroup>
-                </FieldSet>
-              </CardContent>
-            </Card>
-          </section>
+                      <SettingsSwitch
+                        id={fieldId("replies")}
+                        name="replies"
+                        label="Replies"
+                        description="Someone answers one of your comments."
+                        checked={values.notifications.replies}
+                        onCheckedChange={(checked) => setNotification("replies", checked)}
+                      />
+                      <SettingsSwitch
+                        id={fieldId("weekly-digest")}
+                        name="weeklyDigest"
+                        label="Weekly digest"
+                        description="The week's new volumes from your shelves."
+                        checked={values.notifications.weeklyDigest}
+                        onCheckedChange={(checked) => setNotification("weeklyDigest", checked)}
+                      />
+                      <Separator />
+                      <SettingsRadios
+                        id={fieldId("email-frequency")}
+                        label="Email frequency"
+                        name="emailFrequency"
+                        options={settingsEmailFrequencies}
+                        value={values.emailFrequency}
+                        onValueChange={(value) => set("emailFrequency", value as EmailFrequency)}
+                      />
+                    </FieldGroup>
+                  </FieldSet>
+                </CardContent>
+              </Card>
+            </section>
+          ) : null}
+
+          {shown("reading") ? (
+            <section aria-labelledby={headingId("reading")}>
+              <Card>
+                <CardHeader>
+                  {sectionHeading("reading", "Reading")}
+                  <CardDescription>How the reader opens a chapter.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldSet>
+                    <FieldGroup>
+                      <Field>
+                        <FieldTitle id={fieldId("direction-label")}>Reading direction</FieldTitle>
+                        {/* A wrapper, so the field stretches it and not the group. */}
+                        <div>
+                          <ToggleGroup
+                            aria-labelledby={fieldId("direction-label")}
+                            variant="outline"
+                            spacing={0}
+                            value={[values.readingDirection]}
+                            // A single toggle group can be emptied; a direction is always set.
+                            onValueChange={(next: string[]) => {
+                              if (next[0]) set("readingDirection", next[0] as ReadingDirection);
+                            }}
+                          >
+                            <ToggleGroupItem value="rtl">Right to left</ToggleGroupItem>
+                            <ToggleGroupItem value="ltr">Left to right</ToggleGroupItem>
+                          </ToggleGroup>
+                        </div>
+                        <input
+                          type="hidden"
+                          name="readingDirection"
+                          value={values.readingDirection}
+                        />
+                      </Field>
+                      <SettingsRadios
+                        id={fieldId("page-layout")}
+                        label="Page layout"
+                        name="pageLayout"
+                        options={[
+                          { label: "Single page", value: "single" },
+                          { label: "Two-page spread", value: "spread" },
+                        ]}
+                        value={values.pageLayout}
+                        onValueChange={(value) => set("pageLayout", value as PageLayout)}
+                      />
+                      <Separator />
+                      <SettingsSwitch
+                        id={fieldId("content-warnings")}
+                        name="contentWarnings"
+                        label="Content warnings"
+                        description="Ask before opening a chapter marked for mature readers."
+                        checked={values.contentWarnings}
+                        onCheckedChange={(checked) => set("contentWarnings", checked)}
+                      />
+                    </FieldGroup>
+                  </FieldSet>
+                </CardContent>
+              </Card>
+            </section>
+          ) : null}
 
           <div className="flex flex-col gap-3 md:flex-row md:justify-end">
             <Button type="button" variant="outline" onClick={reset}>
@@ -354,55 +373,57 @@ export function SettingsForm({
           </div>
         </form>
 
-        <section aria-labelledby={headingId("danger")}>
-          <Card>
-            <CardHeader>
-              {sectionHeading("danger", "Danger zone")}
-              <CardDescription>Things you cannot take back.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <FieldSet>
-                <FieldGroup>
-                  <Field orientation="responsive">
-                    <FieldContent>
-                      <FieldTitle>Delete account</FieldTitle>
-                      <FieldDescription>
-                        Your shelves, comments and reading history go with it.
-                      </FieldDescription>
-                    </FieldContent>
-                    <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-                      <AlertDialogTrigger render={<Button type="button" variant="destructive" />}>
-                        Delete account
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete your account?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Your shelves, comments and reading history are removed. This cannot be
-                            undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            variant="destructive"
-                            onClick={() => {
-                              setDeleteOpen(false);
-                              onDeleteAccount?.();
-                              announce("Account deletion requested");
-                            }}
-                          >
-                            Delete account
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </Field>
-                </FieldGroup>
-              </FieldSet>
-            </CardContent>
-          </Card>
-        </section>
+        {shown("danger") ? (
+          <section aria-labelledby={headingId("danger")}>
+            <Card>
+              <CardHeader>
+                {sectionHeading("danger", "Danger zone")}
+                <CardDescription>Things you cannot take back.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FieldSet>
+                  <FieldGroup>
+                    <Field orientation="responsive">
+                      <FieldContent>
+                        <FieldTitle>Delete account</FieldTitle>
+                        <FieldDescription>
+                          Your shelves, comments and reading history go with it.
+                        </FieldDescription>
+                      </FieldContent>
+                      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+                        <AlertDialogTrigger render={<Button type="button" variant="destructive" />}>
+                          Delete account
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Your shelves, comments and reading history are removed. This cannot be
+                              undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              variant="destructive"
+                              onClick={() => {
+                                setDeleteOpen(false);
+                                onDeleteAccount?.();
+                                announce("Account deletion requested");
+                              }}
+                            >
+                              Delete account
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </Field>
+                  </FieldGroup>
+                </FieldSet>
+              </CardContent>
+            </Card>
+          </section>
+        ) : null}
 
         <div role="status" className="sr-only">
           <span key={announcement.key}>{announcement.text}</span>
