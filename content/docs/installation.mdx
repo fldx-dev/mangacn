@@ -112,6 +112,17 @@ The components a page block brings land in `components/` as usual; the example r
 shows them together. Copy what you need from it into your own route, then delete the
 `app/(mangacn-examples)/` folder: that removes every example route and nothing else.
 
+Variants of one family (the `login-0N` blocks, the `sidebar-NN` blocks) each get their own
+example route but share component files, such as `components/login-form.tsx` or
+`components/app-sidebar.tsx`. The last variant you add writes those files, so after adding
+`login-01` and then `login-02`, `/examples/login-01` renders login-02's form too. Each block's
+page names the blocks it shares files with.
+
+Page blocks added before the examples group existed wrote their routes straight into your app
+(`app/login/page.tsx`, `app/signup/page.tsx`, `app/dashboard/page.tsx`, `app/series/page.tsx`
+and the like). Adding a block again does not move or remove those; if they were only examples,
+delete them by hand.
+
 ## Client-side navigation
 
 Every block that links to a route in your app (a sidebar's menu, a login page's "Sign up", a

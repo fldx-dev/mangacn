@@ -489,9 +489,9 @@ registry/blocks/<name>/
   of the user's app (`/login`, `/dashboard`, `/series`). The route group adds no URL segment, so
   the example serves at `/examples/<name>`: the `examples/` segment keeps it off the app's own
   routes and the block's name off its siblings'. Deleting `app/(mangacn-examples)/` removes
-  every example route and nothing else (the installation guide's "Example pages"). A component at `components/<file>.tsx`: shadcn 4.23 writes an untargeted
-  `registry:component` to the components folder at the path after the first `components`
-  segment of its registry path (`registry/blocks/login-01/components/login-form.tsx` →
+  every example route and nothing else (the installation guide's "Example pages"). A component
+  at `components/<file>.tsx`: shadcn 4.23 writes an untargeted `registry:component` to the
+  components folder at the path after the first `components` segment of its registry path (`registry/blocks/login-01/components/login-form.tsx` →
   `components/login-form.tsx`, where stock's lands), so an add replaces stock's files in place.
   The catalog states it as `"target": "@components/login-form.tsx"`, so it does not hang on the
   name of the user's components folder. `findBlockProblems` refuses a component that would land
@@ -499,8 +499,8 @@ registry/blocks/<name>/
 - **Imports.** The page imports its own components relatively, `./components/login-form`, and
   `pnpm registry:build` writes the install path, `@/components/login-form`, into
   `public/r/<name>.json` (`scripts/registry-rewrite-pages.ts`, chained after `shadcn build`):
-  the page lands in `app/(mangacn-examples)/examples/<name>/`, away from its components, and stock's installed page
-  imports them that way. The step rewrites only a page's `./components/<file>` imports of its
+  the page lands in `app/(mangacn-examples)/examples/<name>/`, away from its components, and
+  stock's installed page imports them that way. The step rewrites only a page's `./components/<file>` imports of its
   own files; components import each other relatively (`./nav-main`: they land side by side) and
   stay as they are. So no `tsconfig.json` or `vitest.config.mts` alias per component. The import
   rule allows that relative form only for a page's own `components/`; elsewhere an own file's
@@ -553,8 +553,8 @@ registry/blocks/<name>/
   at the end.
 
 The next page block, in short: a folder with `page.tsx` (`registry:page`, target
-`app/(mangacn-examples)/examples/<name>/page.tsx`) and `components/<file>.tsx` (`registry:component`, target
-`@components/<file>.tsx`), a default variant and a test with `expectVariantsAccessible`; a catalog
+`app/(mangacn-examples)/examples/<name>/page.tsx`) and `components/<file>.tsx`
+(`registry:component`, target `@components/<file>.tsx`), a default variant and a test with `expectVariantsAccessible`; a catalog
 entry with its dependencies by URL; the page importing its components relatively; `PARITY_BLOCKS` and
 `pnpm gen:parity` when it is stock's; `pnpm gen:variants && pnpm gen:docs`, two sentences on the
 page, and the files in the smoke's `EXPECTED_CONTENT`. `/view/<name>` and its shots come with
