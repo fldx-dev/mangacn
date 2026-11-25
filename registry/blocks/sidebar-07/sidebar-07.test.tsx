@@ -141,20 +141,52 @@ describe("sidebar-07 AppSidebar props", () => {
     expect(screen.queryByText("Hana Mori")).toBeNull();
   });
 
+  it("keeps the active team in the teams it is given, loaded late or changed", async () => {
+    const ink = { name: "Ink Club", logo: <span />, plan: "Free" };
+    const owl = { name: "Owl Press", logo: <span />, plan: "Monthly" };
+    const shell = (teams: (typeof ink)[]) => (
+      <SidebarProvider>
+        <AppSidebar teams={teams} />
+      </SidebarProvider>
+    );
+    const { rerender } = render(shell([]));
+    expect(screen.queryByRole("button", { name: /Ink Club/ })).toBeNull();
+    rerender(shell([ink, owl]));
+    fireEvent.click(screen.getByRole("button", { name: /Ink Club/ }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: /Owl Press/ }));
+    expect(await screen.findByRole("button", { name: /Owl Press/ })).toBeTruthy();
+    // The chosen team stays while it is listed, and falls back to the first once it is not.
+    rerender(shell([owl, ink]));
+    expect(screen.getByRole("button", { name: /Owl Press/ })).toBeTruthy();
+    rerender(shell([ink]));
+    expect(screen.getByRole("button", { name: /Ink Club/ })).toBeTruthy();
+  });
+
   it("runs NavUser's onLogout and the other account actions from the menu", async () => {
-    const onLogout = vi.fn();
-    const onAccount = vi.fn();
+    const actions = {
+      onUpgrade: vi.fn(),
+      onAccount: vi.fn(),
+      onBilling: vi.fn(),
+      onNotifications: vi.fn(),
+      onLogout: vi.fn(),
+    };
     render(
       <SidebarProvider>
-        <AppSidebar userActions={{ onLogout, onAccount }} />
+        <AppSidebar userActions={actions} />
       </SidebarProvider>,
     );
-    fireEvent.click(screen.getByRole("button", { name: /Hana Mori/ }));
-    fireEvent.click(await screen.findByRole("menuitem", { name: "Account" }));
-    expect(onAccount).toHaveBeenCalledTimes(1);
-    fireEvent.click(screen.getByRole("button", { name: /Hana Mori/ }));
-    fireEvent.click(await screen.findByRole("menuitem", { name: "Log out" }));
-    expect(onLogout).toHaveBeenCalledTimes(1);
+    const items = {
+      onUpgrade: "Upgrade to Pro",
+      onAccount: "Account",
+      onBilling: "Billing",
+      onNotifications: "Notifications",
+      onLogout: "Log out",
+    } as const;
+    for (const [handler, name] of Object.entries(items)) {
+      fireEvent.click(screen.getByRole("button", { name: /Hana Mori/ }));
+      fireEvent.click(await screen.findByRole("menuitem", { name }));
+      expect(actions[handler as keyof typeof items], name).toHaveBeenCalledTimes(1);
+    }
   });
 
   it("fires onLogout from NavUser on its own", async () => {

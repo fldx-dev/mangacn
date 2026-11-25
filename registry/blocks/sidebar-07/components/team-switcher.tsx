@@ -34,7 +34,10 @@ export function TeamSwitcher({
   }[];
 }) {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  // The chosen team by name, so a new `teams` list (loaded late, or changed) keeps a team that is
+  // in it: the chosen one while it is listed, else the first.
+  const [activeName, setActiveName] = React.useState(teams[0]?.name);
+  const activeTeam = teams.find((team) => team.name === activeName) ?? teams[0];
   if (!activeTeam) {
     return null;
   }
@@ -63,7 +66,7 @@ export function TeamSwitcher({
               {teams.map((team, index) => (
                 <DropdownMenuItem
                   key={team.name}
-                  onClick={() => setActiveTeam(team)}
+                  onClick={() => setActiveName(team.name)}
                   className="gap-2 p-2"
                 >
                   <Avatar size="sm">
