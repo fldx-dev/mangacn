@@ -338,7 +338,7 @@
       "type": "registry:lib",
       "title": "Link",
       "description": "The link blocks render for internal routes: a plain <a> by default, swapped in one line for next/link or your router's link.",
-      "categories": ["navigation"],
+      "categories": ["layout"],
       "meta": {
         "since": "0.2.0"
       },

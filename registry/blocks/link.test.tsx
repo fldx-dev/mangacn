@@ -34,6 +34,7 @@ describe("blocks link to internal routes through @/lib/link", () => {
       <SeriesHeader
         series={{
           title: "Lantern Keepers",
+          author: "Hana Mori",
           synopsis: "Lanterns go out one by one.",
           status: "ongoing",
           cover: { src: "data:image/gif;base64,R0lGODlhAQABAAAAACw=", alt: "The cover" },
