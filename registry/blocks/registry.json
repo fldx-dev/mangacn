@@ -927,7 +927,8 @@
         "https://www.mangacn.com/r/breadcrumb.json",
         "https://www.mangacn.com/r/separator.json",
         "https://www.mangacn.com/r/collapsible.json",
-        "https://www.mangacn.com/r/panel.json"
+        "https://www.mangacn.com/r/panel.json",
+        "https://www.mangacn.com/r/link.json"
       ],
       "files": [
         {

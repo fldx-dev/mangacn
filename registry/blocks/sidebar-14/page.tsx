@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-14 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // A studio handbook's page in ink with its table of contents on the right: the sidebar slides
@@ -26,7 +27,7 @@ export default function Page() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">Make a chapter</BreadcrumbLink>
+                <BreadcrumbLink render={<Link href="#" />}>Make a chapter</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-08 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // A studio's inset app shell in ink, with a secondary nav at the sidebar's foot: mangacn's sidebar
@@ -31,7 +32,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Moonlit Ronin</BreadcrumbLink>
+                  <BreadcrumbLink render={<Link href="#" />}>Moonlit Ronin</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>

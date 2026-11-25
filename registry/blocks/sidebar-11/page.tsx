@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-11 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // A chapter's working files in ink: the file tree in mangacn's sidebar, which collapses (Ctrl/⌘+B
@@ -30,11 +31,11 @@ export default function Page() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">chapter-12</BreadcrumbLink>
+                <BreadcrumbLink render={<Link href="#" />}>chapter-12</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">pages</BreadcrumbLink>
+                <BreadcrumbLink render={<Link href="#" />}>pages</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>

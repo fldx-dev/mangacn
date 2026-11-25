@@ -15,6 +15,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-10 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // The workspaces, each a link whose pages open from a chevron that covers its emoji on hover, as
@@ -41,7 +42,7 @@ export function NavWorkspaces({
         <SidebarMenu>
           {workspaces.map((workspace) => (
             <Collapsible key={workspace.name} render={<SidebarMenuItem />}>
-              <SidebarMenuButton render={<a href="#workspaces" />}>
+              <SidebarMenuButton render={<Link href="#workspaces" />}>
                 <span>{workspace.emoji}</span>
                 <span>{workspace.name}</span>
               </SidebarMenuButton>
@@ -61,7 +62,7 @@ export function NavWorkspaces({
                 <SidebarMenuSub>
                   {workspace.pages.map((page) => (
                     <SidebarMenuSubItem key={page.name}>
-                      <SidebarMenuSubButton render={<a href="#workspaces" />}>
+                      <SidebarMenuSubButton render={<Link href="#workspaces" />}>
                         <span>{page.emoji}</span>
                         <span>{page.name}</span>
                       </SidebarMenuSubButton>

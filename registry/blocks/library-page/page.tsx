@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // A reader's shelf inside sidebar-07's app shell: the chapters they have open, then their shelves
 // of volumes. Everything on the page comes from `library` below; replace it with your fetch
@@ -127,7 +128,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Hana Mori</BreadcrumbLink>
+                  <BreadcrumbLink render={<Link href="#" />}>Hana Mori</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
