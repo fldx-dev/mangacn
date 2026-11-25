@@ -326,6 +326,19 @@ describe("Kanban", () => {
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "Rooftop chase" }));
   });
 
+  it("names a card's menu after the item as it is now, in the render that changes it", () => {
+    const setter: { current: SetBoard | null } = { current: null };
+    render(<Board setter={setter} />);
+    act(() => {
+      setter.current?.((board) => ({
+        ...board,
+        pencils: [{ id: "rooftop", title: "Rooftop escape" }, ...(board.pencils ?? []).slice(1)],
+      }));
+    });
+    expect(screen.getByRole("button", { name: "Move Rooftop escape" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Move Rooftop chase" })).toBeNull();
+  });
+
   it("adds a card from a column's form in the columns variant", () => {
     render(<KanbanColumnsVariant />);
     const input = screen.getByLabelText("New card in Done");

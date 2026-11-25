@@ -36,7 +36,6 @@ const ALLOWED: Record<string, Record<string, number>> = {
   // Found when this check was added, outside its task (which fixed use-mobile, profile-01,
   // upload-01 and spread-viewer): a follow-up fixes each one and removes its entry.
   "registry/ui/data-table/data-table.tsx": { "@typescript-eslint/no-explicit-any": 1 },
-  "registry/ui/kanban/kanban.tsx": { "react-hooks/refs": 3, "react-hooks/immutability": 2 },
   "registry/ui/phone-input/phone-input.tsx": { "react-hooks/set-state-in-effect": 1 },
 };
 
