@@ -554,8 +554,12 @@ function useSlice<T>(controlled: T | undefined, initial: T, onChange?: (value: T
   const [own, setOwn] = React.useState(initial);
   const value = controlled ?? own;
   // Two updates before a re-render (setPageSize then setPageIndex) each build on the one before.
+  // Synced after each commit, not while rendering: updates come from events and TanStack's
+  // queued resets.
   const latest = React.useRef(value);
-  latest.current = value;
+  React.useLayoutEffect(() => {
+    latest.current = value;
+  });
   const update = (updater: Updater<T>) => {
     const next = functionalUpdate(updater, latest.current);
     if (Object.is(next, latest.current)) return;
@@ -572,7 +576,7 @@ export interface DataTableProps<TData extends RowData> {
    * `createSelectColumn()` adds the checkboxes.
    */
   // biome-ignore lint/suspicious/noExplicitAny: each column keeps its own value type, as helper.columns() returns them.
-  columns: DataTableColumnDef<TData, any>[];
+  columns: DataTableColumnDef<TData, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any -- each column keeps its own value type, as helper.columns() returns them
   /** The rows: every row, or one page of them with `manualPagination`. */
   data: TData[];
   /**

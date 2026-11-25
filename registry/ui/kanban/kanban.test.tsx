@@ -326,6 +326,36 @@ describe("Kanban", () => {
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "Rooftop chase" }));
   });
 
+  it("names a card's menu after the item as it is now, in the render that changes it", () => {
+    const setter: { current: SetBoard | null } = { current: null };
+    render(<Board setter={setter} />);
+    act(() => {
+      setter.current?.((board) => ({
+        ...board,
+        pencils: [{ id: "rooftop", title: "Rooftop escape" }, ...(board.pencils ?? []).slice(1)],
+      }));
+    });
+    expect(screen.getByRole("button", { name: "Move Rooftop escape" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Move Rooftop chase" })).toBeNull();
+  });
+
+  it("moves a second card from its menu onto the board as the first move left it", async () => {
+    const onValueChange = vi.fn();
+    render(<Board onValueChange={onValueChange} />);
+    const moveToTones = async (title: string) => {
+      fireEvent.click(screen.getByRole("button", { name: `Move ${title}` }));
+      const item = await screen.findByRole("menuitem", { name: "Tones" });
+      await act(async () => {
+        fireEvent.click(item);
+      });
+    };
+    await moveToTones("Rooftop chase");
+    await moveToTones("Night station");
+    expect(cardsIn("Tones")).toEqual(["Rooftop chase", "Night station"]);
+    expect(cardsIn("Pencils")).toEqual([]);
+    expect(onValueChange).toHaveBeenCalledTimes(2);
+  });
+
   it("adds a card from a column's form in the columns variant", () => {
     render(<KanbanColumnsVariant />);
     const input = screen.getByLabelText("New card in Done");
