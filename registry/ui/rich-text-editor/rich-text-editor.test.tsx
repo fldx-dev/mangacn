@@ -213,7 +213,8 @@ describe("RichTextEditor", () => {
       editor.commands.toggleBold();
     });
     expect(onValueChange).toHaveBeenCalledTimes(1);
-    // The parent keeps its value: re-rendered with it, the editor shows it again.
+    // The parent keeps its value and re-renders with it. The editor does not restore it by itself
+    // (the value prop did not change), so the test puts it back before making the change again.
     rerender(<RichTextEditor aria-label="Note" value="<p>Ink</p>" onValueChange={onValueChange} />);
     act(() => {
       editor.commands.setContent("<p>Ink</p>", { emitUpdate: false });
