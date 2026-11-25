@@ -10,6 +10,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui signup-05 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // Stock's email-only form in ink, as login-05: the studio's mark drawn in the current ink colour
@@ -24,17 +25,17 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
       <form aria-labelledby={titleId}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
-            <a href="/" className="flex flex-col items-center gap-2 font-medium">
+            <Link href="/" className="flex flex-col items-center gap-2 font-medium">
               <div className="flex size-8 items-center justify-center rounded-md">
                 <GalleryVerticalEndIcon aria-hidden className="size-6" />
               </div>
               <span className="sr-only">Inkpot Studio</span>
-            </a>
+            </Link>
             <h1 id={titleId} className="font-display text-xl leading-tight uppercase">
               Welcome to Inkpot Studio.
             </h1>
             <FieldDescription>
-              Already have an account? <a href="/login">Sign in</a>
+              Already have an account? <Link href="/login">Sign in</Link>
             </FieldDescription>
           </div>
           <Field>
@@ -68,8 +69,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
         </FieldGroup>
       </form>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="/terms">Terms of Service</a> and{" "}
-        <a href="/privacy">Privacy Policy</a>.
+        By clicking continue, you agree to our <Link href="/terms">Terms of Service</Link> and{" "}
+        <Link href="/privacy">Privacy Policy</Link>.
       </FieldDescription>
     </div>
   );

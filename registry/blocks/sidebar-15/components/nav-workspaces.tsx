@@ -15,6 +15,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-15 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // The notebook's workspaces, each opening its pages. On hover, a chevron over the workspace's
@@ -40,8 +41,8 @@ export function NavWorkspaces({
         <SidebarMenu>
           {workspaces.map((workspace) => (
             <Collapsible key={workspace.name} render={<SidebarMenuItem />}>
-              {/* biome-ignore lint/a11y/useValidAnchor: stock's placeholder link; point it at the workspace. */}
-              <SidebarMenuButton render={<a href="#" />}>
+              {/* Stock's placeholder link; point it at the workspace. */}
+              <SidebarMenuButton render={<Link href="#" />}>
                 <span>{workspace.emoji}</span>
                 <span>{workspace.name}</span>
               </SidebarMenuButton>
@@ -61,8 +62,8 @@ export function NavWorkspaces({
                 <SidebarMenuSub>
                   {workspace.pages.map((page) => (
                     <SidebarMenuSubItem key={page.name}>
-                      {/* biome-ignore lint/a11y/useValidAnchor: stock's placeholder link; point it at the page. */}
-                      <SidebarMenuSubButton render={<a href="#" />}>
+                      {/* Stock's placeholder link; point it at the page. */}
+                      <SidebarMenuSubButton render={<Link href="#" />}>
                         <span>{page.emoji}</span>
                         <span>{page.name}</span>
                       </SidebarMenuSubButton>

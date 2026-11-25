@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-09 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // A studio's post in ink: nested sidebars, the mailboxes as an icon rail and the open mailbox's
@@ -38,7 +39,7 @@ export default function Page() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">All Inboxes</BreadcrumbLink>
+                <BreadcrumbLink render={<Link href="#" />}>All Inboxes</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>

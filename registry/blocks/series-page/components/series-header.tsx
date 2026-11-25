@@ -10,6 +10,7 @@ import { MangaFrame } from "@/components/manga-frame";
 import { Stamp } from "@/components/stamp";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/lib/link";
 
 /** Where the series stands: stamped on the cover in Japanese, said in English. */
 export type SeriesStatus = "ongoing" | "completed" | "hiatus";
@@ -173,7 +174,12 @@ export function SeriesHeader({
         <p className="max-w-prose text-base leading-relaxed">{series.synopsis}</p>
         <div className="flex flex-wrap gap-3">
           {/* An anchor drawn as a button: Base UI marks it role="button", so role="link". */}
-          <Button size="lg" nativeButton={false} role="link" render={<a href={series.startHref} />}>
+          <Button
+            size="lg"
+            nativeButton={false}
+            role="link"
+            render={<Link href={series.startHref} />}
+          >
             Start reading
           </Button>
           {/* The name stays "Follow"; the pressed state says whether the reader follows. */}

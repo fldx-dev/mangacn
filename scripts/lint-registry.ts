@@ -15,25 +15,12 @@ import nextTs from "eslint-config-next/typescript";
 
 const REGISTRIES = ["theme", "ui", "blocks", "hooks"];
 
-const LINK = "@next/next/no-html-link-for-pages";
-
 /**
  * Rule errors accepted for now: how many, by file and rule. More than the count fails (a new
  * error of an accepted rule is still an error), and so does fewer (the entry is stale: lower the
  * count, or remove the rule and then the file when it reaches 0). Each group says what removes it.
  */
-const ALLOWED: Record<string, Record<string, number>> = {
-  // A plain `<a href="/">` in a block. The upcoming link-component task (a swappable
-  // `lib/link.tsx` that renders the app's router link) removes these entries.
-  "registry/blocks/login-02/page.tsx": { [LINK]: 1 },
-  "registry/blocks/login-03/page.tsx": { [LINK]: 1 },
-  "registry/blocks/login-05/components/login-form.tsx": { [LINK]: 1 },
-  "registry/blocks/sidebar-08/components/app-sidebar.tsx": { [LINK]: 1 },
-  "registry/blocks/sidebar-09/components/app-sidebar.tsx": { [LINK]: 1 },
-  "registry/blocks/signup-02/page.tsx": { [LINK]: 1 },
-  "registry/blocks/signup-03/page.tsx": { [LINK]: 1 },
-  "registry/blocks/signup-05/components/signup-form.tsx": { [LINK]: 1 },
-};
+const ALLOWED: Record<string, Record<string, number>> = {};
 
 interface RegistryCatalog {
   items: { files?: { path: string }[] }[];

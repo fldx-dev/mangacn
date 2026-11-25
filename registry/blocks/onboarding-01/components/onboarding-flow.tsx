@@ -28,6 +28,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { TimePicker } from "@/components/ui/time-picker";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Link } from "@/lib/link";
 import {
   ONBOARDING_MIN_GENRES,
   ONBOARDING_STEPS,
@@ -338,7 +339,7 @@ export function OnboardingFlow({
             {step < last ? (
               <Button type="submit">{step === last - 1 ? "Finish" : "Next"}</Button>
             ) : (
-              <Button nativeButton={false} role="link" render={<a href={libraryHref} />}>
+              <Button nativeButton={false} role="link" render={<Link href={libraryHref} />}>
                 Go to library
               </Button>
             )}

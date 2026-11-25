@@ -259,6 +259,16 @@ describe("get_item", () => {
     expect(inkFrame?.dependencyFiles).toEqual([]);
   });
 
+  it("points the link item at the installation guide's client-side navigation", async () => {
+    const link = catalog.find((entry) => entry.name === "link");
+    expect(link?.files).toEqual(["lib/link.tsx"]);
+    expect(link?.docs).toBe("https://www.mangacn.com/docs/installation#client-side-navigation");
+    const { text } = await call("get_item", { name: "link" });
+    expect(text).toContain(
+      "This item has no docs page of its own; https://www.mangacn.com/docs/installation#client-side-navigation covers it.",
+    );
+  });
+
   it("returns a block's page with a Files line naming every block file", async () => {
     const entry = catalog.find((item) => item.name === "chapter-list");
     expect(entry?.page).toBe("/docs/blocks/chapter-list");
@@ -266,7 +276,7 @@ describe("get_item", () => {
     expect(isError).toBe(false);
     expect(text).toContain("npx shadcn@latest add @mangacn/chapter-list");
     expect(text).toContain(
-      "Files: components/blocks/chapter-list/chapter-list.tsx, components/blocks/chapter-list/chapter-numeral.ts; also adds components/caption-box.tsx, components/ink-frame.tsx, components/ink-mark.tsx, components/stamp.tsx, components/ui/separator.tsx, components/ui/item.tsx through its registry dependencies",
+      "Files: components/blocks/chapter-list/chapter-list.tsx, components/blocks/chapter-list/chapter-numeral.ts; also adds components/caption-box.tsx, components/ink-frame.tsx, components/ink-mark.tsx, components/stamp.tsx, components/ui/separator.tsx, components/ui/item.tsx, lib/link.tsx through its registry dependencies",
     );
   });
 

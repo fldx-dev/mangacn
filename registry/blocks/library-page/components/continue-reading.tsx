@@ -4,6 +4,7 @@ import { MangaFrame } from "@/components/manga-frame";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress, ProgressLabel } from "@/components/ui/progress";
+import { Link } from "@/lib/link";
 
 /** A chapter the reader has open: where they stopped, and where to pick it up. */
 export interface ReadingProgress {
@@ -99,7 +100,7 @@ export function ContinueReading({
                   <Button
                     nativeButton={false}
                     role="link"
-                    render={<a href={item.href} />}
+                    render={<Link href={item.href} />}
                     size="sm"
                     className="self-start"
                   >

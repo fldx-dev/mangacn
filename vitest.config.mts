@@ -159,6 +159,11 @@ export default defineConfig({
           new URL("./registry/hooks/lib/highlighter.tsx", import.meta.url),
         ),
       },
+      // every block that links to an internal route → link (theme catalog, registry:lib).
+      {
+        find: /^@\/lib\/link$/,
+        replacement: fileURLToPath(new URL("./registry/theme/link/link.tsx", import.meta.url)),
+      },
       // command → dialog.
       {
         find: /^@\/components\/ui\/dialog$/,

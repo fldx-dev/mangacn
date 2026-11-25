@@ -14,6 +14,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui sidebar-06 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // The handbook's sections, each a button that opens its pages as a menu: beside the sidebar on
@@ -52,7 +53,7 @@ export function NavMain({
                   className="min-w-56 rounded-lg"
                 >
                   {item.items.map((item) => (
-                    <DropdownMenuItem key={item.title} render={<a href={item.url} />}>
+                    <DropdownMenuItem key={item.title} render={<Link href={item.url} />}>
                       {item.title}
                     </DropdownMenuItem>
                   ))}

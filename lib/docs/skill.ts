@@ -28,6 +28,7 @@ const FOUNDATION_ORDER = [
   "font-dialogue-ja",
   "ink-frame",
   "manga-motion",
+  "link",
 ];
 
 /** An item's place in the foundation section: the theme presets (`theme-sepia`) follow the theme. */
@@ -38,12 +39,14 @@ function foundationRank(item: LoadedRegistryItem): number {
 
 /**
  * Where an agent reads about a theme-catalog item: the theme and its fonts on the theming
- * guide, the ink frame under its pen. An item with no page links its registry JSON.
+ * guide, the ink frame under its pen, the link under client-side navigation. An item with no
+ * page links its registry JSON.
  */
 function foundationDocs(item: LoadedRegistryItem): string {
   if (item.type === "registry:theme") return docsUrl(item.name);
   if (item.type === "registry:font") return `${SITE_URL}/docs/theming#fonts`;
   if (item.name === "ink-frame") return `${SITE_URL}/docs/theming#the-pen`;
+  if (item.name === "link") return `${SITE_URL}/docs/installation#client-side-navigation`;
   return registryItemUrl(item.name);
 }
 
@@ -101,8 +104,9 @@ export function renderSkillCatalog(
     "",
     "## Foundation",
     "",
-    "The theme, its presets, its fonts, the pen and the motion presets. Install the theme once per",
-    "project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink and spot.",
+    "The theme, its presets, its fonts, the pen, the motion presets and the link blocks navigate",
+    "with. Install the theme once per project; a preset (`theme-sepia`) brings the theme and gives",
+    "it other paper, ink and spot.",
     "",
     ...foundation.flatMap((item) => entry(item.name, item.description ?? "", foundationDocs(item))),
   ];

@@ -4,6 +4,7 @@ import { FocusLines } from "@/components/focus-lines";
 import { HalftoneBackground } from "@/components/halftone-background";
 import { MangaFrame } from "@/components/manga-frame";
 import { SfxText } from "@/components/sfx-text";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui login-02 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // Stock's split screen in ink: the studio's mark and the form on the left, and where stock shows
@@ -16,10 +17,10 @@ export default function LoginPage() {
     <main className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <a href="/" className="flex items-center gap-2 font-medium">
+          <Link href="/" className="flex items-center gap-2 font-medium">
             <GalleryVerticalEndIcon aria-hidden className="size-4" />
             Inkpot Studio
-          </a>
+          </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">

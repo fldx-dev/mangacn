@@ -14,6 +14,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui login-04 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-18.
 // Stock's card in ink: the form, the title in the display face, and stock's Apple, Google and
@@ -54,12 +55,12 @@ export function LoginForm({ className, forgotPasswordHref, ...props }: LoginForm
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   {forgotPasswordHref ? (
-                    <a
+                    <Link
                       href={forgotPasswordHref}
                       className="ml-auto text-sm underline-offset-2 hover:underline"
                     >
                       Forgot your password?
-                    </a>
+                    </Link>
                   ) : null}
                 </div>
                 <Input id="password" name="password" type="password" required />
@@ -98,7 +99,7 @@ export function LoginForm({ className, forgotPasswordHref, ...props }: LoginForm
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                Don&apos;t have an account? <a href="/signup">Sign up</a>
+                Don&apos;t have an account? <Link href="/signup">Sign up</Link>
               </FieldDescription>
             </FieldGroup>
           </form>
@@ -114,8 +115,8 @@ export function LoginForm({ className, forgotPasswordHref, ...props }: LoginForm
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="/terms">Terms of Service</a> and{" "}
-        <a href="/privacy">Privacy Policy</a>.
+        By clicking continue, you agree to our <Link href="/terms">Terms of Service</Link> and{" "}
+        <Link href="/privacy">Privacy Policy</Link>.
       </FieldDescription>
     </div>
   );

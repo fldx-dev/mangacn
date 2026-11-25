@@ -147,6 +147,7 @@ export const EXPECTED_CONTENT: Record<
     { file: "app/layout.tsx", includes: ["Yusei_Magic(", "--font-dialogue-ja"] },
   ],
   "manga-motion": [{ file: "lib/manga-motion.ts", includes: ["export const popIn"] }],
+  link: [{ file: "lib/link.tsx", includes: ["export function Link"] }],
   // registry:component with `target: "@components/ink-frame.tsx"` (SPEC-components §4.4).
   "ink-frame": [{ file: "components/ink-frame.tsx", includes: ["export function InkFrame"] }],
   // button overwrites the stock button pre-installed after `shadcn init`; dialog, sheet,

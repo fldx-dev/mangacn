@@ -76,6 +76,8 @@ export const SKILL_DIR = "skills/mangacn";
 export { dependencyFiles, installTarget };
 
 const THEMING_PAGE = "/docs/theming";
+/** Where the link item (blocks' internal links, swapped for the app's router) is covered. */
+const LINK_GUIDE = "/docs/installation#client-side-navigation";
 
 /** The one line list_items and get_item print about a hook in place of the client line. */
 export const HOOK_NOTE =
@@ -105,7 +107,7 @@ export function readCatalog(registry: LoadedRegistry = loadRegistry()): CatalogE
       docs:
         page === null && isHook(item)
           ? registryItemUrl(item.name)
-          : `${SITE_URL}${page ?? THEMING_PAGE}`,
+          : `${SITE_URL}${page ?? (item.name === "link" ? LINK_GUIDE : THEMING_PAGE)}`,
     };
   });
   return entries.sort((a, b) => categoryRank(a.category) - categoryRank(b.category));

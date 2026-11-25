@@ -2,7 +2,7 @@
 
 # mangacn catalog
 
-All 156 items in the registry. Each line gives the item's name, what it is, the one
+All 157 items in the registry. Each line gives the item's name, what it is, the one
 command that installs it (with ink-frame first when it draws an outline) and its docs.
 Swap `npx` for `pnpm dlx`, `yarn dlx` or `bunx --bun` to match the project, and keep the
 flags: `--overwrite` answers the overwrite question for a file already there, and `--yes`
@@ -14,8 +14,9 @@ read it, or the MCP's `get_item`, before using a prop.
 
 ## Foundation
 
-The theme, its presets, its fonts, the pen and the motion presets. Install the theme once per
-project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink and spot.
+The theme, its presets, its fonts, the pen, the motion presets and the link blocks navigate
+with. Install the theme once per project; a preset (`theme-sepia`) brings the theme and gives
+it other paper, ink and spot.
 
 - `theme`: Ink-on-paper tokens, screentone utilities and impact keyframes for manga-styled UIs.
   Install: `npx shadcn@latest add @mangacn/theme --yes --overwrite`
@@ -44,6 +45,9 @@ project; a preset (`theme-sepia`) brings the theme and gives it other paper, ink
 - `manga-motion`: Spring and easing presets plus popIn, slamIn, shake and flash variants for motion.
   Install: `npx shadcn@latest add @mangacn/manga-motion --overwrite`
   Docs: https://www.mangacn.com/r/manga-motion.json
+- `link`: The link blocks render for internal routes: a plain <a> by default, swapped in one line for next/link or your router's link.
+  Install: `npx shadcn@latest add @mangacn/link --overwrite`
+  Docs: https://www.mangacn.com/docs/installation#client-side-navigation
 
 ## Primitives
 

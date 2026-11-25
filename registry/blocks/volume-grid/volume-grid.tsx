@@ -5,6 +5,7 @@ import { PageNumber } from "@/components/page-number";
 import { PanelGrid, type PanelGridColumns, PanelGridItem } from "@/components/panel-grid";
 import { Stamp } from "@/components/stamp";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Link } from "@/lib/link";
 
 /** A volume's cover picture. */
 export interface VolumeCover {
@@ -109,7 +110,7 @@ export function VolumeGrid({
               data-slot="volume-grid-volume"
               data-new={volume.isNew ? "true" : undefined}
             >
-              <a
+              <Link
                 href={volume.href}
                 // Named by its content, cover first: a name written apart from the text shown
                 // (`aria-labelledby` over part of it) fails WCAG 2.5.3 Label in Name.
@@ -157,7 +158,7 @@ export function VolumeGrid({
                     )}
                   </div>
                 </div>
-              </a>
+              </Link>
             </PanelGridItem>
           );
         })}

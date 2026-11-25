@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Link } from "@/lib/link";
 
 // Based on shadcn/ui signup-01 (MIT, https://ui.shadcn.com), base-nova style, fetched 2026-11-12.
 // Drawn in ink as login-01 is: the card on paper at the heavy outline width, the title in the
@@ -97,7 +98,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                   Sign up with Google
                 </Button>
                 <FieldDescription className="px-6 text-center">
-                  Already have an account? <a href="/login">Sign in</a>
+                  Already have an account? <Link href="/login">Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
