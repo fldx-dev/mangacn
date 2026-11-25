@@ -291,6 +291,32 @@ describe("DataTable", () => {
     expect(onPaginationChange).toHaveBeenLastCalledWith({ pageIndex: 0, pageSize: 20 });
   });
 
+  it("builds an update on a controlled slice the parent changed since", async () => {
+    const onPaginationChange = vi.fn();
+    const helper = createColumnHelper<DataTableFeatures, { id: string; name: string }>();
+    const columns = helper.columns([helper.accessor("name", { meta: { label: "Name" } })]);
+    const data = Array.from({ length: 50 }, (_, index) => ({
+      id: `r${index}`,
+      name: `Row ${index}`,
+    }));
+    const table = (pageIndex: number) => (
+      <DataTable
+        columns={columns}
+        data={data}
+        getRowId={(row) => row.id}
+        state={{ pagination: { pageIndex, pageSize: 10 } }}
+        onPaginationChange={onPaginationChange}
+      />
+    );
+    const { rerender } = render(table(0));
+    await click("Next page");
+    expect(onPaginationChange).toHaveBeenLastCalledWith({ pageIndex: 1, pageSize: 10 });
+    // The parent kept page 1 out and moved to page 3 itself.
+    rerender(table(2));
+    await click("Next page");
+    expect(onPaginationChange).toHaveBeenLastCalledWith({ pageIndex: 3, pageSize: 10 });
+  });
+
   it("hides a column from its menu, moves focus to the table and announces it", async () => {
     render(<DefaultVariant />);
     await pick("Pages", "Hide");
