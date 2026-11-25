@@ -136,6 +136,33 @@ describe("OnboardingFlow", () => {
     );
   });
 
+  it("draws no skip action without onSkip or skipHref", () => {
+    render(<OnboardingFlow />);
+    expect(screen.queryByRole("button", { name: "Skip for now" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Skip for now" })).toBeNull();
+  });
+
+  it("runs onSkip from Skip for now, on every form step, without validating", () => {
+    const onSkip = vi.fn();
+    render(<OnboardingFlow onSkip={onSkip} />);
+    // The name is empty, so Next would stop here; Skip does not ask.
+    fireEvent.click(screen.getByRole("button", { name: "Skip for now" }));
+    expect(onSkip).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText("Enter your name.")).toBeNull();
+    fillProfile();
+    next();
+    expect(screen.getByRole("button", { name: "Skip for now" })).toBeTruthy();
+  });
+
+  it("makes Skip for now a link to skipHref, still running onSkip", () => {
+    const onSkip = vi.fn();
+    render(<OnboardingFlow skipHref="/home" onSkip={onSkip} />);
+    const skip = screen.getByRole("link", { name: "Skip for now" });
+    expect(skip.getAttribute("href")).toBe("/home");
+    fireEvent.click(skip);
+    expect(onSkip).toHaveBeenCalledTimes(1);
+  });
+
   it("lets the stepper revisit completed steps and validates a step forward", () => {
     render(<OnboardingFlow />);
     // The next step is choosable (linear), but the current one must be valid first.

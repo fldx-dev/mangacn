@@ -14,6 +14,30 @@ const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8"
 const FILES = ["page.tsx", "components/signup-form.tsx"];
 
 describe("SignupForm", () => {
+  it("draws the title, description, provider buttons and footer it is given", () => {
+    render(
+      <SignupForm
+        title="Join Ink Club"
+        description="Use your club email"
+        providers={<button type="button">Continue with Ink ID</button>}
+        footer={<a href="/join">Join the club</a>}
+      />,
+    );
+    expect(screen.getByRole("form", { name: "Join Ink Club" })).toBeTruthy();
+    expect(screen.getByText("Use your club email")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Continue with Ink ID" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Sign up with Apple" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Join the club" }).getAttribute("href")).toBe("/join");
+    expect(screen.queryByRole("link", { name: "Sign in" })).toBeNull();
+  });
+
+  it("draws no provider buttons, nor their rule, with providers={null}", () => {
+    render(<SignupForm providers={null} />);
+    expect(screen.queryByRole("button", { name: "Sign up with Apple" })).toBeNull();
+    expect(screen.queryByText("Or continue with")).toBeNull();
+    expect(screen.getByRole("button", { name: "Create Account" })).toBeTruthy();
+  });
+
   it("holds the password to the 8 characters its description asks for", () => {
     const { container } = render(<SignupForm />);
     expect(container.textContent).toContain("Must be at least 8 characters long.");

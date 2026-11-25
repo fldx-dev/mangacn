@@ -1,5 +1,68 @@
 {
   "activity-01": {
+    "ActivityEvent": [
+      {
+        "id": "activity-data.ts-ActivityEvent",
+        "name": "ActivityEvent",
+        "description": "One line of the timeline: \"{actor} {action} *{title}*\".",
+        "entries": [
+          {
+            "name": "id",
+            "description": "Stable and unique: the event's key and the id of its heading.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "kind",
+            "description": "What the event is about: a filter's `value` (\"reading\", \"comments\", \"follows\" here).",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "actor",
+            "description": "Who did it; the avatar shows their initials.",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "action",
+            "description": "What they did: \"finished\", \"commented on\", \"followed\".",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "title",
+            "description": "What they did it to, set in italics: \"Lantern Keepers, Volume 3\".",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "at",
+            "description": "When, as a local ISO date and time without a zone (\"2026-10-12T21:40\").",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
     "ActivityFeedProps": [
       {
         "id": "activity-feed.tsx-ActivityFeedProps",
@@ -26,6 +89,61 @@
               }
             ],
             "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "filters",
+            "description": "The filter's buttons, in order: one per kind of event, by its `kind`, and `all` for every kind.",
+            "type": "ActivityFilter[] | undefined",
+            "simplifiedType": "ActivityFilter[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "ACTIVITY_FILTERS (All, Reading, Comments, Follows)"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "kindLabels",
+            "description": "The badge on each event, by its `kind`; a kind missing here shows its value.",
+            "type": "Record<string, string> | undefined",
+            "simplifiedType": "Record<string, string> | undefined",
+            "tags": [
+              {
+                "name": "default",
+                "text": "ACTIVITY_KIND_LABELS (Reading, Comment, Follow)"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "ActivityFilter": [
+      {
+        "id": "activity-data.ts-ActivityFilter",
+        "name": "ActivityFilter",
+        "description": "One button of the filter: the `kind` it shows, or `all` for every kind.",
+        "entries": [
+          {
+            "name": "value",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "label",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
             "deprecated": false
           }
         ]
@@ -2616,6 +2734,62 @@
         "name": "LoginFormProps",
         "entries": [
           {
+            "name": "title",
+            "description": "The heading, which also names the form.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Login to your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "description",
+            "description": "The line under the heading.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Enter your email below to login to your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "providers",
+            "description": "The other providers' buttons, under Login. `null` draws none.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "a \"Login with Google\" button"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "The line under the buttons.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Don't have an account?\" and a \"Sign up\" link to /signup"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
             "name": "forgotPasswordHref",
             "description": "Where \"Forgot your password?\" goes. Without it the link is not drawn: no mangacn item\ninstalls a password-reset page.",
             "type": "string | undefined",
@@ -2634,6 +2808,62 @@
         "id": "login-form.tsx-LoginFormProps",
         "name": "LoginFormProps",
         "entries": [
+          {
+            "name": "title",
+            "description": "The heading, which also names the form.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Login to your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "description",
+            "description": "The line under the heading.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Enter your email below to login to your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "providers",
+            "description": "The other providers' buttons, after \"Or continue with\". `null` draws none, and no rule.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "a \"Login with GitHub\" button"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "The line under the buttons.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Don't have an account?\" and a \"Sign up\" link to /signup"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
           {
             "name": "forgotPasswordHref",
             "description": "Where \"Forgot your password?\" goes. Without it the link is not drawn: no mangacn item\ninstalls a password-reset page.",
@@ -2654,6 +2884,62 @@
         "name": "LoginFormProps",
         "entries": [
           {
+            "name": "title",
+            "description": "The heading, which also names the form.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Welcome back\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "description",
+            "description": "The line under the heading.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Login with your Apple or Google account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "providers",
+            "description": "The other providers' buttons, above the email field. `null` draws none.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Login with Apple\" and \"Login with Google\" buttons"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "The line under the buttons.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Don't have an account?\" and a \"Sign up\" link to /signup"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
             "name": "forgotPasswordHref",
             "description": "Where \"Forgot your password?\" goes. Without it the link is not drawn: no mangacn item\ninstalls a password-reset page.",
             "type": "string | undefined",
@@ -2673,11 +2959,119 @@
         "name": "LoginFormProps",
         "entries": [
           {
+            "name": "title",
+            "description": "The heading, which also names the form.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Welcome back\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "description",
+            "description": "The line under the heading.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Login to your Inkpot Studio account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "providers",
+            "description": "The other providers' buttons, three to a row after \"Or continue with\". `null` draws none.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "Apple, Google and Meta icon buttons, each named by a hidden label"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "The line under the buttons.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Don't have an account?\" and a \"Sign up\" link to /signup"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
             "name": "forgotPasswordHref",
             "description": "Where \"Forgot your password?\" goes. Without it the link is not drawn: no mangacn item\ninstalls a password-reset page.",
             "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "login-05": {
+    "LoginFormProps": [
+      {
+        "id": "login-form.tsx-LoginFormProps",
+        "name": "LoginFormProps",
+        "entries": [
+          {
+            "name": "title",
+            "description": "The heading, which also names the form.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Welcome to Inkpot Studio.\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "providers",
+            "description": "The other providers' buttons, two to a row after \"Or\". `null` draws none.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Continue with Apple\" and \"Continue with Google\" buttons"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "The line under the heading.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Don't have an account?\" and a \"Sign up\" link to /signup"
+              }
+            ],
             "required": false,
             "deprecated": false
           }
@@ -3111,7 +3505,7 @@
           },
           {
             "name": "libraryHref",
-            "description": "Where \"Go to library\" goes.",
+            "description": "Where \"Go to library\" goes: `/library` is the route Library Page installs; point it at your\nown home when you do not install that block.",
             "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [
@@ -3128,6 +3522,24 @@
             "description": "Called with the answers when Finish completes the last form step.",
             "type": "((answers: OnboardingAnswers) => void) | undefined",
             "simplifiedType": "(answers: OnboardingAnswers) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onSkip",
+            "description": "Called when the reader skips the flow. With `onSkip` or `skipHref`, a \"Skip for now\" button\nsits beside Next on every form step; without either there is none.",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "skipHref",
+            "description": "Where \"Skip for now\" goes; the button is then a link (`onSkip` still runs first).",
+            "type": "string | undefined",
+            "simplifiedType": "string",
             "tags": [],
             "required": false,
             "deprecated": false
@@ -3649,6 +4061,57 @@
             "type": "((value: number, max: number) => string) | undefined",
             "simplifiedType": "(value: number, max: number) => string",
             "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "profile-01": {
+    "ProfileFormProps": [
+      {
+        "id": "profile-form.tsx-ProfileFormProps",
+        "name": "ProfileFormProps",
+        "entries": [
+          {
+            "name": "defaultValues",
+            "description": "The saved profile.",
+            "type": "Profile",
+            "simplifiedType": "Profile",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "onSaveProfile",
+            "description": "Called with the profile and the picked photo (if any) after a valid Save.",
+            "type": "((values: Profile, photo: File | null) => void) | undefined",
+            "simplifiedType": "(values: Profile, photo: File | null) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onSavePassword",
+            "description": "Called with the current and new password after a valid Save.",
+            "type": "((change: PasswordChange) => void) | undefined",
+            "simplifiedType": "(change: PasswordChange) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "sections",
+            "description": "The sections shown: the public profile and the password, each its own form. Drop `password`\nwhen the app changes it elsewhere.",
+            "type": "ProfileSection[] | undefined",
+            "simplifiedType": "ProfileSection[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "[\"profile\", \"password\"]"
+              }
+            ],
             "required": false,
             "deprecated": false
           }
@@ -4275,6 +4738,57 @@
       }
     ]
   },
+  "settings-01": {
+    "SettingsFormProps": [
+      {
+        "id": "settings-form.tsx-SettingsFormProps",
+        "name": "SettingsFormProps",
+        "entries": [
+          {
+            "name": "defaultValues",
+            "description": "The saved settings; Reset returns to them.",
+            "type": "Settings",
+            "simplifiedType": "Settings",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "onSave",
+            "description": "Called with the settings after a Save that passed validation.",
+            "type": "((values: Settings) => void) | undefined",
+            "simplifiedType": "(values: Settings) => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onDeleteAccount",
+            "description": "Called when the reader confirms the account deletion.",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "sections",
+            "description": "The sections shown, in their fixed order; the others, and their links in the section nav,\nare not drawn, and Save skips their checks; with no form section left, Save and Reset go too. Drop `account` when the app edits the display\nname in profile-01 (it takes email, language and time zone with it).",
+            "type": "(\"account\" | \"danger\" | \"notifications\" | \"reading\")[] | undefined",
+            "simplifiedType": "(\"account\" | \"danger\" | \"notifications\" | \"reading\")[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "[\"account\", \"notifications\", \"reading\", \"danger\"]"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
   "sfx-text": {
     "SfxTextProps": [
       {
@@ -4432,6 +4946,1049 @@
             "type": "string | undefined",
             "simplifiedType": "string",
             "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "sidebar-07": {
+    "AppSidebarProps": [
+      {
+        "id": "app-sidebar.tsx-AppSidebarProps",
+        "name": "AppSidebarProps",
+        "entries": [
+          {
+            "name": "label",
+            "description": "The landmark's name.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Studio\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "teams",
+            "description": "The teams in the header's switcher; the first is the current one.",
+            "type": "SidebarTeam[] | undefined",
+            "simplifiedType": "SidebarTeam[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "the sample studios"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "navMain",
+            "description": "The main navigation's sections.",
+            "type": "SidebarNavItem[] | undefined",
+            "simplifiedType": "SidebarNavItem[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "the sample workflow"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "projects",
+            "description": "The projects.",
+            "type": "SidebarProject[] | undefined",
+            "simplifiedType": "SidebarProject[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "the sample series"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "user",
+            "description": "The signed-in user.",
+            "type": "SidebarUser | undefined",
+            "simplifiedType": "SidebarUser",
+            "tags": [
+              {
+                "name": "default",
+                "text": "the sample editor"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "userActions",
+            "description": "What the user menu's items do. Without them the items do nothing.",
+            "type": "NavUserActions | undefined",
+            "simplifiedType": "NavUserActions",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "side",
+            "description": "",
+            "type": "\"left\" | \"right\" | undefined",
+            "simplifiedType": "\"left\" | \"right\"",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "variant",
+            "description": "",
+            "type": "\"floating\" | \"inset\" | \"sidebar\" | undefined",
+            "simplifiedType": "\"floating\" | \"inset\" | \"sidebar\"",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "collapsible",
+            "description": "",
+            "type": "\"icon\" | \"none\" | \"offcanvas\" | undefined",
+            "simplifiedType": "\"icon\" | \"none\" | \"offcanvas\"",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "NavUserActions": [
+      {
+        "id": "nav-user.tsx-NavUserActions",
+        "name": "NavUserActions",
+        "description": "What the account menu's items do; an item without its handler does nothing.",
+        "entries": [
+          {
+            "name": "onUpgrade",
+            "description": "\"Upgrade to Pro\".",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onAccount",
+            "description": "\"Account\".",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onBilling",
+            "description": "\"Billing\".",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onNotifications",
+            "description": "\"Notifications\".",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onLogout",
+            "description": "\"Log out\".",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SidebarNavItem": [
+      {
+        "id": "app-sidebar.tsx-SidebarNavItem",
+        "name": "SidebarNavItem",
+        "description": "A section of the main navigation: a collapsible group of links.",
+        "entries": [
+          {
+            "name": "title",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "url",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "icon",
+            "description": "",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "isActive",
+            "description": "Opened and marked current from the start.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "items",
+            "description": "",
+            "type": "{ title: string; url: string; }[] | undefined",
+            "simplifiedType": "{ title: string; url: string; }[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SidebarProject": [
+      {
+        "id": "app-sidebar.tsx-SidebarProject",
+        "name": "SidebarProject",
+        "description": "A project (here a series), each with a menu of its own.",
+        "entries": [
+          {
+            "name": "name",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "url",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "icon",
+            "description": "",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SidebarTeam": [
+      {
+        "id": "app-sidebar.tsx-SidebarTeam",
+        "name": "SidebarTeam",
+        "description": "A team in the header's switcher.",
+        "entries": [
+          {
+            "name": "name",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "logo",
+            "description": "",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "plan",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SidebarUser": [
+      {
+        "id": "app-sidebar.tsx-SidebarUser",
+        "name": "SidebarUser",
+        "description": "The signed-in user in the footer. With `avatar` empty (`\"\"`) the avatar shows their initials.",
+        "entries": [
+          {
+            "name": "name",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "email",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "avatar",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "sidebar-08": {
+    "AppSidebarProps": [
+      {
+        "id": "app-sidebar.tsx-AppSidebarProps",
+        "name": "AppSidebarProps",
+        "entries": [
+          {
+            "name": "label",
+            "description": "The landmark's name.",
+            "type": "string | undefined",
+            "simplifiedType": "string",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Studio\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "brand",
+            "description": "The studio in the header.",
+            "type": "SidebarBrand | undefined",
+            "simplifiedType": "SidebarBrand",
+            "tags": [
+              {
+                "name": "default",
+                "text": "the sample studio, linking to \"/\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "navMain",
+            "description": "The main navigation's sections.",
+            "type": "SidebarNavItem[] | undefined",
+            "simplifiedType": "SidebarNavItem[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "the sample workflow"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "projects",
+            "description": "The projects.",
+            "type": "SidebarProject[] | undefined",
+            "simplifiedType": "SidebarProject[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "the sample series"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "navSecondary",
+            "description": "The secondary links at the foot of the content.",
+            "type": "SidebarLink[] | undefined",
+            "simplifiedType": "SidebarLink[]",
+            "tags": [
+              {
+                "name": "default",
+                "text": "Support and Feedback"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "user",
+            "description": "The signed-in user.",
+            "type": "SidebarUser | undefined",
+            "simplifiedType": "SidebarUser",
+            "tags": [
+              {
+                "name": "default",
+                "text": "the sample editor"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "userActions",
+            "description": "What the user menu's items do. Without them the items do nothing.",
+            "type": "NavUserActions | undefined",
+            "simplifiedType": "NavUserActions",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "side",
+            "description": "",
+            "type": "\"left\" | \"right\" | undefined",
+            "simplifiedType": "\"left\" | \"right\"",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "variant",
+            "description": "",
+            "type": "\"floating\" | \"inset\" | \"sidebar\" | undefined",
+            "simplifiedType": "\"floating\" | \"inset\" | \"sidebar\"",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "collapsible",
+            "description": "",
+            "type": "\"icon\" | \"none\" | \"offcanvas\" | undefined",
+            "simplifiedType": "\"icon\" | \"none\" | \"offcanvas\"",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "NavUserActions": [
+      {
+        "id": "nav-user.tsx-NavUserActions",
+        "name": "NavUserActions",
+        "description": "What the account menu's items do; an item without its handler does nothing.",
+        "entries": [
+          {
+            "name": "onUpgrade",
+            "description": "\"Upgrade to Pro\".",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onAccount",
+            "description": "\"Account\".",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onBilling",
+            "description": "\"Billing\".",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onNotifications",
+            "description": "\"Notifications\".",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "onLogout",
+            "description": "\"Log out\".",
+            "type": "(() => void) | undefined",
+            "simplifiedType": "() => void",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SidebarBrand": [
+      {
+        "id": "app-sidebar.tsx-SidebarBrand",
+        "name": "SidebarBrand",
+        "description": "The studio in the header: its mark, name and plan, linking home.",
+        "entries": [
+          {
+            "name": "name",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "logo",
+            "description": "",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "plan",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "url",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SidebarLink": [
+      {
+        "id": "app-sidebar.tsx-SidebarLink",
+        "name": "SidebarLink",
+        "description": "A link of the secondary navigation, at the foot of the content.",
+        "entries": [
+          {
+            "name": "title",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "url",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "icon",
+            "description": "",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SidebarNavItem": [
+      {
+        "id": "app-sidebar.tsx-SidebarNavItem",
+        "name": "SidebarNavItem",
+        "description": "A section of the main navigation: a collapsible group of links.",
+        "entries": [
+          {
+            "name": "title",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "url",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "icon",
+            "description": "",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "isActive",
+            "description": "Opened and marked current from the start.",
+            "type": "boolean | undefined",
+            "simplifiedType": "boolean",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "items",
+            "description": "",
+            "type": "{ title: string; url: string; }[] | undefined",
+            "simplifiedType": "{ title: string; url: string; }[]",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SidebarProject": [
+      {
+        "id": "app-sidebar.tsx-SidebarProject",
+        "name": "SidebarProject",
+        "description": "A project (here a series), each with a menu of its own.",
+        "entries": [
+          {
+            "name": "name",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "url",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "icon",
+            "description": "",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ],
+    "SidebarUser": [
+      {
+        "id": "app-sidebar.tsx-SidebarUser",
+        "name": "SidebarUser",
+        "description": "The signed-in user in the footer. With `avatar` empty (`\"\"`) the avatar shows their initials.",
+        "entries": [
+          {
+            "name": "name",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "email",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          },
+          {
+            "name": "avatar",
+            "description": "",
+            "type": "string",
+            "simplifiedType": "string",
+            "tags": [],
+            "required": true,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "signup-01": {
+    "SignupFormProps": [
+      {
+        "id": "signup-form.tsx-SignupFormProps",
+        "name": "SignupFormProps",
+        "entries": [
+          {
+            "name": "title",
+            "description": "The heading, which also names the form.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Create an account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "description",
+            "description": "The line under the heading.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Enter your information below to create your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "providers",
+            "description": "The other providers' buttons, under Create Account. `null` draws none.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "a \"Sign up with Google\" button"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "The line under the buttons.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Already have an account?\" and a \"Sign in\" link to /login"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "shadow",
+            "description": "",
+            "type": "\"hatch\" | \"ink\" | \"none\" | null | undefined",
+            "simplifiedType": "\"hatch\" | \"ink\" | \"none\"",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "description": "",
+            "type": "\"default\" | \"sm\" | undefined",
+            "simplifiedType": "\"default\" | \"sm\"",
+            "tags": [],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "signup-02": {
+    "SignupFormProps": [
+      {
+        "id": "signup-form.tsx-SignupFormProps",
+        "name": "SignupFormProps",
+        "entries": [
+          {
+            "name": "title",
+            "description": "The heading, which also names the form.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Create your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "description",
+            "description": "The line under the heading.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Fill in the form below to create your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "providers",
+            "description": "The other providers' buttons, after \"Or continue with\". `null` draws none.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "a \"Sign up with GitHub\" button"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "The line under the buttons.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Already have an account?\" and a \"Sign in\" link to /login"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "signup-03": {
+    "SignupFormProps": [
+      {
+        "id": "signup-form.tsx-SignupFormProps",
+        "name": "SignupFormProps",
+        "entries": [
+          {
+            "name": "title",
+            "description": "The heading, which also names the form.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Create your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "description",
+            "description": "The line under the heading.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Enter your email below to create your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "The line under Create Account.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Already have an account?\" and a \"Sign in\" link to /login"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "signup-04": {
+    "SignupFormProps": [
+      {
+        "id": "signup-form.tsx-SignupFormProps",
+        "name": "SignupFormProps",
+        "entries": [
+          {
+            "name": "title",
+            "description": "The heading, which also names the form.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Create your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "description",
+            "description": "The line under the heading.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Enter your email below to create your account\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "providers",
+            "description": "The other providers' buttons, three to a row after \"Or continue with\". `null` draws none.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "Apple, Google and Meta icon buttons, each named by a hidden label"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "The line under the buttons.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Already have an account?\" and a \"Sign in\" link to /login"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          }
+        ]
+      }
+    ]
+  },
+  "signup-05": {
+    "SignupFormProps": [
+      {
+        "id": "signup-form.tsx-SignupFormProps",
+        "name": "SignupFormProps",
+        "entries": [
+          {
+            "name": "title",
+            "description": "The heading, which also names the form.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Welcome to Inkpot Studio.\""
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "providers",
+            "description": "The other providers' buttons, two to a row after \"Or\". `null` draws none.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Continue with Apple\" and \"Continue with Google\" buttons"
+              }
+            ],
+            "required": false,
+            "deprecated": false
+          },
+          {
+            "name": "footer",
+            "description": "The line under the heading.",
+            "type": "React.ReactNode",
+            "simplifiedType": "React.ReactNode",
+            "tags": [
+              {
+                "name": "default",
+                "text": "\"Already have an account?\" and a \"Sign in\" link to /login"
+              }
+            ],
             "required": false,
             "deprecated": false
           }

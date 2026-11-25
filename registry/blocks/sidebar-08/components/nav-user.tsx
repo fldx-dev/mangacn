@@ -37,15 +37,36 @@ function initials(name: string) {
     .join("");
 }
 
-export function NavUser({
-  user,
-}: {
+/** What the account menu's items do; an item without its handler does nothing. */
+export interface NavUserActions {
+  /** "Upgrade to Pro". */
+  onUpgrade?: () => void;
+  /** "Account". */
+  onAccount?: () => void;
+  /** "Billing". */
+  onBilling?: () => void;
+  /** "Notifications". */
+  onNotifications?: () => void;
+  /** "Log out". */
+  onLogout?: () => void;
+}
+
+export interface NavUserProps extends NavUserActions {
   user: {
     name: string;
     email: string;
     avatar: string;
   };
-}) {
+}
+
+export function NavUser({
+  user,
+  onUpgrade,
+  onAccount,
+  onBilling,
+  onNotifications,
+  onLogout,
+}: NavUserProps) {
   const { isMobile } = useSidebar();
   return (
     <SidebarMenu>
@@ -84,28 +105,28 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={onUpgrade}>
                 <SparklesIcon />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={onAccount}>
                 <BadgeCheckIcon />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={onBilling}>
                 <CreditCardIcon />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={onNotifications}>
                 <BellIcon />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={onLogout}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>

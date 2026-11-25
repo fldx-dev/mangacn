@@ -18,3 +18,9 @@ The page is a server component and `profile-form` a client component. To put it 
 ## Preview
 
 <BlockPreview item="profile-01" />
+
+## Props
+
+`ProfileForm` takes the saved profile as `defaultValues`, `onSaveProfile` and `onSavePassword`, and `sections`: `profile` and `password` by default, each its own form. [Settings 01](/docs/blocks/settings-01) also edits the display name; an app that installs both keeps the name on one page by dropping a section there or here (`sections={["password"]}`).
+
+<PropsTable item="profile-01" name="ProfileFormProps" />

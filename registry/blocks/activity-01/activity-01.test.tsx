@@ -95,6 +95,60 @@ describe("ActivityFeed", () => {
     expect(status.textContent).toBe("30 events");
   });
 
+  it("takes its own kinds: the filter's buttons and each event's badge", () => {
+    const events = [
+      {
+        id: "a",
+        kind: "uploads",
+        actor: "Sora",
+        action: "uploaded",
+        title: "Page 4",
+        at: "2026-10-20T10:00",
+      },
+      {
+        id: "b",
+        kind: "likes",
+        actor: "Ren",
+        action: "liked",
+        title: "Page 4",
+        at: "2026-10-20T09:00",
+      },
+      {
+        id: "c",
+        kind: "uploads",
+        actor: "Sora",
+        action: "uploaded",
+        title: "Page 3",
+        at: "2026-10-19T10:00",
+      },
+    ];
+    render(
+      <ActivityFeed
+        events={events}
+        filters={[
+          { value: "all", label: "Everything" },
+          { value: "uploads", label: "Uploads" },
+          { value: "likes", label: "Likes" },
+        ]}
+        kindLabels={{ uploads: "Upload" }}
+      />,
+    );
+    const filter = screen.getByRole("group", { name: "Show" });
+    expect(
+      within(filter)
+        .getAllByRole("button")
+        .map((button) => button.textContent),
+    ).toEqual(["Everything", "Uploads", "Likes"]);
+    expect(screen.getAllByText("Upload")).toHaveLength(2);
+    // A kind without a label shows its value.
+    expect(screen.getByText("likes")).toBeTruthy();
+    const status = screen.getByRole("status");
+    fireEvent.click(screen.getByRole("button", { name: "Uploads" }));
+    expect(status.textContent).toBe("2 events");
+    fireEvent.click(screen.getByRole("button", { name: "Likes" }));
+    expect(status.textContent).toBe("1 event");
+  });
+
   it("appends ten with Show more, focuses the first new heading, and leaves at the end", () => {
     render(<ActivityFeed events={activityEvents} />);
     fireEvent.click(screen.getByRole("button", { name: "Show more" }));

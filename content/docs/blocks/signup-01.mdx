@@ -16,3 +16,9 @@ Stock's sign-up page in ink, with stock's two files and exports: one add writes 
 ## Preview
 
 <BlockPreview item="signup-01" />
+
+## Props
+
+`SignupForm` takes its root card's props. Every field submits under its `id` as its `name` (`name`, `email`, `password`, `confirm-password`). The copy is props too, each defaulting to what the preview shows: `title` (the heading, which names the form), `description`, `providers` (the other providers' buttons), and `footer`, the sign-in line ("Already have an account?" and a link to `/login`). `providers` takes nodes, so pass your own buttons wired to your sign-in calls (a client component of yours, since the page is a server component), or `null` for none.
+
+<PropsTable item="signup-01" name="SignupFormProps" />

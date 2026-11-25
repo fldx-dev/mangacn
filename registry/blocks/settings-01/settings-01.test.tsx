@@ -220,6 +220,42 @@ describe("SettingsForm", () => {
     expect(destructive).toHaveLength(2);
   });
 
+  it("draws only the sections it is given, in the nav too", () => {
+    render(<SettingsForm defaultValues={settings} sections={["notifications", "reading"]} />);
+    const nav = screen.getByRole("navigation", { name: "Settings sections" });
+    expect(
+      within(nav)
+        .getAllByRole("link")
+        .map((link) => link.textContent),
+    ).toEqual(["Notifications", "Reading"]);
+    expect(screen.getAllByRole("region")).toHaveLength(2);
+    expect(screen.queryByLabelText(/Display name/)).toBeNull();
+    expect(screen.queryByRole("button", { name: "Delete account" })).toBeNull();
+  });
+
+  it("drops Save and Reset with no form section, and the nav with no section", () => {
+    const { rerender } = render(<SettingsForm defaultValues={settings} sections={["danger"]} />);
+    expect(screen.queryByRole("button", { name: "Save" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Reset" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Delete account" })).toBeTruthy();
+    rerender(<SettingsForm defaultValues={settings} sections={[]} />);
+    expect(screen.queryByRole("navigation")).toBeNull();
+  });
+
+  it("saves without the account section, not checking its hidden fields", () => {
+    const onSave = vi.fn();
+    render(
+      <SettingsForm
+        defaultValues={{ ...settings, displayName: "" }}
+        sections={["notifications", "reading", "danger"]}
+        onSave={onSave}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    expect(onSave).toHaveBeenCalledTimes(1);
+    expect(status().textContent).toBe("Settings saved");
+  });
+
   it("announces the same result twice when saved twice", async () => {
     render(<SettingsForm defaultValues={settings} />);
     const save = screen.getByRole("button", { name: "Save" });

@@ -14,12 +14,8 @@ import {
   TimelineTitle,
 } from "@/components/ui/timeline";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  ACTIVITY_FILTERS,
-  ACTIVITY_KIND_LABELS,
-  type ActivityEvent,
-  type ActivityKind,
-} from "./activity-data";
+import type { ActivityEvent, ActivityFilter } from "./activity-data";
+import { ACTIVITY_FILTERS, ACTIVITY_KIND_LABELS } from "./activity-data";
 
 // A fixed locale and no time zone in the data: the same markup on the server and the client, on
 // any day. Times are never relative to now.
@@ -73,15 +69,30 @@ export interface ActivityFeedProps {
    * @default 10
    */
   pageSize?: number;
+  /**
+   * The filter's buttons, in order: one per kind of event, by its `kind`, and `all` for every kind.
+   * @default ACTIVITY_FILTERS (All, Reading, Comments, Follows)
+   */
+  filters?: ActivityFilter[];
+  /**
+   * The badge on each event, by its `kind`; a kind missing here shows its value.
+   * @default ACTIVITY_KIND_LABELS (Reading, Comment, Follow)
+   */
+  kindLabels?: Record<string, string>;
 }
 
 /**
  * The filter, the count it announces and the timeline of events under day headings. "Show more"
  * appends the next page and moves focus to the first new event's heading.
  */
-export function ActivityFeed({ events, pageSize = 10 }: ActivityFeedProps) {
+export function ActivityFeed({
+  events,
+  pageSize = 10,
+  filters = ACTIVITY_FILTERS,
+  kindLabels = ACTIVITY_KIND_LABELS,
+}: ActivityFeedProps) {
   const id = React.useId();
-  const [filter, setFilter] = React.useState<ActivityKind | "all">("all");
+  const [filter, setFilter] = React.useState("all");
   const [shown, setShown] = React.useState(pageSize);
   const focusNext = React.useRef<string | null>(null);
 
@@ -109,13 +120,13 @@ export function ActivityFeed({ events, pageSize = 10 }: ActivityFeedProps) {
           value={[filter]}
           onValueChange={(value: string[]) => {
             // One choice at a time: pressing the pressed button again keeps it.
-            const next = value[0] as ActivityKind | "all" | undefined;
+            const next = value[0] as string | undefined;
             if (!next) return;
             setFilter(next);
             setShown(pageSize);
           }}
         >
-          {ACTIVITY_FILTERS.map((option) => (
+          {filters.map((option) => (
             <ToggleGroupItem key={option.value} value={option.value}>
               {option.label}
             </ToggleGroupItem>
@@ -155,7 +166,7 @@ export function ActivityFeed({ events, pageSize = 10 }: ActivityFeedProps) {
                         </h4>
                       </TimelineTitle>
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline">{ACTIVITY_KIND_LABELS[event.kind]}</Badge>
+                        <Badge variant="outline">{kindLabels[event.kind] ?? event.kind}</Badge>
                         <TimelineTime dateTime={event.at}>
                           {formatActivityTime(event.at)}
                         </TimelineTime>
