@@ -115,14 +115,14 @@ the client, prefetches the route and also handles external URLs. The blocks pass
 eslint-config-next's `@next/next/no-html-link-for-pages` either way, since no block writes an
 `<a href="/">` of its own:
 
-```tsx title="lib/link.tsx"
+```tsx title="lib/link.tsx (Next.js)"
 export { default as Link } from "next/link";
 ```
 
 React Router's `Link` takes `to`, not `href`, so wrap it. The blocks pass `href`; the wrapper
 hands an absolute URL to a plain `<a>`, since `to` is for routes:
 
-```tsx title="lib/link.tsx"
+```tsx title="lib/link.tsx (React Router)"
 import type * as React from "react";
 import { Link as RouterLink } from "react-router";
 
