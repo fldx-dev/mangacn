@@ -216,6 +216,7 @@ export function PhoneInput({
   }
   React.useEffect(() => {
     if (!moved) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the re-render after reporting shows a controlled parent's own value if it kept it
     setMoved(null);
     onValueChange?.(moved.value, { country: moved.country, valid: moved.valid });
   }, [moved, onValueChange]);

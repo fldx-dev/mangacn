@@ -124,7 +124,8 @@ interface KanbanContextValue {
   reducedMotion: boolean;
   active: { kind: Kind; id: string; keyboard: boolean } | null;
   moveTo: (itemId: string, columnId: string) => void;
-  focusRequest: React.RefObject<string | null>;
+  /** True once for the card a menu moved, which then takes the focus back. */
+  takeFocusRequest: (id: string) => boolean;
 }
 
 const KanbanContext = React.createContext<KanbanContextValue | null>(null);
@@ -210,7 +211,11 @@ export function Kanban<T>({
     getItemLabel,
     kind: null as Kind | null,
   });
-  latest.current = { ...latest.current, value, columns, getItemId, getItemLabel };
+  // Synced after each commit, not while rendering: handlers and dnd-kit's callbacks read it, and
+  // the collision check dnd-kit runs while rendering reads only `kind` and `getItemId` from it.
+  React.useLayoutEffect(() => {
+    latest.current = { ...latest.current, value, columns, getItemId, getItemLabel };
+  });
 
   React.useEffect(() => {
     // After a card changed column, let the new layout settle before collisions move it again.
@@ -247,15 +252,18 @@ export function Kanban<T>({
     [],
   );
 
-  const labelOf = React.useCallback((id: string) => {
-    const { value: current, getItemId: idOf, getItemLabel: label, kind } = latest.current;
-    // The draft while something is dragged, else the board as given.
-    for (const items of Object.values(kind ? draftRef.current : current)) {
-      const item = items.find((candidate) => idOf(candidate) === id);
-      if (item !== undefined) return label ? label(item) : id;
-    }
-    return id;
-  }, []);
+  // Cards read it while they render, so it reads this render's board (the draft while a card is
+  // dragged, else the board as given), not a ref.
+  const labelOf = React.useCallback(
+    (id: string) => {
+      for (const items of Object.values(board)) {
+        const item = items.find((candidate) => getItemId(candidate) === id);
+        if (item !== undefined) return getItemLabel ? getItemLabel(item) : id;
+      }
+      return id;
+    },
+    [board, getItemId, getItemLabel],
+  );
 
   const spotOf = (current: Record<string, T[]>, id: string) =>
     findSpot(current, latest.current.columns, latest.current.getItemId, id);
@@ -541,6 +549,12 @@ export function Kanban<T>({
     [labelOf, onValueChange],
   );
 
+  const takeFocusRequest = React.useCallback((id: string) => {
+    if (focusRequest.current !== id) return false;
+    focusRequest.current = null;
+    return true;
+  }, []);
+
   const context = React.useMemo<KanbanContextValue>(
     () => ({
       board: board as Record<string, unknown[]>,
@@ -552,9 +566,20 @@ export function Kanban<T>({
       reducedMotion,
       active,
       moveTo,
-      focusRequest,
+      takeFocusRequest,
     }),
-    [board, columns, getItemId, labelOf, orderableColumns, hydrated, reducedMotion, active, moveTo],
+    [
+      board,
+      columns,
+      getItemId,
+      labelOf,
+      orderableColumns,
+      hydrated,
+      reducedMotion,
+      active,
+      moveTo,
+      takeFocusRequest,
+    ],
   );
 
   return (
@@ -833,8 +858,7 @@ export function KanbanCard({ id, className, style, ref, children, ...props }: Ka
   React.useEffect(() => {
     const node = activator.current;
     if (!node) return;
-    if (context.focusRequest.current === id) {
-      context.focusRequest.current = null;
+    if (context.takeFocusRequest(id)) {
       node.focus();
     } else if (keyboardDrag && document.activeElement !== node) {
       node.focus({ preventScroll: true });

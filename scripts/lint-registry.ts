@@ -20,19 +20,7 @@ const REGISTRIES = ["theme", "ui", "blocks", "hooks"];
  * error of an accepted rule is still an error), and so does fewer (the entry is stale: lower the
  * count, or remove the rule and then the file when it reaches 0). Each group says what removes it.
  */
-const ALLOWED: Record<string, Record<string, number>> = {
-  // Found when this check was added, outside its task (which fixed use-mobile, profile-01,
-  // upload-01 and spread-viewer): a follow-up fixes each one and removes its entry.
-  "registry/ui/banner/banner.tsx": { "react-hooks/set-state-in-effect": 1 },
-  "registry/ui/carousel/carousel.tsx": { "react-hooks/set-state-in-effect": 1 },
-  "registry/ui/data-table/data-table.tsx": {
-    "react-hooks/refs": 1,
-    "@typescript-eslint/no-explicit-any": 1,
-  },
-  "registry/ui/kanban/kanban.tsx": { "react-hooks/refs": 3, "react-hooks/immutability": 2 },
-  "registry/ui/phone-input/phone-input.tsx": { "react-hooks/set-state-in-effect": 1 },
-  "registry/ui/rich-text-editor/rich-text-editor.tsx": { "react-hooks/refs": 1 },
-};
+const ALLOWED: Record<string, Record<string, number>> = {};
 
 interface RegistryCatalog {
   items: { files?: { path: string }[] }[];

@@ -163,6 +163,21 @@ describe("Carousel", () => {
     expect(api?.selectedScrollSnap()).toBe(1);
   });
 
+  it("enables previous and next again when embla re-initialises", async () => {
+    layOut();
+    let api: CarouselApi;
+    render(<Pages setApi={(next) => (api = next)} />);
+    await act(async () => {});
+    const previous = screen.getByRole("button", { name: "Previous slide" });
+    const next = screen.getByRole("button", { name: "Next slide" });
+    expect((previous as HTMLButtonElement).disabled).toBe(true);
+
+    act(() => api?.reInit({ startIndex: 2 }));
+    expect(api?.selectedScrollSnap()).toBe(2);
+    expect((previous as HTMLButtonElement).disabled).toBe(false);
+    expect((next as HTMLButtonElement).disabled).toBe(true);
+  });
+
   it("stacks the buttons above and below a vertical carousel", () => {
     render(
       <Carousel orientation="vertical" aria-label="Lines">
