@@ -96,12 +96,8 @@ export function SignupForm({
           <Field>
             <Button type="submit">Create Account</Button>
           </Field>
-          {providers ? (
-            <>
-              <FieldSeparator>Or</FieldSeparator>
-              <Field className="grid gap-4 sm:grid-cols-2">{providers}</Field>
-            </>
-          ) : null}
+          {providers ? <FieldSeparator>Or</FieldSeparator> : null}
+          {providers ? <Field className="grid gap-4 sm:grid-cols-2">{providers}</Field> : null}
         </FieldGroup>
       </form>
       <FieldDescription className="px-6 text-center">

@@ -14,7 +14,6 @@ import {
   TimelineTitle,
 } from "@/components/ui/timeline";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-// Types imported apart: gen:props finds a type's file by a line starting `type <Name>`.
 import type { ActivityEvent, ActivityFilter } from "./activity-data";
 import { ACTIVITY_FILTERS, ACTIVITY_KIND_LABELS } from "./activity-data";
 

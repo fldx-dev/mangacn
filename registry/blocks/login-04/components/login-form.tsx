@@ -132,12 +132,8 @@ export function LoginForm({
               <Field>
                 <Button type="submit">Login</Button>
               </Field>
-              {providers ? (
-                <>
-                  <FieldSeparator>Or continue with</FieldSeparator>
-                  <Field className="grid grid-cols-3 gap-4">{providers}</Field>
-                </>
-              ) : null}
+              {providers ? <FieldSeparator>Or continue with</FieldSeparator> : null}
+              {providers ? <Field className="grid grid-cols-3 gap-4">{providers}</Field> : null}
               <FieldDescription className="text-center">{footer}</FieldDescription>
             </FieldGroup>
           </form>

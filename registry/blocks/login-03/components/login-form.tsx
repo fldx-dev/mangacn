@@ -98,12 +98,8 @@ export function LoginForm({
         <CardContent>
           <form aria-labelledby={titleId}>
             <FieldGroup>
-              {providers ? (
-                <>
-                  <Field>{providers}</Field>
-                  <FieldSeparator>Or continue with</FieldSeparator>
-                </>
-              ) : null}
+              {providers ? <Field>{providers}</Field> : null}
+              {providers ? <FieldSeparator>Or continue with</FieldSeparator> : null}
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input id="email" name="email" type="email" placeholder="m@example.com" required />
