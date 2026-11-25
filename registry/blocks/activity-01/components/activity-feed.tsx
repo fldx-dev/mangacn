@@ -14,12 +14,9 @@ import {
   TimelineTitle,
 } from "@/components/ui/timeline";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  ACTIVITY_FILTERS,
-  ACTIVITY_KIND_LABELS,
-  type ActivityEvent,
-  type ActivityFilter,
-} from "./activity-data";
+// Types imported apart: gen:props finds a type's file by a line starting `type <Name>`.
+import type { ActivityEvent, ActivityFilter } from "./activity-data";
+import { ACTIVITY_FILTERS, ACTIVITY_KIND_LABELS } from "./activity-data";
 
 // A fixed locale and no time zone in the data: the same markup on the server and the client, on
 // any day. Times are never relative to now.
