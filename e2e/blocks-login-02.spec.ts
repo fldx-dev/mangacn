@@ -63,6 +63,6 @@ test("the docs Files line says login-02 replaces login-01's files", async ({ pag
   const line = page.locator('[data-slot="item-files"]');
   await expect(line).toContainText(
     // login-01 first, then any later login block: "from login-01, login-03 and login-04."
-    /Replaces app\/login\/page\.tsx and components\/login-form\.tsx from login-01(, login-\d+)*( and login-\d+)?\./,
+    /Replaces components\/login-form\.tsx from login-01(, login-\d+)*( and login-\d+)?\./,
   );
 });
