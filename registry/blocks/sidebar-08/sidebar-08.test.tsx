@@ -5,6 +5,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
 import { installedPageSource } from "@/lib/registry/page-source";
 import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
+import { SidebarProvider } from "@/registry/ui/sidebar/sidebar";
+import { AppSidebar } from "./components/app-sidebar";
+import { NavUser } from "./components/nav-user";
 import Page from "./page";
 
 const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8");
@@ -116,6 +119,62 @@ describe("sidebar-08 page", () => {
 
   it("has no axe violations as a whole page", async () => {
     await expectNoA11yViolations(<Page />);
+  });
+});
+
+describe("sidebar-08 AppSidebar props", () => {
+  it("draws the brand, sections, projects, links, user and label it is given", () => {
+    render(
+      <SidebarProvider>
+        <AppSidebar
+          label="Workspace"
+          brand={{ name: "Ink Club", logo: <span />, plan: "Free", url: "/home" }}
+          navMain={[{ title: "Boards", url: "/boards", icon: <span /> }]}
+          projects={[{ name: "Comet Run", url: "/comet", icon: <span /> }]}
+          navSecondary={[{ title: "Help", url: "/help", icon: <span /> }]}
+          user={{ name: "Sora Ito", email: "sora@example.com", avatar: "" }}
+        />
+      </SidebarProvider>,
+    );
+    expect(screen.getByRole("navigation", { name: "Workspace" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /Ink Club/ }).getAttribute("href")).toBe("/home");
+    expect(screen.getByRole("link", { name: "Boards" }).getAttribute("href")).toBe("/boards");
+    expect(screen.getByRole("link", { name: "Comet Run" }).getAttribute("href")).toBe("/comet");
+    expect(screen.getByRole("link", { name: "Help" }).getAttribute("href")).toBe("/help");
+    expect(screen.getByRole("button", { name: /Sora Ito/ })).toBeTruthy();
+    expect(screen.queryByText("Inkpot Studio")).toBeNull();
+    expect(screen.queryByText("Support")).toBeNull();
+  });
+
+  it("runs NavUser's onLogout and the other account actions from the menu", async () => {
+    const onLogout = vi.fn();
+    const onAccount = vi.fn();
+    render(
+      <SidebarProvider>
+        <AppSidebar userActions={{ onLogout, onAccount }} />
+      </SidebarProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Hana Mori/ }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Account" }));
+    expect(onAccount).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByRole("button", { name: /Hana Mori/ }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Log out" }));
+    expect(onLogout).toHaveBeenCalledTimes(1);
+  });
+
+  it("fires onLogout from NavUser on its own", async () => {
+    const onLogout = vi.fn();
+    render(
+      <SidebarProvider>
+        <NavUser
+          user={{ name: "Sora Ito", email: "sora@example.com", avatar: "" }}
+          onLogout={onLogout}
+        />
+      </SidebarProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Sora Ito/ }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Log out" }));
+    expect(onLogout).toHaveBeenCalledTimes(1);
   });
 });
 
