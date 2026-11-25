@@ -576,7 +576,7 @@ export interface DataTableProps<TData extends RowData> {
    * `createSelectColumn()` adds the checkboxes.
    */
   // biome-ignore lint/suspicious/noExplicitAny: each column keeps its own value type, as helper.columns() returns them.
-  columns: DataTableColumnDef<TData, any>[];
+  columns: DataTableColumnDef<TData, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any -- each column keeps its own value type, as helper.columns() returns them
   /** The rows: every row, or one page of them with `manualPagination`. */
   data: TData[];
   /**

@@ -33,10 +33,6 @@ const ALLOWED: Record<string, Record<string, number>> = {
   "registry/blocks/signup-02/page.tsx": { [LINK]: 1 },
   "registry/blocks/signup-03/page.tsx": { [LINK]: 1 },
   "registry/blocks/signup-05/components/signup-form.tsx": { [LINK]: 1 },
-  // Found when this check was added, outside its task (which fixed use-mobile, profile-01,
-  // upload-01 and spread-viewer): a follow-up fixes each one and removes its entry.
-  "registry/ui/data-table/data-table.tsx": { "@typescript-eslint/no-explicit-any": 1 },
-  "registry/ui/phone-input/phone-input.tsx": { "react-hooks/set-state-in-effect": 1 },
 };
 
 interface RegistryCatalog {
