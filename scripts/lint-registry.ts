@@ -41,7 +41,6 @@ const ALLOWED: Record<string, Record<string, number>> = {
   },
   "registry/ui/kanban/kanban.tsx": { "react-hooks/refs": 3, "react-hooks/immutability": 2 },
   "registry/ui/phone-input/phone-input.tsx": { "react-hooks/set-state-in-effect": 1 },
-  "registry/ui/rich-text-editor/rich-text-editor.tsx": { "react-hooks/refs": 1 },
 };
 
 interface RegistryCatalog {

@@ -390,9 +390,12 @@ export function RichTextEditor({
     );
   }, [id, ariaLabel, labelledBy, describedBy, invalid, placeholder, editable, disabled]);
 
-  // The latest callback and value, read by tiptap's handlers without recreating the editor.
+  // The latest callback and value, read by tiptap's handlers without recreating the editor. Synced
+  // after each commit, not while rendering: the handlers run only in events and effects.
   const latest = React.useRef({ onValueChange, controlled: value !== undefined, html });
-  latest.current = { onValueChange, controlled: value !== undefined, html };
+  React.useLayoutEffect(() => {
+    latest.current = { onValueChange, controlled: value !== undefined, html };
+  });
 
   const client = useIsClient();
   const [editor, setEditor] = React.useState<Editor | null>(null);

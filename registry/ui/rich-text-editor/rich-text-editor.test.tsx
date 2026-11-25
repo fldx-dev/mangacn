@@ -185,6 +185,45 @@ describe("RichTextEditor", () => {
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
+  it("emits to the latest onValueChange, without remounting the editor", async () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const { rerender } = render(
+      <RichTextEditor aria-label="Note" defaultValue="<p>Ink</p>" onValueChange={first} />,
+    );
+    const editor = await mounted();
+    rerender(<RichTextEditor aria-label="Note" defaultValue="<p>Ink</p>" onValueChange={second} />);
+    expect(await mounted()).toBe(editor);
+    act(() => {
+      editor.commands.selectAll();
+      editor.commands.toggleItalic();
+    });
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenLastCalledWith("<p><em>Ink</em></p>", { text: "Ink" });
+  });
+
+  it("emits a change a controlled parent kept out, again, when it is made again", async () => {
+    const onValueChange = vi.fn();
+    const { rerender } = render(
+      <RichTextEditor aria-label="Note" value="<p>Ink</p>" onValueChange={onValueChange} />,
+    );
+    const editor = await mounted();
+    act(() => {
+      editor.commands.selectAll();
+      editor.commands.toggleBold();
+    });
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    // The parent keeps its value: re-rendered with it, the editor shows it again.
+    rerender(<RichTextEditor aria-label="Note" value="<p>Ink</p>" onValueChange={onValueChange} />);
+    act(() => {
+      editor.commands.setContent("<p>Ink</p>", { emitUpdate: false });
+      editor.commands.selectAll();
+      editor.commands.toggleBold();
+    });
+    expect(onValueChange).toHaveBeenCalledTimes(2);
+    expect(onValueChange).toHaveBeenLastCalledWith("<p><strong>Ink</strong></p>", { text: "Ink" });
+  });
+
   it("puts id, aria-invalid and aria-describedby on the region, and updates them", async () => {
     const { rerender } = render(
       <>
