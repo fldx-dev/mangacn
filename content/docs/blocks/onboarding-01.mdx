@@ -21,4 +21,6 @@ The page is a server component; `onboarding-flow.tsx` is a client component. To 
 
 ## Props
 
+"Go to library" links to `libraryHref`, `/library` by default: the route [Library Page](/docs/blocks/library-page) installs. Without that block, point it at your own home, `<OnboardingFlow libraryHref="/" />`. To let a reader leave the flow early, pass `onSkip`, `skipHref` or both: a "Skip for now" button then sits beside Next on every form step, a link when `skipHref` is set, and skipping checks nothing. Without either there is no skip action. Functions cannot cross from the server page, so pass `onSkip` and `onComplete` from a client component of yours.
+
 <PropsTable item="onboarding-01" name="OnboardingFlowProps" />
