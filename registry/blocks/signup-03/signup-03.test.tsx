@@ -14,6 +14,20 @@ const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8"
 const FILES = ["page.tsx", "components/signup-form.tsx"];
 
 describe("SignupForm", () => {
+  it("draws the title, description and footer it is given", () => {
+    render(
+      <SignupForm
+        title="Join Ink Club"
+        description="Use your club email"
+        footer={<a href="/join">Join the club</a>}
+      />,
+    );
+    expect(screen.getByRole("form", { name: "Join Ink Club" })).toBeTruthy();
+    expect(screen.getByText("Use your club email")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Join the club" }).getAttribute("href")).toBe("/join");
+    expect(screen.queryByRole("link", { name: "Sign in" })).toBeNull();
+  });
+
   it("holds the password to the 8 characters its description asks for", () => {
     const { container } = render(<SignupForm />);
     expect(container.textContent).toContain("Must be at least 8 characters long.");

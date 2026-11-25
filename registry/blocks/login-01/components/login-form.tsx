@@ -12,7 +12,33 @@ import { Link } from "@/lib/link";
 // one spot-red stamp on its corner. The items draw everything; the form only lays them out. The
 // title is the page's heading and names the form, so the form is a landmark of its own.
 
-export interface LoginFormProps extends React.ComponentProps<"div"> {
+const signUp = (
+  <>
+    Don&apos;t have an account? <Link href="/signup">Sign up</Link>
+  </>
+);
+
+export interface LoginFormProps extends Omit<React.ComponentProps<"div">, "title"> {
+  /**
+   * The heading, which also names the form.
+   * @default "Login to your account"
+   */
+  title?: React.ReactNode;
+  /**
+   * The line under the heading.
+   * @default "Enter your email below to login to your account"
+   */
+  description?: React.ReactNode;
+  /**
+   * The other providers' buttons, under Login. `null` draws none.
+   * @default a "Login with Google" button
+   */
+  providers?: React.ReactNode;
+  /**
+   * The line under the buttons.
+   * @default "Don't have an account?" and a "Sign up" link to /signup
+   */
+  footer?: React.ReactNode;
   /**
    * Where "Forgot your password?" goes. Without it the link is not drawn: no mangacn item
    * installs a password-reset page.
@@ -20,7 +46,19 @@ export interface LoginFormProps extends React.ComponentProps<"div"> {
   forgotPasswordHref?: string;
 }
 
-export function LoginForm({ className, forgotPasswordHref, ...props }: LoginFormProps) {
+export function LoginForm({
+  className,
+  forgotPasswordHref,
+  title = "Login to your account",
+  description = "Enter your email below to login to your account",
+  providers = (
+    <Button variant="outline" type="button">
+      Login with Google
+    </Button>
+  ),
+  footer = signUp,
+  ...props
+}: LoginFormProps) {
   const titleId = React.useId();
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -28,10 +66,10 @@ export function LoginForm({ className, forgotPasswordHref, ...props }: LoginForm
         <CardHeader className="relative pe-16">
           <CardTitle>
             <h1 id={titleId} className="font-display text-2xl leading-tight uppercase">
-              Login to your account
+              {title}
             </h1>
           </CardTitle>
-          <CardDescription>Enter your email below to login to your account</CardDescription>
+          <CardDescription>{description}</CardDescription>
           <Stamp
             lang="ja"
             vertical
@@ -66,12 +104,8 @@ export function LoginForm({ className, forgotPasswordHref, ...props }: LoginForm
               </Field>
               <Field>
                 <Button type="submit">Login</Button>
-                <Button variant="outline" type="button">
-                  Login with Google
-                </Button>
-                <FieldDescription className="text-center">
-                  Don&apos;t have an account? <Link href="/signup">Sign up</Link>
-                </FieldDescription>
+                {providers}
+                <FieldDescription className="text-center">{footer}</FieldDescription>
               </Field>
             </FieldGroup>
           </form>
