@@ -110,9 +110,10 @@ stay plain `<a>` in the blocks.
 To navigate on the client, make `lib/link.tsx` your router's link. It is the only file to
 change: no block takes a link prop.
 
-In Next.js, replace the file with one line. `next/link` renders the same `<a>`, prefetches the
-route and also handles external URLs, and with it eslint-config-next's
-`@next/next/no-html-link-for-pages` passes on the blocks:
+In Next.js, replace the file with one line. `next/link` renders the same `<a>`, navigates on
+the client, prefetches the route and also handles external URLs. The blocks pass
+eslint-config-next's `@next/next/no-html-link-for-pages` either way, since no block writes an
+`<a href="/">` of its own:
 
 ```tsx title="lib/link.tsx"
 export { default as Link } from "next/link";
