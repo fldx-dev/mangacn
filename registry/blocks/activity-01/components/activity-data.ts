@@ -2,14 +2,15 @@
 // own data (a fetch in the page, passed down as props); nothing here reads the clock, so the page
 // renders the same on the server and the client, on any day.
 
-/** What an event is about; the filter's values. */
+/** The sample's kinds of event; pass the feed `filters` and `kindLabels` for your own. */
 export type ActivityKind = "reading" | "comments" | "follows";
 
 /** One line of the timeline: "{actor} {action} *{title}*". */
 export interface ActivityEvent {
   /** Stable and unique: the event's key and the id of its heading. */
   id: string;
-  kind: ActivityKind;
+  /** What the event is about: a filter's `value` ("reading", "comments", "follows" here). */
+  kind: string;
   /** Who did it; the avatar shows their initials. */
   actor: string;
   /** What they did: "finished", "commented on", "followed". */
@@ -28,8 +29,14 @@ export interface ActivityStat {
   trend: number[];
 }
 
+/** One button of the filter: the `kind` it shows, or `all` for every kind. */
+export interface ActivityFilter {
+  value: string;
+  label: string;
+}
+
 /** The filter's buttons, in order; `all` shows every kind. */
-export const ACTIVITY_FILTERS: { value: ActivityKind | "all"; label: string }[] = [
+export const ACTIVITY_FILTERS: ActivityFilter[] = [
   { value: "all", label: "All" },
   { value: "reading", label: "Reading" },
   { value: "comments", label: "Comments" },

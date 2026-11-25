@@ -24,3 +24,9 @@ The page and `activity-stats.tsx` are server components; `activity-feed.tsx` is 
 The events and stats are typed in `activity-data.ts` (`ActivityEvent`, `ActivityStat`). The feed takes the events newest first:
 
 <PropsTable item="activity-01" name="ActivityFeedProps" />
+
+An event's `kind` is any string. The sample's kinds are reading, comments and follows; for your own, pass the feed `filters` (one button per kind, by its `value`, plus `all` for every kind) and `kindLabels` (each kind's badge), for example `filters={[{ value: "all", label: "All" }, { value: "uploads", label: "Uploads" }]}` with `kindLabels={{ uploads: "Upload" }}`. A kind with no label shows its value.
+
+<PropsTable item="activity-01" name="ActivityEvent" />
+
+<PropsTable item="activity-01" name="ActivityFilter" />
