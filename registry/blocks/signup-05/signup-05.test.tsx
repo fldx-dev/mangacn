@@ -14,6 +14,28 @@ const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8"
 const FILES = ["page.tsx", "components/signup-form.tsx"];
 
 describe("SignupForm", () => {
+  it("draws the title, provider buttons and footer it is given", () => {
+    render(
+      <SignupForm
+        title="Join Ink Club"
+        providers={<button type="button">Continue with Ink ID</button>}
+        footer={<a href="/join">Join the club</a>}
+      />,
+    );
+    expect(screen.getByRole("form", { name: "Join Ink Club" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Continue with Ink ID" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Continue with Apple" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Join the club" }).getAttribute("href")).toBe("/join");
+    expect(screen.queryByRole("link", { name: "Sign in" })).toBeNull();
+  });
+
+  it("draws no provider buttons, nor their rule, with providers={null}", () => {
+    render(<SignupForm providers={null} />);
+    expect(screen.queryByRole("button", { name: "Continue with Apple" })).toBeNull();
+    expect(screen.queryByText("Or")).toBeNull();
+    expect(screen.getByRole("button", { name: "Create Account" })).toBeTruthy();
+  });
+
   it("submits every field under its name: FormData holds what was typed", () => {
     const { container } = render(<SignupForm />);
     const expected = [["email", "ana@example.com"]];

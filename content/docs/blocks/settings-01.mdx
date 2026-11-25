@@ -18,3 +18,13 @@ The page is a server component and `settings-form` a client component. To put it
 ## Preview
 
 <BlockPreview item="settings-01" />
+
+## Props
+
+`SettingsForm` takes the saved settings as `defaultValues`, `onSave` and `onDeleteAccount`, and `sections`: the sections it draws, all four by default. A hidden section is gone from the section nav too, and Save skips its checks. [Profile 01](/docs/blocks/profile-01) also edits the display name; an app that installs both can drop `account` here, which moves email, language and time zone out with it, or keep it and drop the profile there.
+
+```tsx
+<SettingsForm defaultValues={settings} sections={["notifications", "reading", "danger"]} />
+```
+
+<PropsTable item="settings-01" name="SettingsFormProps" />

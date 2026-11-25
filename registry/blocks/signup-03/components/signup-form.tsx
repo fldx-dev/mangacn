@@ -11,7 +11,37 @@ import { Link } from "@/lib/link";
 // display face; the two passwords side by side, as stock sets them. The items draw everything;
 // the form only lays them out. The title is the page's heading and names the form.
 
-export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
+const signIn = (
+  <>
+    Already have an account? <Link href="/login">Sign in</Link>
+  </>
+);
+
+export interface SignupFormProps extends Omit<React.ComponentProps<"div">, "title"> {
+  /**
+   * The heading, which also names the form.
+   * @default "Create your account"
+   */
+  title?: React.ReactNode;
+  /**
+   * The line under the heading.
+   * @default "Enter your email below to create your account"
+   */
+  description?: React.ReactNode;
+  /**
+   * The line under Create Account.
+   * @default "Already have an account?" and a "Sign in" link to /login
+   */
+  footer?: React.ReactNode;
+}
+
+export function SignupForm({
+  className,
+  title = "Create your account",
+  description = "Enter your email below to create your account",
+  footer = signIn,
+  ...props
+}: SignupFormProps) {
   const titleId = React.useId();
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -19,10 +49,10 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
         <CardHeader className="text-center">
           <CardTitle>
             <h1 id={titleId} className="font-display text-2xl leading-tight uppercase">
-              Create your account
+              {title}
             </h1>
           </CardTitle>
-          <CardDescription>Enter your email below to create your account</CardDescription>
+          <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>
           <form aria-labelledby={titleId}>
@@ -50,9 +80,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
               </Field>
               <Field>
                 <Button type="submit">Create Account</Button>
-                <FieldDescription className="text-center">
-                  Already have an account? <Link href="/login">Sign in</Link>
-                </FieldDescription>
+                <FieldDescription className="text-center">{footer}</FieldDescription>
               </Field>
             </FieldGroup>
           </form>

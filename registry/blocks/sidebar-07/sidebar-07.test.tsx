@@ -5,6 +5,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { hasUseClientDirective } from "@/lib/registry/client";
 import { installedPageSource } from "@/lib/registry/page-source";
 import { expectNoA11yViolations, expectVariantsAccessible } from "@/lib/test/axe";
+import { SidebarProvider } from "@/registry/ui/sidebar/sidebar";
+import { AppSidebar } from "./components/app-sidebar";
+import { NavUser } from "./components/nav-user";
 import Page from "./page";
 
 const source = (file: string) => readFileSync(path.join(__dirname, file), "utf8");
@@ -113,6 +116,92 @@ describe("sidebar-07 page", () => {
 
   it("has no axe violations as a whole page", async () => {
     await expectNoA11yViolations(<Page />);
+  });
+});
+
+describe("sidebar-07 AppSidebar props", () => {
+  it("draws the teams, sections, projects, user and label it is given", () => {
+    render(
+      <SidebarProvider>
+        <AppSidebar
+          label="Workspace"
+          teams={[{ name: "Ink Club", logo: <span />, plan: "Free" }]}
+          navMain={[{ title: "Boards", url: "/boards", items: [{ title: "Week", url: "/w" }] }]}
+          projects={[{ name: "Comet Run", url: "/comet", icon: <span /> }]}
+          user={{ name: "Sora Ito", email: "sora@example.com", avatar: "" }}
+        />
+      </SidebarProvider>,
+    );
+    expect(screen.getByRole("navigation", { name: "Workspace" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Ink Club/ })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Boards" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Comet Run" }).getAttribute("href")).toBe("/comet");
+    expect(screen.getByRole("button", { name: /Sora Ito/ })).toBeTruthy();
+    expect(screen.queryByText("Inkpot Studio")).toBeNull();
+    expect(screen.queryByText("Hana Mori")).toBeNull();
+  });
+
+  it("keeps the active team in the teams it is given, loaded late or changed", async () => {
+    const ink = { name: "Ink Club", logo: <span />, plan: "Free" };
+    const owl = { name: "Owl Press", logo: <span />, plan: "Monthly" };
+    const shell = (teams: (typeof ink)[]) => (
+      <SidebarProvider>
+        <AppSidebar teams={teams} />
+      </SidebarProvider>
+    );
+    const { rerender } = render(shell([]));
+    expect(screen.queryByRole("button", { name: /Ink Club/ })).toBeNull();
+    rerender(shell([ink, owl]));
+    fireEvent.click(screen.getByRole("button", { name: /Ink Club/ }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: /Owl Press/ }));
+    expect(await screen.findByRole("button", { name: /Owl Press/ })).toBeTruthy();
+    // The chosen team stays while it is listed, and falls back to the first once it is not.
+    rerender(shell([owl, ink]));
+    expect(screen.getByRole("button", { name: /Owl Press/ })).toBeTruthy();
+    rerender(shell([ink]));
+    expect(screen.getByRole("button", { name: /Ink Club/ })).toBeTruthy();
+  });
+
+  it("runs NavUser's onLogout and the other account actions from the menu", async () => {
+    const actions = {
+      onUpgrade: vi.fn(),
+      onAccount: vi.fn(),
+      onBilling: vi.fn(),
+      onNotifications: vi.fn(),
+      onLogout: vi.fn(),
+    };
+    render(
+      <SidebarProvider>
+        <AppSidebar userActions={actions} />
+      </SidebarProvider>,
+    );
+    const items = {
+      onUpgrade: "Upgrade to Pro",
+      onAccount: "Account",
+      onBilling: "Billing",
+      onNotifications: "Notifications",
+      onLogout: "Log out",
+    } as const;
+    for (const [handler, name] of Object.entries(items)) {
+      fireEvent.click(screen.getByRole("button", { name: /Hana Mori/ }));
+      fireEvent.click(await screen.findByRole("menuitem", { name }));
+      expect(actions[handler as keyof typeof items], name).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it("fires onLogout from NavUser on its own", async () => {
+    const onLogout = vi.fn();
+    render(
+      <SidebarProvider>
+        <NavUser
+          user={{ name: "Sora Ito", email: "sora@example.com", avatar: "" }}
+          onLogout={onLogout}
+        />
+      </SidebarProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Sora Ito/ }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Log out" }));
+    expect(onLogout).toHaveBeenCalledTimes(1);
   });
 });
 

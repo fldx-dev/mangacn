@@ -110,6 +110,18 @@ describe("profile-01 page", () => {
   });
 });
 
+describe("ProfileForm: sections", () => {
+  it("draws only the sections it is given", () => {
+    const { rerender } = render(<ProfileForm defaultValues={profile} sections={["password"]} />);
+    expect(screen.queryByLabelText(/Display name/)).toBeNull();
+    expect(screen.queryByRole("button", { name: "Save profile" })).toBeNull();
+    expect(screen.getAllByRole("form")).toHaveLength(1);
+    rerender(<ProfileForm defaultValues={profile} sections={["profile"]} />);
+    expect(screen.getByLabelText(/Display name/)).toBeTruthy();
+    expect(screen.getAllByRole("form")).toHaveLength(1);
+  });
+});
+
 describe("ProfileForm: the photo", () => {
   it("has a Change photo trigger that opens the native dialog", () => {
     render(<ProfileForm defaultValues={profile} />);

@@ -67,10 +67,21 @@ export interface OnboardingFlowProps {
    * @default onboardingDefaults
    */
   defaultAnswers?: OnboardingAnswers;
-  /** Where "Go to library" goes. @default "/library" */
+  /**
+   * Where "Go to library" goes: `/library` is the route Library Page installs; point it at your
+   * own home when you do not install that block.
+   * @default "/library"
+   */
   libraryHref?: string;
   /** Called with the answers when Finish completes the last form step. */
   onComplete?: (answers: OnboardingAnswers) => void;
+  /**
+   * Called when the reader skips the flow. With `onSkip` or `skipHref`, a "Skip for now" button
+   * sits beside Next on every form step; without either there is none.
+   */
+  onSkip?: () => void;
+  /** Where "Skip for now" goes; the button is then a link (`onSkip` still runs first). */
+  skipHref?: string;
 }
 
 /**
@@ -82,6 +93,8 @@ export function OnboardingFlow({
   defaultAnswers = onboardingDefaults,
   libraryHref = "/library",
   onComplete,
+  onSkip,
+  skipHref,
 }: OnboardingFlowProps) {
   const id = React.useId();
   const [answers, setAnswers] = React.useState(defaultAnswers);
@@ -133,6 +146,23 @@ export function OnboardingFlow({
 
   const headingId = `${id}-heading`;
   const field = (name: string) => `${id}-${name}`;
+
+  const submit = <Button type="submit">{step === last - 1 ? "Finish" : "Next"}</Button>;
+  const skip = skipHref ? (
+    <Button
+      variant="ghost"
+      nativeButton={false}
+      role="link"
+      onClick={onSkip}
+      render={<Link href={skipHref} />}
+    >
+      Skip for now
+    </Button>
+  ) : onSkip ? (
+    <Button type="button" variant="ghost" onClick={onSkip}>
+      Skip for now
+    </Button>
+  ) : null;
 
   return (
     <Card className="mx-auto w-full max-w-160">
@@ -337,7 +367,14 @@ export function OnboardingFlow({
               <span />
             )}
             {step < last ? (
-              <Button type="submit">{step === last - 1 ? "Finish" : "Next"}</Button>
+              skip ? (
+                <div className="flex flex-wrap items-center gap-3">
+                  {skip}
+                  {submit}
+                </div>
+              ) : (
+                submit
+              )
             ) : (
               <Button nativeButton={false} role="link" render={<Link href={libraryHref} />}>
                 Go to library

@@ -16,3 +16,9 @@ Stock's email-only sign-up in ink, with stock's two files and exports: the studi
 ## Preview
 
 <BlockPreview item="signup-05" />
+
+## Props
+
+`SignupForm` takes its root `div`'s props. Every field submits under its `id` as its `name` (`email`). The copy is props too, each defaulting to what the preview shows: `title` (the heading, which names the form), `providers` (the other providers' buttons), and `footer`, the sign-in line ("Already have an account?" and a link to `/login`), under the heading. `providers` takes nodes, so pass your own buttons wired to your sign-in calls (a client component of yours, since the page is a server component), or `null` for none, which also drops the "Or" rule.
+
+<PropsTable item="signup-05" name="SignupFormProps" />

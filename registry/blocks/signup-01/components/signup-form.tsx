@@ -12,7 +12,47 @@ import { Link } from "@/lib/link";
 // display face, and one spot-red stamp on its corner. The items draw everything; the form only
 // lays them out. The title is the page's heading and names the form, so the form is a landmark.
 
-export function SignupForm({ className, ...props }: React.ComponentProps<typeof Card>) {
+const signIn = (
+  <>
+    Already have an account? <Link href="/login">Sign in</Link>
+  </>
+);
+
+export interface SignupFormProps extends Omit<React.ComponentProps<typeof Card>, "title"> {
+  /**
+   * The heading, which also names the form.
+   * @default "Create an account"
+   */
+  title?: React.ReactNode;
+  /**
+   * The line under the heading.
+   * @default "Enter your information below to create your account"
+   */
+  description?: React.ReactNode;
+  /**
+   * The other providers' buttons, under Create Account. `null` draws none.
+   * @default a "Sign up with Google" button
+   */
+  providers?: React.ReactNode;
+  /**
+   * The line under the buttons.
+   * @default "Already have an account?" and a "Sign in" link to /login
+   */
+  footer?: React.ReactNode;
+}
+
+export function SignupForm({
+  className,
+  title = "Create an account",
+  description = "Enter your information below to create your account",
+  providers = (
+    <Button variant="outline" type="button">
+      Sign up with Google
+    </Button>
+  ),
+  footer = signIn,
+  ...props
+}: SignupFormProps) {
   const titleId = React.useId();
   return (
     <Card
@@ -25,10 +65,10 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
       <CardHeader className="relative pe-16">
         <CardTitle>
           <h1 id={titleId} className="font-display text-2xl leading-tight uppercase">
-            Create an account
+            {title}
           </h1>
         </CardTitle>
-        <CardDescription>Enter your information below to create your account</CardDescription>
+        <CardDescription>{description}</CardDescription>
         <Stamp
           lang="ja"
           vertical
@@ -94,12 +134,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
             <FieldGroup>
               <Field>
                 <Button type="submit">Create Account</Button>
-                <Button variant="outline" type="button">
-                  Sign up with Google
-                </Button>
-                <FieldDescription className="px-6 text-center">
-                  Already have an account? <Link href="/login">Sign in</Link>
-                </FieldDescription>
+                {providers}
+                <FieldDescription className="px-6 text-center">{footer}</FieldDescription>
               </Field>
             </FieldGroup>
           </FieldGroup>
