@@ -29,7 +29,7 @@ import { TeamSwitcher } from "./team-switcher";
 // Stock's sidebar with a small manga studio's sample data in stock's shape: its circles, the
 // workflow, its series and one editor. Every outline and menu is drawn by mangacn's items.
 
-/** The signed-in user in the footer. Without an `avatar` URL the avatar shows their initials. */
+/** The signed-in user in the footer. With `avatar` empty (`""`) the avatar shows their initials. */
 export interface SidebarUser {
   name: string;
   email: string;

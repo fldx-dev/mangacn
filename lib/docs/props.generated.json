@@ -4773,7 +4773,7 @@
           },
           {
             "name": "sections",
-            "description": "The sections shown, in their fixed order; the others, and their links in the section nav,\nare not drawn, and Save skips their checks. Drop `account` when the app edits the display\nname in profile-01 (it takes email, language and time zone with it).",
+            "description": "The sections shown, in their fixed order; the others, and their links in the section nav,\nare not drawn, and Save skips their checks; with no form section left, Save and Reset go too. Drop `account` when the app edits the display\nname in profile-01 (it takes email, language and time zone with it).",
             "type": "(\"account\" | \"danger\" | \"notifications\" | \"reading\")[] | undefined",
             "simplifiedType": "(\"account\" | \"danger\" | \"notifications\" | \"reading\")[]",
             "tags": [
@@ -5252,7 +5252,7 @@
       {
         "id": "app-sidebar.tsx-SidebarUser",
         "name": "SidebarUser",
-        "description": "The signed-in user in the footer. Without an `avatar` URL the avatar shows their initials.",
+        "description": "The signed-in user in the footer. With `avatar` empty (`\"\"`) the avatar shows their initials.",
         "entries": [
           {
             "name": "name",
@@ -5643,7 +5643,7 @@
       {
         "id": "app-sidebar.tsx-SidebarUser",
         "name": "SidebarUser",
-        "description": "The signed-in user in the footer. Without an `avatar` URL the avatar shows their initials.",
+        "description": "The signed-in user in the footer. With `avatar` empty (`\"\"`) the avatar shows their initials.",
         "entries": [
           {
             "name": "name",

@@ -233,6 +233,15 @@ describe("SettingsForm", () => {
     expect(screen.queryByRole("button", { name: "Delete account" })).toBeNull();
   });
 
+  it("drops Save and Reset with no form section, and the nav with no section", () => {
+    const { rerender } = render(<SettingsForm defaultValues={settings} sections={["danger"]} />);
+    expect(screen.queryByRole("button", { name: "Save" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Reset" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Delete account" })).toBeTruthy();
+    rerender(<SettingsForm defaultValues={settings} sections={[]} />);
+    expect(screen.queryByRole("navigation")).toBeNull();
+  });
+
   it("saves without the account section, not checking its hidden fields", () => {
     const onSave = vi.fn();
     render(

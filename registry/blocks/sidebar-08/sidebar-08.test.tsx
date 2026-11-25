@@ -147,19 +147,30 @@ describe("sidebar-08 AppSidebar props", () => {
   });
 
   it("runs NavUser's onLogout and the other account actions from the menu", async () => {
-    const onLogout = vi.fn();
-    const onAccount = vi.fn();
+    const actions = {
+      onUpgrade: vi.fn(),
+      onAccount: vi.fn(),
+      onBilling: vi.fn(),
+      onNotifications: vi.fn(),
+      onLogout: vi.fn(),
+    };
     render(
       <SidebarProvider>
-        <AppSidebar userActions={{ onLogout, onAccount }} />
+        <AppSidebar userActions={actions} />
       </SidebarProvider>,
     );
-    fireEvent.click(screen.getByRole("button", { name: /Hana Mori/ }));
-    fireEvent.click(await screen.findByRole("menuitem", { name: "Account" }));
-    expect(onAccount).toHaveBeenCalledTimes(1);
-    fireEvent.click(screen.getByRole("button", { name: /Hana Mori/ }));
-    fireEvent.click(await screen.findByRole("menuitem", { name: "Log out" }));
-    expect(onLogout).toHaveBeenCalledTimes(1);
+    const items = {
+      onUpgrade: "Upgrade to Pro",
+      onAccount: "Account",
+      onBilling: "Billing",
+      onNotifications: "Notifications",
+      onLogout: "Log out",
+    } as const;
+    for (const [handler, name] of Object.entries(items)) {
+      fireEvent.click(screen.getByRole("button", { name: /Hana Mori/ }));
+      fireEvent.click(await screen.findByRole("menuitem", { name }));
+      expect(actions[handler as keyof typeof items], name).toHaveBeenCalledTimes(1);
+    }
   });
 
   it("fires onLogout from NavUser on its own", async () => {

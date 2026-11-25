@@ -42,7 +42,7 @@ export interface SidebarBrand {
   url: string;
 }
 
-/** The signed-in user in the footer. Without an `avatar` URL the avatar shows their initials. */
+/** The signed-in user in the footer. With `avatar` empty (`""`) the avatar shows their initials. */
 export interface SidebarUser {
   name: string;
   email: string;
