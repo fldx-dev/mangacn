@@ -130,9 +130,10 @@ export function Banner({
     if (open) return;
     const reduce = typeof window !== "undefined" && window.matchMedia?.(REDUCE_QUERY).matches;
     // Under reduced motion it goes at once, here, after the layout effect above has handed focus
-    // on. Only while its body is mounted; without one it is gone already.
+    // on: it has to stay mounted for that one commit, so this cannot be decided while rendering.
     if (reduce) {
-      if (bodyRef.current) setGone(true);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- unmounts only after the commit that hands focus on
+      setGone(true);
       return;
     }
     const timer = setTimeout(() => setGone(true), COLLAPSE_MS);
