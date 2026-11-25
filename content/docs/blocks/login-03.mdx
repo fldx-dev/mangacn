@@ -11,7 +11,7 @@ skipVariants: ["default"]
 
 <CopyPrompt item="login-03" />
 
-Stock's centred login card in ink, with stock's two files and exports: the studio's mark above a card at the heavy outline on the first screentone (tone-1, stock's muted ground), Apple and Google first with stock's marks in the current ink colour, then email and password, and the terms below. Both files are server components; it is an alternative to the other login blocks, which write the same `app/login/page.tsx` and `components/login-form.tsx`, so adding one replaces the other.
+Stock's centred login card in ink, with stock's two files and exports: the studio's mark above a card at the heavy outline on the first screentone (tone-1, stock's muted ground), Apple and Google first with stock's marks in the current ink colour, then email and password, and the terms below. Both files are server components; it is an alternative to the other login blocks, which write the same `components/login-form.tsx`, so adding one replaces the other.
 
 ## Preview
 
@@ -19,7 +19,7 @@ Stock's centred login card in ink, with stock's two files and exports: the studi
 
 ## Props
 
-`LoginForm` takes its root `div`'s props and `forgotPasswordHref`. No mangacn item installs a password-reset page, so the "Forgot your password?" link is drawn only when the prop is set: point it at yours with `<LoginForm forgotPasswordHref="/forgot-password" />` in `app/login/page.tsx`. Every field submits under its `id` as its `name` (`email`, `password`).
+`LoginForm` takes its root `div`'s props and `forgotPasswordHref`. No mangacn item installs a password-reset page, so the "Forgot your password?" link is drawn only when the prop is set: point it at yours with `<LoginForm forgotPasswordHref="/forgot-password" />` in `app/(mangacn-examples)/examples/login-03/page.tsx`. Every field submits under its `id` as its `name` (`email`, `password`).
 
 The copy is props too, each defaulting to what the preview shows: `title` (the heading, which names the form), `description`, `providers` (the other providers' buttons), and `footer`, the sign-up line ("Don't have an account?" and a link to `/signup`). `providers` takes nodes, so pass your own buttons wired to your sign-in calls (a client component of yours, since the page is a server component), or `null` for none, which also drops the "Or continue with" rule.
 

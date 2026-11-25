@@ -85,6 +85,7 @@ test("the docs Files line says sidebar-01 replaces the other sidebars' files", a
   const response = await page.goto("/docs/blocks/sidebar-01");
   expect(response?.status()).toBe(200);
   const line = page.locator('[data-slot="item-files"]');
-  await expect(line).toContainText("app/dashboard/page.tsx");
+  await expect(line).toContainText("app/(mangacn-examples)/examples/sidebar-01/page.tsx");
+  await expect(line).toContainText("/examples/sidebar-01");
   await expect(line).toContainText("sidebar-07");
 });

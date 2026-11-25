@@ -248,7 +248,8 @@ function ownFile(
 /**
  * Whether one relative path from `from` to `to` holds both in this repo and once `shadcn add`
  * has written them: two part files of a block, or two components of a page block, land side
- * by side; a page block's route (`app/login/page.tsx`) and its components do not.
+ * by side; a page block's route (`app/(mangacn-examples)/examples/login-01/page.tsx`) and its
+ * components do not.
  */
 function relativeSurvivesInstall(from: RegistryFile, to: RegistryFile): boolean {
   const relative = (a: string, b: string) => path.posix.relative(path.posix.dirname(a), b);

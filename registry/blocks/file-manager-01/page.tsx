@@ -7,8 +7,9 @@ import {
 
 // A project's files: the folder tree, the open folder's contents and an upload, in one view. The
 // page is a server component; the file manager holds the state. Replace the sample folders and
-// files with your fetch (`const files = await listFiles()` in this async page). Inside
-// sidebar-07's shell, put the content below in its `SidebarInset` instead of this `main`.
+// files with your fetch (`const files = await listFiles()` in this async page). Inside your app's
+// own shell (a sidebar layout, a header), put the content below in its content area instead of
+// this `main`.
 
 export default function Page() {
   return (

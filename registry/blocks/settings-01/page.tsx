@@ -4,7 +4,8 @@ import { SettingsForm } from "./components/settings-form";
 // A signed-in reader's account settings: one route, four sections and a section nav. The page
 // is a server component; the form holds the state. Everything on it comes from `settings`;
 // replace it with your fetch (`const settings = await getSettings()` in this async page). Inside
-// sidebar-07's shell, put the content below in its `SidebarInset` instead of this `main`.
+// your app's own shell (a sidebar layout, a header), put the content below in its content area
+// instead of this `main`.
 
 export default function Page() {
   return (

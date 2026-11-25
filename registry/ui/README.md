@@ -37,14 +37,14 @@ registry/ui/<name>/
    └─ <variant>.tsx      optional extra variants (variants.tsx, sizes.tsx, …)
 ```
 
-| Folder                    | Item type                                                        | Installs to                                               |
-| ------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------- |
-| `registry/theme/`         | `registry:theme`, `registry:font`, `registry:lib`, `ink-frame`   | css, `app/layout.tsx`, `@/lib/<name>.ts`, `@/components/` |
-| `registry/theme/presets/` | `registry:theme` presets (recipe 5), generated from a JSON file  | the theme's colour variables in css, replaced in place    |
-| `registry/ui/<name>/`     | `registry:ui` (primitive) or `registry:component` (manga-native) | `@/components/ui/<name>.tsx` or `@/components/<name>.tsx` |
-| `registry/blocks/<name>/` | `registry:block` (recipe 3)                                      | `@/components/blocks/<name>/…`                            |
-| (a page block)            | `registry:block` with `registry:page` + `registry:component`     | `app/<route>/page.tsx` and `@/components/<file>.tsx`      |
-| `registry/hooks/`         | `registry:hook` (recipe 4), one `<name>.ts` each, `lib/` helpers | `@/hooks/<name>.ts`, a helper at `@/lib/<file>`           |
+| Folder                    | Item type                                                        | Installs to                                                                     |
+| ------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `registry/theme/`         | `registry:theme`, `registry:font`, `registry:lib`, `ink-frame`   | css, `app/layout.tsx`, `@/lib/<name>.ts`, `@/components/`                       |
+| `registry/theme/presets/` | `registry:theme` presets (recipe 5), generated from a JSON file  | the theme's colour variables in css, replaced in place                          |
+| `registry/ui/<name>/`     | `registry:ui` (primitive) or `registry:component` (manga-native) | `@/components/ui/<name>.tsx` or `@/components/<name>.tsx`                       |
+| `registry/blocks/<name>/` | `registry:block` (recipe 3)                                      | `@/components/blocks/<name>/…`                                                  |
+| (a page block)            | `registry:block` with `registry:page` + `registry:component`     | `app/(mangacn-examples)/examples/<name>/page.tsx` and `@/components/<file>.tsx` |
+| `registry/hooks/`         | `registry:hook` (recipe 4), one `<name>.ts` each, `lib/` helpers | `@/hooks/<name>.ts`, a helper at `@/lib/<file>`                                 |
 
 ### Catalog entry
 
@@ -472,20 +472,26 @@ is a whole route (stock's `login-01`) follows the steps below with the changes u
 ### Page blocks
 
 A page block installs a whole route, as stock's `login-01` does; `login-01` is the reference.
-Its files are stock's, by name, type and place:
+Its files are stock's, by name, type and place, except the route, which installs as an example
+under one route group:
 
 ```
 registry/blocks/<name>/
-├─ page.tsx                 the route: registry:page, target app/<route>/page.tsx (first in files[])
+├─ page.tsx                 the route: registry:page, target app/(mangacn-examples)/examples/<name>/page.tsx (first in files[])
 ├─ components/<file>.tsx    its components: registry:component, target @components/<file>.tsx
 ├─ <name>.test.tsx          never shipped
 └─ variants/default.tsx        required: renders the page's main component (the stage shot)
 ```
 
-- **Where the files land.** The page at its `app/<route>/page.tsx` target (stock's: never
-  change it). A component at `components/<file>.tsx`: shadcn 4.23 writes an untargeted
-  `registry:component` to the components folder at the path after the first `components`
-  segment of its registry path (`registry/blocks/login-01/components/login-form.tsx` →
+- **Where the files land.** The page at `app/(mangacn-examples)/examples/<name>/page.tsx`
+  (`examplePageTarget`, lib/registry/blocks.ts; `findBlockProblems` refuses any other target).
+  Stock writes `app/login/page.tsx`; mangacn does not, so an add never takes over a real route
+  of the user's app (`/login`, `/dashboard`, `/series`). The route group adds no URL segment, so
+  the example serves at `/examples/<name>`: the `examples/` segment keeps it off the app's own
+  routes and the block's name off its siblings'. Deleting `app/(mangacn-examples)/` removes
+  every example route and nothing else (the installation guide's "Example pages"). A component
+  at `components/<file>.tsx`: shadcn 4.23 writes an untargeted `registry:component` to the
+  components folder at the path after the first `components` segment of its registry path (`registry/blocks/login-01/components/login-form.tsx` →
   `components/login-form.tsx`, where stock's lands), so an add replaces stock's files in place.
   The catalog states it as `"target": "@components/login-form.tsx"`, so it does not hang on the
   name of the user's components folder. `findBlockProblems` refuses a component that would land
@@ -493,21 +499,22 @@ registry/blocks/<name>/
 - **Imports.** The page imports its own components relatively, `./components/login-form`, and
   `pnpm registry:build` writes the install path, `@/components/login-form`, into
   `public/r/<name>.json` (`scripts/registry-rewrite-pages.ts`, chained after `shadcn build`):
-  the page lands in `app/<route>/`, away from its components, and stock's installed page
-  imports them that way. The step rewrites only a page's `./components/<file>` imports of its
+  the page lands in `app/(mangacn-examples)/examples/<name>/`, away from its components, and
+  stock's installed page imports them that way. The step rewrites only a page's `./components/<file>` imports of its
   own files; components import each other relatively (`./nav-main`: they land side by side) and
   stay as they are. So no `tsconfig.json` or `vitest.config.mts` alias per component. The import
   rule allows that relative form only for a page's own `components/`; elsewhere an own file's
   install path only where a relative path would miss after install. Biome sorts a page's
   `./components/…` imports after its packages and before its aliases (an override in
   `biome.json`), so the emitted page keeps stock's import order.
-- **Variants of one stock family share paths.** Stock's `login-0N` all install
-  `app/login/page.tsx` and `components/login-form.tsx`; its sidebars all `app/dashboard/page.tsx`
-  and most an `app-sidebar.tsx`. mangacn keeps those paths, so a second variant's add replaces
-  the first's files, as in stock. `findBlockProblems` allows two blocks to share a target only
+- **Variants of one stock family share component paths.** Stock's `login-0N` all install
+  `components/login-form.tsx`; its sidebars most an `app-sidebar.tsx`. mangacn keeps those
+  paths, so a second variant's add replaces the first's components, as in stock; each variant's
+  route is its own example, so the first variant's example page then renders the second's
+  components. `findBlockProblems` allows two blocks to share a target only
   when both are in `PARITY_BLOCKS` and stock's own files of both install there; any other
   collision is refused. The docs page's Files line names the shipped blocks that write the same
-  paths ("Replaces `app/login/page.tsx` and `components/login-form.tsx` from `login-01`"), read
+  paths ("Replaces `components/login-form.tsx` from `login-01`"), read
   from the catalog. No block imports a sibling's file: each variant ships its own copy.
 - **A page block inside another page block's shell.** `library-page` sits in `sidebar-07`'s
   app shell without copying a file of it: it declares
@@ -516,15 +523,16 @@ registry/blocks/<name>/
   and `vitest.config.mts` (the one cross-block alias). The import rule allows the install path
   of every file of a declared item, and the dependency check counts an import of a page block's
   component as a use of the page block it declares (other sidebars write that path too). The
-  add then writes the other block's route too (`app/dashboard/page.tsx`), and the Files line
-  says so.
+  add then writes the other block's example route too (`examples/sidebar-07/page.tsx`), and
+  the Files line says so.
 - **Server or client.** The page is a server component, as stock's are; a component file says
   `"use client"` only when it holds state (sidebar-07's five files, as stock's;
   `series-header.tsx`, for Follow's pressed state). The install line's client-component note
   reads the page, so say on the docs page which component files are client components.
 - **Stock parity.** Append the stock name to `PARITY_BLOCKS` (`lib/registry/parity.ts`) and run
   `pnpm gen:parity`: `registry/blocks/parity.test.ts` then holds the block to stock's file list,
-  page target, exports per file (`default` for the page) and registry dependencies, mangacn's
+  exports per file (`default` for the page) and registry dependencies (not the page's target:
+  mangacn's is its example route), mangacn's
   items by URL. A dependency stock declares stays declared even when no file imports it
   (login-01's `label`, reached through `field`). A manga-native page block skips this step.
 - **The page.** It is the route's one `main`, with one `h1`, and every form named (by the
@@ -544,9 +552,9 @@ registry/blocks/<name>/
   that declares a variant (`library-page`) is installed after the family. The build runs once,
   at the end.
 
-The next page block, in short: a folder with `page.tsx` (`registry:page`, stock's
-`app/<route>/page.tsx` target) and `components/<file>.tsx` (`registry:component`, target
-`@components/<file>.tsx`), a default variant and a test with `expectVariantsAccessible`; a catalog
+The next page block, in short: a folder with `page.tsx` (`registry:page`, target
+`app/(mangacn-examples)/examples/<name>/page.tsx`) and `components/<file>.tsx`
+(`registry:component`, target `@components/<file>.tsx`), a default variant and a test with `expectVariantsAccessible`; a catalog
 entry with its dependencies by URL; the page importing its components relatively; `PARITY_BLOCKS` and
 `pnpm gen:parity` when it is stock's; `pnpm gen:variants && pnpm gen:docs`, two sentences on the
 page, and the files in the smoke's `EXPECTED_CONTENT`. `/view/<name>` and its shots come with

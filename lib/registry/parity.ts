@@ -431,7 +431,7 @@ export function extractBlockParityShape(
 
 /**
  * Differences between a stock-derived block and its stock snapshot: the same files by path and
- * type, the same page target, the same exports per file, and the dependency rules of
+ * type, the same exports per file, and the dependency rules of
  * `compareParity` (stock's packages kept, stock's names kept, by bare name or mangacn URL, and
  * only mangacn items added).
  */
@@ -441,11 +441,10 @@ export function compareBlockParity(stock: BlockParityShape, actual: BlockParityS
   for (const file of stock.files) {
     const own = actual.files.find((candidate) => key(candidate) === key(file));
     if (!own) continue;
-    if (file.target !== own.target) {
-      problems.push(`${file.path}: target ${own.target}; stock's is ${file.target}`);
-    }
     problems.push(...diffList(`${file.path} exports`, file.exports, own.exports));
   }
+  // The page's target is not compared: mangacn installs every page block's route under one
+  // route group (`examplePageTarget`, lib/registry/blocks.ts), not at stock's `app/<route>/`.
   return [...problems, ...dependencyProblems(stock, actual)];
 }
 

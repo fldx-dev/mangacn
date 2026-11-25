@@ -11,7 +11,7 @@ skipVariants: ["default"]
 
 <CopyPrompt item="sidebar-15" />
 
-Stock's two-sidebar shell in ink, with stock's eleven files and exports: mangacn's [Sidebar](/docs/components/sidebar) draws a notebook on the left and a schedule with a [Calendar](/docs/components/calendar) on the right, two named navigation landmarks around the page's blank [panels](/docs/components/panel). <kbd>Ctrl</kbd>+<kbd>B</kbd> (<kbd>⌘</kbd>+<kbd>B</kbd> on a Mac) or the trigger puts both away, where stock's right sidebar never collapses; on phones the left opens as a sheet and the right is hidden, as in stock, and the sample month is fixed so the page looks the same every day. It is an alternative to the other sidebar blocks: it writes `app/dashboard/page.tsx` and component files of the same names, so adding it replaces theirs.
+Stock's two-sidebar shell in ink, with stock's eleven files and exports: mangacn's [Sidebar](/docs/components/sidebar) draws a notebook on the left and a schedule with a [Calendar](/docs/components/calendar) on the right, two named navigation landmarks around the page's blank [panels](/docs/components/panel). <kbd>Ctrl</kbd>+<kbd>B</kbd> (<kbd>⌘</kbd>+<kbd>B</kbd> on a Mac) or the trigger puts both away, where stock's right sidebar never collapses; on phones the left opens as a sheet and the right is hidden, as in stock, and the sample month is fixed so the page looks the same every day. It is an alternative to the other sidebar blocks: it writes component files of the same names, so adding it replaces theirs.
 
 The page is a server component; every component file is a client component but `date-picker`, which has no directive, as in stock: it holds state, so import it only from a client component, as `sidebar-right` does.
 

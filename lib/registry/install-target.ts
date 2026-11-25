@@ -56,7 +56,7 @@ export function dependencyFiles(name: string, registry: LoadedRegistry): string[
 /**
  * The other items that write one of `name`'s own files, each with the paths it shares, in
  * catalog order and `name`'s file order: login-02 → `[{ item: "login-01", files:
- * ["app/login/page.tsx", "components/login-form.tsx"] }]`. Variants of one stock family are
+ * ["components/login-form.tsx"] }]`. Variants of one stock family are
  * alternatives (SPEC-components-6 §5.1): installing one replaces the other's files.
  */
 export function sharedInstallTargets(

@@ -11,9 +11,9 @@ skipVariants: ["default"]
 
 <CopyPrompt item="settings-01" />
 
-A reader's account settings route, `app/settings/page.tsx`: a section nav and four [Card](/docs/components/card)s of [Field](/docs/components/field)s, with [Input](/docs/components/input)s, [Select](/docs/components/select)s, [Switch](/docs/components/switch)es, [Radio Group](/docs/components/radio-group)s, a [Toggle Group](/docs/components/toggle-group) for the reading direction and an [Alert Dialog](/docs/components/alert-dialog) before Delete account. Save checks the display name and email, focuses the first invalid field or announces "Settings saved"; nothing is sent, so pass `onSave` and `onDeleteAccount` to `SettingsForm` and replace the sample `settings` in `settings-data.ts` with your own.
+A reader's account settings route, `app/(mangacn-examples)/examples/settings-01/page.tsx`: a section nav and four [Card](/docs/components/card)s of [Field](/docs/components/field)s, with [Input](/docs/components/input)s, [Select](/docs/components/select)s, [Switch](/docs/components/switch)es, [Radio Group](/docs/components/radio-group)s, a [Toggle Group](/docs/components/toggle-group) for the reading direction and an [Alert Dialog](/docs/components/alert-dialog) before Delete account. Save checks the display name and email, focuses the first invalid field or announces "Settings saved"; nothing is sent, so pass `onSave` and `onDeleteAccount` to `SettingsForm` and replace the sample `settings` in `settings-data.ts` with your own.
 
-The page is a server component and `settings-form` a client component. To put it in [Sidebar 07](/docs/blocks/sidebar-07)'s app shell, render the page's header and `SettingsForm` inside that block's `SidebarInset` instead of the page's `main`.
+The page is a server component and `settings-form` a client component. To put it in your app's own shell, render the page's header and `SettingsForm` in the shell's content area instead of the page's `main` (in a mangacn sidebar block such as [Sidebar 07](/docs/blocks/sidebar-07), its `SidebarInset`).
 
 ## Preview
 

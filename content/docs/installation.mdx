@@ -88,6 +88,7 @@ the set.
 | Restyled primitives (`button`, `dialog`, …) | `components/ui/<item>.tsx` |
 | Manga-native pieces (`speech-bubble`, `panel`, …) | `components/<item>.tsx` |
 | Blocks (`chapter-list`, `spread-viewer`) | `components/blocks/<block>/` |
+| Page blocks' example routes (`login-01`, `sidebar-07`) | `app/(mangacn-examples)/examples/<block>/page.tsx` |
 | The ink frame | `components/ink-frame.tsx` |
 | The link blocks navigate with | `lib/link.tsx` |
 | Tokens, utilities and keyframes | your `globals.css` |
@@ -97,6 +98,30 @@ Everything is plain source in your project. Edit it as you would your own code.
 
 </Step>
 </Steps>
+
+## Example pages
+
+A page block (a login or sign-up page, a sidebar shell, the settings or library page) ships a
+route as an example of the block in use. Every one installs under one route group,
+`app/(mangacn-examples)/`, at `examples/<block>/page.tsx`, so `login-01` serves at
+`/examples/login-01` and `sidebar-07` at `/examples/sidebar-07`. A route group adds no URL
+segment, and `examples/<block>` keeps the examples off your own `/login`, `/dashboard` or
+`/series`, and off each other.
+
+The components a page block brings land in `components/` as usual; the example route only
+shows them together. Copy what you need from it into your own route, then delete the
+`app/(mangacn-examples)/` folder: that removes every example route and nothing else.
+
+Variants of one family (the `login-0N` blocks, the `sidebar-NN` blocks) each get their own
+example route but share component files, such as `components/login-form.tsx` or
+`components/app-sidebar.tsx`. The last variant you add writes those files, so after adding
+`login-01` and then `login-02`, `/examples/login-01` renders login-02's form too. Each block's
+page names the blocks it shares files with.
+
+Page blocks added before the examples group existed wrote their routes straight into your app
+(`app/login/page.tsx`, `app/signup/page.tsx`, `app/dashboard/page.tsx`, `app/series/page.tsx`
+and the like). Adding a block again does not move or remove those; if they were only examples,
+delete them by hand.
 
 ## Client-side navigation
 

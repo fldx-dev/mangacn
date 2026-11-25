@@ -11,9 +11,9 @@ skipVariants: ["default"]
 
 <CopyPrompt item="profile-01" />
 
-A reader's profile route, `app/profile/page.tsx`: a public profile [Card](/docs/components/card) with an [Avatar](/docs/components/avatar) in initials, a "Change photo" [File Upload](/docs/components/file-upload) trigger that previews the picked image, the username in an [Input Group](/docs/components/input-group), a [Textarea](/docs/components/textarea) bio with a live count and interests in a [Tags Input](/docs/components/tags-input); then a password card of [Password Input](/docs/components/password-input)s with a strength meter. Each card is its own form: Save checks it, focuses the first invalid field or announces the result, and nothing is sent, so pass `onSaveProfile` and `onSavePassword` to `ProfileForm` and replace the sample `profile` in `profile-data.ts` with your own.
+A reader's profile route, `app/(mangacn-examples)/examples/profile-01/page.tsx`: a public profile [Card](/docs/components/card) with an [Avatar](/docs/components/avatar) in initials, a "Change photo" [File Upload](/docs/components/file-upload) trigger that previews the picked image, the username in an [Input Group](/docs/components/input-group), a [Textarea](/docs/components/textarea) bio with a live count and interests in a [Tags Input](/docs/components/tags-input); then a password card of [Password Input](/docs/components/password-input)s with a strength meter. Each card is its own form: Save checks it, focuses the first invalid field or announces the result, and nothing is sent, so pass `onSaveProfile` and `onSavePassword` to `ProfileForm` and replace the sample `profile` in `profile-data.ts` with your own.
 
-The page is a server component and `profile-form` a client component. To put it in [Sidebar 07](/docs/blocks/sidebar-07)'s app shell, render the page's header and `ProfileForm` inside that block's `SidebarInset` instead of the page's `main`.
+The page is a server component and `profile-form` a client component. To put it in your app's own shell, render the page's header and `ProfileForm` in the shell's content area instead of the page's `main` (in a mangacn sidebar block such as [Sidebar 07](/docs/blocks/sidebar-07), its `SidebarInset`).
 
 ## Preview
 

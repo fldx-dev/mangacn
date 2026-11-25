@@ -4,6 +4,9 @@ import {
   BLOCKS_CATALOG,
   blockGroup,
   blockTarget,
+  EXAMPLES_GROUP,
+  examplePageTarget,
+  examplePageUrl,
   findBlockProblems,
   groupBlocks,
   installPageSource,
@@ -52,7 +55,7 @@ function pageBlock(overrides: Partial<LoadedRegistryItem> = {}): LoadedRegistryI
       {
         path: "registry/blocks/login-01/page.tsx",
         type: "registry:page",
-        target: "app/login/page.tsx",
+        target: "app/(mangacn-examples)/examples/login-01/page.tsx",
       },
       {
         path: "registry/blocks/login-01/components/login-form.tsx",
@@ -67,7 +70,7 @@ function pageBlock(overrides: Partial<LoadedRegistryItem> = {}): LoadedRegistryI
 describe("page blocks", () => {
   it("are blocks with a registry:page file, which pageFile returns", () => {
     expect(isPageBlock(pageBlock())).toBe(true);
-    expect(pageFile(pageBlock())?.target).toBe("app/login/page.tsx");
+    expect(pageFile(pageBlock())?.target).toBe("app/(mangacn-examples)/examples/login-01/page.tsx");
     expect(isPageBlock(block())).toBe(false);
     expect(pageFile(block())).toBeUndefined();
   });
@@ -115,12 +118,28 @@ describe("page blocks", () => {
     ]);
   });
 
-  it("need an app/<route>/page.tsx target", () => {
+  it("need their example route under the (mangacn-examples) group", () => {
     const [page, form] = pageBlock().files;
-    const wrong = pageBlock({ files: [{ ...page, target: "@components/page.tsx" }, form] });
-    expect(findBlockProblems(registry(wrong))).toEqual([
-      'login-01: registry/blocks/login-01/page.tsx has target "@components/page.tsx"; expected app/<route>/page.tsx',
-    ]);
+    const expected = '"app/(mangacn-examples)/examples/login-01/page.tsx"';
+    for (const target of [
+      "@components/page.tsx",
+      "app/login/page.tsx",
+      "app/(mangacn-examples)/login/page.tsx",
+      "app/(mangacn-examples)/examples/login-02/page.tsx",
+    ]) {
+      const wrong = pageBlock({ files: [{ ...page, target }, form] });
+      expect(findBlockProblems(registry(wrong))).toEqual([
+        `login-01: registry/blocks/login-01/page.tsx has target "${target}"; expected ${expected}`,
+      ]);
+    }
+  });
+
+  it("install their route at /examples/<name>, inside the one route group", () => {
+    expect(EXAMPLES_GROUP).toBe("(mangacn-examples)");
+    expect(examplePageTarget("sidebar-07")).toBe(
+      "app/(mangacn-examples)/examples/sidebar-07/page.tsx",
+    );
+    expect(examplePageUrl("sidebar-07")).toBe("/examples/sidebar-07");
   });
 });
 
@@ -229,8 +248,8 @@ describe("findBlockProblems", () => {
 });
 
 describe("variants of one stock family (SPEC-components-6 §5.1)", () => {
-  // login-01 and login-02 both install stock's `app/login/page.tsx` and
-  // `components/login-form.tsx`: alternatives, as in stock. Anything else stays refused.
+  // login-01 and login-02 both install stock's `components/login-form.tsx`: alternatives, as in
+  // stock. Their routes are their own (`examples/login-0N`). Anything else stays refused.
   const variant = (name: string) =>
     pageBlock({
       name,
@@ -238,7 +257,7 @@ describe("variants of one stock family (SPEC-components-6 §5.1)", () => {
         {
           path: `registry/blocks/${name}/page.tsx`,
           type: "registry:page",
-          target: "app/login/page.tsx",
+          target: examplePageTarget(name),
         },
         {
           path: `registry/blocks/${name}/components/login-form.tsx`,
@@ -271,7 +290,6 @@ describe("variants of one stock family (SPEC-components-6 §5.1)", () => {
 
   it("refuses a shared path between a variant and a block outside PARITY_BLOCKS", () => {
     expect(findBlockProblems(registry(variant("login-01"), variant("login-09")), family)).toEqual([
-      "login-09: registry/blocks/login-09/page.tsx installs to app/login/page.tsx, as a file of login-01 does",
       "login-09: registry/blocks/login-09/components/login-form.tsx installs to components/login-form.tsx, as a file of login-01 does",
     ]);
   });
@@ -305,8 +323,6 @@ describe("variants of one stock family (SPEC-components-6 §5.1)", () => {
         three,
       ),
     ).toEqual([
-      "login-09: registry/blocks/login-09/page.tsx installs to app/login/page.tsx, as a file of login-01 does",
-      "login-09: registry/blocks/login-09/page.tsx installs to app/login/page.tsx, as a file of login-02 does",
       "login-09: registry/blocks/login-09/components/login-form.tsx installs to components/login-form.tsx, as a file of login-01 does",
       "login-09: registry/blocks/login-09/components/login-form.tsx installs to components/login-form.tsx, as a file of login-02 does",
     ]);

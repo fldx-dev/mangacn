@@ -49,8 +49,8 @@ describe("itemFilesMarkdown", () => {
 });
 
 describe("a variant of a stock family", () => {
-  // SPEC-components-6 §5.1: the login-0N variants write the same two paths, so each page names
-  // the others in one sentence, read from the catalog.
+  // SPEC-components-6 §5.1: the login-0N variants write the same form, so each page names the
+  // others in one sentence, read from the catalog. Each variant's route is its own.
   const logins = (catalog as { items: { name: string }[] }).items
     .map((item) => item.name)
     .filter((name) => /^login-\d+$/.test(name));
@@ -61,11 +61,9 @@ describe("a variant of a stock family", () => {
     expect(logins.length).toBeGreaterThan(2);
     const { container } = render(<ItemFiles item="login-02" />);
     const others = prose(logins.filter((name) => name !== "login-02"));
-    expect(
-      container.textContent?.endsWith(
-        ` Replaces app/login/page.tsx and components/login-form.tsx from ${others}.`,
-      ),
-    ).toBe(true);
+    expect(container.querySelector("[data-slot=item-files-replaces]")?.textContent).toBe(
+      ` Replaces components/login-form.tsx from ${others}.`,
+    );
     expect(container.querySelectorAll("[data-slot=item-files-replaces]")).toHaveLength(1);
     cleanup();
     render(<ItemFiles item="login-01" />);
@@ -77,8 +75,27 @@ describe("a variant of a stock family", () => {
   it("says the same in Markdown, and nothing for a block that shares no path", () => {
     const others = prose(logins.filter((name) => name !== "login-02").map((name) => `\`${name}\``));
     expect(itemFilesMarkdown("login-02")).toContain(
-      ` Replaces \`app/login/page.tsx\` and \`components/login-form.tsx\` from ${others}.\n\n`,
+      ` Replaces \`components/login-form.tsx\` from ${others}. The page`,
     );
     expect(itemFilesMarkdown("chapter-list")).not.toContain("Replaces");
+  });
+});
+
+describe("a page block", () => {
+  it("says its example route's URL and that the route group's folder is safe to delete", () => {
+    const { container } = render(<ItemFiles item="series-page" />);
+    expect(container.textContent).toContain("app/(mangacn-examples)/examples/series-page/page.tsx");
+    expect(container.querySelector("[data-slot=item-files-example]")?.textContent).toBe(
+      " The page is an example route at /examples/series-page, under app/(mangacn-examples)/ with every block's example route: deleting that folder removes the example routes and leaves the components.",
+    );
+    expect(itemFilesMarkdown("series-page")).toContain(
+      " The page is an example route at `/examples/series-page`, under `app/(mangacn-examples)/` with every block's example route",
+    );
+  });
+
+  it("says nothing of example routes for a block that is not a page", () => {
+    const { container } = render(<ItemFiles item="chapter-list" />);
+    expect(container.querySelector("[data-slot=item-files-example]")).toBeNull();
+    expect(itemFilesMarkdown("chapter-list")).not.toContain("example route");
   });
 });

@@ -104,12 +104,16 @@ describe("variants of one family in the full smoke", () => {
   // SPEC-components-6 §5.1: variants share install paths, so each is installed in name order
   // and checked right after its own add; a block that declares a variant comes after them all.
   const url = (name: string) => `https://www.mangacn.com/r/${name}.json`;
-  const page = (name: string, route: string, components: string[], deps: string[] = []) => ({
+  const page = (name: string, components: string[], deps: string[] = []) => ({
     name,
     type: "registry:block",
     registryDependencies: deps.map(url),
     files: [
-      { path: `registry/blocks/${name}/page.tsx`, type: "registry:page", target: route },
+      {
+        path: `registry/blocks/${name}/page.tsx`,
+        type: "registry:page",
+        target: `app/(mangacn-examples)/examples/${name}/page.tsx`,
+      },
       ...components.map((file) => ({
         path: `registry/blocks/${name}/components/${file}.tsx`,
         type: "registry:component",
@@ -119,12 +123,12 @@ describe("variants of one family in the full smoke", () => {
   });
   const items = [
     { name: "ink-frame", files: [{ path: "x/ink-frame.tsx", type: "registry:component" }] },
-    page("library-page", "app/library/page.tsx", ["shelf"], ["sidebar-07"]),
-    page("sidebar-08", "app/dashboard/page.tsx", ["app-sidebar", "nav-main"]),
-    page("login-02", "app/login/page.tsx", ["login-form"]),
-    page("sidebar-07", "app/dashboard/page.tsx", ["app-sidebar", "nav-main"]),
-    page("login-01", "app/login/page.tsx", ["login-form"]),
-    page("signup-01", "app/signup/page.tsx", ["signup-form"]),
+    page("library-page", ["shelf"], ["sidebar-07"]),
+    page("sidebar-08", ["app-sidebar", "nav-main"]),
+    page("login-02", ["login-form"]),
+    page("sidebar-07", ["app-sidebar", "nav-main"]),
+    page("login-01", ["login-form"]),
+    page("signup-01", ["signup-form"]),
   ];
 
   it("groups the items that write the same path, in name order", () => {
