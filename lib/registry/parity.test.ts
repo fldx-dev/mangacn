@@ -263,16 +263,20 @@ describe("block parity", () => {
     ]);
   });
 
-  it("fails when an export is removed or added, or the page moves", () => {
-    const changed = [
-      { ...ownFiles[0], target: "app/sign-in/page.tsx" },
-      { ...ownFiles[1], content: "export function SignInForm() {}\n" },
-    ];
+  it("fails when an export is removed or added", () => {
+    const changed = [ownFiles[0], { ...ownFiles[1], content: "export function SignInForm() {}\n" }];
     expect(compareBlockParity(stock, shape(changed))).toEqual([
       "components/login-form.tsx exports: missing LoginForm",
       "components/login-form.tsx exports: unexpected SignInForm",
-      "page.tsx: target app/sign-in/page.tsx; stock's is app/login/page.tsx",
     ]);
+  });
+
+  it("does not hold the page to stock's target (pages install under the examples group)", () => {
+    const moved = [
+      { ...ownFiles[0], target: "app/(mangacn-examples)/examples/login-01/page.tsx" },
+      ownFiles[1],
+    ];
+    expect(compareBlockParity(stock, shape(moved))).toEqual([]);
   });
 
   it("fails when a dependency is removed or a foreign one added", () => {

@@ -11,9 +11,9 @@ skipVariants: ["default"]
 
 <CopyPrompt item="activity-01" />
 
-A signed-in reader's own activity at `app/activity/page.tsx`: four [Stat Card](/docs/components/stat-card)s with sparklines, a [Toggle Group](/docs/components/toggle-group) that filters the events by kind and announces the count, and a [Timeline](/docs/components/timeline) of events under day headings, each with an [Avatar](/docs/components/avatar), a [Badge](/docs/components/badge) for its kind and its time, ten at a time behind a Show more [Button](/docs/components/button). Everything comes from the typed constants in `components/activity-data.ts`; replace them with your fetch. Times are literals formatted in `en-US`, never relative to now, so the page prerenders the same on any day.
+A signed-in reader's own activity at `app/(mangacn-examples)/examples/activity-01/page.tsx`: four [Stat Card](/docs/components/stat-card)s with sparklines, a [Toggle Group](/docs/components/toggle-group) that filters the events by kind and announces the count, and a [Timeline](/docs/components/timeline) of events under day headings, each with an [Avatar](/docs/components/avatar), a [Badge](/docs/components/badge) for its kind and its time, ten at a time behind a Show more [Button](/docs/components/button). Everything comes from the typed constants in `components/activity-data.ts`; replace them with your fetch. Times are literals formatted in `en-US`, never relative to now, so the page prerenders the same on any day.
 
-The page and `activity-stats.tsx` are server components; `activity-feed.tsx` is a client component, for the filter and Show more. To put the page in an app shell, move its content into [Sidebar 07](/docs/blocks/sidebar-07)'s `SidebarInset`, in place of the dashboard's, and drop the page's own `main`: the inset is the route's `main`.
+The page and `activity-stats.tsx` are server components; `activity-feed.tsx` is a client component, for the filter and Show more. To put the page in your app's own shell, move its content into the shell's content area and drop the page's own `main` (in a mangacn sidebar block such as [Sidebar 07](/docs/blocks/sidebar-07), its `SidebarInset`, which is the route's `main`).
 
 ## Preview
 

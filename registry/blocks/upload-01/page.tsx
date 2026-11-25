@@ -4,8 +4,8 @@ import { UploadForm } from "./components/upload-form";
 // A creator's chapter upload: the series, number and title, then the pages with their progress,
 // in one card. The page is a server component; the form holds the state and the simulated
 // upload. Replace `uploadSeries` with your fetch (`const series = await getSeries()` in this
-// async page). Inside sidebar-07's shell, put the content below in its `SidebarInset` instead of
-// this `main`.
+// async page). Inside your app's own shell (a sidebar layout, a header), put the content below
+// in its content area instead of this `main`.
 
 export default function Page() {
   return (

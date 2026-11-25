@@ -42,9 +42,9 @@ describe("installPlan", () => {
     expect(vite.stylesheet).toBe("src/index.css");
     expect(vite.fontFile).toBe("src/index.css");
     const login = (plan: InstallPlan) => plan.kit.find((item) => item.name === "login-01");
-    expect(login(next)?.files).toContain("app/login/page.tsx");
-    expect(login(vite)?.files).not.toContain("app/login/page.tsx");
-    expect(login(vite)?.skipped).toEqual(["app/login/page.tsx"]);
+    expect(login(next)?.files).toContain("app/(mangacn-examples)/examples/login-01/page.tsx");
+    expect(login(vite)?.files).not.toContain("app/(mangacn-examples)/examples/login-01/page.tsx");
+    expect(login(vite)?.skipped).toEqual(["app/(mangacn-examples)/examples/login-01/page.tsx"]);
     for (const item of [...vite.kit, ...vite.brought]) {
       for (const file of item.files) expect(file).toMatch(/^src\//);
     }

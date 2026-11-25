@@ -169,7 +169,7 @@
         {
           "path": "login-01/page.tsx",
           "type": "registry:page",
-          "target": "app/login/page.tsx"
+          "target": "app/(mangacn-examples)/examples/login-01/page.tsx"
         },
         {
           "path": "login-01/components/login-form.tsx",
@@ -203,7 +203,7 @@
         {
           "path": "login-02/page.tsx",
           "type": "registry:page",
-          "target": "app/login/page.tsx"
+          "target": "app/(mangacn-examples)/examples/login-02/page.tsx"
         },
         {
           "path": "login-02/components/login-form.tsx",
@@ -234,7 +234,7 @@
         {
           "path": "login-03/page.tsx",
           "type": "registry:page",
-          "target": "app/login/page.tsx"
+          "target": "app/(mangacn-examples)/examples/login-03/page.tsx"
         },
         {
           "path": "login-03/components/login-form.tsx",
@@ -269,7 +269,7 @@
         {
           "path": "login-04/page.tsx",
           "type": "registry:page",
-          "target": "app/login/page.tsx"
+          "target": "app/(mangacn-examples)/examples/login-04/page.tsx"
         },
         {
           "path": "login-04/components/login-form.tsx",
@@ -299,7 +299,7 @@
         {
           "path": "login-05/page.tsx",
           "type": "registry:page",
-          "target": "app/login/page.tsx"
+          "target": "app/(mangacn-examples)/examples/login-05/page.tsx"
         },
         {
           "path": "login-05/components/login-form.tsx",
@@ -331,7 +331,7 @@
         {
           "path": "signup-01/page.tsx",
           "type": "registry:page",
-          "target": "app/signup/page.tsx"
+          "target": "app/(mangacn-examples)/examples/signup-01/page.tsx"
         },
         {
           "path": "signup-01/components/signup-form.tsx",
@@ -365,7 +365,7 @@
         {
           "path": "signup-02/page.tsx",
           "type": "registry:page",
-          "target": "app/signup/page.tsx"
+          "target": "app/(mangacn-examples)/examples/signup-02/page.tsx"
         },
         {
           "path": "signup-02/components/signup-form.tsx",
@@ -396,7 +396,7 @@
         {
           "path": "signup-03/page.tsx",
           "type": "registry:page",
-          "target": "app/signup/page.tsx"
+          "target": "app/(mangacn-examples)/examples/signup-03/page.tsx"
         },
         {
           "path": "signup-03/components/signup-form.tsx",
@@ -431,7 +431,7 @@
         {
           "path": "signup-04/page.tsx",
           "type": "registry:page",
-          "target": "app/signup/page.tsx"
+          "target": "app/(mangacn-examples)/examples/signup-04/page.tsx"
         },
         {
           "path": "signup-04/components/signup-form.tsx",
@@ -461,7 +461,7 @@
         {
           "path": "signup-05/page.tsx",
           "type": "registry:page",
-          "target": "app/signup/page.tsx"
+          "target": "app/(mangacn-examples)/examples/signup-05/page.tsx"
         },
         {
           "path": "signup-05/components/signup-form.tsx",
@@ -494,7 +494,7 @@
         {
           "path": "sidebar-01/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-01/page.tsx"
         },
         {
           "path": "sidebar-01/components/app-sidebar.tsx",
@@ -538,7 +538,7 @@
         {
           "path": "sidebar-02/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-02/page.tsx"
         },
         {
           "path": "sidebar-02/components/app-sidebar.tsx",
@@ -579,7 +579,7 @@
         {
           "path": "sidebar-03/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-03/page.tsx"
         },
         {
           "path": "sidebar-03/components/app-sidebar.tsx",
@@ -610,7 +610,7 @@
         {
           "path": "sidebar-04/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-04/page.tsx"
         },
         {
           "path": "sidebar-04/components/app-sidebar.tsx",
@@ -643,7 +643,7 @@
         {
           "path": "sidebar-05/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-05/page.tsx"
         },
         {
           "path": "sidebar-05/components/app-sidebar.tsx",
@@ -682,7 +682,7 @@
         {
           "path": "sidebar-06/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-06/page.tsx"
         },
         {
           "path": "sidebar-06/components/app-sidebar.tsx",
@@ -725,7 +725,7 @@
         {
           "path": "sidebar-07/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-07/page.tsx"
         },
         {
           "path": "sidebar-07/components/app-sidebar.tsx",
@@ -778,7 +778,7 @@
         {
           "path": "sidebar-08/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-08/page.tsx"
         },
         {
           "path": "sidebar-08/components/app-sidebar.tsx",
@@ -833,7 +833,7 @@
         {
           "path": "sidebar-09/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-09/page.tsx"
         },
         {
           "path": "sidebar-09/components/app-sidebar.tsx",
@@ -873,7 +873,7 @@
         {
           "path": "sidebar-10/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-10/page.tsx"
         },
         {
           "path": "sidebar-10/components/app-sidebar.tsx",
@@ -934,7 +934,7 @@
         {
           "path": "sidebar-11/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-11/page.tsx"
         },
         {
           "path": "sidebar-11/components/app-sidebar.tsx",
@@ -964,7 +964,7 @@
         {
           "path": "sidebar-13/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-13/page.tsx"
         },
         {
           "path": "sidebar-13/components/settings-dialog.tsx",
@@ -993,7 +993,7 @@
         {
           "path": "sidebar-14/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-14/page.tsx"
         },
         {
           "path": "sidebar-14/components/app-sidebar.tsx",
@@ -1029,7 +1029,7 @@
         {
           "path": "library-page/page.tsx",
           "type": "registry:page",
-          "target": "app/library/page.tsx"
+          "target": "app/(mangacn-examples)/examples/library-page/page.tsx"
         },
         {
           "path": "library-page/components/shelf.tsx",
@@ -1101,7 +1101,7 @@
         {
           "path": "series-page/page.tsx",
           "type": "registry:page",
-          "target": "app/series/page.tsx"
+          "target": "app/(mangacn-examples)/examples/series-page/page.tsx"
         },
         {
           "path": "series-page/components/series-header.tsx",
@@ -1134,7 +1134,7 @@
         {
           "path": "sidebar-12/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-12/page.tsx"
         },
         {
           "path": "sidebar-12/components/app-sidebar.tsx",
@@ -1184,7 +1184,7 @@
         {
           "path": "sidebar-15/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-15/page.tsx"
         },
         {
           "path": "sidebar-15/components/calendars.tsx",
@@ -1264,7 +1264,7 @@
         {
           "path": "sidebar-16/page.tsx",
           "type": "registry:page",
-          "target": "app/dashboard/page.tsx"
+          "target": "app/(mangacn-examples)/examples/sidebar-16/page.tsx"
         },
         {
           "path": "sidebar-16/components/app-sidebar.tsx",
@@ -1329,7 +1329,7 @@
         {
           "path": "settings-01/page.tsx",
           "type": "registry:page",
-          "target": "app/settings/page.tsx"
+          "target": "app/(mangacn-examples)/examples/settings-01/page.tsx"
         },
         {
           "path": "settings-01/components/settings-form.tsx",
@@ -1370,7 +1370,7 @@
         {
           "path": "profile-01/page.tsx",
           "type": "registry:page",
-          "target": "app/profile/page.tsx"
+          "target": "app/(mangacn-examples)/examples/profile-01/page.tsx"
         },
         {
           "path": "profile-01/components/profile-form.tsx",
@@ -1410,7 +1410,7 @@
         {
           "path": "onboarding-01/page.tsx",
           "type": "registry:page",
-          "target": "app/onboarding/page.tsx"
+          "target": "app/(mangacn-examples)/examples/onboarding-01/page.tsx"
         },
         {
           "path": "onboarding-01/components/onboarding-flow.tsx",
@@ -1450,7 +1450,7 @@
         {
           "path": "file-manager-01/page.tsx",
           "type": "registry:page",
-          "target": "app/files/page.tsx"
+          "target": "app/(mangacn-examples)/examples/file-manager-01/page.tsx"
         },
         {
           "path": "file-manager-01/components/file-manager.tsx",
@@ -1486,7 +1486,7 @@
         {
           "path": "activity-01/page.tsx",
           "type": "registry:page",
-          "target": "app/activity/page.tsx"
+          "target": "app/(mangacn-examples)/examples/activity-01/page.tsx"
         },
         {
           "path": "activity-01/components/activity-stats.tsx",
@@ -1530,7 +1530,7 @@
         {
           "path": "upload-01/page.tsx",
           "type": "registry:page",
-          "target": "app/upload/page.tsx"
+          "target": "app/(mangacn-examples)/examples/upload-01/page.tsx"
         },
         {
           "path": "upload-01/components/upload-form.tsx",

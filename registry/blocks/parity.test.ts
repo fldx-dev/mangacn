@@ -11,7 +11,7 @@ import {
 } from "@/lib/registry/parity";
 
 // A block mangacn redraws from a stock base-nova block keeps stock's files (path inside the
-// block and type), the page's route target, each file's exports and stock's registry
+// block and type), each file's exports and stock's registry
 // dependencies (mangacn items by URL, more mangacn items allowed). The snapshot is refreshed
 // only by `pnpm gen:parity`.
 const snapshot = JSON.parse(

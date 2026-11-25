@@ -11,9 +11,9 @@ skipVariants: ["default"]
 
 <CopyPrompt item="upload-01" />
 
-A creator's chapter upload route, `app/upload/page.tsx`: a [Card](/docs/components/card) with the series in a [Select](/docs/components/select), the chapter in a [Number Input](/docs/components/number-input) and a title [Input](/docs/components/input), then a [File Upload](/docs/components/file-upload) drop zone for up to 40 page images with a [Progress](/docs/components/progress) bar per page and one for the chapter, and an [Alert](/docs/components/alert) when a page fails. Upload runs a simulated upload in the form (a page whose name contains "error" fails once, to show its Retry), Cancel stops it, and Publish, enabled once every page is done, checks the fields and announces; replace the timer with your upload, pass `onPublish` to `UploadForm` and replace the sample `uploadSeries` in `upload-data.ts` with your own.
+A creator's chapter upload route, `app/(mangacn-examples)/examples/upload-01/page.tsx`: a [Card](/docs/components/card) with the series in a [Select](/docs/components/select), the chapter in a [Number Input](/docs/components/number-input) and a title [Input](/docs/components/input), then a [File Upload](/docs/components/file-upload) drop zone for up to 40 page images with a [Progress](/docs/components/progress) bar per page and one for the chapter, and an [Alert](/docs/components/alert) when a page fails. Upload runs a simulated upload in the form (a page whose name contains "error" fails once, to show its Retry), Cancel stops it, and Publish, enabled once every page is done, checks the fields and announces; replace the timer with your upload, pass `onPublish` to `UploadForm` and replace the sample `uploadSeries` in `upload-data.ts` with your own.
 
-The page is a server component and `upload-form` a client component. To put it in [Sidebar 07](/docs/blocks/sidebar-07)'s app shell, render the page's header and `UploadForm` inside that block's `SidebarInset` instead of the page's `main`.
+The page is a server component and `upload-form` a client component. To put it in your app's own shell, render the page's header and `UploadForm` in the shell's content area instead of the page's `main` (in a mangacn sidebar block such as [Sidebar 07](/docs/blocks/sidebar-07), its `SidebarInset`).
 
 ## Preview
 

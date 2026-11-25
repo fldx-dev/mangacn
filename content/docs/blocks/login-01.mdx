@@ -11,7 +11,7 @@ skipVariants: ["default"]
 
 <CopyPrompt item="login-01" />
 
-Stock's login page in ink, with stock's two files and exports: one add writes `app/login/page.tsx` and `components/login-form.tsx` where shadcn's login-01 puts them, and the page imports the form from `@/components/login-form`. The form sits on mangacn's card at the heavy outline width, its title in the display face under one spot <span lang="ja">受付</span> (reception) stamp, and its "Sign up" link goes to `/signup`, where [Signup 01](/docs/blocks/signup-01) sits.
+Stock's login page in ink, with stock's two files and exports: one add writes `app/(mangacn-examples)/examples/login-01/page.tsx` and `components/login-form.tsx` (the page as an example route, the components where shadcn's login-01 puts them), and the page imports the form from `@/components/login-form`. The form sits on mangacn's card at the heavy outline width, its title in the display face under one spot <span lang="ja">受付</span> (reception) stamp, and its "Sign up" link goes to `/signup`, your sign-up route ([Signup 01](/docs/blocks/signup-01)'s example serves at `/examples/signup-01`).
 
 ## Preview
 
@@ -19,6 +19,6 @@ Stock's login page in ink, with stock's two files and exports: one add writes `a
 
 ## Props
 
-`LoginForm` takes its root `div`'s props and `forgotPasswordHref`. No mangacn item installs a password-reset page, so the "Forgot your password?" link is drawn only when the prop is set: point it at yours with `<LoginForm forgotPasswordHref="/forgot-password" />` in `app/login/page.tsx`. Every field submits under its `id` as its `name` (`email`, `password`).
+`LoginForm` takes its root `div`'s props and `forgotPasswordHref`. No mangacn item installs a password-reset page, so the "Forgot your password?" link is drawn only when the prop is set: point it at yours with `<LoginForm forgotPasswordHref="/forgot-password" />` in `app/(mangacn-examples)/examples/login-01/page.tsx`. Every field submits under its `id` as its `name` (`email`, `password`).
 
 <PropsTable item="login-01" name="LoginFormProps" />

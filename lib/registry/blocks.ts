@@ -14,18 +14,20 @@ import { type BlockParityShape, loadBlockParitySnapshot, PARITY_BLOCKS } from ".
 // they render declared by its mangacn URL.
 //
 // A page block (batch 5, stock's `login-01`) is a whole route instead: its first file is
-// `page.tsx`, a `registry:page` with stock's target (`app/login/page.tsx`), and its other files
-// live in `components/` as `registry:component`, installed where stock installs them:
+// `page.tsx`, a `registry:page` installed as an example route under one route group
+// (`app/(mangacn-examples)/examples/login-01/page.tsx`, served at `/examples/login-01`; stock's
+// target is `app/login/page.tsx`), and its other files live in `components/` as
+// `registry:component`, installed where stock installs them:
 // `registry/blocks/login-01/components/login-form.tsx` → `components/login-form.tsx`. shadcn 4.23
 // writes an untargeted `registry:component` to the user's components folder at the path after
 // the first `components` segment of the file's registry path (or at its basename when the folder
 // has another name); the catalog states that place as `@components/<file>`, so it does not hang
-// on the folder's name. The page lands in `app/<route>/`, away from its components, so once
-// installed it imports them by install path (`@/components/login-form`), as stock's page does;
-// component files import each other relatively, since they land together.
+// on the folder's name. The page lands in `app/(mangacn-examples)/examples/<name>/`, away from
+// its components, so once installed it imports them by install path (`@/components/login-form`),
+// as stock's page does; component files import each other relatively, since they land together.
 //
-// Variants of one stock family (SPEC-components-6 §5.1) install the same paths: every login-0N
-// writes `app/login/page.tsx` and `components/login-form.tsx`. So a page imports its own
+// Variants of one stock family (SPEC-components-6 §5.1) install the same component paths: every
+// login-0N writes `components/login-form.tsx` (each its own example route). So a page imports its own
 // components relatively (`./components/login-form`), which resolves in this repo without a
 // per-path alias, and `pnpm registry:build` rewrites those imports to the install path
 // (`@/components/login-form`) in the emitted JSON (`installPageSource`,
@@ -45,8 +47,23 @@ export const PAGE_COMPONENT_TYPE = "registry:component";
 export const PAGE_FILE = "page.tsx";
 export const PAGE_COMPONENTS_DIR = "components";
 
-/** `app/<route>/page.tsx`, one or more kebab-case route segments, as stock's pages target. */
-const PAGE_TARGET = /^app\/(?:[a-z0-9-]+\/)+page\.tsx$/;
+/**
+ * The route group every page block's route installs under. A route group adds no URL segment, so
+ * the routes sit one level down, under `examples/`, to keep clear of an app's own `/login` or
+ * `/dashboard`; the block's name keeps two blocks apart. Deleting the group's folder removes
+ * every example route and nothing else.
+ */
+export const EXAMPLES_GROUP = "(mangacn-examples)";
+
+/** A page block's route: `login-01` → `app/(mangacn-examples)/examples/login-01/page.tsx`. */
+export function examplePageTarget(name: string): string {
+  return `app/${EXAMPLES_GROUP}/examples/${name}/${PAGE_FILE}`;
+}
+
+/** The URL a page block's route serves: `login-01` → `/examples/login-01`. */
+export function examplePageUrl(name: string): string {
+  return `/examples/${name}`;
+}
 
 /**
  * The groups of the Blocks index and the docs sidebar, in order (SPEC-components-6 §6,
@@ -165,8 +182,10 @@ function pageBlockProblems(item: LoadedRegistryItem, at: (problem: string) => vo
     at(
       `the first file is ${first.path} (${first.type}); expected ${folder}${PAGE_FILE} (${PAGE_TYPE})`,
     );
-  } else if (!PAGE_TARGET.test(first.target ?? "")) {
-    at(`${first.path} has target ${JSON.stringify(first.target)}; expected app/<route>/page.tsx`);
+  } else if (first.target !== examplePageTarget(item.name)) {
+    at(
+      `${first.path} has target ${JSON.stringify(first.target)}; expected "${examplePageTarget(item.name)}"`,
+    );
   }
   const components = `${folder}${PAGE_COMPONENTS_DIR}/`;
   for (const file of rest) {
@@ -187,7 +206,7 @@ function pageBlockProblems(item: LoadedRegistryItem, at: (problem: string) => vo
  * `registry:block` in category `block`, lives in its own folder and declares every registry
  * dependency by mangacn URL. A block has `<name>.tsx` as its entry (first) file and gives every
  * file type `registry:block` and its `@components/blocks/<name>/…` target; a page block has
- * `page.tsx` first (`registry:page`, target `app/<route>/page.tsx`) and its other files in
+ * `page.tsx` first (`registry:page`, target `examplePageTarget(name)`) and its other files in
  * `components/` (`registry:component`, target `@components/<file>`). No block file installs
  * where another item's file does, unless both are stock-derived blocks whose stock files share
  * that target (`sharesStockTarget`): variants of one family are alternatives. Items of other
@@ -323,7 +342,7 @@ export function isOwnComponentImport(
 /**
  * A page block's route file as `shadcn add` should write it: each relative import of one of its
  * own components (`./components/login-form`) becomes that component's install path
- * (`@/components/login-form`), since the route lands in `app/<route>/`, away from them. Every
+ * (`@/components/login-form`), since the route lands in `app/(mangacn-examples)/examples/<name>/`, away from them. Every
  * other import, and every other byte, is left as it is.
  */
 export function installPageSource(

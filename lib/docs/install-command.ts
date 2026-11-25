@@ -6,6 +6,7 @@ import {
   loadRegistry,
   registryItemUrl,
 } from "@/lib/registry";
+import { EXAMPLES_GROUP, examplePageUrl, pageFile } from "@/lib/registry/blocks";
 import { clientNote, isClientItem } from "@/lib/registry/client";
 import { extractImports } from "@/lib/registry/imports";
 import {
@@ -156,12 +157,14 @@ export function commandFor(props: InstallCommandProps, manager: PackageManager):
  * (`components/blocks/chapter-list/chapter-list.tsx`, …), then what its mangacn registry
  * dependencies add, transitively, and the shipped items whose files it replaces (a variant of a
  * stock family writes the paths its siblings write), the siblings that share the same paths in
- * one group. A block's page prints it under the install block.
+ * one group; for a page block, the URL its example route serves and the route group's folder.
+ * A block's page prints it under the install block.
  */
 export function itemFiles(name: string): {
   files: string[];
   dependencyFiles: string[];
   replaces: { items: string[]; files: string[] }[];
+  example: { url: string; folder: string } | null;
 } {
   const item = catalogItem(name);
   const groups = new Map<string, { items: string[]; files: string[] }>();
@@ -175,6 +178,9 @@ export function itemFiles(name: string): {
     files: item.files.map(installTarget),
     dependencyFiles: registry ? dependencyFiles(name, registry) : [],
     replaces: [...groups.values()],
+    example: pageFile(item)
+      ? { url: examplePageUrl(name), folder: `app/${EXAMPLES_GROUP}/` }
+      : null,
   };
 }
 

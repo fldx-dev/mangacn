@@ -112,7 +112,8 @@ const LANDING_TYPES = ["registry:block", "registry:hook", "registry:example"];
  * Every file a block or a hook lists in `files[]` must land at its target: a block's
  * `@components/blocks/<name>/<file>` → `components/blocks/<name>/<file>` (a block ships several
  * files, and a missing target makes the CLI flatten them into `components/`, SPEC-components-3
- * §3, §7); a page block's route at its `app/<route>/page.tsx` and its components'
+ * §3, §7); a page block's route at `app/(mangacn-examples)/examples/<name>/page.tsx` and its
+ * components'
  * `@components/<file>` → `components/<file>`; a hook's `@hooks/<name>.ts` → `hooks/<name>.ts`,
  * where the items that declare it import it from (SPEC-components-4 §4); a variant's
  * `@components/c-<component>-<n>.tsx` → `components/c-<component>-<n>.tsx` (SPEC-components-10).
@@ -241,19 +242,19 @@ export const EXPECTED_CONTENT: Record<
   "page-number": [
     { file: "components/page-number.tsx", includes: ["export function PageNumber("] },
   ],
-  // A page block: the route at stock's target, the form where stock's untargeted component
+  // A page block: the route at its example path, the form where stock's untargeted component
   // lands, and the page importing it from there (the build proves the import resolves).
   "login-01": [
     {
-      file: "app/login/page.tsx",
+      file: "app/(mangacn-examples)/examples/login-01/page.tsx",
       includes: ['import { LoginForm } from "@/components/login-form"'],
     },
     { file: "components/login-form.tsx", includes: ["export function LoginForm("] },
   ],
-  // login-02 shares login-01's paths: the full smoke checks it right after its own add.
+  // login-02 shares login-01's form: the full smoke checks it right after its own add.
   "login-02": [
     {
-      file: "app/login/page.tsx",
+      file: "app/(mangacn-examples)/examples/login-02/page.tsx",
       includes: [
         'import { LoginForm } from "@/components/login-form"',
         'import { MangaFrame } from "@/components/manga-frame"',
@@ -267,7 +268,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "login-03": [
     {
-      file: "app/login/page.tsx",
+      file: "app/(mangacn-examples)/examples/login-03/page.tsx",
       includes: ['import { LoginForm } from "@/components/login-form"', "Inkpot Studio"],
     },
     {
@@ -277,7 +278,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "login-04": [
     {
-      file: "app/login/page.tsx",
+      file: "app/(mangacn-examples)/examples/login-04/page.tsx",
       includes: ['import { LoginForm } from "@/components/login-form"'],
     },
     {
@@ -290,7 +291,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "login-05": [
     {
-      file: "app/login/page.tsx",
+      file: "app/(mangacn-examples)/examples/login-05/page.tsx",
       includes: ['import { LoginForm } from "@/components/login-form"'],
     },
     {
@@ -300,14 +301,14 @@ export const EXPECTED_CONTENT: Record<
   ],
   "signup-01": [
     {
-      file: "app/signup/page.tsx",
+      file: "app/(mangacn-examples)/examples/signup-01/page.tsx",
       includes: ['import { SignupForm } from "@/components/signup-form"'],
     },
     { file: "components/signup-form.tsx", includes: ["export function SignupForm("] },
   ],
   "signup-02": [
     {
-      file: "app/signup/page.tsx",
+      file: "app/(mangacn-examples)/examples/signup-02/page.tsx",
       includes: [
         'import { SignupForm } from "@/components/signup-form"',
         "Inkpot Studio",
@@ -321,7 +322,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "signup-03": [
     {
-      file: "app/signup/page.tsx",
+      file: "app/(mangacn-examples)/examples/signup-03/page.tsx",
       includes: ['import { SignupForm } from "@/components/signup-form"', "Inkpot Studio"],
     },
     {
@@ -331,7 +332,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "signup-04": [
     {
-      file: "app/signup/page.tsx",
+      file: "app/(mangacn-examples)/examples/signup-04/page.tsx",
       includes: ['import { SignupForm } from "@/components/signup-form"'],
     },
     {
@@ -345,7 +346,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "signup-05": [
     {
-      file: "app/signup/page.tsx",
+      file: "app/(mangacn-examples)/examples/signup-05/page.tsx",
       includes: ['import { SignupForm } from "@/components/signup-form"'],
     },
     {
@@ -353,11 +354,11 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function SignupForm(", "Continue with Google"],
     },
   ],
-  // The sidebar variants share app/dashboard/page.tsx and components/app-sidebar.tsx (and some a
-  // search-form or nav-main): the full smoke checks each right after its own add.
+  // The sidebar variants share components/app-sidebar.tsx (and some a search-form or nav-main):
+  // the full smoke checks each right after its own add.
   "sidebar-01": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-01/page.tsx",
       includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
     },
     {
@@ -372,7 +373,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "sidebar-02": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-02/page.tsx",
       includes: ['import { AppSidebar } from "@/components/app-sidebar"', "sticky top-0"],
     },
     {
@@ -387,7 +388,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "sidebar-03": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-03/page.tsx",
       includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
     },
     {
@@ -397,7 +398,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "sidebar-04": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-04/page.tsx",
       includes: [
         'import { AppSidebar } from "@/components/app-sidebar"',
         '"--sidebar-width": "19rem"',
@@ -410,7 +411,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "sidebar-05": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-05/page.tsx",
       includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
     },
     {
@@ -421,7 +422,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "sidebar-06": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-06/page.tsx",
       includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
     },
     {
@@ -440,7 +441,7 @@ export const EXPECTED_CONTENT: Record<
   // Five component files side by side: app-sidebar imports the other four relatively.
   "sidebar-07": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-07/page.tsx",
       includes: ['import { AppSidebar } from "@/components/app-sidebar"'],
     },
     {
@@ -455,7 +456,7 @@ export const EXPECTED_CONTENT: Record<
   // sidebar-08 shares sidebar-07's route and app-sidebar, nav-main, nav-projects and nav-user.
   "sidebar-08": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-08/page.tsx",
       includes: [
         'import { AppSidebar } from "@/components/app-sidebar"',
         "Volume 3: Paper lanterns",
@@ -476,7 +477,7 @@ export const EXPECTED_CONTENT: Record<
   // sidebar-09 shares the route, app-sidebar and nav-user: two nested sidebars in app-sidebar.
   "sidebar-09": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-09/page.tsx",
       includes: [
         'import { AppSidebar } from "@/components/app-sidebar"',
         '"--sidebar-width": "350px"',
@@ -495,7 +496,7 @@ export const EXPECTED_CONTENT: Record<
   // sidebar-10 shares the route and app-sidebar, nav-main, nav-secondary and team-switcher.
   "sidebar-10": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-10/page.tsx",
       includes: [
         'import { AppSidebar } from "@/components/app-sidebar"',
         'import { NavActions } from "@/components/nav-actions"',
@@ -521,7 +522,7 @@ export const EXPECTED_CONTENT: Record<
   // sidebar-11 shares the route and app-sidebar: the file tree lives in app-sidebar itself.
   "sidebar-11": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-11/page.tsx",
       includes: ['import { AppSidebar } from "@/components/app-sidebar"', "Chapter 12, page 2"],
     },
     {
@@ -532,7 +533,7 @@ export const EXPECTED_CONTENT: Record<
   // sidebar-13 shares the route only: its shell is a settings dialog of its own.
   "sidebar-13": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-13/page.tsx",
       includes: [
         'import { SettingsDialog } from "@/components/settings-dialog"',
         "Reader settings",
@@ -543,7 +544,7 @@ export const EXPECTED_CONTENT: Record<
   // Server-only: neither file has a client directive.
   "sidebar-14": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-14/page.tsx",
       includes: [
         'import { AppSidebar } from "@/components/app-sidebar"',
         '<AppSidebar side="right" />',
@@ -557,7 +558,7 @@ export const EXPECTED_CONTENT: Record<
   // sidebar-12 shares sidebar-07's route and app-sidebar, nav-user: checked after its own add.
   "sidebar-12": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-12/page.tsx",
       includes: ['import { AppSidebar } from "@/components/app-sidebar"', "Release schedule"],
     },
     {
@@ -577,7 +578,7 @@ export const EXPECTED_CONTENT: Record<
   // sidebar-16 shares the route and most component names with the other sidebars.
   "sidebar-16": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-16/page.tsx",
       includes: [
         'import { AppSidebar } from "@/components/app-sidebar"',
         'import { SiteHeader } from "@/components/site-header"',
@@ -600,7 +601,7 @@ export const EXPECTED_CONTENT: Record<
   // sidebar-15: two sidebars, eleven files; the route and five component names are shared.
   "sidebar-15": [
     {
-      file: "app/dashboard/page.tsx",
+      file: "app/(mangacn-examples)/examples/sidebar-15/page.tsx",
       includes: [
         'import { SidebarLeft } from "@/components/sidebar-left"',
         'import { SidebarRight } from "@/components/sidebar-right"',
@@ -632,11 +633,11 @@ export const EXPECTED_CONTENT: Record<
     },
     { file: "components/team-switcher.tsx", includes: ["export function TeamSwitcher("] },
   ],
-  // A page block inside another's shell: sidebar-07 arrives as a dependency (its route at
-  // app/dashboard too), and the page reaches its app-sidebar by install path.
+  // A page block inside another's shell: sidebar-07 arrives as a dependency (its own example
+  // route too), and the page reaches its app-sidebar by install path.
   "library-page": [
     {
-      file: "app/library/page.tsx",
+      file: "app/(mangacn-examples)/examples/library-page/page.tsx",
       includes: [
         'import { AppSidebar } from "@/components/app-sidebar"',
         'import { Shelf, type ShelfEmpty } from "@/components/shelf"',
@@ -648,13 +649,16 @@ export const EXPECTED_CONTENT: Record<
       includes: ["export function ContinueReading("],
     },
     { file: "components/app-sidebar.tsx", includes: ["export function AppSidebar("] },
-    { file: "app/dashboard/page.tsx", includes: ["export default function Page("] },
+    {
+      file: "app/(mangacn-examples)/examples/sidebar-07/page.tsx",
+      includes: ["export default function Page("],
+    },
   ],
   // A page made of blocks: the route imports its header by install path and the three series
   // blocks from theirs.
   "series-page": [
     {
-      file: "app/series/page.tsx",
+      file: "app/(mangacn-examples)/examples/series-page/page.tsx",
       includes: [
         'import { type Series, SeriesHeader } from "@/components/series-header"',
         'from "@/components/blocks/volume-grid/volume-grid"',
@@ -665,7 +669,7 @@ export const EXPECTED_CONTENT: Record<
   // App blocks (SPEC-components-8 §5): the route imports its form and data by install path.
   "settings-01": [
     {
-      file: "app/settings/page.tsx",
+      file: "app/(mangacn-examples)/examples/settings-01/page.tsx",
       includes: [
         'import { settings } from "@/components/settings-data"',
         'import { SettingsForm } from "@/components/settings-form"',
@@ -676,7 +680,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "profile-01": [
     {
-      file: "app/profile/page.tsx",
+      file: "app/(mangacn-examples)/examples/profile-01/page.tsx",
       includes: [
         'import { profile } from "@/components/profile-data"',
         'import { ProfileForm } from "@/components/profile-form"',
@@ -687,7 +691,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "onboarding-01": [
     {
-      file: "app/onboarding/page.tsx",
+      file: "app/(mangacn-examples)/examples/onboarding-01/page.tsx",
       includes: ['import { OnboardingFlow } from "@/components/onboarding-flow"'],
     },
     { file: "components/onboarding-flow.tsx", includes: ["export function OnboardingFlow("] },
@@ -695,7 +699,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "file-manager-01": [
     {
-      file: "app/files/page.tsx",
+      file: "app/(mangacn-examples)/examples/file-manager-01/page.tsx",
       includes: [
         'from "@/components/file-manager-data"',
         'import { FileManager } from "@/components/file-manager"',
@@ -709,7 +713,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "activity-01": [
     {
-      file: "app/activity/page.tsx",
+      file: "app/(mangacn-examples)/examples/activity-01/page.tsx",
       includes: [
         'import { ActivityFeed } from "@/components/activity-feed"',
         'import { activityEvents, activityStats } from "@/components/activity-data"',
@@ -721,7 +725,7 @@ export const EXPECTED_CONTENT: Record<
   ],
   "upload-01": [
     {
-      file: "app/upload/page.tsx",
+      file: "app/(mangacn-examples)/examples/upload-01/page.tsx",
       includes: [
         'import { uploadSeries } from "@/components/upload-data"',
         'import { UploadForm } from "@/components/upload-form"',
@@ -984,7 +988,7 @@ function installOrder(
 /**
  * The items in `items` that write the same install path as another, grouped, each group in
  * name order: variants of one stock family (`login-01`, `login-02`) are alternatives that share
- * `app/login/page.tsx` and `components/login-form.tsx` (SPEC-components-6 §5.1). Items that share
+ * `components/login-form.tsx` (SPEC-components-6 §5.1). Items that share
  * no path are in no group.
  */
 export function installFamilies(items: readonly CatalogItem[]): string[][] {

@@ -4,8 +4,8 @@ import { ProfileForm } from "./components/profile-form";
 // A signed-in reader's profile: the public profile and the password, one card each, in one
 // column. The page is a server component; the form holds the state. Everything on it comes from
 // `profile`; replace it with your fetch (`const profile = await getProfile()` in this async
-// page). Inside sidebar-07's shell, put the content below in its `SidebarInset` instead of this
-// `main`.
+// page). Inside your app's own shell (a sidebar layout, a header), put the content below in its
+// content area instead of this `main`.
 
 export default function Page() {
   return (
